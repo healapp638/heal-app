@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+/* Enable dark variant */
+@variant dark (&:where(.dark, .dark *));
+
+/* ===============================
+   THEME TOKENS (Tailwind v4)
+================================ */
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-maincolor: var(--maincolor);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-cream: var(--cream);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}
+
+/* ===============================
+   BASE DESIGN TOKENS
+================================ */
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #171717;
+
+    --card: #f5f5f5;
+    --card-foreground: #171717;
+
+    --primary: #ff0000;
+    --primary-foreground: #ffffff;
+    --cream: #FFD8B5;
+    --gradient-green-orange: radial-gradient(at 100% 0%, #A8BBA2 0%, #F66F76 10%, transparent 40%), radial-gradient(at 0% 100%, #F66F76 0%, #A8BBA2 10%, transparent 40%);
+
+    --secondary: #00ff00;
+    --secondary-foreground: #003300;
+    --maincolor: #F66F76;
+    --border: #e5e7eb;
+    --ring: #ff0000;
+  }
+
+  .dark {
+    --background: #0f172a;
+    --foreground: #e5e7eb;
+    --maincolor: #F66F76;
+    --card: #020617;
+    --card-foreground: #e5e7eb;
+    --cream: #FFD8B5;
+    --primary: #ff4d4f;
+    --primary-foreground: #ffffff;
+    --gradient-green-orange: radial-gradient(at 100% 0%, #A8BBA2 0%, #F66F76 10%, transparent 40%), radial-gradient(at 0% 100%, #F66F76 0%, #A8BBA2 10%, transparent 40%);
+    --secondary: #22c55e;
+    --secondary-foreground: #052e16;
+
+    --border: #1e293b;
+    --ring: #ff4d4f;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-poppins);
+  }
+
+  h1 {
+    @apply text-4xl font-bold;
+  }
+
+  h2 {
+    @apply text-3xl font-semibold;
+  }
+
+  h3 {
+    @apply text-2xl font-medium;
+  }
+
+  p {
+    @apply p-0 m-0;
+  }
+}
+
+/* Respect system UI */
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  .dark {
+    color-scheme: dark;
+  }
+}
+
+/* ===============================
+   COMPONENT CLASSES
+================================ */
+
+/* Online/Offline Status Messages */
+.custom-offline-message .ant-message-notice-content {
+  background: linear-gradient(135deg, #ff4d4f 0%, #cf1322 100%);
+  color: white;
+  border-radius: 8px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+  animation: slideInDown 0.3s ease-out;
+}
+
+.custom-online-message .ant-message-notice-content {
+  background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+  color: white;
+  border-radius: 8px;
+  padding: 12px 20px;
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
+  animation: slideInDown 0.3s ease-out;
+}
+
+.gradient-green-orange {
+  background: var(--gradient-green-orange);
+}
+
+.backgroundImage {
+  background: url('/images/Background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@layer components {
+  .authCard {
+    @apply w-full max-w-lg rounded-lg border border-border bg-card text-card-foreground shadow-sm p-4;
+  }
+
+  .whiteText {
+    @apply text-white;
+  }
+
+  .blackText {
+    @apply text-black dark:text-white;
+  }
+
+}
