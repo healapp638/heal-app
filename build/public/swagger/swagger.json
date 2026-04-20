@@ -1,0 +1,2054 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"ApiResponse": {
+				"properties": {
+					"status": {
+						"type": "boolean"
+					},
+					"message": {
+						"type": "string"
+					},
+					"data": {},
+					"code": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"status",
+					"message",
+					"code"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"InitMultipartRequest": {
+				"properties": {
+					"fileName": {
+						"type": "string"
+					},
+					"fileType": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"fileName",
+					"fileType"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignPartRequest": {
+				"properties": {
+					"key": {
+						"type": "string"
+					},
+					"uploadId": {
+						"type": "string"
+					},
+					"partNumber": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"key",
+					"uploadId",
+					"partNumber"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CompleteMultipartRequest": {
+				"properties": {
+					"key": {
+						"type": "string"
+					},
+					"uploadId": {
+						"type": "string"
+					},
+					"parts": {
+						"items": {
+							"properties": {
+								"PartNumber": {
+									"type": "number",
+									"format": "double"
+								},
+								"ETag": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"PartNumber",
+								"ETag"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"key",
+					"uploadId",
+					"parts"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"Bearer": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header",
+				"description": "JWT Authorization header using the Bearer scheme."
+			}
+		}
+	},
+	"info": {
+		"title": "heal_api_3001",
+		"version": "1.0.0",
+		"description": "Boilerplate apis",
+		"license": {
+			"name": "license"
+		},
+		"contact": {
+			"name": "STS"
+		}
+	},
+	"paths": {
+		"/user/common/contactus/fill": {
+			"post": {
+				"operationId": "ContactUs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Contact Us",
+				"tags": [
+					"User Common Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"message": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email",
+									"name"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User login",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"password": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"password",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Save a User",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"first_name": {
+										"type": "string"
+									},
+									"last_name": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"password": {
+										"type": "string"
+									},
+									"phone_number": {
+										"type": "string"
+									},
+									"country_code": {
+										"type": "string"
+									},
+									"profile_pic": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"first_name",
+									"last_name",
+									"email",
+									"password"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/forgot_password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Forgot password api endpoint",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/reset_password": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Reset password api endpoint",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"otp": {
+										"type": "string"
+									},
+									"new_password": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"otp",
+									"new_password",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/verify_otp": {
+			"post": {
+				"operationId": "VerifyOtp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Verify Otp Route  api endpoint",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"otp": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"otp",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/resend_otp": {
+			"post": {
+				"operationId": "ResendOtp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Resend Otp Route  api endpoint",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/change_password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Change Password endpoint",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"new_password": {
+										"type": "string"
+									},
+									"old_password": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"new_password",
+									"old_password"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/details": {
+			"get": {
+				"operationId": "GetUserDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User info",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/user/auth/profile": {
+			"put": {
+				"operationId": "UpdateUserProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update User Profile",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"first_name": {
+										"type": "string"
+									},
+									"last_name": {
+										"type": "string"
+									},
+									"phone_number": {
+										"type": "string"
+									},
+									"country_code": {
+										"type": "string"
+									},
+									"profile_pic": {
+										"type": "string",
+										"format": "binary"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/delete_deactivate": {
+			"delete": {
+				"operationId": "DeleteOrDeactivateAccount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "delete or deactivate user account\n2 for delete 3 for deactivate",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"reason": {
+										"type": "string"
+									},
+									"status": {
+										"type": "number",
+										"format": "double"
+									}
+								},
+								"required": [
+									"status"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/refresh_token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Refresh tokne api\nprovide refresh token in this api and get new access token",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"refresh_token": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refresh_token"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/logout": {
+			"post": {
+				"operationId": "LogoutUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Logout User",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/user/auth/upload_file": {
+			"post": {
+				"operationId": "UploadFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Upload a file",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/details_user": {
+			"get": {
+				"operationId": "GetUserDetailsUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User info",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/common/common_content": {
+			"get": {
+				"operationId": "GetCommonContent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get Common Content info",
+				"tags": [
+					"Common"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/common/questions": {
+			"get": {
+				"operationId": "GetQuestions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get Faq Questions",
+				"tags": [
+					"Common"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/common/store_parameter_to_aws": {
+			"post": {
+				"operationId": "StoreParameterToAws",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Post parameter to aws",
+				"tags": [
+					"Common"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"name",
+									"value"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/user/list": {
+			"get": {
+				"operationId": "GetUsersList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User List",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "sort_column",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort_direction",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search_key",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/admin/user/details": {
+			"get": {
+				"operationId": "GetUserDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User Details",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "user_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/user/status": {
+			"put": {
+				"operationId": "UpdateUserStatus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update User Status\n1 for active 2 for delete 3 for deactivate",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"status": {
+										"type": "number",
+										"format": "double"
+									},
+									"user_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"status",
+									"user_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/user/dashboard": {
+			"get": {
+				"operationId": "GetDashboardData",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get Dashboard data",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "past_day",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/user/upload/multipart/init": {
+			"post": {
+				"operationId": "InitiateMultipartUpload",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "1. Initiate Multipart Upload",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/InitMultipartRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/user/upload/multipart/sign-part": {
+			"post": {
+				"operationId": "SignMultipartPart",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "2. Sign Part",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignPartRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/user/upload/multipart/complete": {
+			"post": {
+				"operationId": "CompleteMultipartUpload",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "3. Complete Multipart",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CompleteMultipartRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/user/upload/process_file_admin": {
+			"post": {
+				"operationId": "ProcessFileAdmin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Process File Admin",
+				"tags": [
+					"Admin User Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"duration": {
+										"type": "number",
+										"format": "double"
+									},
+									"s3_key": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"s3_key"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/contactus/list": {
+			"get": {
+				"operationId": "ListContactDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "List events.",
+				"tags": [
+					"Admin ContactUs Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "sort_column",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort_direction",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search_key",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/contactus/details": {
+			"get": {
+				"operationId": "GetContactDetail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "List events.",
+				"tags": [
+					"Admin ContactUs Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "contact_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/contactus/delete": {
+			"delete": {
+				"operationId": "DeleteContactUs",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete Contact.",
+				"tags": [
+					"Admin ContactUs Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"contact_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"contact_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/contactus/reply": {
+			"post": {
+				"operationId": "ReplyContactus",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Reply TO Contact",
+				"tags": [
+					"Admin ContactUs Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"html": {
+										"type": "string"
+									},
+									"contact_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"html",
+									"contact_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/common/question": {
+			"post": {
+				"operationId": "AddQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Add Question  endpoint",
+				"tags": [
+					"Admin Common Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"answer": {
+										"type": "string"
+									},
+									"question": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"answer",
+									"question"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "UpdateQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update Question endpoint",
+				"tags": [
+					"Admin Common Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"answer": {
+										"type": "string"
+									},
+									"question": {
+										"type": "string"
+									},
+									"question_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"answer",
+									"question",
+									"question_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteQuestion",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Delete Question endpoint",
+				"tags": [
+					"Admin Common Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"question_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"question_id"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/common/common_content": {
+			"put": {
+				"operationId": "UpdateCommonContent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update Common Content endpoint",
+				"tags": [
+					"Admin Common Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"terms_conditions": {
+										"type": "string"
+									},
+									"privacy_policy": {
+										"type": "string"
+									},
+									"about": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"terms_conditions",
+									"privacy_policy",
+									"about"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get Admin login",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"password": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"password",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/forgot_password": {
+			"post": {
+				"operationId": "ForgotPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Forgot password api endpoint",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/reset_password": {
+			"post": {
+				"operationId": "ResetPassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Reset password api endpoint",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"otp": {
+										"type": "string"
+									},
+									"new_password": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"otp",
+									"new_password",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/verify_otp": {
+			"post": {
+				"operationId": "VerifyOtp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Verify Otp Route  api endpoint",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"otp": {
+										"type": "number",
+										"format": "double"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"otp",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/resend_otp": {
+			"post": {
+				"operationId": "ResendOtp",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Resend Otp Route  api endpoint",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/change_password": {
+			"post": {
+				"operationId": "ChangePassword",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Change Password endpoint",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"new_password": {
+										"type": "string"
+									},
+									"old_password": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"new_password",
+									"old_password"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/details": {
+			"get": {
+				"operationId": "GetAdminDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get Admin info",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/admin/auth/profile": {
+			"put": {
+				"operationId": "UpdateAdminProfile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Update Admin Profile",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": false,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"first_name": {
+										"type": "string"
+									},
+									"last_name": {
+										"type": "string"
+									},
+									"phone_number": {
+										"type": "string"
+									},
+									"country_code": {
+										"type": "string"
+									},
+									"greet_msg": {
+										"type": "string"
+									},
+									"profile_pic": {
+										"type": "string",
+										"format": "binary"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/refresh_token": {
+			"post": {
+				"operationId": "RefreshToken",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Refresh token api\nprovide refresh token in this api and get new access token",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"refresh_token": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refresh_token"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/auth/logout": {
+			"post": {
+				"operationId": "LogoutUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Logout User",
+				"tags": [
+					"Admin Auth Routes"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/api/v1"
+		}
+	]
+}
