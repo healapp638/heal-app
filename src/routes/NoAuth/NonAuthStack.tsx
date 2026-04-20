@@ -1,7 +1,8 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../../screens/nonAuth/Home";
+
 import AppRoutes from "../RouteKeys/appRoutes";
+import Home from "../../screens/nonAuth/Home";
 
 export default function NonAuthStack() {
   const Stack = createNativeStackNavigator();

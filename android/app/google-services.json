@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "557562015265",
-    "project_id": "templateproject-6eb36",
-    "storage_bucket": "templateproject-6eb36.appspot.com"
+    "project_number": "81341323740",
+    "project_id": "heal-43111",
+    "storage_bucket": "heal-43111.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:557562015265:android:54bee301f9675dc84ebd60",
+        "mobilesdk_app_id": "1:81341323740:android:29dd20ffc4eb58533a9719",
         "android_client_info": {
           "package_name": "com.heal"
         }
       },
       "oauth_client": [
         {
-          "client_id": "557562015265-prvlh5llp3icrmae83glsq6bojqcginp.apps.googleusercontent.com",
+          "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDpJ6OjFsiTgRsaIUK0gCrlN4KmbbeAPPc"
+          "current_key": "AIzaSyDwQRWhC3UIJo_16AHysw9kBNl8i5Jg8Y4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "557562015265-prvlh5llp3icrmae83glsq6bojqcginp.apps.googleusercontent.com",
+              "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "557562015265-8s87aia6k2onde0d9qdlgf230e0i1cb3.apps.googleusercontent.com",
+              "client_id": "81341323740-v6ehjcn5uo31mm3np2no18v8hu62o02u.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.template"
+                "bundle_id": "com.healwellness.app"
               }
             }
           ]
@@ -43,34 +43,50 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:557562015265:android:aba8078c880ce3f84ebd60",
+        "mobilesdk_app_id": "1:81341323740:android:c23b67e69e1258c73a9719",
         "android_client_info": {
-          "package_name": "com.template"
+          "package_name": "com.healwellness.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "557562015265-prvlh5llp3icrmae83glsq6bojqcginp.apps.googleusercontent.com",
+          "client_id": "81341323740-lonocvcjsjngck1lhqshib03fhgib23s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healwellness.app",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "81341323740-q9ti4j6fv6nr86at931h315lqmlbs9om.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healwellness.app",
+            "certificate_hash": "6c56ffaf1f19794d95ef167f91ac4482d762cd98"
+          }
+        },
+        {
+          "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDpJ6OjFsiTgRsaIUK0gCrlN4KmbbeAPPc"
+          "current_key": "AIzaSyDwQRWhC3UIJo_16AHysw9kBNl8i5Jg8Y4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "557562015265-prvlh5llp3icrmae83glsq6bojqcginp.apps.googleusercontent.com",
+              "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "557562015265-8s87aia6k2onde0d9qdlgf230e0i1cb3.apps.googleusercontent.com",
+              "client_id": "81341323740-v6ehjcn5uo31mm3np2no18v8hu62o02u.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.template"
+                "bundle_id": "com.healwellness.app"
               }
             }
           ]

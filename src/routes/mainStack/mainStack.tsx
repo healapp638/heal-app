@@ -1,23 +1,20 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import AppRoutes from "../RouteKeys/appRoutes";
-import AuthStack from "../auth/AuthStack";
-import NonAuthStack from "../NoAuth/NonAuthStack";
-import { LocalizationContext } from "../../localization/localization";
-import { strings } from "../../constants/variables";
-import Loader from "../../screens/modals/Loader";
-import { useSelector } from "react-redux";
-import { useNetInfo } from "@react-native-community/netinfo";
-import {
-  Text,
-  Animated,
-  StyleSheet,
-} from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context"; // ✅ Use this SafeAreaView
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AppRoutes from '../RouteKeys/appRoutes';
+import AuthStack from '../auth/AuthStack';
+import NonAuthStack from '../NoAuth/NonAuthStack';
+import { LocalizationContext } from '../../localization/localization';
+import { strings } from '../../constants/variables';
+import Loader from '../../modals/Loader';
+import { useSelector } from 'react-redux';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { Text, Animated, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ Use this SafeAreaView
 
 export default function MainStack() {
   const Stack = createNativeStackNavigator();
-  const { initializeAppLanguage, setAppLanguage } = useContext(LocalizationContext);
+  const { initializeAppLanguage, setAppLanguage } =
+    useContext(LocalizationContext);
   const loading = useSelector((state: any) => state.tempData.loader);
   const netInfo = useNetInfo();
 
@@ -71,17 +68,27 @@ export default function MainStack() {
   return (
     <>
       {showBanner && (
-        <SafeAreaView edges={['top']} style={{ zIndex: 20, position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+        <SafeAreaView
+          edges={['top']}
+          style={{
+            zIndex: 20,
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            right: 0,
+          }}
+        >
           <Animated.View
             style={[
               styles.banner,
               {
-                backgroundColor: isConnected ? "green" : "red",
+                backgroundColor: isConnected ? 'green' : 'red',
                 transform: [{ translateY: slideAnim }],
               },
-            ]}>
+            ]}
+          >
             <Text style={styles.bannerText}>
-              {isConnected ? "Back online" : "No Internet Connection"}
+              {isConnected ? 'Back online' : 'No Internet Connection'}
             </Text>
           </Animated.View>
         </SafeAreaView>
@@ -89,7 +96,7 @@ export default function MainStack() {
 
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name={AppRoutes.AuthStack} component={AuthStack} />
-        <Stack.Screen name={AppRoutes.NonAuthStack} component={NonAuthStack} />
+        {/* <Stack.Screen name={AppRoutes.NonAuthStack} component={NonAuthStack} /> */}
       </Stack.Navigator>
       {loading && <Loader />}
     </>
@@ -98,14 +105,14 @@ export default function MainStack() {
 
 const styles = StyleSheet.create({
   banner: {
-    width: "100%",
+    width: '100%',
     height: 32,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     paddingHorizontal: 20,
   },
   bannerText: {
-    color: "white",
-    fontWeight: "500",
+    color: 'white',
+    fontWeight: '500',
   },
 });

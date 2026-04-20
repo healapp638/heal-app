@@ -1,5 +1,12 @@
 const AppFonts = {
-    // font name example : Bold:'SFUIText-Bold' ,  Regular:'SFUIText-Regular',
-}
+  reco: 'Recoleta-RegularDEMO',
+  semiBold: 'Poppins-SemiBold',
+  regular: 'Poppins-Regular',
+  italic: 'Poppins-Italic',
+  semiItalic: 'Poppins-SemiBoldItalic',
+  medium: 'Poppins-Medium',
 
-export default AppFonts
+  // font name example : Bold:'SFUIText-Bold' ,  Regular:'SFUIText-Regular',
+};
+
+export default AppFonts;

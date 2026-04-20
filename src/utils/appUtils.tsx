@@ -27,7 +27,7 @@ const AppUtils: AppUtilsInterface = {
 
   //Adjust Font Size
   fontSize(size) {
-    return Platform.OS == 'ios' ? size : (size - 3)
+    return Platform.OS == 'ios' ? size : size - 1;
   },
 
   //Email validation
@@ -55,7 +55,7 @@ const AppUtils: AppUtilsInterface = {
 
   // Enable Ada compliance
   adaCompliance: () => {
-       store.dispatch(setFontScaling(1.5))
+    store.dispatch(setFontScaling(1.4))
   },
 
   // Check Update with live version's

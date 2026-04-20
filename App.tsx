@@ -1,28 +1,28 @@
-import React, { useEffect, useState } from "react";
-import { StatusBar, useColorScheme } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
-import { Provider } from "react-redux";
-import { store, persistor } from "./src/redux/Store/store";
-import { LightTheme, DarkTheme } from "./src/constants/colors";
-import MainStack from "./src/routes/mainStack/mainStack";
-import AppUtils from "./src/utils/appUtils";
-import notifee, { AndroidImportance } from "@notifee/react-native";
-import messaging from "@react-native-firebase/messaging";
-import UpdatePopup from "./src/screens/modals/UpdatePopup";
-import { PersistGate } from "redux-persist/integration/react";
-import { LocalizationProvider } from "./src/localization/localization";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { SetAppLanguage } from './src/redux/Reducers/userData'
-import { strings } from "./src/constants/variables";
-import { ToastProvider } from "./src/utils/ToastManager";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import React, { useEffect, useState } from 'react';
+import { StatusBar, useColorScheme } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { Provider } from 'react-redux';
+import { store, persistor } from './src/redux/Store/store';
+import { LightTheme, DarkTheme } from './src/constants/colors';
+import MainStack from './src/routes/mainStack/mainStack';
+import AppUtils from './src/utils/appUtils';
+import notifee, { AndroidImportance } from '@notifee/react-native';
+import messaging from '@react-native-firebase/messaging';
+import UpdatePopup from './src/modals/UpdatePopup';
+import { PersistGate } from 'redux-persist/integration/react';
+import { LocalizationProvider } from './src/localization/localization';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { SetAppLanguage } from './src/redux/Reducers/userData';
+import { strings } from './src/constants/variables';
+import { ToastProvider } from './src/utils/ToastManager';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 function App(): React.JSX.Element {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const theme = useColorScheme();
   const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
-    AppUtils.disableFontScale()
+    AppUtils.disableFontScale();
     checkUpdate();
     getLanguage();
     const unsubscribe = messaging().onMessage(onMessageReceived);
@@ -49,8 +49,8 @@ function App(): React.JSX.Element {
 
   async function onMessageReceived(message: any) {
     const channelId = await notifee.createChannel({
-      id: "default",
-      name: "Default",
+      id: 'default',
+      name: 'Default',
       importance: AndroidImportance.HIGH,
     });
     notifee.displayNotification({
@@ -61,7 +61,7 @@ function App(): React.JSX.Element {
       },
       data: message?.data,
       ios: {
-        sound: "default",
+        sound: 'default',
       },
     });
   }
@@ -73,10 +73,13 @@ function App(): React.JSX.Element {
         onBackDropPress={() => setIsUpdateAvailable(false)}
         isVisible={isUpdateAvailable}
       />
+
       <LocalizationProvider>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <NavigationContainer theme={theme == "dark" ? DarkTheme : LightTheme}>
+            <NavigationContainer
+              theme={theme == 'dark' ? DarkTheme : LightTheme}
+            >
               <ToastProvider>
                 <MainStack />
               </ToastProvider>
@@ -86,6 +89,6 @@ function App(): React.JSX.Element {
       </LocalizationProvider>
     </SafeAreaProvider>
   );
-};
+}
 
 export default App;
