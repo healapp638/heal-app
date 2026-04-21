@@ -4,9 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start:dev": "cross-env ENV_MODE=DEV pm2 start build/src/server.js --name 'heal_api_3001' -i max",
+    "start:dev": "pm2 start build/src/server.js --name 'heal_api_3001'",
     "restart:dev": "pm2 restart heal_api_3001",
-    "start:prod": "cross-env ENV_MODE=PROD pm2 start build/src/server.js --name 'heal_api_3001'",
+    "start:prod": "pm2 start build/src/server.js --name 'heal_api_3001'",
     "restart:prod": "pm2 restart heal_api_3001",
     "start": "export AWS_PROFILE=heal && export AWS_SDK_LOAD_CONFIG=1 && pm2 restart heal_api_3001 || pm2 start build/src/server.js --name 'heal_api_3001'",
     "restart": "pm2 restart heal_api_3001",
