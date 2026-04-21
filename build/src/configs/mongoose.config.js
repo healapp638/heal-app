@@ -17,6 +17,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const app_constant_1 = require("../constants/app.constant");
 const connection = () => __awaiter(void 0, void 0, void 0, function* () {
     const MONGO_URI = yield app_constant_1.DB.MONGODB_URI;
+    console.log(MONGO_URI, "MONGO_URI");
     mongoose_1.default.Promise = global.Promise;
     yield mongoose_1.default.connect(MONGO_URI, {});
     const db = mongoose_1.default.connection;

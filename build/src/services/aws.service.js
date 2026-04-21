@@ -147,6 +147,7 @@ const getSecretFromAWS = (secret_key_param) => __awaiter(void 0, void 0, void 0,
             });
             client.getSecretValue({ SecretId: secret_key_param }, (err, data) => {
                 if (err) {
+                    // console.log(err, 'error getSecretFromAWS')
                     return resolve(false);
                 }
                 const secretKey = JSON.parse(data.SecretString);

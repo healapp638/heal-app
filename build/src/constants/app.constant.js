@@ -82,8 +82,8 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
     APP.JWT_SECRET = services_1.default.awsService.getSecretFromAWS("API_SECRET");
     EMAIL_CREDENTIAL.SMTP_EMAIL = services_1.default.awsService.getSecretFromAWS(STMP_EMAIL);
     EMAIL_CREDENTIAL.SMTP_API_KEY = services_1.default.awsService.getSecretFromAWS(SMTP_API_KEY);
-    APP.SWAGGER_USER_NAME = services_1.default.awsService.getSecretFromAWS("SWAGGER_USER_NAME");
-    APP.SWAGGER_PASSWORD = services_1.default.awsService.getSecretFromAWS("SWAGGER_PASSWORD");
+    // APP.SWAGGER_USER_NAME = services.awsService.getSecretFromAWS("SWAGGER_USER_NAME")
+    // APP.SWAGGER_PASSWORD =  services.awsService.getSecretFromAWS("SWAGGER_PASSWORD")
     exports.AWS_CREDENTIAL = AWS_CREDENTIAL = {
         ACCESSID: services_1.default.awsService.getParameterFromAWS({ name: ACCESSID }),
         REGION: services_1.default.awsService.getParameterFromAWS({ name: REGION }),
@@ -91,6 +91,7 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
         BUCKET_NAME: services_1.default.awsService.getParameterFromAWS({ name: BUCKET }),
         COLLECTION_ID_AWS_REKOGNITION: process.env.COLLECTION_ID_AWS_REKOGNITION, //use it if want to use image search in project
     };
+    console.log(yield services_1.default.awsService.getSecretFromAWS(DB_URI), '=>>>>>>');
     // AGORA_CREDENTIAL = {
     //   AGORA_APP_ID: services.awsService.getParameterFromAWS({ name: 'AGORA_APP_ID' }),
     //   AGORA_APP_CERTIFICATE: services.awsService.getParameterFromAWS({ name: 'AGORA_APP_CERTIFICATE' }),

@@ -106,6 +106,7 @@ const getSecretFromAWS = async (secret_key_param: string) => {
             client.getSecretValue({ SecretId: secret_key_param }, (err: any, data: any) => {
 
                 if (err) {
+                    // console.log(err, 'error getSecretFromAWS')
                     return resolve(false);
                 }
                 const secretKey = JSON.parse(data.SecretString);

@@ -43,8 +43,8 @@ const APP: AppConstant = {
   PROJECT_NAME: 'Heal',
   PROJECT_LOGO: 'file/file-1735634891680.webp',
   AWS_REGION: 'us-east-1',
-  SWAGGER_USER_NAME:'admin',
-  SWAGGER_PASSWORD:'Admin@123'
+  SWAGGER_USER_NAME: 'admin',
+  SWAGGER_PASSWORD: 'Admin@123'
 };
 
 const DB: DbConstant = {
@@ -55,7 +55,7 @@ const DB: DbConstant = {
 const EMAIL_CREDENTIAL: EmailConstant = {
   SMTP_EMAIL: '',
   SMTP_API_KEY: '',
-  EMAIL_HOST:process.env.EMAIL_HOST || '',
+  EMAIL_HOST: process.env.EMAIL_HOST || '',
 }
 
 const SMS_CREDENTIAL: SMSConstant = {
@@ -80,8 +80,8 @@ const initializeAwsCredential = async () => {
   APP.JWT_SECRET = services.awsService.getSecretFromAWS("API_SECRET")
   EMAIL_CREDENTIAL.SMTP_EMAIL = services.awsService.getSecretFromAWS(STMP_EMAIL)
   EMAIL_CREDENTIAL.SMTP_API_KEY = services.awsService.getSecretFromAWS(SMTP_API_KEY)
-  APP.SWAGGER_USER_NAME = services.awsService.getSecretFromAWS("SWAGGER_USER_NAME")
-  APP.SWAGGER_PASSWORD =  services.awsService.getSecretFromAWS("SWAGGER_PASSWORD")
+  // APP.SWAGGER_USER_NAME = services.awsService.getSecretFromAWS("SWAGGER_USER_NAME")
+  // APP.SWAGGER_PASSWORD =  services.awsService.getSecretFromAWS("SWAGGER_PASSWORD")
   AWS_CREDENTIAL = {
     ACCESSID: services.awsService.getParameterFromAWS({ name: ACCESSID }),
     REGION: services.awsService.getParameterFromAWS({ name: REGION }),
@@ -89,7 +89,7 @@ const initializeAwsCredential = async () => {
     BUCKET_NAME: services.awsService.getParameterFromAWS({ name: BUCKET }),
     COLLECTION_ID_AWS_REKOGNITION: process.env.COLLECTION_ID_AWS_REKOGNITION, //use it if want to use image search in project
   };
-
+  console.log(await services.awsService.getSecretFromAWS(DB_URI), '=>>>>>>')
   // AGORA_CREDENTIAL = {
   //   AGORA_APP_ID: services.awsService.getParameterFromAWS({ name: 'AGORA_APP_ID' }),
   //   AGORA_APP_CERTIFICATE: services.awsService.getParameterFromAWS({ name: 'AGORA_APP_CERTIFICATE' }),
@@ -100,7 +100,7 @@ const initializeAwsCredential = async () => {
   //************If Twilio Used In Project**************** */
   // SMS_CREDENTIAL.TWILIO_ACCOUNT_SID = services.awsService.getSecretFromAWS('TWILIO_ACCOUNT_SID')
   // SMS_CREDENTIAL.TWILIO_AUTH_TOKEN = services.awsService.getSecretFromAWS('TWILIO_AUTH_TOKEN')
- 
+
 
   //************If Stripe Used In Project**************** */
   // STRIPE_CREDENTIAL = {

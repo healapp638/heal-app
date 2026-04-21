@@ -39,21 +39,5 @@ export const bootstrapAdmin = async function (cb: CallbackFunction) {
     await createOne(commonContentRef)
   }
 
-  // Use It If Project Requirement is Image Search 
-  //finds all aws RekognitionCollection   
-  // let collectionList = await services.awsService.awsFaceRekognitionFunctions.listCollectionAwsRekognition()
-  // const collectionId = AWS_CREDENTIAL.COLLECTION_ID_AWS_REKOGNITION
-  // //if collection list function works
-  // if (collectionList.status) {
-  //   let existCollectionId = collectionList.data.filter((collection_id: any) => collection_id == collectionId)
-
-  //   //if collection id not create till then create a new one 
-  //   if (existCollectionId.length == 0) {
-  //     let response = await services.awsService.awsFaceRekognitionFunctions.createCollectionAwsRekognition(collectionId)
-  //     if (response.status) {
-  //     }
-  //   }
-  // } //ends
-
   cb();
 };

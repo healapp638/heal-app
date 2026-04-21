@@ -8,7 +8,7 @@ import { serve, setup } from "swagger-ui-express";
 import Routes from "./modules/index";
 import { bootstrapAdmin } from "./utils/bootstrap.util";
 // import { rateLimiter } from "./utils/config.util";
-import { APP } from "./constants/app.constant";
+import { APP, initializeAwsCredential } from "./constants/app.constant";
 import { connection } from "./configs/mongoose.config";
 import { handleFileSize } from "./utils/config.util";
 import basicAuth from "express-basic-auth";
@@ -16,14 +16,12 @@ import compression from "compression";
 
 const app: Application = express();
 
-/* =========================
-   Call it when Parameters are stored to AWS
-========================= */
-// initializeAwsCredential()
 
-/* =========================
-   DATABASE INIT
-========================= */
+//  Call it when Parameters are stored to AWS
+initializeAwsCredential()
+
+
+//  DATABASE INIT
 connection()
   .then(() => {
     bootstrapAdmin(() => {
@@ -34,14 +32,12 @@ connection()
     console.log(err, "error Bootstrapping");
   });
 
-/* =========================
-   SECURITY MIDDLEWARE
-========================= */
+
+//  SECURITY MIDDLEWARE
 app.use(helmet());
 
-/* =========================
-   CORS CONFIG (FIXED)
-========================= */
+
+//  CORS CONFIG (FIXED)
 app.use(
   cors({
     origin: "*",
@@ -50,9 +46,8 @@ app.use(
   })
 );
 
-/* =========================
-   RESPONSE COMPRESSION
-========================= */
+
+//  RESPONSE COMPRESSION
 app.use(
   compression({
     level: 6,        // balanced speed vs compression
@@ -60,25 +55,21 @@ app.use(
   })
 );
 
-/* =========================
-   BODY & LOGGING
-========================= */
+
+
 app.use(bodyParser.json());
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
 
-/* =========================
-   STATIC FILES
-========================= */
+
 app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/files", express.static(path.join(__dirname, "/public/uploads")));
 // app.use(rateLimiter); //limit the api hit with specific ip
 
-/* =========================
-   SWAGGER
-========================= */
+
+//  SWAGGER
 async function setupSwagger(app: any) {
   const SWAGGER_USER = await APP.SWAGGER_USER_NAME;
   const SWAGGER_PASS = await APP.SWAGGER_PASSWORD;
@@ -106,15 +97,11 @@ async function setupSwagger(app: any) {
 
 setupSwagger(app)
 
-/* =========================
-   ROUTES
-========================= */
+
 app.use("/api/v1", Routes);
 app.use(handleFileSize as any);
 
-/* =========================
-   SERVER START
-========================= */
+
 app.listen(APP.PORT, () => {
   console.log("Server is running on port", APP.PORT);
   console.log("Swagger link:", `http://localhost:${APP.PORT}/swagger`);

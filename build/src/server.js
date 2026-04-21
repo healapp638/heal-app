@@ -28,13 +28,9 @@ const config_util_1 = require("./utils/config.util");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 const compression_1 = __importDefault(require("compression"));
 const app = (0, express_1.default)();
-/* =========================
-   Call it when Parameters are stored to AWS
-========================= */
-// initializeAwsCredential()
-/* =========================
-   DATABASE INIT
-========================= */
+//  Call it when Parameters are stored to AWS
+(0, app_constant_1.initializeAwsCredential)();
+//  DATABASE INIT
 (0, mongoose_config_1.connection)()
     .then(() => {
     (0, bootstrap_util_1.bootstrapAdmin)(() => {
@@ -44,42 +40,28 @@ const app = (0, express_1.default)();
     .catch((err) => {
     console.log(err, "error Bootstrapping");
 });
-/* =========================
-   SECURITY MIDDLEWARE
-========================= */
+//  SECURITY MIDDLEWARE
 app.use((0, helmet_1.default)());
-/* =========================
-   CORS CONFIG (FIXED)
-========================= */
+//  CORS CONFIG (FIXED)
 app.use((0, cors_1.default)({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
 }));
-/* =========================
-   RESPONSE COMPRESSION
-========================= */
+//  RESPONSE COMPRESSION
 app.use((0, compression_1.default)({
     level: 6, // balanced speed vs compression
     threshold: 1024 //  best default 1kB
 }));
-/* =========================
-   BODY & LOGGING
-========================= */
 app.use(body_parser_1.default.json());
 app.use(express_1.default.json({ limit: "50mb" }));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, morgan_1.default)("tiny"));
-/* =========================
-   STATIC FILES
-========================= */
 app.use(express_1.default.static("public"));
 app.use(express_1.default.static(path_1.default.join(__dirname, "/public")));
 app.use("/files", express_1.default.static(path_1.default.join(__dirname, "/public/uploads")));
 // app.use(rateLimiter); //limit the api hit with specific ip
-/* =========================
-   SWAGGER
-========================= */
+//  SWAGGER
 function setupSwagger(app) {
     return __awaiter(this, void 0, void 0, function* () {
         const SWAGGER_USER = yield app_constant_1.APP.SWAGGER_USER_NAME;
@@ -101,14 +83,8 @@ function setupSwagger(app) {
     });
 }
 setupSwagger(app);
-/* =========================
-   ROUTES
-========================= */
 app.use("/api/v1", index_1.default);
 app.use(config_util_1.handleFileSize);
-/* =========================
-   SERVER START
-========================= */
 app.listen(app_constant_1.APP.PORT, () => {
     console.log("Server is running on port", app_constant_1.APP.PORT);
     console.log("Swagger link:", `http://localhost:${app_constant_1.APP.PORT}/swagger`);
