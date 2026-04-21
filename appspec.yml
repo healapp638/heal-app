@@ -1,0 +1,18 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /var/www/html/Heal-Dev-API
+hooks:
+  BeforeInstall:
+    - location: scripts/beforeinstall.sh
+      timeout: 200
+      runas: root
+  AfterInstall:
+    - location: scripts/afterinstall.sh
+      timeout: 600
+      runas: root
+  ApplicationStart:
+    - location: scripts/applicationstart.sh
+      timeout: 300
+      runas: root
