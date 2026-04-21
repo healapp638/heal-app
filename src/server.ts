@@ -42,37 +42,13 @@ app.use(helmet());
 /* =========================
    CORS CONFIG (FIXED)
 ========================= */
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map(origin => origin.trim()).filter(Boolean);
-// console.log("Allowed Origins:", allowedOrigins);
-
-const corsOptions: cors.CorsOptions = {
-  origin: (origin, callback) => {
-    // console.log("Origin:", origin);
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("CORS not allowed for this origin"), false);
-  },
-  credentials: true,
-  methods: ["GET", "POST", "HEAD", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Origin",
-    "Authorization",
-    "X-Requested-With",
-    "Content-Type",
-    "Accept",
-    "authtoken",
-    "Referrer-Policy",
-    "Strict-Transport-Security",
-    "includeSubDomains",
-    "Content-Security-Policy",
-    "Permissions-Policy",
-  ]
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+  })
+);
 
 /* =========================
    RESPONSE COMPRESSION
