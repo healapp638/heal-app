@@ -17,6 +17,16 @@ const AppRoutes = {
   PrivacyPolicy: 'PrivacyPolicy',
   Warning: 'Warning',
   CreatingSpace: 'CreatingSpace',
+  AccessScreen: 'AccessScreen',
+  SignIn: 'SignIn',
+  SignUp: 'SignUp',
+  Verification: 'Verification',
+  ForgotPassword: 'ForgotPassword',
+  ResetPassword: 'ResetPassword',
+  Offer: 'Offer',
+  SelectLanguage: 'SelectLanguage',
+  Reminder: 'Reminder',
+  Premium: 'Premium',
 };
 
 export default AppRoutes;

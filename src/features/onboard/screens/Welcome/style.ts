@@ -19,6 +19,25 @@ const style = (colors: any) =>
       height: 30,
       width: 30,
     },
+    languagePill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#EBD8C9',
+      paddingVertical: 6,
+      paddingHorizontal: 12,
+      borderRadius: 100,
+    },
+    flagIcon: {
+      width: 24,
+      height: 16,
+      marginRight: 8,
+    },
+    langCode: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(12),
+      color: colors.black,
+      includeFontPadding: false,
+    },
     phoneImage: {
       height: 470,
       width: 230,

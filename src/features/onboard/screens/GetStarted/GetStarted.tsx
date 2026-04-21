@@ -1,15 +1,17 @@
+import React, { useContext } from 'react';
 import { Image, View } from 'react-native';
-import React from 'react';
 import SolidView from '../../../../components/SolidView';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 
 const GetStarted = () => {
   const navigation = useNavigation();
   const { images, colors } = useTheme() as any;
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
   return (
@@ -28,7 +30,7 @@ const GetStarted = () => {
             style={styles.startImage}
           />
           <SolidText style={styles.description}>
-            Re-center your mind. Transform your life.
+            {localization.appkeys?.reCenterSubtitle}
           </SolidText>
           <Image
             source={images.stars}
@@ -36,11 +38,11 @@ const GetStarted = () => {
             style={styles.starsImage}
           />
           <SolidText style={styles.quote}>
-            "Exactly what I needed to reset my mindset"
+            {localization.appkeys?.quoteMindset}
           </SolidText>
 
           <SolidBtn
-            titleTxt="Get Started"
+            titleTxt={localization.appkeys?.getStarted}
             btnStyle={styles.btn}
             onPress={() => navigation.navigate(AppRoutes.HearAboutUs as never)}
           />

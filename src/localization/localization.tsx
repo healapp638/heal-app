@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import * as RNLocalize from 'react-native-localize';
 import LocalizedStrings from 'react-native-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,8 +12,13 @@ interface LocalizationProviderProps {
 export const DEFAULT_LANGUAGE = strings.english;
 
 const localization = new LocalizedStrings({
-  "English": require('./langFiles/en.json'),
-  'French': require('./langFiles/fr.json'),
+  English: require('./langFiles/en.json'),
+  French: require('./langFiles/fr.json'),
+  Spanish: require('./langFiles/es.json'),
+  German: require('./langFiles/de.json'),
+  Russian: require('./langFiles/ru.json'),
+  Portuguese: require('./langFiles/pt.json'),
+  Italian: require('./langFiles/it.json'),
 });
 
 type LocalizationContextType = {
@@ -30,8 +35,14 @@ export const LocalizationContext = createContext<LocalizationContextType>({
   initializeAppLanguage: () => {},
 });
 
-export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({ children }) => {
+export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({
+  children,
+}) => {
   const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
+
+  useEffect(() => {
+    initializeAppLanguage();
+  }, []);
 
   const setLanguage = (language: string) => {
     localization.setLanguage(language);
@@ -41,7 +52,7 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({ chil
 
   const initializeAppLanguage = async () => {
     const currentLanguage = await AsyncStorage.getItem(strings.appLanguage);
-    AppUtils.showLog(currentLanguage ?? "Language not found");
+    // AppUtils.showLog(currentLanguage ?? "Language not found");
     if (!currentLanguage) {
       let localeCode = DEFAULT_LANGUAGE;
       const supportedLocaleCodes = localization.getAvailableLanguages();
@@ -69,7 +80,8 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({ chil
         setAppLanguage: setLanguage,
         appLanguage,
         initializeAppLanguage,
-      }}>
+      }}
+    >
       {children}
     </LocalizationContext.Provider>
   );

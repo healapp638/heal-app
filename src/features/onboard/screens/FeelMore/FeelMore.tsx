@@ -1,26 +1,28 @@
+import React, { useState, useContext } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 const FeelMore = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [selected, setSelected] = useState<string | null>(null);
 
   const options = [
-    { id: '1', label: 'Peace of mind' },
-    { id: '2', label: 'Confidence' },
-    { id: '3', label: 'Emotional strength' },
-    { id: '4', label: 'Clarity about my life' },
-    { id: '5', label: 'Balance' },
-    { id: '6', label: 'Motivation' },
+    { id: '1', label: localization.appkeys?.optionPeaceOfMind },
+    { id: '2', label: localization.appkeys?.optionConfidence },
+    { id: '3', label: localization.appkeys?.optionEmotionalStrength },
+    { id: '4', label: localization.appkeys?.optionLifeClarity },
+    { id: '5', label: localization.appkeys?.optionBalance },
+    { id: '6', label: localization.appkeys?.optionMotivation },
   ];
 
   return (
@@ -38,10 +40,10 @@ const FeelMore = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              What would you like to feel more of?
+              {localization.appkeys?.feelMoreTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              Your answers help us personalize your safe space.
+              {localization.appkeys?.safeSpaceSub}
             </SolidText>
 
             <View style={styles.listContainer}>
@@ -73,7 +75,7 @@ const FeelMore = () => {
 
             <View style={{ flex: 1 }} />
             <SolidBtn
-              titleTxt="Continue"
+              titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() =>

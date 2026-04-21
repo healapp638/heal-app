@@ -25,7 +25,6 @@ export default function MainStack() {
   const prevConnection = useRef<boolean | null>(null);
 
   useEffect(() => {
-    setAppLanguage(strings.english);
     initializeAppLanguage();
   }, []);
 
@@ -94,9 +93,11 @@ export default function MainStack() {
         </SafeAreaView>
       )}
 
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false, gestureEnabled: false }}
+      >
         <Stack.Screen name={AppRoutes.AuthStack} component={AuthStack} />
-        {/* <Stack.Screen name={AppRoutes.NonAuthStack} component={NonAuthStack} /> */}
+        <Stack.Screen name={AppRoutes.NonAuthStack} component={NonAuthStack} />
       </Stack.Navigator>
       {loading && <Loader />}
     </>

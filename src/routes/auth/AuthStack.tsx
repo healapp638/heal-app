@@ -17,11 +17,18 @@ import Warning from '../../features/onboard/screens/Warning/Warning';
 import CreatingSpace from '../../features/onboard/screens/CreatingSpace/CreatingSpace';
 import Terms from '../../features/common/screens/Terms/Terms';
 import PrivacyPolicy from '../../features/common/screens/PrivacyPolicy/PrivacyPolicy';
+import AccessScreen from '../../features/auth/screens/AccessScreen/AccessScreen';
+import SignIn from '../../features/auth/screens/SignIn/SignIn';
+import SignUp from '../../features/auth/screens/SignUp/SignUp';
+import Verification from '../../features/auth/screens/Verification/Verification';
+import ForgotPassword from '../../features/auth/screens/ForgotPassword/ForgotPassword';
+import ResetPassword from '../../features/auth/screens/ResetPassword/ResetPassword';
+import SelectLanguage from '../../features/auth/screens/SelectLanguage/SelectLanguage';
 
 export default function AuthStack() {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
       <Stack.Screen name={AppRoutes.Splash} component={Splash} />
       <Stack.Screen name={AppRoutes.Welcome} component={Welcome} />
       <Stack.Screen name={AppRoutes.GetStarted} component={GetStarted} />
@@ -46,6 +53,13 @@ export default function AuthStack() {
       <Stack.Screen name={AppRoutes.CreatingSpace} component={CreatingSpace} />
       <Stack.Screen name={AppRoutes.Terms} component={Terms} />
       <Stack.Screen name={AppRoutes.PrivacyPolicy} component={PrivacyPolicy} />
+      <Stack.Screen name={AppRoutes.AccessScreen} component={AccessScreen} />
+      <Stack.Screen name={AppRoutes.SignIn} component={SignIn} />
+      <Stack.Screen name={AppRoutes.SignUp} component={SignUp} />
+      <Stack.Screen name={AppRoutes.Verification} component={Verification} />
+      <Stack.Screen name={AppRoutes.ForgotPassword} component={ForgotPassword} />
+      <Stack.Screen name={AppRoutes.ResetPassword} component={ResetPassword} />
+      <Stack.Screen name={AppRoutes.SelectLanguage} component={SelectLanguage} />
     </Stack.Navigator>
   );
 }

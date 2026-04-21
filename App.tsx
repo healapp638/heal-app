@@ -16,6 +16,8 @@ import { SetAppLanguage } from './src/redux/Reducers/userData';
 import { strings } from './src/constants/variables';
 import { ToastProvider } from './src/utils/ToastManager';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+
 function App(): React.JSX.Element {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const theme = useColorScheme();
@@ -34,11 +36,10 @@ function App(): React.JSX.Element {
     try {
       const value = await AsyncStorage.getItem(strings.appLanguage);
       if (value !== null) {
-        const result = JSON.parse(value);
-        store.dispatch(SetAppLanguage(result.appLanguage));
+        store.dispatch(SetAppLanguage(value));
       }
     } catch (e) {
-    } finally {
+      console.log('Error loading language', e);
     }
   };
 
@@ -68,25 +69,27 @@ function App(): React.JSX.Element {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <UpdatePopup
-        onBackDropPress={() => setIsUpdateAvailable(false)}
-        isVisible={isUpdateAvailable}
-      />
+      <KeyboardProvider>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <UpdatePopup
+          onBackDropPress={() => setIsUpdateAvailable(false)}
+          isVisible={isUpdateAvailable}
+        />
 
-      <LocalizationProvider>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <NavigationContainer
-              theme={theme == 'dark' ? DarkTheme : LightTheme}
-            >
-              <ToastProvider>
-                <MainStack />
-              </ToastProvider>
-            </NavigationContainer>
+            <LocalizationProvider>
+              <NavigationContainer
+                theme={theme == 'dark' ? DarkTheme : LightTheme}
+              >
+                <ToastProvider>
+                  <MainStack />
+                </ToastProvider>
+              </NavigationContainer>
+            </LocalizationProvider>
           </PersistGate>
         </Provider>
-      </LocalizationProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }

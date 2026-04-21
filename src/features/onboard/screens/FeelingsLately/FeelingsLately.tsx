@@ -1,26 +1,28 @@
+import React, { useState, useContext } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
+import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 
 const FeelingsLately = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [selected, setSelected] = useState<string | null>(null);
 
   const options = [
-    { id: '1', label: 'Overwhelmed' },
-    { id: '2', label: 'Emotionally drained' },
-    { id: '3', label: 'Overthinking everything' },
-    { id: '4', label: 'Feeling stuck' },
-    { id: '5', label: 'Lost or unsure about life' },
-    { id: '6', label: 'Just looking for more clarity' },
+    { id: '1', label: localization.appkeys?.optionOverwhelmed },
+    { id: '2', label: localization.appkeys?.optionDrained },
+    { id: '3', label: localization.appkeys?.optionOverthinking },
+    { id: '4', label: localization.appkeys?.optionStuck },
+    { id: '5', label: localization.appkeys?.optionLost },
+    { id: '6', label: localization.appkeys?.optionClarity },
   ];
 
   return (
@@ -38,10 +40,10 @@ const FeelingsLately = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              How have you been feeling lately?
+              {localization.appkeys?.feelingsTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              Your answers help us personalize your safe space.
+              {localization.appkeys?.safeSpaceSub}
             </SolidText>
 
             <View style={styles.listContainer}>
@@ -72,7 +74,7 @@ const FeelingsLately = () => {
             </View>
             <View style={{ flex: 1 }} />
             <SolidBtn
-              titleTxt="Continue"
+              titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() => navigation.navigate(AppRoutes.FeelMore as never)}

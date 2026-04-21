@@ -1,15 +1,17 @@
+import React, { useState, useContext } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 
 const PrivacyMatters = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [accepted, setAccepted] = useState(false);
 
@@ -17,19 +19,19 @@ const PrivacyMatters = () => {
     {
       id: '1',
       icon: images.must,
-      text: 'Your personal data is only used to give you personalized guidance.',
+      text: localization.appkeys?.privacyItem1,
       bg: '#E2EBD3', // Light green
     },
     {
       id: '2',
       icon: images.lock,
-      text: 'We do not share your personal data with third parties',
+      text: localization.appkeys?.privacyItem2,
       bg: '#FCE7E7', // Light pink
     },
     {
       id: '3',
       icon: images.private,
-      text: 'Your data stays between you and us',
+      text: localization.appkeys?.privacyItem3,
       bg: '#E1F0FF', // Light blue
     },
   ];
@@ -47,7 +49,9 @@ const PrivacyMatters = () => {
           />
 
           <View style={styles.mainContainer}>
-            <SolidText style={styles.title}>Your privacy matters</SolidText>
+            <SolidText style={styles.title}>
+              {localization.appkeys?.privacyTitle}
+            </SolidText>
 
             {privacyItems.map(item => (
               <View key={item.id} style={styles.privacyCard}>
@@ -72,15 +76,14 @@ const PrivacyMatters = () => {
                 resizeMode="contain"
               />
               <SolidText style={styles.checkboxText}>
-                I have read and accepted the terms and conditions and the
-                privacy policy
+                {localization.appkeys?.privacyAcceptTerms}
               </SolidText>
             </TouchableOpacity>
 
             <View style={{ flex: 1 }} />
 
             <SolidBtn
-              titleTxt="Continue"
+              titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!accepted}
               onPress={() => navigation.navigate(AppRoutes.Warning as never)}
@@ -92,14 +95,16 @@ const PrivacyMatters = () => {
                   navigation.navigate(AppRoutes.PrivacyPolicy as never)
                 }
               >
-                <SolidText style={styles.footerText}>Privacy Policy</SolidText>
+                <SolidText style={styles.footerText}>
+                  {localization.appkeys?.privacyPolicy}
+                </SolidText>
               </TouchableOpacity>
               <View style={styles.dot} />
               <TouchableOpacity
                 onPress={() => navigation.navigate(AppRoutes.Terms as never)}
               >
                 <SolidText style={styles.footerText}>
-                  Terms of Service
+                  {localization.appkeys?.termsOfService}
                 </SolidText>
               </TouchableOpacity>
             </View>

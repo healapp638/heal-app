@@ -1,11 +1,12 @@
+import React, { useEffect, useRef, useState, useContext } from 'react';
 import { Animated, Image, StyleSheet, View } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 const CHAR_INTERVAL_MS = 28;
@@ -14,11 +15,12 @@ const SENTENCE_PAUSE_MS = 700;
 const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
   const sentences = [
-    'Welcome to Heal! We’re here to support you on your journey towards clarity & Connection.',
-    'It’s okay to feel stuck sometimes; you’re not alone in this. Take a moment to breath and know you’ve made an important step today.',
+    localization.appkeys?.welcomeSentence1,
+    localization.appkeys?.welcomeSentence2,
   ];
 
   const [displayedTexts, setDisplayedTexts] = useState<string[]>(['', '']);
@@ -86,26 +88,29 @@ const CreatingSpace = () => {
 
   const handleContinue = () => {
     // Navigate home for now as it's the end of the onboarding flow
-    navigation.navigate(AppRoutes.Home as never);
+    navigation.navigate(AppRoutes.AccessScreen as never);
   };
 
   return (
     <SolidView
+      isScrollEnabled
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
           <View style={{ paddingHorizontal: 20 }}>
-            <HeaderCommon title="Creating space" />
+            <HeaderCommon title={localization.appkeys?.creatingSpaceHeader} />
           </View>
 
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              {allDone ? 'You’re All Set, B!' : 'Creating your space...'}
+              {allDone
+                ? localization.appkeys?.allSetB
+                : localization.appkeys?.creatingSpaceTitle}
             </SolidText>
 
             {!allDone && (
               <SolidText style={styles.subtitle}>
-                it might take a minute or two...
+                {localization.appkeys?.takeMinuteSubtitle}
               </SolidText>
             )}
 
@@ -140,7 +145,10 @@ const CreatingSpace = () => {
           <Animated.View
             style={[styles.btnContainer, { opacity: buttonOpacity }]}
           >
-            <SolidBtn titleTxt="Start Healing" onPress={handleContinue} />
+            <SolidBtn
+              titleTxt={localization.appkeys?.startHealing}
+              onPress={handleContinue}
+            />
           </Animated.View>
         </View>
       }

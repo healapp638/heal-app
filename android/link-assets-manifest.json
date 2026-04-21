@@ -74,8 +74,56 @@
       "sha1": "fb8fccca21550e71135f92bbaf8a2e8a12c90465"
     },
     {
-      "path": "assets/fonts/Recoleta-RegularDEMO.otf",
-      "sha1": "56bec949bc9ac1bf62b44e1d846c4dff001433f1"
+      "path": "assets/fonts/Recoleta Alt Black.otf",
+      "sha1": "1c4bd919ccf870efeae60150f88b967f2f7a510f"
+    },
+    {
+      "path": "assets/fonts/Recoleta Alt Bold.otf",
+      "sha1": "2a95ed995adbfe213f101ea9cacb8b445c196436"
+    },
+    {
+      "path": "assets/fonts/Recoleta Alt Light.otf",
+      "sha1": "b893c6c997a2db60c4d39283d80635b0796fc49d"
+    },
+    {
+      "path": "assets/fonts/Recoleta Alt Medium.otf",
+      "sha1": "e612239ae565ef94b9d2afdbe00e81c90b07dee2"
+    },
+    {
+      "path": "assets/fonts/Recoleta Alt Regular.otf",
+      "sha1": "2982648cde6c0b50d45e8c49d42acdd2ab12759e"
+    },
+    {
+      "path": "assets/fonts/Recoleta Alt SemiBold.otf",
+      "sha1": "f9fdc4b39118f0e7620e1b3e34e12475aacf9624"
+    },
+    {
+      "path": "assets/fonts/Recoleta Alt Thin.otf",
+      "sha1": "673d50fb2c3d9083d6a1fa98ba8053e07c44772c"
+    },
+    {
+      "path": "assets/fonts/Recoleta Black.otf",
+      "sha1": "c1e318aec1a7be7d8a869645b23c496f87201569"
+    },
+    {
+      "path": "assets/fonts/Recoleta Bold.otf",
+      "sha1": "37ca9ebbc25fa27c7caf72a72f12770b0f5984b7"
+    },
+    {
+      "path": "assets/fonts/Recoleta Light.otf",
+      "sha1": "994d0b26122de54ababc3229bc3ef434e3506b71"
+    },
+    {
+      "path": "assets/fonts/Recoleta Medium.otf",
+      "sha1": "58ef637b310a97aa15c57d85d7d12a23dd52b86f"
+    },
+    {
+      "path": "assets/fonts/Recoleta Regular.otf",
+      "sha1": "a502e8fd4588955109c862f24d9198ab23f60552"
+    },
+    {
+      "path": "assets/fonts/Recoleta SemiBold.otf",
+      "sha1": "88b512b805c461e8705b67f1a82e2b1ca9ef76d0"
     }
   ]
 }

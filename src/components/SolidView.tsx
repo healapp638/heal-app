@@ -9,7 +9,10 @@ import {
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { KeyboardAvoidingView } from 'react-native-keyboard-controller';
+import {
+  KeyboardAvoidingView,
+  KeyboardAwareScrollView,
+} from 'react-native-keyboard-controller';
 
 interface SolidViewProps {
   viewStyle?: ViewStyle;
@@ -37,27 +40,29 @@ const SolidView: React.FC<SolidViewProps> = ({
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top']}>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={isChatScreen ? 'translate-with-padding' : 'padding'}
-        keyboardVerticalOffset={keyboardOffset}
-      >
-        {isScrollEnabled ? (
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            overScrollMode="never"
-            style={[{ flex: 1 }, mainContStyle]}
-            contentContainerStyle={[styles.scrollContainer, scrollContStyle]}
-            keyboardShouldPersistTaps="handled"
-            refreshControl={refreshControl}
-          >
-            {view}
-          </ScrollView>
-        ) : (
-          view
-        )}
-      </KeyboardAvoidingView>
+      {isScrollEnabled ? (
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+          overScrollMode="never"
+          style={[{ flex: 1 }, mainContStyle]}
+          contentContainerStyle={[styles.scrollContainer, scrollContStyle]}
+          keyboardShouldPersistTaps="handled"
+          refreshControl={refreshControl}
+          bottomOffset={Platform.OS === 'ios' ? 40 : 0}
+        >
+          {view}
+        </KeyboardAwareScrollView>
+      ) : (
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={isChatScreen ? 'translate-with-padding' : 'padding'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          enabled={true}
+        >
+          {view}
+        </KeyboardAvoidingView>
+      )}
     </SafeAreaView>
   );
 };

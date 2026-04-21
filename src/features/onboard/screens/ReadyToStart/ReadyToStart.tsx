@@ -1,23 +1,25 @@
+import React, { useState, useContext } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 const ReadyToStart = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [selected, setSelected] = useState<string | null>(null);
 
   const options = [
-    { id: '1', label: "I'm just exploring for now" },
-    { id: '2', label: "I'm willing to try" },
-    { id: '3', label: "Yes, I'm ready to start" },
+    { id: '1', label: localization.appkeys?.optionExploring },
+    { id: '2', label: localization.appkeys?.optionWilling },
+    { id: '3', label: localization.appkeys?.optionReady },
   ];
 
   return (
@@ -35,10 +37,10 @@ const ReadyToStart = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              Are you ready to start showing up for yourself?
+              {localization.appkeys?.readyToStartTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              Your answers help us personalize your safe space.
+              {localization.appkeys?.safeSpaceSub}
             </SolidText>
 
             <View style={styles.listContainer}>
@@ -69,7 +71,7 @@ const ReadyToStart = () => {
             </View>
             <View style={{ flex: 1 }} />
             <SolidBtn
-              titleTxt="Continue"
+              titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() => navigation.navigate(AppRoutes.RightPlace as never)}

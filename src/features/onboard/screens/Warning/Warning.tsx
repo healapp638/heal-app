@@ -1,25 +1,28 @@
+import React, { useContext } from 'react';
 import { Image, View } from 'react-native';
-import React from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 const Warning = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
   return (
     <SolidView
+      isScrollEnabled
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
           <View style={{ paddingHorizontal: 20 }}>
-            <HeaderCommon title="Warning" />
+            <HeaderCommon title={localization.appkeys?.warningHeader} />
           </View>
 
           <Image
@@ -28,16 +31,19 @@ const Warning = () => {
             resizeMode="stretch"
           />
           <View style={styles.mainContainer}>
-            <SolidText style={styles.title}>Important note</SolidText>
+            <SolidText style={styles.title}>
+              {localization.appkeys?.importantNote}
+            </SolidText>
             <SolidText style={styles.subtitle}>
-              Heal supports your emotional well-being but is not a replacement
-              for professional medical or mental health care.
+              {localization.appkeys?.warningSubtitle}
             </SolidText>
 
             <SolidBtn
-              titleTxt="I understand, Continue"
+              titleTxt={localization.appkeys?.understandContinue}
               btnStyle={styles.btn}
-              onPress={() => navigation.navigate(AppRoutes.CreatingSpace as never)}
+              onPress={() =>
+                navigation.navigate(AppRoutes.CreatingSpace as never)
+              }
             />
           </View>
         </View>

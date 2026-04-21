@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
 
-    marginTop: Platform.OS === 'ios' ? 0 : 20,
+    marginTop: Platform.OS === 'ios' ? 0 : 8,
     height: 50,
     marginBottom: 20,
   },
@@ -91,14 +91,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backIcon: {
-    width: 24,
-    height: 24,
+    width: Platform.OS == 'ios' ? 20 : 18,
+    height: Platform.OS == 'ios' ? 20 : 18,
   },
   title: {
     fontFamily: AppFonts.medium,
-    fontSize: AppUtils.fontSize(16),
+    fontSize: 16,
     color: 'black',
     textAlign: 'center',
+    includeFontPadding: false,
   },
   rightPlaceholder: {
     width: 40,

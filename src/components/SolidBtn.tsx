@@ -46,6 +46,7 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
       {isLoading && <ActivityIndicator />}
       {img && (
         <Image
+          resizeMode="contain"
           tintColor={imgTintColor}
           source={img}
           style={{ width: 24, height: 24, marginHorizontal: 8 }}
@@ -76,6 +77,7 @@ const style = (colors: any) =>
       fontSize: AppUtils.fontSize(16),
       color: 'white',
       fontFamily: AppFonts.semiBold,
+      includeFontPadding: false,
     },
     disabled: {
       backgroundColor: '#B0B0B0',

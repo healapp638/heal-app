@@ -1,0 +1,118 @@
+import React, { useContext } from 'react';
+import { Image, TouchableOpacity, View } from 'react-native';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import SolidView from '../../../../components/SolidView';
+import SolidText from '../../../../components/SolidText';
+import SolidBtn from '../../../../components/SolidBtn';
+import style from './style';
+import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import HeaderCommon from '../../../../components/HeaderCommon';
+import { LocalizationContext } from '../../../../localization/localization';
+
+const AccessScreen = () => {
+  const { colors, images } = useTheme() as any;
+  const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
+  const styles = style(colors);
+
+  return (
+    <SolidView
+      isScrollEnabled
+      viewStyle={{ flex: 1 }}
+      view={
+        <View style={styles.mainContainer}>
+          {/* <HeaderCommon title="Welcome!" /> */}
+
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Image
+              source={images.logo}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+
+            <SolidText style={styles.title}>
+              {localization.appkeys?.welcomeHeader}
+            </SolidText>
+            <SolidText style={styles.subtitle}>
+              {localization.appkeys?.safeSpaceSubtitle}
+            </SolidText>
+
+            <View style={styles.socialButtonsContainer}>
+              <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                <Image
+                  source={images.google2}
+                  style={styles.socialIcon}
+                  resizeMode="contain"
+                />
+                <SolidText style={styles.socialBtnTxt}>
+                  {localization.appkeys?.continueWithGoogle}
+                </SolidText>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                <Image
+                  source={images.apple}
+                  style={styles.socialIcon}
+                  resizeMode="contain"
+                />
+                <SolidText style={styles.socialBtnTxt}>
+                  {localization.appkeys?.continueWithApple}
+                </SolidText>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                <Image
+                  source={images.mail}
+                  style={styles.socialIcon}
+                  resizeMode="contain"
+                />
+                <SolidText style={styles.socialBtnTxt}>
+                  {localization.appkeys?.continueWithEmail}
+                </SolidText>
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ flex: 1 }} />
+
+            <View style={styles.bottomButtonsContainer}>
+              <SolidBtn
+                titleTxt={localization.appkeys?.logInBtn}
+                btnStyle={styles.loginBtn}
+                onPress={() => {
+                  navigation.navigate(AppRoutes.SignIn as never);
+                }}
+              />
+              <SolidBtn
+                titleTxt={localization.appkeys?.createAccountBtn}
+                btnStyle={styles.createAccountBtn}
+                onPress={() => navigation.navigate(AppRoutes.SignUp as never)}
+              />
+            </View>
+
+            <View style={styles.footer}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate(AppRoutes.PrivacyPolicy as never)
+                }
+              >
+                <SolidText style={styles.footerText}>
+                  {localization.appkeys?.privacyPolicy}
+                </SolidText>
+              </TouchableOpacity>
+              <View style={styles.dot} />
+              <TouchableOpacity
+                onPress={() => navigation.navigate(AppRoutes.Terms as never)}
+              >
+                <SolidText style={styles.footerText}>
+                  {localization.appkeys?.termsOfService}
+                </SolidText>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      }
+    />
+  );
+};
+
+export default AccessScreen;

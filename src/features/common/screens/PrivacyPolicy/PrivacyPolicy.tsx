@@ -1,23 +1,25 @@
+import React, { useContext } from 'react';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import style from './style';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
-
 import { useTheme } from '@react-navigation/native';
 import { ScrollView, View } from 'react-native';
+import { LocalizationContext } from '../../../../localization/localization';
+
 const PrivacyPolicy = () => {
   const { colors } = useTheme() as any;
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
-  const placeholderText =
-    'Lorem ipsum dolor sit amet consectetur. Consectetur vitae risus quam vivamus eget id risus malesuada. Vitae luctus pretium magna purus rhoncus. Diam nec maecenas suspendisse neque aliquet posuere. Eu tellus tortor et orci vel sed volutpat id a.\n\nMalesuada risus arcu dignissim molestie tincidunt euismod interdum ante. Orci blandit sollicitudin nunc quam. Varius viverra interdum diam elementum tincidunt sit vestibulum facilisis sapien. Vitae nulla habitasse leo sem mi. Vulputate risus arcu justo sem.\n\nVitae varius placerat vulputate rhoncus vel proin arcu nullam ultricies. Sit sed est viverra dui leo leo turpis velit ultrices. Quisque amet et turpis placerat tincidunt sed fusce ac. Nunc dui dui lacus a tristique augue egestas. Egestas nunc turpis amet elementum bibendum nisl et.\n\nPhasellus vel facilisi adipiscing lacinia. Ipsum consequat eget massa pellentesque bibendum mi ullamcorper quis et. Quisque amet et turpis placerat tincidunt sed fusce ac. Nunc dui dui lacus a tristique augue egestas. Egestas nunc turpis amet elementum bibendum nisl et.\n\nVestibulum donec vitae sed dignissim a euismod duis risus odio. Leo nunc malesuada feugiat pulvinar pellentesque nec turpis. At donec cursus tempor nisl. Porta arcu quisque et pellentesque quam duis id. Ut cursus lectus dignissim tellus consectetur.';
+  const placeholderText = localization.appkeys?.legalPlaceholder;
 
   return (
     <SolidView
       viewStyle={{ flex: 1 }}
       view={
         <View style={styles.mainContainer}>
-          <HeaderCommon title="Privacy Policy" />
+          <HeaderCommon title={localization.appkeys?.privacyPolicy} />
 
           <ScrollView
             showsVerticalScrollIndicator={false}

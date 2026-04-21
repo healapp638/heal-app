@@ -1,24 +1,26 @@
+import React, { useState, useContext } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
-import React, { useState } from 'react';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 const TimeCommitment = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [selected, setSelected] = useState<string | null>(null);
 
   const options = [
-    { id: '1', label: 'Just 2 minutes' },
-    { id: '2', label: 'Around 5 minutes' },
-    { id: '3', label: '10 minutes or more' },
-    { id: '4', label: 'Only when I need it' },
+    { id: '1', label: localization.appkeys?.option2Min },
+    { id: '2', label: localization.appkeys?.option5Min },
+    { id: '3', label: localization.appkeys?.option10MinPlus },
+    { id: '4', label: localization.appkeys?.optionWhenNeeded },
   ];
 
   return (
@@ -36,10 +38,10 @@ const TimeCommitment = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              How much time can you commit?
+              {localization.appkeys?.timeCommitmentTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              Choose the amount of time that feels comfortable for you.
+              {localization.appkeys?.timeCommitmentSub}
             </SolidText>
 
             <View style={styles.listContainer}>
@@ -70,7 +72,7 @@ const TimeCommitment = () => {
             </View>
             <View style={{ flex: 1 }} />
             <SolidBtn
-              titleTxt="Continue"
+              titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() =>
