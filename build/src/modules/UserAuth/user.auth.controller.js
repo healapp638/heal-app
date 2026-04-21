@@ -42,7 +42,7 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
      */
     login(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            // request.email = request.email.toLocaleLowerCase().trim()
+            request.email = request.email.toLocaleLowerCase().trim();
             const validate = (0, user_auth_validator_1.validateLoginUser)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
@@ -70,16 +70,15 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     /**
     * Save a User
     */
-    register(first_name, last_name, email, password, phone_number, country_code, profile_pic) {
+    register(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const body = { first_name, last_name, email, password, phone_number, country_code };
-            // body.email = email.toLocaleLowerCase().trim()
-            const validate = (0, user_auth_validator_1.validateRegister)(body);
+            request.email = request.email.toLocaleLowerCase().trim();
+            const validate = (0, user_auth_validator_1.validateRegister)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.register);
-            return wrappedFunc(body, profile_pic); // Invoking the wrapped function 
+            return wrappedFunc(request);
         });
     }
     //ends
@@ -167,15 +166,14 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     /**
 * Update User Profile
 */
-    updateUserProfile(first_name, last_name, phone_number, country_code, profile_pic) {
+    updateUserProfile(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const body = { first_name, last_name, phone_number, country_code };
-            const validate = (0, user_auth_validator_1.validateUpdateProfile)(body);
+            const validate = (0, user_auth_validator_1.validateUpdateProfile)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.updateUserProfile);
-            return wrappedFunc(body, this.userId, profile_pic); // Invoking the wrapped function 
+            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
         });
     }
     //ends
@@ -247,15 +245,9 @@ __decorate([
 ], UserAuthController.prototype, "login", null);
 __decorate([
     (0, tsoa_1.Post)("/register"),
-    __param(0, (0, tsoa_1.FormField)()),
-    __param(1, (0, tsoa_1.FormField)()),
-    __param(2, (0, tsoa_1.FormField)()),
-    __param(3, (0, tsoa_1.FormField)()),
-    __param(4, (0, tsoa_1.FormField)()),
-    __param(5, (0, tsoa_1.FormField)()),
-    __param(6, (0, tsoa_1.UploadedFile)()),
+    __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "register", null);
 __decorate([
@@ -304,13 +296,9 @@ __decorate([
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Put)("/profile"),
-    __param(0, (0, tsoa_1.FormField)()),
-    __param(1, (0, tsoa_1.FormField)()),
-    __param(2, (0, tsoa_1.FormField)()),
-    __param(3, (0, tsoa_1.FormField)()),
-    __param(4, (0, tsoa_1.UploadedFile)()),
+    __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, Object]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "updateUserProfile", null);
 __decorate([

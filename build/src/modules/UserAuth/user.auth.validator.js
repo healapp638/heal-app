@@ -15,12 +15,17 @@ const validateLoginUser = (user) => {
 exports.validateLoginUser = validateLoginUser;
 const validateRegister = (user) => {
     return joi_1.default.object({
-        first_name: joi_1.default.string().trim().min(2).max(20).required(),
-        last_name: joi_1.default.string().required(),
-        email: joi_1.default.string().trim().email().min(4).max(35).required(),
-        password: joi_1.default.string().min(4).max(20).required(),
-        phone_number: joi_1.default.string().optional().allow(''),
-        country_code: joi_1.default.string().optional().allow(''),
+        hearAboutUs: joi_1.default.string().trim().min(2).max(20).required(),
+        bringsYouHere: joi_1.default.string().required(),
+        howFellingLately: joi_1.default.string().trim().email().min(4).max(35).required(),
+        likeToFellMore: joi_1.default.string().min(2).max(20).required(),
+        timeYouCommit: joi_1.default.string().required(),
+        startShowingOfYourSelf: joi_1.default.string().required(),
+        fullName: joi_1.default.string().required(),
+        country: joi_1.default.string().required(),
+        email: joi_1.default.string().trim().email().required(),
+        dob: joi_1.default.string().required(),
+        password: joi_1.default.string().min(4).required(),
     }).validate(user);
 };
 exports.validateRegister = validateRegister;
@@ -60,10 +65,11 @@ const validateChangePassword = (user) => {
 exports.validateChangePassword = validateChangePassword;
 const validateUpdateProfile = (user) => {
     return joi_1.default.object({
-        first_name: joi_1.default.string().optional().allow(''),
-        last_name: joi_1.default.string().optional().allow(''),
-        phone_number: joi_1.default.string().optional().allow(''),
-        country_code: joi_1.default.string().optional().allow(''),
+        fullName: joi_1.default.string().optional().allow(''),
+        country: joi_1.default.string().optional().allow(''),
+        dob: joi_1.default.string().optional().allow(''),
+        profilePic: joi_1.default.string().optional().allow(''),
+        language: joi_1.default.string().optional().allow(''),
     }).validate(user);
 };
 exports.validateUpdateProfile = validateUpdateProfile;

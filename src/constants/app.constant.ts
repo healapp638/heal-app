@@ -80,8 +80,6 @@ const initializeAwsCredential = async () => {
   APP.JWT_SECRET = services.awsService.getSecretFromAWS("API_SECRET")
   EMAIL_CREDENTIAL.SMTP_EMAIL = services.awsService.getSecretFromAWS(STMP_EMAIL)
   EMAIL_CREDENTIAL.SMTP_API_KEY = services.awsService.getSecretFromAWS(SMTP_API_KEY)
-  // APP.SWAGGER_USER_NAME = services.awsService.getSecretFromAWS("SWAGGER_USER_NAME")
-  // APP.SWAGGER_PASSWORD =  services.awsService.getSecretFromAWS("SWAGGER_PASSWORD")
   AWS_CREDENTIAL = {
     ACCESSID: services.awsService.getParameterFromAWS({ name: ACCESSID }),
     REGION: services.awsService.getParameterFromAWS({ name: REGION }),
@@ -89,13 +87,7 @@ const initializeAwsCredential = async () => {
     BUCKET_NAME: services.awsService.getParameterFromAWS({ name: BUCKET }),
     COLLECTION_ID_AWS_REKOGNITION: process.env.COLLECTION_ID_AWS_REKOGNITION, //use it if want to use image search in project
   };
-  console.log(await services.awsService.getSecretFromAWS(DB_URI), '=>>>>>>')
-  // AGORA_CREDENTIAL = {
-  //   AGORA_APP_ID: services.awsService.getParameterFromAWS({ name: 'AGORA_APP_ID' }),
-  //   AGORA_APP_CERTIFICATE: services.awsService.getParameterFromAWS({ name: 'AGORA_APP_CERTIFICATE' }),
-  //   AGORA_CUSTOMER_ID: services.awsService.getParameterFromAWS({ name: 'AGORA_CUSTOMER_ID' }),
-  //   AGORA_CUSTOMER_SECRET: services.awsService.getParameterFromAWS({ name: 'AGORA_CUSTOMER_SECRET' }),
-  // };
+
 
   //************If Twilio Used In Project**************** */
   // SMS_CREDENTIAL.TWILIO_ACCOUNT_SID = services.awsService.getSecretFromAWS('TWILIO_ACCOUNT_SID')

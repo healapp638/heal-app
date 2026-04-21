@@ -27,7 +27,7 @@ export default class UserAuthController extends Controller {
     @Post("/login")
     public async login(@Body() request: { email: string, password: string }): Promise<ApiResponse> {
 
-        // request.email = request.email.toLocaleLowerCase().trim()
+        request.email = request.email.toLocaleLowerCase().trim()
         const validate = validateLoginUser(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -61,17 +61,14 @@ export default class UserAuthController extends Controller {
     * Save a User
     */
     @Post("/register")
-    public async register(@FormField() first_name: string, @FormField() last_name: string, @FormField() email: string, @FormField() password: string, @FormField() phone_number?: string, @FormField() country_code?: string, @UploadedFile() profile_pic?: Express.Multer.File): Promise<ApiResponse> {
-        const body = { first_name, last_name, email, password, phone_number, country_code }
-
-        // body.email = email.toLocaleLowerCase().trim()
-        const validate = validateRegister(body);
+    public async register(@Body() request: { hearAboutUs: string, bringsYouHere: string, howFellingLately: string, likeToFellMore: string, timeYouCommit: string, startShowingOfYourSelf: string, fullName: string, country: string, email: string, dob: string, password: string }): Promise<ApiResponse> {
+        request.email = request.email.toLocaleLowerCase().trim()
+        const validate = validateRegister(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }
-
         const wrappedFunc = tryCatchWrapper(handler.register);
-        return wrappedFunc(body, profile_pic); // Invoking the wrapped function 
+        return wrappedFunc(request);
 
     }
     //ends
@@ -175,16 +172,16 @@ export default class UserAuthController extends Controller {
 */
     @Security('Bearer')
     @Put("/profile")
-    public async updateUserProfile(@FormField() first_name?: string, @FormField() last_name?: string, @FormField() phone_number?: string, @FormField() country_code?: string, @UploadedFile() profile_pic?: Express.Multer.File): Promise<ApiResponse> {
-        const body = { first_name, last_name, phone_number, country_code }
+    public async updateUserProfile(@Body() request: { fullName?: string, country?: string, dob?: string, profilePic?: string, language?: string }): Promise<ApiResponse> {
 
-        const validate = validateUpdateProfile(body);
+
+        const validate = validateUpdateProfile(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }
 
         const wrappedFunc = tryCatchWrapper(handler.updateUserProfile);
-        return wrappedFunc(body, this.userId, profile_pic); // Invoking the wrapped function 
+        return wrappedFunc(request, this.userId); // Invoking the wrapped function 
     }
     //ends
 
@@ -244,9 +241,9 @@ export default class UserAuthController extends Controller {
     //ends
 
 
-        /**
-   * Get User info
-   */
+    /**
+* Get User info
+*/
     @Security('Bearer')
     @Get("/details_user")
     public async getUserDetailsUser(): Promise<ApiResponse> {

@@ -62,7 +62,7 @@ const generateTenDigitNumber = () => {
     return crypto_1.default.randomInt(1000000000, 9999999999);
 };
 exports.generateTenDigitNumber = generateTenDigitNumber;
-const generateRandomOtp = (len) => {
+const generateRandomOtp = (len = 6) => {
     const digits = '0123456789';
     let OTP = '';
     for (let i = 0; i < len; i++) {
@@ -181,7 +181,7 @@ function generateRandomNumeric(length) {
     }
     return result;
 }
-const generateOtp = (length = 4) => {
+const generateOtp = (length = 6) => {
     const min = Math.pow(10, (length - 1)); // Minimum number (e.g., 1000 for 4 digits)
     const max = Math.pow(10, length) - 1; // Maximum number (e.g., 9999 for 4 digits)
     return crypto_1.default.randomInt(min, max + 1);

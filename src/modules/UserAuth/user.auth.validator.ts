@@ -10,12 +10,17 @@ export const validateLoginUser = (user: any) => {
 
 export const validateRegister = (user: any) => {
     return joi.object({
-        first_name: joi.string().trim().min(2).max(20).required(),
-        last_name: joi.string().required(),
-        email: joi.string().trim().email().min(4).max(35).required(),
-        password: joi.string().min(4).max(20).required(),
-        phone_number: joi.string().optional().allow(''),
-        country_code: joi.string().optional().allow(''),
+        hearAboutUs: joi.string().trim().min(2).max(20).required(),
+        bringsYouHere: joi.string().required(),
+        howFellingLately: joi.string().trim().email().min(4).max(35).required(),
+        likeToFellMore: joi.string().min(2).max(20).required(),
+        timeYouCommit: joi.string().required(),
+        startShowingOfYourSelf: joi.string().required(),
+        fullName: joi.string().required(),
+        country: joi.string().required(),
+        email: joi.string().trim().email().required(),
+        dob: joi.string().required(),
+        password: joi.string().min(4).required(),
     }).validate(user)
 }
 
@@ -55,10 +60,11 @@ export const validateChangePassword = (user: any) => {
 
 export const validateUpdateProfile = (user: any) => {
     return joi.object({
-        first_name: joi.string().optional().allow(''),
-        last_name: joi.string().optional().allow(''),
-        phone_number: joi.string().optional().allow(''),
-        country_code: joi.string().optional().allow(''),
+        fullName: joi.string().optional().allow(''),
+        country: joi.string().optional().allow(''),
+        dob: joi.string().optional().allow(''),
+        profilePic: joi.string().optional().allow(''),
+        language: joi.string().optional().allow(''),
     }).validate(user)
 }
 

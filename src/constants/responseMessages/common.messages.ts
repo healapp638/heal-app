@@ -37,6 +37,7 @@ const common_messages = {
     img_save_err: "Error Occurred while saving Image",
     img_save_sucess: "Image Saved Successfully",
     password_incorrect: "Password Seems to be Incorrect",
+    otp_sent: "Otp sent successfully",
     email_already: "Email is already registered with us",
     error_while_create_acc: "Error While Creating Account",
     contactUs_success: "We have received your query, we will get back to you soon",
@@ -60,6 +61,7 @@ const common_messages = {
     recording_stop_failure: 'Error While Stop Recording',
     recording_delete_success: 'Recording Delete Successfully',
     recording_delete_failure: 'Error While Delete Recording',
+    otp_sent_error: "Error While Sending Otp",
 
 }
 

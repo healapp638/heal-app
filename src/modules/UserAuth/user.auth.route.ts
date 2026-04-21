@@ -3,12 +3,21 @@ import UserAuthController from './user.auth.controller'
 import { showOutput } from '../../utils/response.util'
 import { ApiResponse } from '../../utils/interfaces.util'
 import middlewares from '../../middlewares'
+import { ratLimiting } from '../../middlewares/rate.limit.middleware'
 const { verifyTokenUser } = middlewares.auth
 const { multer } = middlewares.fileUpload
 
 const router = express.Router()
 
-router.post('/login', async (req: Request | any, res: Response) => {
+
+router.post('/register', async (req: Request | any, res: Response) => {
+    const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password } = req.body;
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password });
+    return showOutput(res, result, result.code)
+})
+
+router.post('/login', ratLimiting, async (req: Request | any, res: Response) => {
     const { email, password } = req.body;
     const controller = new UserAuthController(req, res)
     const result: ApiResponse = await controller.login({ email, password });
@@ -21,13 +30,6 @@ router.post('/login', async (req: Request | any, res: Response) => {
 //     const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, user_type, name, os_type);
 //     return showOutput(res, result, result.code)
 // })
-
-router.post('/register', multer.addToMulter.single('profile_pic'), async (req: Request | any, res: Response) => {
-    const { first_name, last_name, email, password, phone_number, country_code } = req.body;
-    const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.register(first_name, last_name, email, password, phone_number, country_code, req.file);
-    return showOutput(res, result, result.code)
-})
 
 router.post('/forgot_password', async (req: Request | any, res: Response) => {
     const { email } = req.body;
@@ -71,10 +73,10 @@ router.get('/details', verifyTokenUser, async (req: Request | any, res: Response
     return showOutput(res, result, result.code)
 })
 
-router.put('/profile', multer.addToMulter.single('profile_pic'), verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { first_name, last_name, phone_number, country_code } = req.body
+router.put('/profile', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const {fullName,country,dob,profilePic,language } = req.body
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.updateUserProfile(first_name, last_name, phone_number, country_code, req.file);
+    const result: ApiResponse = await controller.updateUserProfile({fullName,country,dob,profilePic,language });
     return showOutput(res, result, result.code)
 })
 

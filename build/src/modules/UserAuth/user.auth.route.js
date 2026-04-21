@@ -16,10 +16,17 @@ const express_1 = __importDefault(require("express"));
 const user_auth_controller_1 = __importDefault(require("./user.auth.controller"));
 const response_util_1 = require("../../utils/response.util");
 const middlewares_1 = __importDefault(require("../../middlewares"));
+const rate_limit_middleware_1 = require("../../middlewares/rate.limit.middleware");
 const { verifyTokenUser } = middlewares_1.default.auth;
 const { multer } = middlewares_1.default.fileUpload;
 const router = express_1.default.Router();
-router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password } = req.body;
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
     const result = yield controller.login({ email, password });
@@ -31,12 +38,6 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 //     const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, user_type, name, os_type);
 //     return showOutput(res, result, result.code)
 // })
-router.post('/register', multer.addToMulter.single('profile_pic'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { first_name, last_name, email, password, phone_number, country_code } = req.body;
-    const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.register(first_name, last_name, email, password, phone_number, country_code, req.file);
-    return (0, response_util_1.showOutput)(res, result, result.code);
-}));
 router.post('/forgot_password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
@@ -72,10 +73,10 @@ router.get('/details', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, 
     const result = yield controller.getUserDetails();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.put('/profile', multer.addToMulter.single('profile_pic'), verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { first_name, last_name, phone_number, country_code } = req.body;
+router.put('/profile', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { fullName, country, dob, profilePic, language } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.updateUserProfile(first_name, last_name, phone_number, country_code, req.file);
+    const result = yield controller.updateUserProfile({ fullName, country, dob, profilePic, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_deactivate', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

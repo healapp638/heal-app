@@ -241,39 +241,57 @@
 				"requestBody": {
 					"required": true,
 					"content": {
-						"multipart/form-data": {
+						"application/json": {
 							"schema": {
-								"type": "object",
 								"properties": {
-									"first_name": {
+									"password": {
 										"type": "string"
 									},
-									"last_name": {
+									"dob": {
 										"type": "string"
 									},
 									"email": {
 										"type": "string"
 									},
-									"password": {
+									"country": {
 										"type": "string"
 									},
-									"phone_number": {
+									"fullName": {
 										"type": "string"
 									},
-									"country_code": {
+									"startShowingOfYourSelf": {
 										"type": "string"
 									},
-									"profile_pic": {
-										"type": "string",
-										"format": "binary"
+									"timeYouCommit": {
+										"type": "string"
+									},
+									"likeToFellMore": {
+										"type": "string"
+									},
+									"howFellingLately": {
+										"type": "string"
+									},
+									"bringsYouHere": {
+										"type": "string"
+									},
+									"hearAboutUs": {
+										"type": "string"
 									}
 								},
 								"required": [
-									"first_name",
-									"last_name",
+									"password",
+									"dob",
 									"email",
-									"password"
-								]
+									"country",
+									"fullName",
+									"startShowingOfYourSelf",
+									"timeYouCommit",
+									"likeToFellMore",
+									"howFellingLately",
+									"bringsYouHere",
+									"hearAboutUs"
+								],
+								"type": "object"
 							}
 						}
 					}
@@ -558,29 +576,28 @@
 				],
 				"parameters": [],
 				"requestBody": {
-					"required": false,
+					"required": true,
 					"content": {
-						"multipart/form-data": {
+						"application/json": {
 							"schema": {
-								"type": "object",
 								"properties": {
-									"first_name": {
+									"language": {
 										"type": "string"
 									},
-									"last_name": {
+									"profilePic": {
 										"type": "string"
 									},
-									"phone_number": {
+									"dob": {
 										"type": "string"
 									},
-									"country_code": {
+									"country": {
 										"type": "string"
 									},
-									"profile_pic": {
-										"type": "string",
-										"format": "binary"
+									"fullName": {
+										"type": "string"
 									}
-								}
+								},
+								"type": "object"
 							}
 						}
 					}
