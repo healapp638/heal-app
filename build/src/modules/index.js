@@ -10,6 +10,8 @@ const admin_auth_route_1 = __importDefault(require("../modules/AdminAuth/admin.a
 const admin_common_route_1 = __importDefault(require("../modules/AdminCommon/admin.common.route"));
 const admin_user_route_1 = __importDefault(require("../modules/AdminUser/admin.user.route"));
 const admin_contactus_route_1 = __importDefault(require("../modules/AdminContactus/admin.contactus.route"));
+const admin_theme_route_1 = __importDefault(require("./AdminTheme/admin.theme.route"));
+const admin_modules_route_1 = __importDefault(require("./AdminModules/admin.modules.route"));
 //user and admin all usertype common routes
 const common_route_1 = __importDefault(require("../modules/Common/common.route"));
 //user routes
@@ -21,6 +23,8 @@ Route.use('/admin/common', admin_common_route_1.default);
 Route.use('/admin/user', admin_user_route_1.default);
 Route.use('/admin/auth', admin_auth_route_1.default);
 Route.use('/admin/contactus', admin_contactus_route_1.default);
+Route.use('/admin/theme', admin_theme_route_1.default);
+Route.use('/admin/modules', admin_modules_route_1.default);
 //user routes
 Route.use('/user/auth', user_auth_route_1.default);
 Route.use('/user/common', user_common_route_1.default);

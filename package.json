@@ -27,6 +27,7 @@
     "exec": "npm run lint && ts-node src/server.ts"
   },
   "dependencies": {
+    "@google-cloud/translate": "^2.1.4",
     "@sendgrid/mail": "^8.1.4",
     "@types/moment": "^2.13.0",
     "aws-cli": "^0.0.2",
