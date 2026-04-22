@@ -56,16 +56,17 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     //   * User Social login 
     //   * login_source can be for google use google & for apple use apple etc
     //   */
-    //     @Post("/social_login")
-    //     public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() user_type: number, @FormField() name?: string, @FormField() os_type?: string): Promise<ApiResponse> {
-    //         const request = { login_source, social_auth, email, name, user_type, os_type }
-    //         const validate = validateSocialLogin(request);
-    //         if (validate.error) {
-    //             return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
-    //         }
-    //         const wrappedFunc = tryCatchWrapper(handler.social_login);
-    //         return wrappedFunc(request); // Invoking the wrapped function 
-    //     }
+    socialLogin(login_source, social_auth, email, name, os_type) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const request = { login_source, social_auth, email, name, os_type };
+            const validate = (0, user_auth_validator_1.validateSocialLogin)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.social_login);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
     //     //ends
     /**
     * Save a User
@@ -243,6 +244,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "login", null);
+__decorate([
+    (0, tsoa_1.Post)("/social_login"),
+    __param(0, (0, tsoa_1.FormField)()),
+    __param(1, (0, tsoa_1.FormField)()),
+    __param(2, (0, tsoa_1.FormField)()),
+    __param(3, (0, tsoa_1.FormField)()),
+    __param(4, (0, tsoa_1.FormField)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String, String]),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "socialLogin", null);
 __decorate([
     (0, tsoa_1.Post)("/register"),
     __param(0, (0, tsoa_1.Body)()),

@@ -27,7 +27,7 @@ if (envConfig.error) {
 //3rd parm is project Initial 
 const ENV_PARMAS = (0, config_util_1.getEnvironmentParams)(process.env.ENV_MODE, 'HEAL', 'HL'); //sds
 console.log(ENV_PARMAS, "Parms_For_Aws_Parameter_store");
-const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, SMTP_API_KEY, STMP_EMAIL } = ENV_PARMAS;
+const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET } = ENV_PARMAS;
 let AGORA_CREDENTIAL;
 let AWS_CREDENTIAL;
 let STRIPE_CREDENTIAL;
@@ -51,7 +51,7 @@ const APP = {
 exports.APP = APP;
 const DB = {
     DB_NAME: process.env.DB_NAME || '',
-    MONGODB_URI: process.env.MONGODB_URI || '',
+    MONGODB_URI: '',
 };
 exports.DB = DB;
 const EMAIL_CREDENTIAL = {
@@ -76,27 +76,82 @@ const REDIS_CREDENTIAL = {
 };
 exports.REDIS_CREDENTIAL = REDIS_CREDENTIAL;
 //***** MAKE SURE FOR  DEV, PROD, AND STAGE ENVIOREMENENT USER ENV_PARMAS THAT ABOVE SHOWS AND SAVE IT IN AWS WITH SAME NAME  ******/
+// const initializeAwsCredential = async () => {
+//   //call this function when paramters are stored to aws 
+//   DB.MONGODB_URI = services.awsService.getSecretFromAWS(DB_URI)
+//   APP.JWT_SECRET = services.awsService.getSecretFromAWS("API_SECRET")
+//   EMAIL_CREDENTIAL.SMTP_EMAIL = services.awsService.getSecretFromAWS(STMP_EMAIL)
+//   EMAIL_CREDENTIAL.SMTP_API_KEY = services.awsService.getSecretFromAWS(SMTP_API_KEY)
+//   AWS_CREDENTIAL = {
+//     ACCESSID: services.awsService.getParameterFromAWS({ name: ACCESSID }),
+//     REGION: services.awsService.getParameterFromAWS({ name: REGION }),
+//     AWS_SECRET: services.awsService.getSecretFromAWS("heal_secret"),
+//     BUCKET_NAME: services.awsService.getParameterFromAWS({ name: BUCKET }),
+//     COLLECTION_ID_AWS_REKOGNITION: process.env.COLLECTION_ID_AWS_REKOGNITION, //use it if want to use image search in project
+//   };
+//   //************If Twilio Used In Project**************** */
+//   // SMS_CREDENTIAL.TWILIO_ACCOUNT_SID = services.awsService.getSecretFromAWS('TWILIO_ACCOUNT_SID')
+//   // SMS_CREDENTIAL.TWILIO_AUTH_TOKEN = services.awsService.getSecretFromAWS('TWILIO_AUTH_TOKEN')
+//   //************If Stripe Used In Project**************** */
+//   // STRIPE_CREDENTIAL = {
+//   //   STRIPE_PB_KEY: services.awsService.getParameterFromAWS({ name: ENV_PARMAS.STRIPE_PB_KEY }),
+//   //   STRIPE_SEC_KEY: services.awsService.getParameterFromAWS({ name: ENV_PARMAS.STRIPE_SEC_KEY }),
+//   //   STRIPE_VERSION: '2024-04-10'
+//   // };
+// }
+//***** MAKE SURE FOR  DEV, PROD, AND STAGE ENVIOREMENENT USER ENV_PARMAS THAT ABOVE SHOWS AND SAVE IT IN AWS WITH SAME NAME  ******/
 const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function* () {
-    //call this function when paramters are stored to aws 
-    DB.MONGODB_URI = services_1.default.awsService.getSecretFromAWS(DB_URI);
-    APP.JWT_SECRET = services_1.default.awsService.getSecretFromAWS("API_SECRET");
-    EMAIL_CREDENTIAL.SMTP_EMAIL = services_1.default.awsService.getSecretFromAWS(STMP_EMAIL);
-    EMAIL_CREDENTIAL.SMTP_API_KEY = services_1.default.awsService.getSecretFromAWS(SMTP_API_KEY);
-    exports.AWS_CREDENTIAL = AWS_CREDENTIAL = {
-        ACCESSID: services_1.default.awsService.getParameterFromAWS({ name: ACCESSID }),
-        REGION: services_1.default.awsService.getParameterFromAWS({ name: REGION }),
-        AWS_SECRET: services_1.default.awsService.getSecretFromAWS("digismart_secret"),
-        BUCKET_NAME: services_1.default.awsService.getParameterFromAWS({ name: BUCKET }),
-        COLLECTION_ID_AWS_REKOGNITION: process.env.COLLECTION_ID_AWS_REKOGNITION, //use it if want to use image search in project
-    };
-    //************If Twilio Used In Project**************** */
-    // SMS_CREDENTIAL.TWILIO_ACCOUNT_SID = services.awsService.getSecretFromAWS('TWILIO_ACCOUNT_SID')
-    // SMS_CREDENTIAL.TWILIO_AUTH_TOKEN = services.awsService.getSecretFromAWS('TWILIO_AUTH_TOKEN')
-    //************If Stripe Used In Project**************** */
-    // STRIPE_CREDENTIAL = {
-    //   STRIPE_PB_KEY: services.awsService.getParameterFromAWS({ name: ENV_PARMAS.STRIPE_PB_KEY }),
-    //   STRIPE_SEC_KEY: services.awsService.getParameterFromAWS({ name: ENV_PARMAS.STRIPE_SEC_KEY }),
-    //   STRIPE_VERSION: '2024-04-10'
-    // };
+    console.time("AWS_CREDENTIAL_INIT");
+    console.log("Initializing AWS credentials in parallel...");
+    try {
+        // call this function when parameters are stored to aws
+        const results = yield Promise.all([
+            services_1.default.awsService.getSecretFromAWS(DB_URI),
+            services_1.default.awsService.getSecretFromAWS(JWT_SECRET),
+            services_1.default.awsService.getParameterFromAWS({ name: ACCESSID }),
+            services_1.default.awsService.getParameterFromAWS({ name: REGION }),
+            services_1.default.awsService.getSecretFromAWS("heal_secret"),
+            services_1.default.awsService.getParameterFromAWS({ name: BUCKET }),
+            // services.awsService.getSecretFromAWS(CLOUDFRONT_URL),
+            // services.awsService.getSecretFromAWS(SWAGGER_USER_NAME),
+            // services.awsService.getSecretFromAWS(SWAGGER_PASSWORD),
+            // services.awsService.getSecretFromAWS(STMP_EMAIL),
+            // services.awsService.getSecretFromAWS(SMTP_API_KEY),
+            // services.awsService.getSecretFromAWS(STRIPE_PB_KEY),
+            // services.awsService.getSecretFromAWS(STRIPE_SEC_KEY),
+        ]);
+        const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName
+        // swaggerUserName,
+        // swaggerPassword,
+        // smtpEmail,
+        // cloudfrontUrl,
+        // smtpApiKey,
+        // stripePbKey,
+        // stripeSecKey,
+        ] = results;
+        DB.MONGODB_URI = mongodbUri;
+        APP.JWT_SECRET = jwtSecret;
+        // APP.CLOUDFRONT_URL = cloudfrontUrl;
+        // APP.SWAGGER_USER_NAME = swaggerUserName;
+        // APP.SWAGGER_PASSWORD = swaggerPassword;
+        // EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
+        // EMAIL_CREDENTIAL.SMTP_API_KEY = smtpApiKey;
+        // STRIPE_CREDENTIAL.STRIPE_PB_KEY = stripePbKey;
+        // STRIPE_CREDENTIAL.STRIPE_SEC_KEY = stripeSecKey;
+        exports.AWS_CREDENTIAL = AWS_CREDENTIAL = {
+            ACCESSID: accessId,
+            REGION: region,
+            AWS_SECRET: awsSecret,
+            BUCKET_NAME: bucketName,
+        };
+        console.log("AWS credentials initialized successfully.");
+    }
+    catch (error) {
+        console.error("Error initializing AWS credentials:", error);
+        throw error; // Rethrow to prevent server from starting with invalid config
+    }
+    finally {
+        console.timeEnd("AWS_CREDENTIAL_INIT");
+    }
 });
 exports.initializeAwsCredential = initializeAwsCredential;

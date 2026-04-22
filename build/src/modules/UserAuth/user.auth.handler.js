@@ -56,6 +56,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const services_1 = __importDefault(require("../../services"));
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const messages_1 = require("../../helpers/messages");
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -102,7 +103,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dateOfBirth && !!userData.country;
+        const is_profile_completed = !!userData.dob && !!userData.country;
         if (!userData.password) {
             const otp = '123456';
             const otpCreatedAt = new Date();
@@ -131,10 +132,10 @@ const UserAuthHandler = {
         if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
             yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' }); //activate user again
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, Object.assign(Object.assign({}, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         const { login_source, social_auth, email, name = undefined } = data;
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
@@ -156,10 +157,15 @@ const UserAuthHandler = {
         }; //match condition ends 
         //check user exist or not 
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
+        const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
+        const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
+        const is_simple_login = !!(userData === null || userData === void 0 ? void 0 : userData.password);
+        const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //if account deactivate by admin throw error 
-            if (((_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_b = findUser.data) === null || _b === void 0 ? void 0 : _b.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
+            if (((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_c = findUser.data) === null || _c === void 0 ? void 0 : _c.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.middleware.deactivated_account, null, statusCodes_1.default.API_ERROR);
             }
             //update social account array 
@@ -168,11 +174,11 @@ const UserAuthHandler = {
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.login_error, null, statusCodes_1.default.API_ERROR);
             }
             commonHelper.keysDeleteFromObject(findUser === null || findUser === void 0 ? void 0 : findUser.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_c = findUser.data) === null || _c === void 0 ? void 0 : _c._id, (_d = findUser.data) === null || _d === void 0 ? void 0 : _d.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            const userData = Object.assign(Object.assign({}, findUser === null || findUser === void 0 ? void 0 : findUser.data), { access_token, refresh_token });
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_d = findUser.data) === null || _d === void 0 ? void 0 : _d._id, (_e = findUser.data) === null || _e === void 0 ? void 0 : _e.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, findUser === null || findUser === void 0 ? void 0 : findUser.data), { access_token, refresh_token });
             //if account deactivated by user then activate it again 
-            if (((_e = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _e === void 0 ? void 0 : _e.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_f = findUser.data) === null || _f === void 0 ? void 0 : _f.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
-                yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: (_g = findUser.data) === null || _g === void 0 ? void 0 : _g._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
+            if (((_f = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _f === void 0 ? void 0 : _f.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_g = findUser.data) === null || _g === void 0 ? void 0 : _g.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
+                yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: (_h = findUser.data) === null || _h === void 0 ? void 0 : _h._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
             }
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, userData, statusCodes_1.default.SUCCESS);
         }
@@ -190,7 +196,7 @@ const UserAuthHandler = {
                 email,
                 first_name: name ? name : commonHelper.getFirstNameFromEmail(email),
                 account_source: login_source,
-                is_verified: true,
+                isVerified: true,
             };
             const userRef = new user_auth_model_1.default(newObj);
             const result = yield (0, db_helpers_1.createOne)(userRef);
@@ -198,12 +204,11 @@ const UserAuthHandler = {
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.login_error, null, statusCodes_1.default.API_ERROR);
             }
             commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_h = result.data) === null || _h === void 0 ? void 0 : _h._id, (_j = result.data) === null || _j === void 0 ? void 0 : _j.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            const userData = Object.assign(Object.assign({}, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_j = result.data) === null || _j === void 0 ? void 0 : _j._id, (_k = result.data) === null || _k === void 0 ? void 0 : _k.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, userData, statusCodes_1.default.SUCCESS);
         }
     }),
-    //***********SOCIAL LOGIN USED : if social login used in this project then use this function ************************ */
     register(data, profile_pic) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
@@ -238,38 +243,40 @@ const UserAuthHandler = {
             };
             const hashed = yield commonHelper.bycrptPasswordHash(password);
             obj.password = hashed;
-            const otp = commonHelper.generateOtp();
+            // const otp = commonHelper.generateOtp()
+            const otp = "123456";
             obj.otp = otp;
             // const emailPayload = { user_name: fullName, otp }
             // const payload = { ...data, account_source: 'email', password: hashed, otp }
             // check if user exists
             const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
             //if user exist with same account source then throw error
-            if (findUser.status && ((_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.account_source) == 'email' && ((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.is_verified)) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.email_already, null, statusCodes_1.default.API_ERROR);
+            if (findUser.status && ((_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.account_source) == 'email' && ((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.isVerified)) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "email_already_exists"), null, statusCodes_1.default.API_ERROR);
             }
             //if exist with different source (through google apple login) then update details and account source else insert new account entry
-            const result = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, obj, true); //upsert true
+            const result = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, obj, true);
             if (!result.status) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.register_error, null, statusCodes_1.default.API_ERROR);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_register"), null, statusCodes_1.default.API_ERROR);
             }
             // const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
             // if (!sendEmail.status) {
-            //     return showResponse(false, responseMessage.users.register_error, null, statusCodes.API_ERROR);
+            //     return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
             // }
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.verification_email_sent, null, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), null, statusCodes_1.default.SUCCESS);
         });
     },
     //ends
     forgotPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email } = data;
-        const queryObject = { email, is_verified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
+        const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         // check if user exists
         const exists = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
         if (!exists.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.not_registered, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = exists === null || exists === void 0 ? void 0 : exists.data;
+        const language = (userData === null || userData === void 0 ? void 0 : userData.language) || 'en';
         // const otp = commonHelper.generateOtp();
         const otp = 123456;
         // const to = `${exists?.data?.email}`
@@ -277,48 +284,56 @@ const UserAuthHandler = {
         // const payload = { user_name, otp }
         // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
         // if (!emailSend.status) {
-        //     return showResponse(false, responseMessage.users.forgot_password_email_error, null, statusCodes.API_ERROR)
+        //     return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR)
         // }
         yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, userData === null || userData === void 0 ? void 0 : userData._id, { otp }); //update otp in database
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.otp_send, null, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_send_success"), null, statusCodes_1.default.SUCCESS);
     }), //ends
     resetPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
+        var _a, _b, _c;
         const { email, new_password, otp } = data;
-        const queryObject = { email, is_verified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
+        const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
         if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.not_registered, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
-        if (((_a = result.data) === null || _a === void 0 ? void 0 : _a.otp) !== Number(otp)) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_otp, null, statusCodes_1.default.API_ERROR);
+        const language = ((_a = result === null || result === void 0 ? void 0 : result.data) === null || _a === void 0 ? void 0 : _a.language) || 'en';
+        if (((_b = result.data) === null || _b === void 0 ? void 0 : _b.otp) !== otp) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "invalid_otp"), null, statusCodes_1.default.API_ERROR);
         }
         const hashed = yield commonHelper.bycrptPasswordHash(new_password);
         const updateObj = { otp: '', password: hashed };
-        const updated = yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, (_b = result === null || result === void 0 ? void 0 : result.data) === null || _b === void 0 ? void 0 : _b._id, updateObj);
+        const updated = yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, (_c = result === null || result === void 0 ? void 0 : result.data) === null || _c === void 0 ? void 0 : _c._id, updateObj);
         if (!updated.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.password_reset_error, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_reset_password"), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.password_reset_success, null, statusCodes_1.default.SUCCESS);
-    }), //ends
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
+    }),
     verifyOtp: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { email, otp } = data;
+        var _a;
+        const { email, otp, password } = data;
+        if (password) {
+            const hashed = yield commonHelper.bycrptPasswordHash(password);
+            data.password = hashed;
+        }
         const queryObject = { email, otp, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const exists = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
         if (!exists.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_otp, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "invalid_otp"), null, statusCodes_1.default.API_ERROR);
         }
-        yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, { is_verified: true });
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.otp_verify_success, null, statusCodes_1.default.SUCCESS);
-    }), //ends
+        const language = ((_a = exists === null || exists === void 0 ? void 0 : exists.data) === null || _a === void 0 ? void 0 : _a.language) || 'en';
+        yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, { isVerified: true, password: data.password });
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_verify_success"), null, statusCodes_1.default.SUCCESS);
+    }),
     resendOtp: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email } = data;
         const queryObject = { email, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
         if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_email, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "invalid_email"), null, statusCodes_1.default.API_ERROR);
         }
-        // const userData = result?.data;
+        const userData = result === null || result === void 0 ? void 0 : result.data;
+        const language = (userData === null || userData === void 0 ? void 0 : userData.language) || 'en';
         // const otp = commonHelper.generateOtp();
         const otp = "123456";
         // const to = userData?.email
@@ -326,60 +341,81 @@ const UserAuthHandler = {
         // const payload = { user_name, otp }
         // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
         // if (!emailSend.status) {
-        //     return showResponse(false, responseMessage.users.otp_send_error, null, statusCodes.API_ERROR)
+        //     return showResponse(false, getMessage(language || 'en', "otp_send_error"), null, statusCodes.API_ERROR)
         // }
         yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, { otp });
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.otp_resend, null, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_resend"), null, statusCodes_1.default.SUCCESS);
     }), //ends
     changePassword: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
+        var _a, _b;
         const { old_password, new_password } = data;
         const exists = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId });
         if (!exists.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.not_registered, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
-        const comparePassword = yield commonHelper.verifyBycryptHash(old_password, (_a = exists.data) === null || _a === void 0 ? void 0 : _a.password);
+        const language = ((_a = exists === null || exists === void 0 ? void 0 : exists.data) === null || _a === void 0 ? void 0 : _a.language) || 'en';
+        const comparePassword = yield commonHelper.verifyBycryptHash(old_password, (_b = exists.data) === null || _b === void 0 ? void 0 : _b.password);
         if (!comparePassword) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_old_password, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "invalid_old_password"), null, statusCodes_1.default.API_ERROR);
         }
         //new password and old password cannot be same
         if (new_password === old_password) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.cannot_same_old_new_password, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "cannot_same_old_new_password"), null, statusCodes_1.default.API_ERROR);
         }
         const hashed = yield commonHelper.bycrptPasswordHash(new_password);
         const result = yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, userId, { password: hashed });
         if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.password_change_failed, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_reset_password"), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.password_change_successfull, null, statusCodes_1.default.SUCCESS);
-    }), //ends
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
+    }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, social_account: 0, otp: 0 });
+        var _a, _b;
+        const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, otp: 0 });
+        const userData = result === null || result === void 0 ? void 0 : result.data;
+        const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
+        const is_simple_login = !!(userData === null || userData === void 0 ? void 0 : userData.password);
+        const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
         if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_user, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.user_detail, result.data, statusCodes_1.default.SUCCESS);
-    }), //ends
+        const language = ((_b = result === null || result === void 0 ? void 0 : result.data) === null || _b === void 0 ? void 0 : _b.language) || 'en';
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed }), statusCodes_1.default.SUCCESS);
+    }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;
         const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (fullName && { fullName })), (country && { country })), (dob && { dob })), (language && { language })), (profilePic && { profilePic }));
+        const user = yield user_auth_model_1.default.findOne({ _id: user_id });
+        console.log(user, 'user');
+        if (!user) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
+        }
+        const user_language = (user === null || user === void 0 ? void 0 : user.language) || 'en';
+        console.log(user_id, '0');
         const result = yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, user_id, updateObj);
+        console.log(result, 'result');
         if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.user_account_update_error, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(user_language || 'en', "user_account_update_error"), null, statusCodes_1.default.API_ERROR);
         }
         commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.user_account_updated, result.data, statusCodes_1.default.SUCCESS);
-    }), //ends
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "user_account_updated"), result.data, statusCodes_1.default.SUCCESS);
+    }),
     deleteOrDeactivateAccount(data, user_id) {
         return __awaiter(this, void 0, void 0, function* () {
             const { status, reason } = data;
             const updateObj = Object.assign({ status, deactivateBy: workflow_constant_1.DEACTIVATE_BY.USER }, (reason && { reason }));
+            const user = yield user_auth_model_1.default.findOne({ _id: user_id });
+            if (!user) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
+            }
+            const user_language = (user === null || user === void 0 ? void 0 : user.language) || 'en';
             const result = yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, user_id, updateObj);
             if (!result.status) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.user_account_update_error, null, statusCodes_1.default.API_ERROR);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(user_language || 'en', "user_account_update_error"), null, statusCodes_1.default.API_ERROR);
             }
-            const msg = status == workflow_constant_1.USER_STATUS.DELETED ? 'deleted' : 'deactivated';
-            return (0, response_util_1.showResponse)(true, `${responseMessages_1.default.users.user_account_has_been} ${msg} Successfully`, null, statusCodes_1.default.SUCCESS);
+            const msg = status == workflow_constant_1.USER_STATUS.DELETED ? (0, messages_1.getMessage)(user_language || 'en', "user_account_has_been_deleted") : (0, messages_1.getMessage)(user_language || 'en', "user_account_has_been_deactivated");
+            return (0, response_util_1.showResponse)(true, msg, null, statusCodes_1.default.SUCCESS);
         });
     }, //ends
     refreshToken(data) {
@@ -388,28 +424,29 @@ const UserAuthHandler = {
             const { refresh_token } = data;
             const response = yield (0, auth_util_1.decodeToken)(refresh_token);
             if (!response.status) {
-                return (0, response_util_1.showResponse)(false, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.middleware) === null || _a === void 0 ? void 0 : _a.token_expired, null, statusCodes_1.default.REFRESH_TOKEN_ERROR);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "token_expired"), null, statusCodes_1.default.REFRESH_TOKEN_ERROR);
             }
-            const user_id = (_b = response === null || response === void 0 ? void 0 : response.data) === null || _b === void 0 ? void 0 : _b.id;
+            const user_id = (_a = response === null || response === void 0 ? void 0 : response.data) === null || _a === void 0 ? void 0 : _a.id;
             const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: user_id });
             if (!findUser.status) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_user, null, statusCodes_1.default.API_ERROR);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
             }
+            const user_language = ((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.language) || 'en';
             if (((_c = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _c === void 0 ? void 0 : _c.status) == workflow_constant_1.USER_STATUS.DEACTIVATED) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.middleware.deactivated_account, null, statusCodes_1.default.ACCOUNT_DISABLED);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(user_language || 'en', "user_account_has_been_deactivated"), null, statusCodes_1.default.ACCOUNT_DISABLED);
             }
             if (((_d = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _d === void 0 ? void 0 : _d.status) == workflow_constant_1.USER_STATUS.DELETED) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.middleware.deleted_account, null, statusCodes_1.default.ACCOUNT_DELETED);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(user_language || 'en', "user_account_has_been_deleted"), null, statusCodes_1.default.ACCOUNT_DELETED);
             }
             const tokens = yield (0, auth_util_1.generateAccessRefreshToken)((_e = findUser.data) === null || _e === void 0 ? void 0 : _e._id, (_f = findUser.data) === null || _f === void 0 ? void 0 : _f.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            return (0, response_util_1.showResponse)(true, 'Tokens Generated Successfully', { access_token: tokens.access_token, refresh_token: tokens.refresh_token }, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "tokens_generated_successfully"), { access_token: tokens.access_token, refresh_token: tokens.refresh_token }, statusCodes_1.default.SUCCESS);
         });
-    }, //ends
+    },
     logoutUser() {
         return __awaiter(this, void 0, void 0, function* () {
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.logout_success, null, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)('en', "logout_success"), null, statusCodes_1.default.SUCCESS);
         });
-    }, //ends
+    },
     uploadFile: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { file } = data;
         const s3Upload = yield services_1.default.awsService.uploadFileToS3([file]);
@@ -419,11 +456,13 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.file_upload_success, s3Upload === null || s3Upload === void 0 ? void 0 : s3Upload.data, statusCodes_1.default.SUCCESS);
     }),
     getUserDetailsUser: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, social_account: 0, otp: 0 });
+        const language = ((_a = result === null || result === void 0 ? void 0 : result.data) === null || _a === void 0 ? void 0 : _a.language) || 'en';
         if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_user, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.user_detail, result.data, statusCodes_1.default.SUCCESS);
-    }), //ends
-}; //ends
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), result.data, statusCodes_1.default.SUCCESS);
+    }),
+};
 exports.default = UserAuthHandler;

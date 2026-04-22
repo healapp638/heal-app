@@ -7,7 +7,6 @@ import helmet from "helmet";
 import { serve, setup } from "swagger-ui-express";
 import Routes from "./modules/index";
 import { bootstrapAdmin } from "./utils/bootstrap.util";
-// import { rateLimiter } from "./utils/config.util";
 import { APP, initializeAwsCredential } from "./constants/app.constant";
 import { connection } from "./configs/mongoose.config";
 import { handleFileSize } from "./utils/config.util";
@@ -16,21 +15,19 @@ import compression from "compression";
 
 const app: Application = express();
 
-
-//  Call it when Parameters are stored to AWS
-initializeAwsCredential()
-
-
-//  DATABASE INIT
-connection()
-  .then(() => {
-    bootstrapAdmin(() => {
-      console.log("Bootstrapping finished!");
+const init = async () => {
+  await initializeAwsCredential()
+  await connection()
+    .then(() => {
+      bootstrapAdmin(() => {
+        console.log("Bootstrapping finished!");
+      });
+    })
+    .catch((err: any) => {
+      console.log(err, "error Bootstrapping");
     });
-  })
-  .catch((err: any) => {
-    console.log(err, "error Bootstrapping");
-  });
+}
+init();
 
 
 //  SECURITY MIDDLEWARE

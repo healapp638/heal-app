@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EMAIL_SEND_TYPE = exports.DEACTIVATE_BY = exports.USER_STATUS = exports.ROLE = void 0;
+exports.languages = exports.EMAIL_SEND_TYPE = exports.DEACTIVATE_BY = exports.USER_STATUS = exports.ROLE = void 0;
 const interfaces_util_1 = require("../utils/interfaces.util");
 const ROLE = {
     ADMIN: 1,
@@ -21,3 +21,16 @@ const DEACTIVATE_BY = {
 exports.DEACTIVATE_BY = DEACTIVATE_BY;
 const EMAIL_SEND_TYPE = interfaces_util_1.EmailSendType;
 exports.EMAIL_SEND_TYPE = EMAIL_SEND_TYPE;
+const languages = {
+    ENGLISH: "en",
+    CHINESE: "zh",
+    SPANISH: "es",
+    FRENCH: "fr",
+    HINDI: "hi",
+    GERMAN: "de",
+    RUSSIAN: "ru",
+    PORTUGUESE: "pt",
+    ITALIAN: "it",
+    ROMANIAN: "ro"
+};
+exports.languages = languages;

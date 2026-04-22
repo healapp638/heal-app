@@ -21,25 +21,25 @@ const helmet_1 = __importDefault(require("helmet"));
 const swagger_ui_express_1 = require("swagger-ui-express");
 const index_1 = __importDefault(require("./modules/index"));
 const bootstrap_util_1 = require("./utils/bootstrap.util");
-// import { rateLimiter } from "./utils/config.util";
 const app_constant_1 = require("./constants/app.constant");
 const mongoose_config_1 = require("./configs/mongoose.config");
 const config_util_1 = require("./utils/config.util");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 const compression_1 = __importDefault(require("compression"));
 const app = (0, express_1.default)();
-//  Call it when Parameters are stored to AWS
-(0, app_constant_1.initializeAwsCredential)();
-//  DATABASE INIT
-(0, mongoose_config_1.connection)()
-    .then(() => {
-    (0, bootstrap_util_1.bootstrapAdmin)(() => {
-        console.log("Bootstrapping finished!");
+const init = () => __awaiter(void 0, void 0, void 0, function* () {
+    yield (0, app_constant_1.initializeAwsCredential)();
+    yield (0, mongoose_config_1.connection)()
+        .then(() => {
+        (0, bootstrap_util_1.bootstrapAdmin)(() => {
+            console.log("Bootstrapping finished!");
+        });
+    })
+        .catch((err) => {
+        console.log(err, "error Bootstrapping");
     });
-})
-    .catch((err) => {
-    console.log(err, "error Bootstrapping");
 });
+init();
 //  SECURITY MIDDLEWARE
 app.use((0, helmet_1.default)());
 //  CORS CONFIG (FIXED)

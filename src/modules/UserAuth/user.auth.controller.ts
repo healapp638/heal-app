@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Get, Security, UploadedFile, FormField, Put, Delete } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
-import { validateChangePassword, validateForgotPassword, validateRefreshToken, validateDeleteOrDeactivation, validateUpdateProfile, validateRegister, validateResetPassword, validateResendOtp, validateVerifyOtp, validateLoginUser } from '../UserAuth/user.auth.validator';
+import { validateChangePassword, validateForgotPassword, validateRefreshToken, validateDeleteOrDeactivation, validateUpdateProfile, validateRegister, validateResetPassword, validateResendOtp, validateVerifyOtp, validateLoginUser, validateSocialLogin } from '../UserAuth/user.auth.validator';
 import handler from '../UserAuth/user.auth.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
@@ -43,18 +43,18 @@ export default class UserAuthController extends Controller {
     //   * User Social login 
     //   * login_source can be for google use google & for apple use apple etc
     //   */
-    //     @Post("/social_login")
-    //     public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() user_type: number, @FormField() name?: string, @FormField() os_type?: string): Promise<ApiResponse> {
-    //         const request = { login_source, social_auth, email, name, user_type, os_type }
+        @Post("/social_login")
+        public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() name?: string, @FormField() os_type?: string): Promise<ApiResponse> {
+            const request = { login_source, social_auth, email, name, os_type }
 
-    //         const validate = validateSocialLogin(request);
-    //         if (validate.error) {
-    //             return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
-    //         }
+            const validate = validateSocialLogin(request);
+            if (validate.error) {
+                return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+            }
 
-    //         const wrappedFunc = tryCatchWrapper(handler.social_login);
-    //         return wrappedFunc(request); // Invoking the wrapped function 
-    //     }
+            const wrappedFunc = tryCatchWrapper(handler.social_login);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        }
     //     //ends
 
     /**
@@ -109,7 +109,7 @@ export default class UserAuthController extends Controller {
     * Verify Otp Route  api endpoint
     */
     @Post("/verify_otp")
-    public async verifyOtp(@Body() request: { email: string, otp: string }): Promise<ApiResponse> {
+    public async verifyOtp(@Body() request: { email: string, otp: string,password?:string }): Promise<ApiResponse> {
 
         const validate = validateVerifyOtp(request);
         if (validate.error) {
@@ -173,13 +173,10 @@ export default class UserAuthController extends Controller {
     @Security('Bearer')
     @Put("/profile")
     public async updateUserProfile(@Body() request: { fullName?: string, country?: string, dob?: string, profilePic?: string, language?: string }): Promise<ApiResponse> {
-
-
         const validate = validateUpdateProfile(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }
-
         const wrappedFunc = tryCatchWrapper(handler.updateUserProfile);
         return wrappedFunc(request, this.userId); // Invoking the wrapped function 
     }

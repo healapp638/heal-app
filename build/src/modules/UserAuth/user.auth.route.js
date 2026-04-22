@@ -32,12 +32,12 @@ router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __await
     const result = yield controller.login({ email, password });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-// router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
-//     const { login_source, social_auth, email, name, user_type, os_type } = req.body;
-//     const userAuthController = new UserAuthController(req, res)
-//     const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, user_type, name, os_type);
-//     return showOutput(res, result, result.code)
-// })
+router.post('/social_login', multer.addToMulter.none(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { login_source, social_auth, email, name, os_type } = req.body;
+    const userAuthController = new user_auth_controller_1.default(req, res);
+    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.post('/forgot_password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
@@ -51,9 +51,9 @@ router.post('/reset_password', (req, res) => __awaiter(void 0, void 0, void 0, f
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/verify_otp', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, otp } = req.body;
+    const { email, otp, password } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.verifyOtp({ email, otp });
+    const result = yield controller.verifyOtp({ email, otp, password });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/resend_otp', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

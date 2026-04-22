@@ -96,29 +96,43 @@ const postParameterToAWS = (input: postParameter) => {
     });
 };
 
-const getSecretFromAWS = async (secret_key_param: string) => {
-    return new Promise((resolve) => {
+const getSecretFromAWS = async (secret_key_param: string, retries = 3): Promise<any> => {
+
+    const cachedValue = cache.get(secret_key_param);
+    if (cachedValue !== undefined) {
+        return Promise.resolve(cachedValue);
+    }
+
+    for (let i = 0; i < retries; i++) {
         try {
-            const client = new AWS.SecretsManager({
-                region: APP.AWS_REGION,
-            });
+            const result = await new Promise((resolve, reject) => {
+                const client = new AWS.SecretsManager({
+                    region: APP.AWS_REGION,
+                });
 
-            client.getSecretValue({ SecretId: secret_key_param }, (err: any, data: any) => {
-
-                if (err) {
-                    // console.log(err, 'error getSecretFromAWS')
-                    return resolve(false);
-                }
-                const secretKey = JSON.parse(data.SecretString);
-                // let response = { SecretString: secretKey?.digismart_secret }
-                const response = secretKey[secret_key_param]
-                return resolve(response);
+                client.getSecretValue({ SecretId: secret_key_param }, (err: any, data: any) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    try {
+                        const secretKey = JSON.parse(data.SecretString);
+                        const response = secretKey[secret_key_param];
+                        cache.set(secret_key_param, response);
+                        resolve(response);
+                    } catch (parseErr) {
+                        reject(parseErr);
+                    }
+                });
             });
-        } catch (e) {
-            console.log(e)
-            return resolve(false);
+            return result;
+        } catch {
+            if (i === retries - 1) {
+                return false;
+            }
+            await new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
         }
-    });
+    }
+    return false;
 };
 
 const sendSMSService = async (to: number, Message: string) => {

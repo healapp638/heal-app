@@ -21,10 +21,24 @@ const DEACTIVATE_BY = {
 
 const EMAIL_SEND_TYPE = EmailSendType
 
+const languages = {
+    ENGLISH: "en",
+    CHINESE: "zh",
+    SPANISH: "es",
+    FRENCH: "fr",
+    HINDI: "hi",
+    GERMAN: "de",
+    RUSSIAN: "ru",
+    PORTUGUESE: "pt",
+    ITALIAN: "it",
+    ROMANIAN: "ro"
+}
+
 export {
     ROLE,
     USER_STATUS,
     DEACTIVATE_BY,
     EMAIL_SEND_TYPE,
+    languages
 };
 

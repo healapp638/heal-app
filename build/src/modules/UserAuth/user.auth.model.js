@@ -14,7 +14,7 @@ const UserSchema = new mongoose_1.Schema({
     email: { type: String, default: "", index: true },
     dob: { type: Date, default: "" },
     password: { type: String, default: "" },
-    otp: { type: Number, default: null },
+    otp: { type: String, default: null },
     otpCreatedAt: { type: Date, default: null },
     profilePic: { type: String, default: "" },
     isVerified: { type: Boolean, default: false },

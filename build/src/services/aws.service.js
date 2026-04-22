@@ -139,28 +139,42 @@ const postParameterToAWS = (input) => {
     });
 };
 exports.postParameterToAWS = postParameterToAWS;
-const getSecretFromAWS = (secret_key_param) => __awaiter(void 0, void 0, void 0, function* () {
-    return new Promise((resolve) => {
+const getSecretFromAWS = (secret_key_param_1, ...args_1) => __awaiter(void 0, [secret_key_param_1, ...args_1], void 0, function* (secret_key_param, retries = 3) {
+    const cachedValue = cache.get(secret_key_param);
+    if (cachedValue !== undefined) {
+        return Promise.resolve(cachedValue);
+    }
+    for (let i = 0; i < retries; i++) {
         try {
-            const client = new aws_sdk_1.default.SecretsManager({
-                region: app_constant_1.APP.AWS_REGION,
+            const result = yield new Promise((resolve, reject) => {
+                const client = new aws_sdk_1.default.SecretsManager({
+                    region: app_constant_1.APP.AWS_REGION,
+                });
+                client.getSecretValue({ SecretId: secret_key_param }, (err, data) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    try {
+                        const secretKey = JSON.parse(data.SecretString);
+                        const response = secretKey[secret_key_param];
+                        cache.set(secret_key_param, response);
+                        resolve(response);
+                    }
+                    catch (parseErr) {
+                        reject(parseErr);
+                    }
+                });
             });
-            client.getSecretValue({ SecretId: secret_key_param }, (err, data) => {
-                if (err) {
-                    // console.log(err, 'error getSecretFromAWS')
-                    return resolve(false);
-                }
-                const secretKey = JSON.parse(data.SecretString);
-                // let response = { SecretString: secretKey?.digismart_secret }
-                const response = secretKey[secret_key_param];
-                return resolve(response);
-            });
+            return result;
         }
-        catch (e) {
-            console.log(e);
-            return resolve(false);
+        catch (_a) {
+            if (i === retries - 1) {
+                return false;
+            }
+            yield new Promise(res => setTimeout(res, 1000 * Math.pow(2, i)));
         }
-    });
+    }
+    return false;
 });
 exports.getSecretFromAWS = getSecretFromAWS;
 const sendSMSService = (to, Message) => __awaiter(void 0, void 0, void 0, function* () {

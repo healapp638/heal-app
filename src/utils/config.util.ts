@@ -34,6 +34,8 @@ export const getEnvironmentParams = (env: any, project_name: string, project_ini
             SMTP_API_KEY: `${initial_for_aws}_SMTP_API_KEY`,
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_PROD`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_PROD`,
+            JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            
 
 
         },
@@ -48,6 +50,7 @@ export const getEnvironmentParams = (env: any, project_name: string, project_ini
             SMTP_API_KEY: `${initial_for_aws}_SMTP_API_KEY`,
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_STAGE`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_STAGE`,
+            JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
         },
         'DEV': {
             DB_NAME: `${initial_for_aws}_DB_NAME_DEV`,
@@ -61,6 +64,7 @@ export const getEnvironmentParams = (env: any, project_name: string, project_ini
             SMTP_API_KEY: `${initial_for_aws}_SMTP_API_KEY`,
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_DEV`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_DEV`,
+            JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
         },
 
     }

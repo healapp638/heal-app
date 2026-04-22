@@ -12,7 +12,7 @@ export interface AwsCredential {
     REGION: any;
     BUCKET_NAME: any;
     AWS_SECRET: any;
-    COLLECTION_ID_AWS_REKOGNITION: any;
+    // COLLECTION_ID_AWS_REKOGNITION: any;
 }
 
 export interface AgoraCredential {

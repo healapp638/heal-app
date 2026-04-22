@@ -17,7 +17,7 @@ const validateRegister = (user) => {
     return joi_1.default.object({
         hearAboutUs: joi_1.default.string().trim().min(2).max(20).required(),
         bringsYouHere: joi_1.default.string().required(),
-        howFellingLately: joi_1.default.string().trim().email().min(4).max(35).required(),
+        howFellingLately: joi_1.default.string().trim().required(),
         likeToFellMore: joi_1.default.string().min(2).max(20).required(),
         timeYouCommit: joi_1.default.string().required(),
         startShowingOfYourSelf: joi_1.default.string().required(),
@@ -33,6 +33,7 @@ const validateVerifyOtp = (user) => {
     return joi_1.default.object({
         email: joi_1.default.string().trim().email().min(4).max(35).required(),
         otp: joi_1.default.string().min(4).max(20).required(),
+        password: joi_1.default.string().optional().allow(''),
     }).validate(user);
 };
 exports.validateVerifyOtp = validateVerifyOtp;
@@ -69,7 +70,7 @@ const validateUpdateProfile = (user) => {
         country: joi_1.default.string().optional().allow(''),
         dob: joi_1.default.string().optional().allow(''),
         profilePic: joi_1.default.string().optional().allow(''),
-        language: joi_1.default.string().optional().allow(''),
+        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
     }).validate(user);
 };
 exports.validateUpdateProfile = validateUpdateProfile;
@@ -80,7 +81,6 @@ const validateSocialLogin = (user) => {
         social_auth: joi_1.default.string().required(),
         name: joi_1.default.string().optional().allow(''),
         os_type: joi_1.default.string().optional().allow(''),
-        user_type: joi_1.default.number().valid(2, 3).error(new Error("2 for trainer 3 for user")).required(),
     }).validate(user);
 };
 exports.validateSocialLogin = validateSocialLogin;

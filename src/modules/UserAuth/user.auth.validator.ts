@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { USER_STATUS } from '../../constants/workflow.constant';
+import { languages, USER_STATUS } from '../../constants/workflow.constant';
 
 export const validateLoginUser = (user: any) => {
     return joi.object({
@@ -12,7 +12,7 @@ export const validateRegister = (user: any) => {
     return joi.object({
         hearAboutUs: joi.string().trim().min(2).max(20).required(),
         bringsYouHere: joi.string().required(),
-        howFellingLately: joi.string().trim().email().min(4).max(35).required(),
+        howFellingLately: joi.string().trim().required(),
         likeToFellMore: joi.string().min(2).max(20).required(),
         timeYouCommit: joi.string().required(),
         startShowingOfYourSelf: joi.string().required(),
@@ -28,6 +28,7 @@ export const validateVerifyOtp = (user: any) => {
     return joi.object({
         email: joi.string().trim().email().min(4).max(35).required(),
         otp: joi.string().min(4).max(20).required(),
+        password: joi.string().optional().allow(''),
     }).validate(user)
 }
 
@@ -64,7 +65,7 @@ export const validateUpdateProfile = (user: any) => {
         country: joi.string().optional().allow(''),
         dob: joi.string().optional().allow(''),
         profilePic: joi.string().optional().allow(''),
-        language: joi.string().optional().allow(''),
+        language: joi.string().optional().allow(...Object.values(languages)),
     }).validate(user)
 }
 
@@ -76,7 +77,6 @@ export const validateSocialLogin = (user: any) => {
         social_auth: joi.string().required(),
         name: joi.string().optional().allow(''),
         os_type: joi.string().optional().allow(''),
-        user_type: joi.number().valid(2, 3).error(new Error("2 for trainer 3 for user")).required(),
     }).validate(user)
 }
 

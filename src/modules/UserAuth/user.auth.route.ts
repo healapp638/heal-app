@@ -24,12 +24,12 @@ router.post('/login', ratLimiting, async (req: Request | any, res: Response) => 
     return showOutput(res, result, result.code)
 })
 
-// router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
-//     const { login_source, social_auth, email, name, user_type, os_type } = req.body;
-//     const userAuthController = new UserAuthController(req, res)
-//     const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, user_type, name, os_type);
-//     return showOutput(res, result, result.code)
-// })
+router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
+    const { login_source, social_auth, email, name, os_type } = req.body;
+    const userAuthController = new UserAuthController(req, res)
+    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type);
+    return showOutput(res, result, result.code)
+})
 
 router.post('/forgot_password', async (req: Request | any, res: Response) => {
     const { email } = req.body;
@@ -46,9 +46,9 @@ router.post('/reset_password', async (req: Request | any, res: Response) => {
 })
 
 router.post('/verify_otp', async (req: Request | any, res: Response) => {
-    const { email, otp } = req.body;
+    const { email, otp, password } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.verifyOtp({ email, otp });
+    const result: ApiResponse = await controller.verifyOtp({ email, otp, password });
     return showOutput(res, result, result.code)
 })
 
@@ -74,9 +74,9 @@ router.get('/details', verifyTokenUser, async (req: Request | any, res: Response
 })
 
 router.put('/profile', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const {fullName,country,dob,profilePic,language } = req.body
+    const { fullName, country, dob, profilePic, language } = req.body
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.updateUserProfile({fullName,country,dob,profilePic,language });
+    const result: ApiResponse = await controller.updateUserProfile({ fullName, country, dob, profilePic, language });
     return showOutput(res, result, result.code)
 })
 

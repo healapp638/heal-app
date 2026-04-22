@@ -217,6 +217,60 @@
 				}
 			}
 		},
+		"/user/auth/social_login": {
+			"post": {
+				"operationId": "SocialLogin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"login_source": {
+										"type": "string"
+									},
+									"social_auth": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"os_type": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"login_source",
+									"social_auth",
+									"email"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/auth/register": {
 			"post": {
 				"operationId": "Register",
@@ -415,6 +469,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"password": {
+										"type": "string"
+									},
 									"otp": {
 										"type": "string"
 									},
