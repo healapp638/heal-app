@@ -167,6 +167,23 @@
     "yearlyPriceInfo": "CHF 0.96/week, billed yearly as CHF 49.99/year",
     "startFreeTrialBtn": "Start 3-day free trial now",
     "addPromoCode": "Add promo code",
-    "restore": "Restore"
+    "restore": "Restore",
+    "tabHome": "Home",
+    "tabChallenges": "Challenges",
+    "tabModules": "Modules",
+    "tabJournal": "Journal",
+    "tabSettings": "Settings",
+    "homeSafeSpace": "Safe Space",
+    "homeCalendarPlaceholder": "Calendar would go here",
+    "homeProgressTracker": "Progress Tracker",
+    "homeLevel2": "30% Level 2",
+    "homeQuoteDay": "Quote of the day",
+    "homeExploreMore": "Tap to explore more",
+    "homeDailyQuote": "...",
+    "homeWhatYouCanDo": "...",
+    "homeSeeAll": "See All",
+    "challengeCompletedTitle": "...",
+    "challengeDuration": "1 MIN",
+    "startedModule": "Started Modules"
   }
 }

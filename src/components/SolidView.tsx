@@ -6,13 +6,17 @@ import {
   ViewStyle,
   RefreshControlProps,
   Platform,
+  Pressable,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useTheme, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   KeyboardAvoidingView,
   KeyboardAwareScrollView,
 } from 'react-native-keyboard-controller';
+import AppRoutes from '../routes/RouteKeys/appRoutes';
 
 interface SolidViewProps {
   viewStyle?: ViewStyle;
@@ -23,6 +27,8 @@ interface SolidViewProps {
   keyboardOffset?: number;
   isChatScreen?: boolean;
   refreshControl?: React.ReactElement<RefreshControlProps>;
+  showChat?: boolean;
+  keyboardVerticalOffset?: any;
 }
 
 const SolidView: React.FC<SolidViewProps> = ({
@@ -34,8 +40,11 @@ const SolidView: React.FC<SolidViewProps> = ({
   keyboardOffset = 0,
   isChatScreen = false,
   refreshControl,
+  showChat = false,
+  keyboardVerticalOffset,
 }) => {
-  const { colors, background } = useTheme() as any;
+  const { colors, images } = useTheme() as any;
+  const navigation = useNavigation();
   const styles = style(colors);
 
   return (
@@ -57,11 +66,26 @@ const SolidView: React.FC<SolidViewProps> = ({
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={isChatScreen ? 'translate-with-padding' : 'padding'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          keyboardVerticalOffset={
+            keyboardVerticalOffset ?? Platform.OS === 'ios' ? 40 : 0
+          }
           enabled={true}
         >
           {view}
         </KeyboardAvoidingView>
+      )}
+
+      {showChat && (
+        <TouchableOpacity
+          style={styles.healContainer}
+          onPress={() => navigation.navigate(AppRoutes.HealyChat as never)}
+        >
+          <Image
+            source={images.heal}
+            style={styles.heal}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
       )}
     </SafeAreaView>
   );
@@ -80,6 +104,16 @@ const style = (colors: any) =>
 
     scrollContainer: {
       flexGrow: 1,
+    },
+    heal: {
+      height: 70,
+      width: 70,
+    },
+    healContainer: {
+      position: 'absolute',
+      zIndex: 9999,
+      bottom: Platform.OS == 'ios' ? 114 : 94,
+      right: 10,
     },
   });
 

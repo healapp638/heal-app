@@ -12,6 +12,12 @@ const style = (colors: any) =>
     closeBtn: {
       marginTop: Platform.OS === 'ios' ? hp(2) : hp(3),
       marginBottom: hp(2),
+      height: 14, // Same as closeIcon height
+    },
+    closeBtnPlaceholder: {
+      marginTop: Platform.OS === 'ios' ? hp(2) : hp(3),
+      marginBottom: hp(2),
+      height: 14,
     },
     closeIcon: {
       width: 14,
@@ -19,7 +25,7 @@ const style = (colors: any) =>
       tintColor: '#999',
     },
     title: {
-      fontSize: AppUtils.fontSize(28),
+      fontSize: AppUtils.fontSize(25),
       textAlign: 'center',
       fontFamily: AppFonts.recoMedium,
       color: colors.brown,
@@ -101,6 +107,10 @@ lineHeight:20,
       includeFontPadding: false
 
     },
+    toggleIcon: {
+      width: 44,
+      height: 24,
+    },
     plansContainer: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -162,12 +172,10 @@ lineHeight:20,
 
     },
     actionBtn: {
-      backgroundColor: colors.brown,
-      borderRadius: 100,
-
       width: '90%',
-      alignItems: 'center',
-      marginBottom: 20,
+
+      marginBottom: 25,
+      marginTop:45
     },
     actionBtnText: {
       fontFamily: AppFonts.semiBold,

@@ -1,0 +1,129 @@
+import React from 'react';
+import {
+  View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Pressable,
+} from 'react-native';
+import { useTheme } from '@react-navigation/native';
+import SolidText from './SolidText';
+import AppUtils from '../utils/appUtils';
+import AppFonts from '../constants/fonts';
+
+interface HomeHeaderProps {
+  userName: string;
+  safeSpaceLabel: string;
+  streakCount: number;
+  onStreakPress: () => void;
+  showStreak: boolean;
+  showCrown: boolean;
+  onCrownPress: () => void;
+}
+
+const HomeHeader = ({
+  userName,
+  safeSpaceLabel,
+  streakCount,
+  onStreakPress,
+  showStreak = true,
+  showCrown,
+  onCrownPress,
+}: HomeHeaderProps) => {
+  const { colors, images } = useTheme() as any;
+
+  return (
+    <View style={styles.header}>
+      <View>
+        <SolidText style={[styles.userName, { color: colors.brown }]}>
+          {userName}
+        </SolidText>
+        <SolidText style={[styles.safeSpace, { color: colors.brown }]}>
+          {safeSpaceLabel}
+        </SolidText>
+      </View>
+      {showStreak && (
+        <Pressable onPress={onStreakPress} style={styles.headerRight}>
+          <View style={styles.streakBox}>
+            <Image
+              source={images.streak}
+              style={styles.icon}
+              resizeMode="contain"
+            />
+            <SolidText style={[styles.streakText, { color: colors.brown }]}>
+              {streakCount}
+            </SolidText>
+            <View style={styles.divider} />
+            <TouchableOpacity>
+              <Image
+                source={images.calendar}
+                style={styles.icon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+        </Pressable>
+      )}
+      {showCrown && (
+        <Pressable onPress={onCrownPress}>
+          <Image
+            source={images.crown}
+            tintColor={colors.brown}
+            style={{ height: 16, width: 16 }} // Reusing same icon size constraints
+            resizeMode="contain"
+          />
+        </Pressable>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  userName: {
+    fontSize: AppUtils.fontSize(23),
+    fontFamily: AppFonts.recoMedium,
+    includeFontPadding: false,
+  },
+  safeSpace: {
+    fontSize: AppUtils.fontSize(14),
+    fontFamily: AppFonts.regular,
+    includeFontPadding: false,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  streakBox: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    alignItems: 'center',
+    marginTop: -8,
+  },
+  icon: {
+    width: 16,
+    height: 16,
+  },
+  streakText: {
+    fontSize: AppUtils.fontSize(14),
+    fontFamily: AppFonts.semiBold,
+    marginLeft: 2,
+    includeFontPadding: false,
+  },
+  divider: {
+    width: 1.5,
+    height: 18,
+    backgroundColor: '#D1D1D1',
+    marginHorizontal: 10,
+    marginRight: 11,
+  },
+});
+
+export default HomeHeader;

@@ -16,6 +16,8 @@ interface HeaderCommonProps {
   showBack?: boolean;
   onBackPress?: () => void;
   rightComponent?: React.ReactNode;
+  rightIcon?: any;
+  onRightPress?: () => void;
 }
 
 const HeaderCommon: React.FC<HeaderCommonProps> = ({
@@ -23,6 +25,8 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   showBack = true,
   onBackPress,
   rightComponent,
+  rightIcon,
+  onRightPress,
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -57,9 +61,18 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
         )}
       </View>
 
-      <View style={styles.sideContainer}>
+      <View style={{ ...styles.sideContainer, alignItems: 'flex-end' }}>
         {rightComponent ? (
           rightComponent
+        ) : rightIcon ? (
+          <TouchableOpacity onPress={onRightPress} activeOpacity={0.7}>
+            <Image
+              source={rightIcon}
+              tintColor={colors.brown}
+              style={{ height: 16, width: 16 }} // Reusing same icon size constraints
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
         ) : (
           <View style={styles.rightPlaceholder} />
         )}
@@ -91,8 +104,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   backIcon: {
-    width: Platform.OS == 'ios' ? 20 : 18,
-    height: Platform.OS == 'ios' ? 20 : 18,
+    width: 14,
+    height: 14,
   },
   title: {
     fontFamily: AppFonts.medium,

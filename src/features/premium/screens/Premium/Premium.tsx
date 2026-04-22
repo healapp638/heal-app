@@ -1,12 +1,17 @@
-import React, { useContext, useState } from 'react';
-import { View, Image, TouchableOpacity, Switch, Platform } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, TouchableOpacity } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import { LocalizationContext } from '../../../../localization/localization';
 import SolidBtn from '../../../../components/SolidBtn';
-import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
+import PremiumHeader from '../../../../components/PremiumHeader';
+import TimelineCard from '../../../../components/TimelineCard';
+import ReminderToggle from '../../../../components/ReminderToggle';
+import PlansSection from '../../../../components/PlansSection';
+import PremiumFooter from '../../../../components/PremiumFooter';
+import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 
 const Premium = () => {
   const { colors, images } = useTheme() as any;
@@ -18,6 +23,14 @@ const Premium = () => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>(
     'yearly',
   );
+  const [showCloseBtn, setShowCloseBtn] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowCloseBtn(true);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Helper to get formatted dates for the timeline
   const getTimelineDate = (daysToAdd: number) => {
@@ -34,19 +47,13 @@ const Premium = () => {
       isScrollEnabled
       view={
         <View style={styles.mainContainer}>
-          {/* Header */}
-          <TouchableOpacity
-            style={styles.closeBtn}
-            onPress={() => navigation.goBack()}
-          >
-            <Image
-              source={images.cross2}
-              style={styles.closeIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
+          <PremiumHeader
+            showCloseBtn={showCloseBtn}
+            onClose={() => navigation.goBack()}
+            styles={styles}
+            images={images}
+          />
 
-          {/* Title Section */}
           <SolidText style={styles.title}>
             {localization.appkeys?.howTrialWorks}
           </SolidText>
@@ -54,147 +61,51 @@ const Premium = () => {
             {localization.appkeys?.notChargedToday}
           </SolidText>
 
-          {/* Timeline Card */}
-          <View style={styles.timelineCard}>
-            <View style={styles.timelineLeft}>
-              <Image
-                source={images.premium}
-                style={styles.premiumImage}
-                resizeMode="contain"
-              />
-            </View>
+          <TimelineCard
+            localization={localization}
+            styles={styles}
+            images={images}
+            trialReminderDate={trialReminderDate}
+            becomeMemberDate={becomeMemberDate}
+          />
 
-            <View style={styles.timelineRight}>
-              <View style={styles.timelineItem}>
-                <SolidText style={styles.timelineTitle}>
-                  {localization.appkeys?.todayFreeTrialStarts}
-                </SolidText>
-                <SolidText style={styles.timelineSub}>
-                  {localization.appkeys?.enjoyFullAccess}
-                </SolidText>
-              </View>
+          <ReminderToggle
+            localization={localization}
+            styles={styles}
+            images={images}
+            reminderEnabled={reminderEnabled}
+            onToggle={() => setReminderEnabled(!reminderEnabled)}
+          />
 
-              <View style={{ ...styles.timelineItem, marginVertical: 20 }}>
-                <SolidText style={styles.timelineTitle}>
-                  {trialReminderDate} -{' '}
-                  {localization.appkeys?.trialReminderDate?.split(' - ')[1] ||
-                    'Trial reminder'}
-                </SolidText>
-                <SolidText style={styles.timelineSub}>
-                  {localization.appkeys?.endingSoon}
-                </SolidText>
-              </View>
+          <PlansSection
+            localization={localization}
+            styles={styles}
+            selectedPlan={selectedPlan}
+            setSelectedPlan={setSelectedPlan}
+          />
 
-              <View style={styles.timelineItem}>
-                <SolidText style={styles.timelineTitle}>
-                  {becomeMemberDate} -{' '}
-                  {localization.appkeys?.becomeMemberDate?.split(' - ')[1] ||
-                    'Become member'}
-                </SolidText>
-                <SolidText style={styles.timelineSub}>
-                  {localization.appkeys?.endsUnlessCanceled}
-                </SolidText>
-              </View>
-            </View>
-          </View>
-
-          {/* Reminder Toggle */}
-          <View style={styles.reminderRow}>
-            <SolidText style={styles.reminderText}>
-              {localization.appkeys?.reminderBeforeEnds}
-            </SolidText>
-            <Switch
-              value={reminderEnabled}
-              onValueChange={setReminderEnabled}
-              trackColor={{ false: '#767577', true: colors.primary }}
-              thumbColor={Platform.OS === 'ios' ? undefined : colors.white}
-            />
-          </View>
-
-          {/* Subscription Plans */}
-          <View style={styles.plansContainer}>
-            <TouchableOpacity
-              style={[
-                styles.planCard,
-                selectedPlan === 'monthly' && styles.activePlanCard,
-              ]}
-              onPress={() => setSelectedPlan('monthly')}
-            >
-              <SolidText style={styles.planLabel}>
-                {localization.appkeys?.monthly}
-              </SolidText>
-              <SolidText style={styles.planPrice}>
-                {localization.appkeys?.monthlyPrice}
-              </SolidText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.planCard,
-                selectedPlan === 'yearly' && styles.activePlanCard,
-              ]}
-              onPress={() => setSelectedPlan('yearly')}
-            >
-              <View style={styles.badge}>
-                <SolidText style={styles.badgeText}>
-                  {localization.appkeys?.save60}
-                </SolidText>
-              </View>
-              <SolidText style={styles.planLabel}>
-                {localization.appkeys?.yearly}
-              </SolidText>
-              <SolidText style={styles.planPrice}>
-                {localization.appkeys?.yearlyPrice}
-              </SolidText>
-            </TouchableOpacity>
-          </View>
-
-          {/* Price Detail */}
           <SolidText style={styles.priceInfo}>
             {localization.appkeys?.yearlyPriceInfo}
           </SolidText>
 
-          {/* Action Button */}
           <SolidBtn
             btnStyle={styles.actionBtn}
             txtStyle={styles.actionBtnText}
             titleTxt={localization.appkeys?.startFreeTrialBtn}
-            onPress={() => {}}
+            onPress={() => navigation.navigate(AppRoutes.BottomTab as never)}
           />
 
-          {/* Promo Code */}
           <TouchableOpacity style={styles.promoBtn}>
             <SolidText style={styles.promoText}>
               {localization.appkeys?.addPromoCode}
             </SolidText>
           </TouchableOpacity>
 
-          {/* Footer Links */}
-          <View style={styles.footerLinks}>
-            <TouchableOpacity>
-              <SolidText style={styles.footerLink}>
-                {localization.appkeys?.restore}
-              </SolidText>
-            </TouchableOpacity>
-            <View style={styles.footerDot} />
-            <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(AppRoutes.PrivacyPolicy as never)
-              }
-            >
-              <SolidText style={styles.footerLink}>
-                {localization.appkeys?.privacyPolicy}
-              </SolidText>
-            </TouchableOpacity>
-            <View style={styles.footerDot} />
-            <TouchableOpacity
-              onPress={() => navigation.navigate(AppRoutes.Terms as never)}
-            >
-              <SolidText style={styles.footerLink}>
-                {localization.appkeys?.termsOfService}
-              </SolidText>
-            </TouchableOpacity>
-          </View>
+          <PremiumFooter
+            localization={localization}
+            styles={styles}
+            navigation={navigation}
+          />
         </View>
       }
     />

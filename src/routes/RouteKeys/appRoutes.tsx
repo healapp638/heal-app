@@ -27,6 +27,18 @@ const AppRoutes = {
   SelectLanguage: 'SelectLanguage',
   Reminder: 'Reminder',
   Premium: 'Premium',
+  BottomTab: 'BottomTab',
+  Challenges: 'Challenges',
+  Modules: 'Modules',
+  Journal: 'Journal',
+  Settings: 'Settings',
+  DailyStreak: 'DailyStreak',
+  ProgressTracker: 'ProgressTracker',
+  DailyQuote: 'DailyQuote',
+  ThemeMixes: 'ThemeMixes',
+  ThemeSeeAll: 'ThemeSeeAll',
+  ThemeDetail: 'ThemeDetail',
+  HealyChat: 'HealyChat',
 };
 
 export default AppRoutes;

@@ -10,7 +10,8 @@ const style = (colors: any) =>
       paddingHorizontal: 20,
     },
     title: {
-      fontSize: 25,
+          fontSize: AppUtils.fontSize(25),
+
       textAlign: 'center',
       fontFamily: AppFonts.recoMedium,
       color: colors.black,
