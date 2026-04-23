@@ -1,0 +1,95 @@
+import joi from 'joi';
+import { languages } from '../../constants/workflow.constant';
+
+export const validateCreateExerciseDetails = (common: any) => {
+    return joi.object({
+        reading_title: joi.string().trim().required(),
+        reading_description: joi.string().trim().required(),
+        concept_title: joi.string().trim().required(),
+        concept_description: joi.string().trim().required(),
+        reflection: joi.string().trim().required(),
+        phase_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateUpdateExerciseDetails = (common: any) => {
+    return joi.object({
+        reading_title: joi.string().optional().allow(''),
+        reading_description: joi.string().optional().allow(''),
+        concept_title: joi.string().optional().allow(''),
+        concept_description: joi.string().optional().allow(''),
+        reflection: joi.string().optional().allow(''),
+        exercise_details_id: joi.string().trim().required(),
+        lang: joi.string().trim().required().valid(...Object.values(languages)),
+    }).validate(common)
+}
+
+export const validateDeleteExerciseDetails = (common: any) => {
+    return joi.object({
+        exercise_details_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateExerciseDetails = (common: any) => {
+    return joi.object({
+        exercise_details_id: joi.string().trim().required(),
+        lang: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateListExerciseDetails = (common: any) => {
+    return joi.object({
+        page: joi.number().optional(),
+        limit: joi.number().optional(),
+        search: joi.string().optional(),
+        lang: joi.string().trim().required().valid(...Object.values(languages)),
+        phase_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateCreateExercise = (common: any) => {
+    return joi.object({
+        title: joi.string().trim().required(),
+        description: joi.string().trim().required(),
+        exercise_details_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateUpdateExercise = (common: any) => {
+    return joi.object({
+        title: joi.string().optional().allow(''),
+        description: joi.string().optional().allow(''),
+        exercise_id: joi.string().trim().required(),
+        lang: joi.string().trim().required().valid(...Object.values(languages)),
+    }).validate(common)
+}
+
+export const validateDeleteExercise = (common: any) => {
+    return joi.object({
+        exercise_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateExercise = (common: any) => {
+    return joi.object({
+        exercise_id: joi.string().trim().required(),
+        lang: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateListExercise = (common: any) => {
+    return joi.object({
+        page: joi.number().optional(),
+        limit: joi.number().optional(),
+        search: joi.string().optional(),
+        lang: joi.string().trim().required().valid(...Object.values(languages)),
+        exercise_details_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateSingleExercise = (common: any) => {
+    return joi.object({
+        exercise_id: joi.string().trim().required(),
+        lang: joi.string().trim().required(),
+    }).validate(common)
+}
