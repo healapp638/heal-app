@@ -1563,6 +1563,262 @@
 				]
 			}
 		},
+		"/admin/submodules/create_submodule": {
+			"post": {
+				"operationId": "CreateSubModule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Sub Modules"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"moduleId": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"moduleId",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/submodules/update_submodule": {
+			"post": {
+				"operationId": "UpdateSubModule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Sub Modules"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"lang": {
+										"type": "string"
+									},
+									"subModuleId": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"lang",
+									"subModuleId",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/submodules/delete_submodule": {
+			"delete": {
+				"operationId": "DeleteSubModule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Sub Modules"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"subModuleId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"subModuleId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/submodules/list_submodule": {
+			"get": {
+				"operationId": "ListSubModule",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Sub Modules"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lang",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "moduleId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/submodules/submodule_details": {
+			"get": {
+				"operationId": "SubModuleDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Sub Modules"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "subModuleId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lang",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/admin/modules/create_module": {
 			"post": {
 				"operationId": "CreateModule",
@@ -1593,11 +1849,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"themeId": {
+										"type": "string"
+									},
 									"title": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"themeId",
 									"title"
 								],
 								"type": "object"
@@ -1637,6 +1897,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"lang": {
+										"type": "string"
+									},
 									"moduleId": {
 										"type": "string"
 									},
@@ -1645,6 +1908,7 @@
 									}
 								},
 								"required": [
+									"lang",
 									"moduleId",
 									"title"
 								],
@@ -1655,7 +1919,7 @@
 				}
 			}
 		},
-		"/admin/modules/delete_theme": {
+		"/admin/modules/delete_module": {
 			"delete": {
 				"operationId": "DeleteModule",
 				"responses": {
@@ -1752,6 +2016,14 @@
 					{
 						"in": "query",
 						"name": "lang",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "themeId",
 						"required": false,
 						"schema": {
 							"type": "string"

@@ -8,6 +8,7 @@ import adminUserRoutes from '../modules/AdminUser/admin.user.route'
 import adminContactUsRoutes from '../modules/AdminContactus/admin.contactus.route'
 import adminThemeRoutes from './AdminTheme/admin.theme.route'
 import adminModulesRoutes from './AdminModules/admin.modules.route'
+import adminSubModulesRoutes from './AdminSubModules/admin.submodules.route'
 
 //user and admin all usertype common routes
 import commonRoutes from '../modules/Common/common.route'
@@ -27,7 +28,8 @@ Route.use('/admin/user', adminUserRoutes);
 Route.use('/admin/auth', adminAuthRoutes);
 Route.use('/admin/contactus', adminContactUsRoutes);
 Route.use('/admin/theme', adminThemeRoutes);
-Route.use('/admin/modules', adminModulesRoutes)
+Route.use('/admin/modules', adminModulesRoutes);
+Route.use('/admin/submodules', adminSubModulesRoutes);
 
 //user routes
 Route.use('/user/auth', userAuthRoutes);

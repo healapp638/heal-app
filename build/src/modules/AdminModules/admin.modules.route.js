@@ -19,15 +19,15 @@ const middlewares_1 = __importDefault(require("../../middlewares"));
 const { verifyTokenAdmin } = middlewares_1.default.auth;
 const router = express_1.default.Router();
 router.post('/create_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title } = req.body;
+    const { title, themeId } = req.body;
     const controller = new admin_modules_controller_1.default(req, res);
-    const result = yield controller.createModule({ title });
+    const result = yield controller.createModule({ title, themeId });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/update_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, moduleId } = req.body;
+    const { title, moduleId, lang } = req.body;
     const controller = new admin_modules_controller_1.default(req, res);
-    const result = yield controller.updateModule({ title, moduleId });
+    const result = yield controller.updateModule({ title, moduleId, lang });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -37,9 +37,9 @@ router.delete('/delete_module', verifyTokenAdmin, (req, res) => __awaiter(void 0
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page, limit, search, lang } = req.query;
+    const { page, limit, search, lang, themeId } = req.query;
     const controller = new admin_modules_controller_1.default(req, res);
-    const result = yield controller.listModule(page, limit, search, lang);
+    const result = yield controller.listModule(page, limit, search, lang, themeId);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/module_details', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

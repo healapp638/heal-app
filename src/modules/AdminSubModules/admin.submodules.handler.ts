@@ -5,12 +5,12 @@ import statusCodes from '../../constants/statusCodes'
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import translateText from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
-import adminModulesModel from "./admin.modules.model";
+import adminSubmodulesModel from "./admin.submodules.model";
 
 const CommonHandler = {
 
-    createModule: async (data: any): Promise<ApiResponse> => {
-        const { title, themeId } = data;
+    createSubModule: async (data: any): Promise<ApiResponse> => {
+        const { title, moduleId } = data;
 
         const obj: any = {
             title: {},
@@ -27,14 +27,10 @@ const CommonHandler = {
                 obj.title[lang] = translatedTitle;
             })
         );
-
-        console.log(obj, 'FINAL obj ✅'); // now it will have data
-
-        const createTheme = await adminModulesModel.create({
+        const createTheme = await adminSubmodulesModel.create({
             title: obj.title,
-            themeId: convertToObjectId(themeId),
+            moduleId: convertToObjectId(moduleId),
         });
-
         if (!createTheme) {
             return showResponse(false, responseMessage.common.save_failed, null, statusCodes.API_ERROR);
         }
@@ -42,17 +38,17 @@ const CommonHandler = {
         return showResponse(true, responseMessage.common.data_save, null, statusCodes.SUCCESS);
     },
 
-    updateModule: async (data: any): Promise<ApiResponse> => {
-        const { title, lang, moduleId } = data
-        const isModuleExist = await adminModulesModel.findOne({ _id: moduleId, status: USER_STATUS.ACTIVE });
+    updateSubModule: async (data: any): Promise<ApiResponse> => {
+        const { title, lang, subModuleId } = data
+        const isModuleExist = await adminSubmodulesModel.findOne({ _id: subModuleId, status: USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return showResponse(false, responseMessage.common.module_not_found, null, statusCodes.API_ERROR)
         }
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
         };
-        const updateTheme = await adminModulesModel.findByIdAndUpdate(
-            moduleId,
+        const updateTheme = await adminSubmodulesModel.findByIdAndUpdate(
+            subModuleId,
             { $set: obj },
             { new: true }
         );
@@ -62,18 +58,18 @@ const CommonHandler = {
         return showResponse(true, responseMessage.common.updated_sucessfully, null, statusCodes.SUCCESS)
     },
 
-    deleteModule: async (data: any): Promise<ApiResponse> => {
-        const { moduleId } = data
-        const deleteTheme = await adminModulesModel.findOneAndUpdate({ _id: moduleId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+    deleteSubModule: async (data: any): Promise<ApiResponse> => {
+        const { subModuleId } = data
+        const deleteTheme = await adminSubmodulesModel.findOneAndUpdate({ _id: subModuleId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
         if (!deleteTheme) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }
         return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
     },
 
-    listModule: async (page: number, limit: number, search: string = '', lang: string = 'en', themeId: string): Promise<ApiResponse> => {
+    listSubModule: async (page: number, limit: number, search: string = '', lang: string = 'en', moduleId: string): Promise<ApiResponse> => {
         const aggregate = [
-            { $match: { status: { $ne: USER_STATUS.DELETED }, themeId: convertToObjectId(themeId) } },
+            { $match: { status: { $ne: USER_STATUS.DELETED }, moduleId: convertToObjectId(moduleId) } },
             {
                 $addFields: {
                     title: `$title.${lang}`,
@@ -86,15 +82,15 @@ const CommonHandler = {
             },
             { $sort: { createdAt: -1 } },
         ]
-        const { totalCount, aggregation } = await getCountAndPagination(adminModulesModel, aggregate, page, limit)
-        const result = await adminModulesModel.aggregate(aggregation)
+        const { totalCount, aggregation } = await getCountAndPagination(adminSubmodulesModel, aggregate, page, limit)
+        const result = await adminSubmodulesModel.aggregate(aggregation)
         return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
     },
 
-    moduleDetails: async (data: any): Promise<ApiResponse> => {
-        const { moduleId, lang } = data
-        const themeDetails = await adminModulesModel.aggregate([
-            { $match: { _id: convertToObjectId(moduleId) } },
+    subModuleDetails: async (data: any): Promise<ApiResponse> => {
+        const { subModuleId, lang } = data
+        const themeDetails = await adminSubmodulesModel.aggregate([
+            { $match: { _id: convertToObjectId(subModuleId) } },
             {
                 $addFields: {
                     title: `$title.${lang}`,

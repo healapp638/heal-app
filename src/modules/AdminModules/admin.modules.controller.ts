@@ -5,7 +5,7 @@ import handler from './admin.modules.handler'
 import { showResponse } from '../../utils/response.util';
 import { tryCatchWrapper } from '../../utils/config.util';
 import statusCodes from '../../constants/statusCodes';
-import { validateCreateModule, validateDeleteModule, validateModuleDetails, validateUpdateModule } from './admin.modules.validator';
+import { validateCreateModule, validateDeleteModule, validateListModule, validateModuleDetails, validateUpdateModule } from './admin.modules.validator';
 
 
 @Tags('Admin Modules')
@@ -23,7 +23,7 @@ export default class AdminModulesController extends Controller {
 
     @Security('Bearer')
     @Post('/create_module')
-    public async createModule(@Body() request: { title: string }): Promise<ApiResponse> {
+    public async    createModule(@Body() request: { title: string,themeId:string }): Promise<ApiResponse> {
         const validate = validateCreateModule(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -34,7 +34,7 @@ export default class AdminModulesController extends Controller {
 
     @Security('Bearer')
     @Post('/update_module')
-    public async updateModule(@Body() request: { title: string, moduleId: string }): Promise<ApiResponse> {
+    public async updateModule(@Body() request: { title: string, moduleId: string,lang:string }): Promise<ApiResponse> {
         const validate = validateUpdateModule(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -44,7 +44,7 @@ export default class AdminModulesController extends Controller {
     }
 
     @Security('Bearer')
-    @Delete('/delete_theme')
+    @Delete('/delete_module')
     public async deleteModule(@Body() request: { moduleId: string }): Promise<ApiResponse> {
         const validate = validateDeleteModule(request);
         if (validate.error) {
@@ -56,9 +56,13 @@ export default class AdminModulesController extends Controller {
 
     @Security('Bearer')
     @Get('/list_module')
-    public async listModule(@Query() page?: number, @Query() limit?: number, @Query() search?: string, @Query() lang?: string): Promise<ApiResponse> {
+    public async listModule(@Query() page?: number, @Query() limit?: number, @Query() search?: string, @Query() lang?: string, @Query() themeId?: string): Promise<ApiResponse> {
+        const validate = validateListModule({ page, limit, search, lang,themeId });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
         const wrappedFunc = tryCatchWrapper(handler.listModule);
-        return wrappedFunc(page, limit, search, lang); // Invoking the wrapped function 
+        return wrappedFunc(page, limit, search, lang,themeId); // Invoking the wrapped function 
     }
 
     @Security('Bearer')

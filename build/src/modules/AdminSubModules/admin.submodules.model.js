@@ -17,9 +17,9 @@ const langSchema = {
     it: { type: String, default: '' },
     ro: { type: String, default: '' },
 };
-const moduleSchema = new mongoose_1.default.Schema({
-    themeId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Theme', default: null },
+const subModuleSchema = new mongoose_1.default.Schema({
+    moduleId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Module', default: null },
     title: langSchema,
     status: { type: Number, default: workflow_constant_1.USER_STATUS.ACTIVE },
 }, { timestamps: true, versionKey: false });
-exports.default = mongoose_1.default.model('Module', moduleSchema);
+exports.default = mongoose_1.default.model('SubModule', subModuleSchema);

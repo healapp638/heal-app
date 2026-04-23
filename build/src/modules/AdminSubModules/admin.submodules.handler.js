@@ -18,10 +18,10 @@ const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
 const common_helper_1 = require("../../helpers/common.helper");
-const admin_modules_model_1 = __importDefault(require("./admin.modules.model"));
+const admin_submodules_model_1 = __importDefault(require("./admin.submodules.model"));
 const CommonHandler = {
-    createModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, themeId } = data;
+    createSubModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { title, moduleId } = data;
         const obj = {
             title: {},
         };
@@ -32,40 +32,39 @@ const CommonHandler = {
             ]);
             obj.title[lang] = translatedTitle;
         })));
-        console.log(obj, 'FINAL obj ✅'); // now it will have data
-        const createTheme = yield admin_modules_model_1.default.create({
+        const createTheme = yield admin_submodules_model_1.default.create({
             title: obj.title,
-            themeId: (0, common_helper_1.convertToObjectId)(themeId),
+            moduleId: (0, common_helper_1.convertToObjectId)(moduleId),
         });
         if (!createTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, null, statusCodes_1.default.SUCCESS);
     }),
-    updateModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, lang, moduleId } = data;
-        const isModuleExist = yield admin_modules_model_1.default.findOne({ _id: moduleId, status: workflow_constant_1.USER_STATUS.ACTIVE });
+    updateSubModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { title, lang, subModuleId } = data;
+        const isModuleExist = yield admin_submodules_model_1.default.findOne({ _id: subModuleId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.module_not_found, null, statusCodes_1.default.API_ERROR);
         }
         const obj = Object.assign({}, (title && { [`title.${lang}`]: title }));
-        const updateTheme = yield admin_modules_model_1.default.findByIdAndUpdate(moduleId, { $set: obj }, { new: true });
+        const updateTheme = yield admin_submodules_model_1.default.findByIdAndUpdate(subModuleId, { $set: obj }, { new: true });
         if (!updateTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
-    deleteModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { moduleId } = data;
-        const deleteTheme = yield admin_modules_model_1.default.findOneAndUpdate({ _id: moduleId }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
+    deleteSubModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { subModuleId } = data;
+        const deleteTheme = yield admin_submodules_model_1.default.findOneAndUpdate({ _id: subModuleId }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
         if (!deleteTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),
-    listModule: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en', themeId) {
+    listSubModule: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en', moduleId) {
         const aggregate = [
-            { $match: { status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, themeId: (0, common_helper_1.convertToObjectId)(themeId) } },
+            { $match: { status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, moduleId: (0, common_helper_1.convertToObjectId)(moduleId) } },
             {
                 $addFields: {
                     title: `$title.${lang}`,
@@ -78,14 +77,14 @@ const CommonHandler = {
             },
             { $sort: { createdAt: -1 } },
         ];
-        const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_modules_model_1.default, aggregate, page, limit);
-        const result = yield admin_modules_model_1.default.aggregate(aggregation);
+        const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_submodules_model_1.default, aggregate, page, limit);
+        const result = yield admin_submodules_model_1.default.aggregate(aggregation);
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
-    moduleDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { moduleId, lang } = data;
-        const themeDetails = yield admin_modules_model_1.default.aggregate([
-            { $match: { _id: (0, common_helper_1.convertToObjectId)(moduleId) } },
+    subModuleDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { subModuleId, lang } = data;
+        const themeDetails = yield admin_submodules_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(subModuleId) } },
             {
                 $addFields: {
                     title: `$title.${lang}`,

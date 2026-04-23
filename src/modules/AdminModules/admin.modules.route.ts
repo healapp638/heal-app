@@ -8,16 +8,16 @@ const { verifyTokenAdmin } = middlewares.auth
 const router = express.Router()
 
 router.post('/create_module', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { title } = req.body
+    const { title,themeId } = req.body
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.createModule({ title });
+    const result: ApiResponse = await controller.createModule({ title,themeId });
     return showOutput(res, result, result.code)
 });
 
 router.post('/update_module', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { title, moduleId } = req.body
+    const { title, moduleId, lang } = req.body
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.updateModule({ title, moduleId });
+    const result: ApiResponse = await controller.updateModule({ title, moduleId, lang });
     return showOutput(res, result, result.code)
 });
 
@@ -29,9 +29,9 @@ router.delete('/delete_module', verifyTokenAdmin, async (req: Request | any, res
 });
 
 router.get('/list_module', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { page, limit, search, lang } = req.query
+    const { page, limit, search, lang,themeId } = req.query
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.listModule(page, limit, search, lang);
+    const result: ApiResponse = await controller.listModule(page, limit, search, lang,themeId);
     return showOutput(res, result, result.code)
 });
 

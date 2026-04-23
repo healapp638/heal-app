@@ -14,13 +14,13 @@ const langSchema = {
     ro: { type: String, default: '' },
 };
 
-const moduleSchema = new mongoose.Schema(
+const subModuleSchema = new mongoose.Schema(
     {
-        themeId: { type: mongoose.Schema.Types.ObjectId, ref: 'Theme', default: null },
+        moduleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Module', default: null },
         title: langSchema,
         status: { type: Number, default: USER_STATUS.ACTIVE },
     },
     { timestamps: true, versionKey: false }
 );
 
-export default mongoose.model('Module', moduleSchema);
+export default mongoose.model('SubModule', subModuleSchema);

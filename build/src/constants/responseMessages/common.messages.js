@@ -24,6 +24,7 @@ const common_messages = {
     database_error: "Data fetch unsucessfull",
     data_retreive_sucess: "Data retrieve successfully",
     data_not_found: "Data not found",
+    module_not_found: "Module not found",
     data_save: "Data Saved Successfully",
     save_failed: "Error Occurred while saving Data",
     already_existed: "Data already existed",

@@ -1,40 +1,40 @@
 import joi from 'joi';
 import { languages } from '../../constants/workflow.constant';
 
-export const validateCreateModule = (common: any) => {
+export const validateCreateSubModule = (common: any) => {
     return joi.object({
         title: joi.string().trim().required(),
-        themeId: joi.string().trim().required(),
+        moduleId: joi.string().trim().required(),
     }).validate(common)
 }
 
-export const validateUpdateModule = (common: any) => {
+export const validateUpdateSubModule = (common: any) => {
     return joi.object({
         title: joi.string().optional().allow(''),
-        moduleId: joi.string().trim().required(),
+        subModuleId: joi.string().trim().required(),
         lang: joi.string().trim().required().valid(...Object.values(languages)),
     }).validate(common)
 }
 
-export const validateDeleteModule = (common: any) => {
+export const validateDeleteSubModule = (common: any) => {
     return joi.object({
-        moduleId: joi.string().trim().required(),
+        subModuleId: joi.string().trim().required(),
     }).validate(common)
 }
 
-export const validateModuleDetails = (common: any) => {
+export const validateSubModuleDetails = (common: any) => {
     return joi.object({
-        moduleId: joi.string().trim().required(),
+        subModuleId: joi.string().trim().required(),
         lang: joi.string().trim().required(),
     }).validate(common)
 }
 
-export const validateListModule = (common: any) => {
+export const validateListSubModule = (common: any) => {
     return joi.object({
         page: joi.number().optional(),
         limit: joi.number().optional(),
         search: joi.string().optional(),
         lang: joi.string().trim().required().valid(...Object.values(languages)),
-        themeId: joi.string().trim().required(),
+        moduleId: joi.string().trim().required(),
     }).validate(common)
 }

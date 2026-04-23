@@ -42,16 +42,16 @@ const CommonHandler = {
             imgUrl
         });
         if (!createTheme) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, null, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, null, statusCodes_1.default.SUCCESS);
     }),
     updateTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, description, imgUrl, lang, themeId } = data;
         const obj = Object.assign(Object.assign(Object.assign({}, (title && { [`title.${lang}`]: title })), (description && { [`description.${lang}`]: description })), (imgUrl && { imgUrl }));
         const updateTheme = yield admin_theme_model_1.default.findByIdAndUpdate(themeId, { $set: obj }, { new: true });
         if (!updateTheme) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
@@ -59,7 +59,7 @@ const CommonHandler = {
         const { themeId } = data;
         const deleteTheme = yield admin_theme_model_1.default.findOneAndUpdate({ _id: themeId }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
         if (!deleteTheme) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),

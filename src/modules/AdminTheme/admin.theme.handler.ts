@@ -40,10 +40,10 @@ const CommonHandler = {
         });
 
         if (!createTheme) {
-            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR);
+            return showResponse(false, responseMessage.common.save_failed, null, statusCodes.API_ERROR);
         }
 
-        return showResponse(true, responseMessage.common.data_retreive_sucess, null, statusCodes.SUCCESS);
+        return showResponse(true, responseMessage.common.data_save, null, statusCodes.SUCCESS);
     },
 
     updateTheme: async (data: any): Promise<ApiResponse> => {
@@ -59,7 +59,7 @@ const CommonHandler = {
             { new: true }
         );
         if (!updateTheme) {
-            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR)
+            return showResponse(false, responseMessage.common.update_failed, null, statusCodes.API_ERROR)
         }
         return showResponse(true, responseMessage.common.updated_sucessfully, null, statusCodes.SUCCESS)
     },
@@ -68,7 +68,7 @@ const CommonHandler = {
         const { themeId } = data
         const deleteTheme = await adminThemeModel.findOneAndUpdate({ _id: themeId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
         if (!deleteTheme) {
-            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR)
+            return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }
         return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
     },

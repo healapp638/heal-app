@@ -9,7 +9,7 @@ const AdminSchema = new mongoose_1.Schema({
     password: { type: String },
     profile_pic: { type: String, default: "" },
     user_type: { type: Number, default: workflow_constant_1.ROLE.ADMIN },
-    otp: { type: Number, default: null },
+    otp: { type: String, default: null },
     phone_number: { type: String, default: null },
     country_code: { type: String, default: null },
     is_verified: { type: Boolean, default: true },

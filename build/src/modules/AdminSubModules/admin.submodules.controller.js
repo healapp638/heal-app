@@ -25,96 +25,96 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
-const admin_modules_handler_1 = __importDefault(require("./admin.modules.handler"));
+const admin_submodules_handler_1 = __importDefault(require("./admin.submodules.handler"));
 const response_util_1 = require("../../utils/response.util");
 const config_util_1 = require("../../utils/config.util");
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
-const admin_modules_validator_1 = require("./admin.modules.validator");
-let AdminModulesController = class AdminModulesController extends tsoa_1.Controller {
+const admin_submodules_validator_1 = require("./admin.submodules.validator");
+let AdminSubModulesController = class AdminSubModulesController extends tsoa_1.Controller {
     constructor(req, res) {
         super();
         this.req = req;
         this.res = res;
         this.userId = req.body.user ? req.body.user.id : '';
     }
-    createModule(request) {
+    createSubModule(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_modules_validator_1.validateCreateModule)(request);
+            const validate = (0, admin_submodules_validator_1.validateCreateSubModule)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_modules_handler_1.default.createModule);
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_submodules_handler_1.default.createSubModule);
             return wrappedFunc(request); // Invoking the wrapped function 
         });
     }
-    updateModule(request) {
+    updateSubModule(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_modules_validator_1.validateUpdateModule)(request);
+            const validate = (0, admin_submodules_validator_1.validateUpdateSubModule)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_modules_handler_1.default.updateModule);
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_submodules_handler_1.default.updateSubModule);
             return wrappedFunc(request); // Invoking the wrapped function 
         });
     }
-    deleteModule(request) {
+    deleteSubModule(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_modules_validator_1.validateDeleteModule)(request);
+            const validate = (0, admin_submodules_validator_1.validateDeleteSubModule)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_modules_handler_1.default.deleteModule);
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_submodules_handler_1.default.deleteSubModule);
             return wrappedFunc(request); // Invoking the wrapped function 
         });
     }
-    listModule(page, limit, search, lang, themeId) {
+    listSubModule(page, limit, search, lang, moduleId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_modules_validator_1.validateListModule)({ page, limit, search, lang, themeId });
+            const validate = (0, admin_submodules_validator_1.validateListSubModule)({ page, limit, search, lang, moduleId });
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_modules_handler_1.default.listModule);
-            return wrappedFunc(page, limit, search, lang, themeId); // Invoking the wrapped function 
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_submodules_handler_1.default.listSubModule);
+            return wrappedFunc(page, limit, search, lang, moduleId); // Invoking the wrapped function 
         });
     }
-    moduleDetails(moduleId, lang) {
+    subModuleDetails(subModuleId, lang) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_modules_validator_1.validateModuleDetails)({ moduleId, lang });
+            const validate = (0, admin_submodules_validator_1.validateSubModuleDetails)({ subModuleId, lang });
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_modules_handler_1.default.moduleDetails);
-            return wrappedFunc({ moduleId, lang }); // Invoking the wrapped function 
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_submodules_handler_1.default.subModuleDetails);
+            return wrappedFunc({ subModuleId, lang }); // Invoking the wrapped function 
         });
     }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)('/create_module'),
+    (0, tsoa_1.Post)('/create_submodule'),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], AdminModulesController.prototype, "createModule", null);
+], AdminSubModulesController.prototype, "createSubModule", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)('/update_module'),
+    (0, tsoa_1.Post)('/update_submodule'),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], AdminModulesController.prototype, "updateModule", null);
+], AdminSubModulesController.prototype, "updateSubModule", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Delete)('/delete_module'),
+    (0, tsoa_1.Delete)('/delete_submodule'),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], AdminModulesController.prototype, "deleteModule", null);
+], AdminSubModulesController.prototype, "deleteSubModule", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Get)('/list_module'),
+    (0, tsoa_1.Get)('/list_submodule'),
     __param(0, (0, tsoa_1.Query)()),
     __param(1, (0, tsoa_1.Query)()),
     __param(2, (0, tsoa_1.Query)()),
@@ -123,19 +123,19 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, Number, String, String, String]),
     __metadata("design:returntype", Promise)
-], AdminModulesController.prototype, "listModule", null);
+], AdminSubModulesController.prototype, "listSubModule", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Get)('/module_details'),
+    (0, tsoa_1.Get)('/submodule_details'),
     __param(0, (0, tsoa_1.Query)()),
     __param(1, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
-], AdminModulesController.prototype, "moduleDetails", null);
-AdminModulesController = __decorate([
-    (0, tsoa_1.Tags)('Admin Modules'),
-    (0, tsoa_1.Route)('/admin/modules'),
+], AdminSubModulesController.prototype, "subModuleDetails", null);
+AdminSubModulesController = __decorate([
+    (0, tsoa_1.Tags)('Admin Sub Modules'),
+    (0, tsoa_1.Route)('/admin/submodules'),
     __metadata("design:paramtypes", [Object, Object])
-], AdminModulesController);
-exports.default = AdminModulesController;
+], AdminSubModulesController);
+exports.default = AdminSubModulesController;
