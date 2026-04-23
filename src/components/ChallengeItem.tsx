@@ -1,5 +1,11 @@
 import React from 'react';
-import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
@@ -30,25 +36,29 @@ const ChallengeItem = ({
       onPress={onPress}
       style={styles.container}
     >
-      {/* Top Left Badge Tag */}
-      {badge && (
-        <View style={styles.badgeContainer}>
-          <Image
-            source={images.time} // Using calendar as a fallback clock
-            style={styles.badgeIcon}
-            resizeMode="contain"
-            tintColor="white"
-          />
-          <SolidText style={styles.badgeText}>{badge}</SolidText>
-        </View>
-      )}
-
       <View style={styles.contentRow}>
-        <View style={styles.textContainer}>
-          <SolidText style={styles.titleText}>{title}</SolidText>
-          {description && (
-            <SolidText style={styles.descriptionText}>{description}</SolidText>
+        <View style={{ width: '80%' }}>
+          {/* Top Left Badge Tag */}
+          {badge && (
+            <View style={styles.badgeContainer}>
+              <Image
+                source={images.time} // Using calendar as a fallback clock
+                style={styles.badgeIcon}
+                resizeMode="contain"
+                tintColor="white"
+              />
+              <SolidText style={styles.badgeText}>{badge}</SolidText>
+            </View>
           )}
+
+          <View style={styles.textContainer}>
+            <SolidText style={styles.titleText}>{title}</SolidText>
+            {description && (
+              <SolidText style={styles.descriptionText}>
+                {description}
+              </SolidText>
+            )}
+          </View>
         </View>
 
         {/* Right Status Indicator */}
@@ -93,45 +103,48 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#604033', // Deep brown tag
     borderRadius: 14, // Pill shape
-    paddingHorizontal: 6,
-    paddingVertical: 4,
-    marginBottom: 14,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    marginBottom: Platform.OS == 'ios' ? 10 : 8,
   },
   badgeIcon: {
-    width: 14,
-    height: 14,
-    marginRight: 6,
+    width: 13,
+    height: 13,
+    marginRight: 4,
   },
   badgeText: {
     fontSize: AppUtils.fontSize(12),
     fontFamily: AppFonts.regular,
     color: '#F4EEE2', // Match screen background color for text
+    includeFontPadding: false,
   },
   contentRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    width: '100%',
   },
   textContainer: {
     flex: 1,
     paddingRight: 12,
+    width: '90%',
   },
   titleText: {
     fontSize: AppUtils.fontSize(14),
     fontFamily: AppFonts.semiBold,
     color: '#3A2110',
-    marginBottom: 6,
   },
   descriptionText: {
     fontSize: AppUtils.fontSize(12),
     fontFamily: AppFonts.medium,
     color: '#3A2110',
     opacity: 0.8,
-    lineHeight: 22,
+    lineHeight: 18,
+    marginTop: Platform.OS == 'ios' ? 5 : 0,
   },
   statusContainer: {
-    width: 58,
-    height: 58,
+    width: 56,
+    height: 56,
     borderRadius: 29,
     justifyContent: 'center',
     alignItems: 'center',

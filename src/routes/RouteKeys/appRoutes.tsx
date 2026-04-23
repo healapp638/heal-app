@@ -29,7 +29,13 @@ const AppRoutes = {
   Premium: 'Premium',
   BottomTab: 'BottomTab',
   Challenges: 'Challenges',
+  ChallengeDetail: 'ChallengeDetail',
+  Exercise: 'Exercise',
   Modules: 'Modules',
+  StartedModule: 'StartedModule',
+  PhaseDetail: 'PhaseDetail',
+  ModuleExercise: 'ModuleExercise',
+  ThemeDetail: 'ThemeDetail',
   Journal: 'Journal',
   Settings: 'Settings',
   DailyStreak: 'DailyStreak',
@@ -37,8 +43,12 @@ const AppRoutes = {
   DailyQuote: 'DailyQuote',
   ThemeMixes: 'ThemeMixes',
   ThemeSeeAll: 'ThemeSeeAll',
-  ThemeDetail: 'ThemeDetail',
+  ModuleThemeDetail: 'ModuleThemeDetail',
+  AddJournal: 'AddJournal',
   HealyChat: 'HealyChat',
+  Calendar: 'Calendar',
+  ConnectedEntries: 'ConnectedEntries',
+  EditProfile: 'EditProfile',
 };
 
 export default AppRoutes;

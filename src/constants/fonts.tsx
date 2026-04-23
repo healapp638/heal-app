@@ -1,6 +1,9 @@
 const AppFonts = {
   reco: 'Recoleta Regular',
   recoMedium: 'Recoleta Medium',
+  recoSemiBold: 'Recoleta SemiBold',
+  recoBold: 'Recoleta Bold',
+
   semiBold: 'Poppins-SemiBold',
   regular: 'Poppins-Regular',
   italic: 'Poppins-Italic',

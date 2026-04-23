@@ -1,9 +1,10 @@
 import React, { useContext } from 'react';
 import { View, FlatList, StyleSheet, Platform } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import ChallengeItem from './ChallengeItem';
 import { LocalizationContext } from '../localization/localization';
+import AppRoutes from '../routes/RouteKeys/appRoutes';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 
@@ -25,6 +26,7 @@ interface ChallengeListProps {
 const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
+  const navigation = useNavigation();
 
   const filteredChallenges = data.filter(item => item.category === activeTab);
 
@@ -49,7 +51,9 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
             points={item.points}
             badge={item.badge}
             isCompleted={item.isCompleted}
-            onPress={() => {}}
+            onPress={() =>
+              navigation.navigate(AppRoutes.ChallengeDetail as never)
+            }
           />
         );
       }}

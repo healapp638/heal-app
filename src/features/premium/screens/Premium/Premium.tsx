@@ -92,7 +92,12 @@ const Premium = () => {
             btnStyle={styles.actionBtn}
             txtStyle={styles.actionBtnText}
             titleTxt={localization.appkeys?.startFreeTrialBtn}
-            onPress={() => navigation.navigate(AppRoutes.BottomTab as never)}
+            onPress={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: AppRoutes.BottomTab as never }],
+              });
+            }}
           />
 
           <TouchableOpacity style={styles.promoBtn}>

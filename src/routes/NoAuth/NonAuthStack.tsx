@@ -13,8 +13,21 @@ import DailyQuote from '../../features/Home/screens/DailyQuote/DailyQuote';
 import ProgressTracker from '../../features/Home/screens/ProgressTracker/ProgressTracker';
 import ThemeMixes from '../../features/Home/screens/ThemeMixes/ThemeMixes';
 import ThemeSeeAll from '../../features/Home/screens/ThemeSeeAll/ThemeSeeAll';
-import ThemeDetail from '../../features/Home/screens/ThemeDetail/ThemeDetail';
+
 import HealyChat from '../../features/Home/screens/HealyChat/HealyChat';
+import ChallengeDetail from '../../features/Challenges/screens/ChallengeDetail/ChallengeDetail';
+import Exercise from '../../features/Challenges/screens/Exercise/Exercise';
+import StartedModule from '../../features/Modules/screens/StartedModule/StartedModule';
+import PhaseDetail from '../../features/Modules/screens/PhaseDetail/PhaseDetail';
+import ModuleExercise from '../../features/Modules/screens/ModuleExercise/ModuleExercise';
+
+import ThemeDetail from '../../features/Home/screens/ThemeDetail/ThemeDetail';
+import ModuleThemeDetail from '../../features/Modules/screens/ModuleThemeDetail/ModuleThemeDetail';
+import AddJournal from '../../features/Journal/screens/AddJournal/AddJournal';
+import Calendar from '../../features/Journal/screens/Calendar/Calendar';
+import ConnectedEntries from '../../features/Journal/screens/ConnectedEntries/ConnectedEntries';
+import EditProfile from '../../features/settings/screens/EditProfile/EditProfile';
+import SelectLanguage from '../../features/auth/screens/SelectLanguage/SelectLanguage';
 
 export default function NonAuthStack() {
   const Stack = createNativeStackNavigator();
@@ -38,6 +51,32 @@ export default function NonAuthStack() {
       <Stack.Screen name={AppRoutes.ThemeSeeAll} component={ThemeSeeAll} />
       <Stack.Screen name={AppRoutes.ThemeDetail} component={ThemeDetail} />
       <Stack.Screen name={AppRoutes.HealyChat} component={HealyChat} />
+      <Stack.Screen
+        name={AppRoutes.ChallengeDetail}
+        component={ChallengeDetail}
+      />
+      <Stack.Screen name={AppRoutes.Exercise} component={Exercise} />
+      <Stack.Screen name={AppRoutes.StartedModule} component={StartedModule} />
+      <Stack.Screen name={AppRoutes.PhaseDetail} component={PhaseDetail} />
+      <Stack.Screen
+        name={AppRoutes.ModuleExercise}
+        component={ModuleExercise}
+      />
+      <Stack.Screen
+        name={AppRoutes.ModuleThemeDetail}
+        component={ModuleThemeDetail}
+      />
+      <Stack.Screen name={AppRoutes.AddJournal} component={AddJournal} />
+      <Stack.Screen name={AppRoutes.Calendar} component={Calendar} />
+      <Stack.Screen
+        name={AppRoutes.ConnectedEntries}
+        component={ConnectedEntries}
+      />
+      <Stack.Screen name={AppRoutes.EditProfile} component={EditProfile} />
+      <Stack.Screen
+        name={AppRoutes.SelectLanguage}
+        component={SelectLanguage}
+      />
     </Stack.Navigator>
   );
 }

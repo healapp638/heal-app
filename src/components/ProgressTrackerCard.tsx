@@ -65,7 +65,7 @@ const ProgressTrackerCard = ({
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
-    padding: 14,
+    padding: 10,
     marginVertical: 8,
   },
   topRow: {

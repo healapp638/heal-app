@@ -43,7 +43,11 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
     <View style={styles.container}>
       <View style={styles.sideContainer}>
         {showBack && (
-          <TouchableOpacity onPress={handleBack} activeOpacity={0.7}>
+          <TouchableOpacity
+            hitSlop={10}
+            onPress={handleBack}
+            activeOpacity={0.7}
+          >
             <Image
               source={images.back}
               style={styles.backIcon}

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Pressable,
+  ViewStyle,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
@@ -19,6 +20,8 @@ interface HomeHeaderProps {
   showStreak: boolean;
   showCrown: boolean;
   onCrownPress: () => void;
+  viewStyle?: ViewStyle;
+  subStyle?: ViewStyle;
 }
 
 const HomeHeader = ({
@@ -29,16 +32,20 @@ const HomeHeader = ({
   showStreak = true,
   showCrown,
   onCrownPress,
+  viewStyle,
+  subStyle,
 }: HomeHeaderProps) => {
   const { colors, images } = useTheme() as any;
 
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, viewStyle]}>
       <View>
         <SolidText style={[styles.userName, { color: colors.brown }]}>
           {userName}
         </SolidText>
-        <SolidText style={[styles.safeSpace, { color: colors.brown }]}>
+        <SolidText
+          style={[styles.safeSpace, { color: colors.brown }, subStyle]}
+        >
           {safeSpaceLabel}
         </SolidText>
       </View>
@@ -69,7 +76,7 @@ const HomeHeader = ({
           <Image
             source={images.crown}
             tintColor={colors.brown}
-            style={{ height: 16, width: 16 }} // Reusing same icon size constraints
+            style={{ height: 18, width: 18 }} // Reusing same icon size constraints
             resizeMode="contain"
           />
         </Pressable>

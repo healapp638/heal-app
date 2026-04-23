@@ -138,7 +138,7 @@ const style = (colors: any) =>
       backgroundColor: colors.white,
       borderRadius: 12,
       overflow: 'hidden',
-      paddingHorizontal: 15,
+      paddingHorizontal: 10,
       flexDirection: 'row',
       alignItems: 'center',
       borderWidth: 1,

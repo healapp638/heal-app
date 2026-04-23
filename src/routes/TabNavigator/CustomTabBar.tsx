@@ -71,8 +71,8 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
                   styles.iconContainer,
                   isFocused && { backgroundColor: `${colors.primary}1A` }, // Light pink background
                   route.name === AppRoutes.Challenges
-                    ? { width: 75 }
-                    : { width: 65 },
+                    ? { width: 74 }
+                    : { width: 62 },
                 ]}
               >
                 <Image
@@ -85,6 +85,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
                 />
                 <SolidText
                   maxFontScale={1}
+                  numberOfLines={1}
                   style={[
                     styles.label,
                     { color: isFocused ? colors.primary : '#A19489' },
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? -8 : 6,
+    paddingBottom: Platform.OS === 'ios' ? -10 : 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -131,7 +132,7 @@ const styles = StyleSheet.create({
   iconContainer: {
     borderRadius: 16,
     marginBottom: 6,
-    paddingVertical: 14,
+    paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent', // Explicit default background
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     fontFamily: AppFonts.regular,
     textAlign: 'center',
     includeFontPadding: false,
-    marginTop: 4,
+    marginTop: 6,
   },
 });
 

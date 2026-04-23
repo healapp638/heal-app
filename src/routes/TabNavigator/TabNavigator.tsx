@@ -4,10 +4,11 @@ import AppRoutes from '../RouteKeys/appRoutes';
 import CustomTabBar from './CustomTabBar';
 import { LocalizationContext } from '../../localization/localization';
 import Home from '../../features/Home/screens/Home/Home';
-import Challenges from '../../features/Challenges/Challenges';
-import Modules from '../../features/Modules/Modules';
-import Journal from '../../features/Journal/Journal';
-import Settings from '../../features/Settings';
+import Challenges from '../../features/Challenges/screens/Challenges/Challenges';
+
+import Settings from '../../features/settings/screens/Settings/Settings';
+import Modules from '../../features/Modules/screens/Modules/Modules';
+import Journal from '../../features/Journal/screens/Journal/Journal';
 
 // Placeholder screens (will be replaced with real imports)
 

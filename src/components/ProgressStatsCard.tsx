@@ -54,8 +54,8 @@ const styles = StyleSheet.create({
   statsCard: {
     flexDirection: 'row',
     backgroundColor: '#FFDBBB', // Specific beige from design specs
-    borderRadius: 18,
-    paddingVertical: 18,
+    borderRadius: 16,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     marginBottom: 16,
     justifyContent: 'space-between',
