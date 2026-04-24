@@ -43,10 +43,10 @@ init();
 //  SECURITY MIDDLEWARE
 app.use((0, helmet_1.default)());
 //  CORS CONFIG (FIXED)
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
 app.use((0, cors_1.default)({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    origin: allowedOrigins,
+    credentials: true,
 }));
 //  RESPONSE COMPRESSION
 app.use((0, compression_1.default)({

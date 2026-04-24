@@ -10,7 +10,8 @@ import adminThemeRoutes from './AdminTheme/admin.theme.route'
 import adminModulesRoutes from './AdminModules/admin.modules.route'
 import adminSubModulesRoutes from './AdminSubModules/admin.submodules.route'
 import adminPhasesRoutes from './AdminPhases/admin.phases.route'
-import adminExerciseRoutes from './AdminExercise/admin.exercise.route'
+import adminExerciseRoutes from './AdminExercise/admin.exercise.route';
+import userModulesRoutes from './UserModules/user.modules.route';
 
 //user and admin all usertype common routes
 import commonRoutes from '../modules/Common/common.route'
@@ -38,6 +39,7 @@ Route.use('/admin/exercise', adminExerciseRoutes);
 //user routes
 Route.use('/user/auth', userAuthRoutes);
 Route.use('/user/common', userCommonRoutes);
+Route.use('/user/modules', userModulesRoutes);
 
 //user and admin all usertype common routes
 Route.use('/common', commonRoutes);

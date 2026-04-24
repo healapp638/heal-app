@@ -35,11 +35,12 @@ app.use(helmet());
 
 
 //  CORS CONFIG (FIXED)
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+
 app.use(
   cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
+    origin: allowedOrigins,
+    credentials: true,
   })
 );
 
