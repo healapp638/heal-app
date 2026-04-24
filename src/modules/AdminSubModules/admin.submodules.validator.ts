@@ -5,6 +5,7 @@ export const validateCreateSubModule = (common: any) => {
     return joi.object({
         title: joi.string().trim().required(),
         moduleId: joi.string().trim().required(),
+        description: joi.string().trim().required(),
     }).validate(common)
 }
 
@@ -13,6 +14,7 @@ export const validateUpdateSubModule = (common: any) => {
         title: joi.string().optional().allow(''),
         subModuleId: joi.string().trim().required(),
         lang: joi.string().trim().required().valid(...Object.values(languages)),
+        description: joi.string().trim().optional().allow(''),
     }).validate(common)
 }
 

@@ -35,6 +35,7 @@ export const getEnvironmentParams = (env: any, project_name: string, project_ini
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_PROD`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_PROD`,
             JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            GOOGLE_TRANSLATE_API_KEY: `${initial_for_aws}_GOOGLE_TRANSLATE_API_KEY`,
             
 
 
@@ -51,6 +52,7 @@ export const getEnvironmentParams = (env: any, project_name: string, project_ini
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_STAGE`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_STAGE`,
             JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            GOOGLE_TRANSLATE_API_KEY: `${initial_for_aws}_GOOGLE_TRANSLATE_API_KEY`,
         },
         'DEV': {
             DB_NAME: `${initial_for_aws}_DB_NAME_DEV`,
@@ -65,6 +67,7 @@ export const getEnvironmentParams = (env: any, project_name: string, project_ini
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_DEV`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_DEV`,
             JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            GOOGLE_TRANSLATE_API_KEY: `${initial_for_aws}_GOOGLE_TRANSLATE_API_KEY`,
         },
 
     }

@@ -18,6 +18,7 @@ const subModuleSchema = new mongoose.Schema(
     {
         moduleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Module', default: null },
         title: langSchema,
+        description: langSchema,
         status: { type: Number, default: USER_STATUS.ACTIVE },
     },
     { timestamps: true, versionKey: false }

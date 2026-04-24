@@ -19,15 +19,15 @@ const middlewares_1 = __importDefault(require("../../middlewares"));
 const { verifyTokenAdmin } = middlewares_1.default.auth;
 const router = express_1.default.Router();
 router.post('/create_submodule', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, moduleId } = req.body;
+    const { title, moduleId, description } = req.body;
     const controller = new admin_submodules_controller_1.default(req, res);
-    const result = yield controller.createSubModule({ title, moduleId });
+    const result = yield controller.createSubModule({ title, moduleId, description });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/update_submodule', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, subModuleId, lang } = req.body;
+    const { title, subModuleId, lang, description } = req.body;
     const controller = new admin_submodules_controller_1.default(req, res);
-    const result = yield controller.updateSubModule({ title, subModuleId, lang });
+    const result = yield controller.updateSubModule({ title, subModuleId, lang, description });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_submodule', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

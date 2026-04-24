@@ -10,6 +10,7 @@ const validateCreateSubModule = (common) => {
     return joi_1.default.object({
         title: joi_1.default.string().trim().required(),
         moduleId: joi_1.default.string().trim().required(),
+        description: joi_1.default.string().trim().required(),
     }).validate(common);
 };
 exports.validateCreateSubModule = validateCreateSubModule;
@@ -18,6 +19,7 @@ const validateUpdateSubModule = (common) => {
         title: joi_1.default.string().optional().allow(''),
         subModuleId: joi_1.default.string().trim().required(),
         lang: joi_1.default.string().trim().required().valid(...Object.values(workflow_constant_1.languages)),
+        description: joi_1.default.string().trim().optional().allow(''),
     }).validate(common);
 };
 exports.validateUpdateSubModule = validateUpdateSubModule;

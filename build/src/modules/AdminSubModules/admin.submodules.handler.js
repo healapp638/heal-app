@@ -21,20 +21,24 @@ const common_helper_1 = require("../../helpers/common.helper");
 const admin_submodules_model_1 = __importDefault(require("./admin.submodules.model"));
 const CommonHandler = {
     createSubModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, moduleId } = data;
+        const { title, moduleId, description } = data;
         const obj = {
             title: {},
+            description: {},
         };
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-            const [translatedTitle] = yield Promise.all([
-                (0, langauge_translate_helper_1.default)(title, lang)
+            const [translatedTitle, translatedDescription] = yield Promise.all([
+                (0, langauge_translate_helper_1.default)(title, lang),
+                (0, langauge_translate_helper_1.default)(description, lang)
             ]);
             obj.title[lang] = translatedTitle;
+            obj.description[lang] = translatedDescription;
         })));
         const createTheme = yield admin_submodules_model_1.default.create({
             title: obj.title,
             moduleId: (0, common_helper_1.convertToObjectId)(moduleId),
+            description: obj.description,
         });
         if (!createTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
@@ -42,12 +46,12 @@ const CommonHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, null, statusCodes_1.default.SUCCESS);
     }),
     updateSubModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, lang, subModuleId } = data;
+        const { title, lang, subModuleId, description } = data;
         const isModuleExist = yield admin_submodules_model_1.default.findOne({ _id: subModuleId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.module_not_found, null, statusCodes_1.default.API_ERROR);
         }
-        const obj = Object.assign({}, (title && { [`title.${lang}`]: title }));
+        const obj = Object.assign(Object.assign({}, (title && { [`title.${lang}`]: title })), (description && { [`description.${lang}`]: description }));
         const updateTheme = yield admin_submodules_model_1.default.findByIdAndUpdate(subModuleId, { $set: obj }, { new: true });
         if (!updateTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);
@@ -68,6 +72,7 @@ const CommonHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    description: `$description.${lang}`,
                 }
             },
             {
@@ -88,6 +93,7 @@ const CommonHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    description: `$description.${lang}`,
                 }
             }
         ]);

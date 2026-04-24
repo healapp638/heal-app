@@ -24,6 +24,12 @@ const messages: any = {
         token_expired: "Token expired",
         logout_success: "Logout success",
         user_detail: "User detail fetched successfully",
+        data_fetch_success: "Data fetched successfully",
+        data_not_found: "Data not found",
+        theme_not_found: "Theme not found",
+        already_completed: "Already completed",
+        error_while_completing_lesson: "Error while completing lesson",
+        lesson_completed_successfully: "Lesson completed successfully",
 
 
     },
@@ -52,6 +58,12 @@ const messages: any = {
         token_expired: "Token expirado",
         logout_success: "Logout success",
         user_detail: "Detalles del usuario obtenidos exitosamente",
+        data_fetch_success: "Datos obtenidos exitosamente",
+        data_not_found: "Datos no encontrados",
+        theme_not_found: "Tema no encontrado",
+        already_completed: "Ya completado",
+        error_while_completing_lesson: "Error al completar la lección",
+        lesson_completed_successfully: "Lección completada exitosamente",
 
 
     },
@@ -80,9 +92,15 @@ const messages: any = {
         token_expired: "Token expiré",
         logout_success: "Logout success",
         user_detail: "Détails de l'utilisateur obtenus avec succès",
+        data_fetch_success: "Données obtenues avec succès",
+        data_not_found: "Données non trouvées",
+        theme_not_found: "Thème non trouvé",
+        already_completed: "Déjà complété",
+        error_while_completing_lesson: "Erreur lors de la complétion de la leçon",
+        lesson_completed_successfully: "Leçon complétée avec succès",
 
     },
-    zh:{
+    zh: {
         USER_NOT_FOUND: "用户未找到",
         INVALID_CREDENTIALS: "无效的电子邮件或密码",
         email_already_exists: "电子邮件已存在",
@@ -107,8 +125,14 @@ const messages: any = {
         token_expired: "Token已过期",
         logout_success: "Logout success",
         user_detail: "用户详情获取成功",
+        data_fetch_success: "数据获取成功",
+        data_not_found: "数据未找到",
+        theme_not_found: "主题未找到",
+        already_completed: "已完成",
+        error_while_completing_lesson: "完成课程时出错",
+        lesson_completed_successfully: "课程完成成功",
     },
-    hi:{
+    hi: {
         //hindi
         USER_NOT_FOUND: "उपयोगकर्ता नहीं मिला",
         INVALID_CREDENTIALS: "अमान्य ईमेल या पासवर्ड",
@@ -134,10 +158,16 @@ const messages: any = {
         token_expired: "टोकन समाप्त हो गया है",
         logout_success: "लॉगआउट सफलता",
         user_detail: "उपयोगकर्ता विवरण सफलतापूर्वक प्राप्त हुआ",
-        
-        
+        data_fetch_success: "डेटा सफलतापूर्वक प्राप्त हुआ",
+        data_not_found: "डेटा नहीं मिला",
+        theme_not_found: "थीम नहीं मिला",
+        already_completed: "पहले ही पूरा हो चुका है",
+        error_while_completing_lesson: "पाठ पूरा करते समय त्रुटि",
+        lesson_completed_successfully: "पाठ सफलतापूर्वक पूरा हुआ",
+
+
     },
-    de:{
+    de: {
         USER_NOT_FOUND: "Benutzer nicht gefunden",
         INVALID_CREDENTIALS: "Ungültige E-Mail oder Passwort",
         email_already_exists: "E-Mail existiert bereits",
@@ -162,10 +192,16 @@ const messages: any = {
         token_expired: "Token abgelaufen",
         logout_success: "Logout erfolgreich",
         user_detail: "Benutzerdetails erfolgreich abgerufen",
-        
-        
+        data_fetch_success: "Daten erfolgreich abgerufen",
+        data_not_found: "Daten nicht gefunden",
+        theme_not_found: "Theme nicht gefunden",
+        already_completed: "Bereits abgeschlossen",
+        error_while_completing_lesson: "Fehler beim Abschließen der Lektion",
+        lesson_completed_successfully: "Lektion erfolgreich abgeschlossen",
+
+
     },
-    ru:{
+    ru: {
         USER_NOT_FOUND: "Пользователь не найден",
         INVALID_CREDENTIALS: "Неверный email или пароль",
         email_already_exists: "Email уже существует",
@@ -190,8 +226,14 @@ const messages: any = {
         token_expired: "Токен истек",
         logout_success: "Выход выполнен успешно",
         user_detail: "Детали пользователя получены успешно",
+        data_fetch_success: "Данные успешно получены",
+        data_not_found: "Данные не найдены",
+        theme_not_found: "Тема не найдена",
+        already_completed: "Уже завершено",
+        error_while_completing_lesson: "Ошибка при завершении урока",
+        lesson_completed_successfully: "Урок успешно завершен",
     },
-    pt:{
+    pt: {
         USER_NOT_FOUND: "Usuário não encontrado",
         INVALID_CREDENTIALS: "Email ou senha inválidos",
         email_already_exists: "Email já existe",
@@ -216,8 +258,14 @@ const messages: any = {
         token_expired: "Token expirado",
         logout_success: "Logout realizado com sucesso",
         user_detail: "Detalhes do usuário obtidos com sucesso",
+        data_fetch_success: "Dados obtidos com sucesso",
+        data_not_found: "Dados não encontrados",
+        theme_not_found: "Tema não encontrado",
+        already_completed: "Já completado",
+        error_while_completing_lesson: "Erro ao completar a lição",
+        lesson_completed_successfully: "Lição completada com sucesso",
     },
-    it:{
+    it: {
         USER_NOT_FOUND: "Utente non trovato",
         INVALID_CREDENTIALS: "Email o password non validi",
         email_already_exists: "Email già esistente",
@@ -242,8 +290,14 @@ const messages: any = {
         token_expired: "Token scaduto",
         logout_success: "Logout effettuato con successo",
         user_detail: "Dettagli dell'utente ottenuti con successo",
+        data_fetch_success: "Dati ottenuti con successo",
+        data_not_found: "Dati non trovati",
+        theme_not_found: "Tema non trovato",
+        already_completed: "Già completato",
+        error_while_completing_lesson: "Errore durante la completamento della lezione",
+        lesson_completed_successfully: "Lezione completata con successo",
     },
-    ro:{
+    ro: {
         USER_NOT_FOUND: "Utilizator negăsit",
         INVALID_CREDENTIALS: "Email sau parolă invalide",
         email_already_exists: "Email deja existent",
@@ -268,6 +322,12 @@ const messages: any = {
         token_expired: "Token expirat",
         logout_success: "Logout reușit",
         user_detail: "Detalii ale utilizatorului obținute cu succes",
+        data_fetch_success: "Date obținute cu succes",
+        data_not_found: "Date nu au fost găsite",
+        theme_not_found: "Tema nu a fost găsită",
+        already_completed: "Deja completat",
+        error_while_completing_lesson: "Eroare la completarea lecției",
+        lesson_completed_successfully: "Lecția a fost completată cu succes",
     },
 };
 

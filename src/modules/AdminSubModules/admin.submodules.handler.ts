@@ -10,26 +10,30 @@ import adminSubmodulesModel from "./admin.submodules.model";
 const CommonHandler = {
 
     createSubModule: async (data: any): Promise<ApiResponse> => {
-        const { title, moduleId } = data;
+        const { title, moduleId, description } = data;
 
         const obj: any = {
             title: {},
+            description: {},
         };
 
         const langs = Object.values(languages);
 
         await Promise.all(
             langs.map(async (lang: string) => {
-                const [translatedTitle] = await Promise.all([
-                    translateText(title, lang)
+                const [translatedTitle, translatedDescription] = await Promise.all([
+                    translateText(title, lang),
+                    translateText(description, lang)
                 ]);
 
                 obj.title[lang] = translatedTitle;
+                obj.description[lang] = translatedDescription;
             })
         );
         const createTheme = await adminSubmodulesModel.create({
             title: obj.title,
             moduleId: convertToObjectId(moduleId),
+            description: obj.description,
         });
         if (!createTheme) {
             return showResponse(false, responseMessage.common.save_failed, null, statusCodes.API_ERROR);
@@ -39,13 +43,14 @@ const CommonHandler = {
     },
 
     updateSubModule: async (data: any): Promise<ApiResponse> => {
-        const { title, lang, subModuleId } = data
+        const { title, lang, subModuleId, description } = data
         const isModuleExist = await adminSubmodulesModel.findOne({ _id: subModuleId, status: USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return showResponse(false, responseMessage.common.module_not_found, null, statusCodes.API_ERROR)
         }
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
+            ...(description && { [`description.${lang}`]: description }),
         };
         const updateTheme = await adminSubmodulesModel.findByIdAndUpdate(
             subModuleId,
@@ -73,6 +78,7 @@ const CommonHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    description: `$description.${lang}`,
                 }
             },
             {
@@ -94,6 +100,7 @@ const CommonHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    description: `$description.${lang}`,
                 }
             }
         ])

@@ -27,7 +27,7 @@ if (envConfig.error) {
 //3rd parm is project Initial 
 const ENV_PARMAS = (0, config_util_1.getEnvironmentParams)(process.env.ENV_MODE, 'HEAL', 'HL'); //sds
 console.log(ENV_PARMAS, "Parms_For_Aws_Parameter_store");
-const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET } = ENV_PARMAS;
+const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET, GOOGLE_TRANSLATE_API_KEY } = ENV_PARMAS;
 let AGORA_CREDENTIAL;
 let AWS_CREDENTIAL;
 let STRIPE_CREDENTIAL;
@@ -117,6 +117,7 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
             services_1.default.awsService.getParameterFromAWS({ name: REGION }),
             services_1.default.awsService.getSecretFromAWS("heal_secret"),
             services_1.default.awsService.getParameterFromAWS({ name: BUCKET }),
+            services_1.default.awsService.getParameterFromAWS({ name: GOOGLE_TRANSLATE_API_KEY }),
             // services.awsService.getSecretFromAWS(CLOUDFRONT_URL),
             // services.awsService.getSecretFromAWS(SWAGGER_USER_NAME),
             // services.awsService.getSecretFromAWS(SWAGGER_PASSWORD),

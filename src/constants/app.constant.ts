@@ -22,7 +22,8 @@ const {
   REGION,
   DB_URI,
   BUCKET,
-  JWT_SECRET
+  JWT_SECRET,
+  GOOGLE_TRANSLATE_API_KEY
 } = ENV_PARMAS
 let AGORA_CREDENTIAL: AgoraCredential
 let AWS_CREDENTIAL: AwsCredential
@@ -122,6 +123,7 @@ const initializeAwsCredential = async () => {
       services.awsService.getParameterFromAWS({ name: REGION }),
       services.awsService.getSecretFromAWS("heal_secret"),
       services.awsService.getParameterFromAWS({ name: BUCKET }),
+      services.awsService.getParameterFromAWS({ name: GOOGLE_TRANSLATE_API_KEY }),
       // services.awsService.getSecretFromAWS(CLOUDFRONT_URL),
       // services.awsService.getSecretFromAWS(SWAGGER_USER_NAME),
       // services.awsService.getSecretFromAWS(SWAGGER_PASSWORD),

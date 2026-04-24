@@ -18,10 +18,46 @@ const response_util_1 = require("../../utils/response.util");
 const middlewares_1 = __importDefault(require("../../middlewares"));
 const { verifyTokenUser } = middlewares_1.default.auth;
 const router = express_1.default.Router();
-router.post('/theme_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cursor, limit } = req.body;
+router.get('/theme_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { cursor, limit } = req.query;
     const controller = new user_modules_controller_1.default(req, res);
-    const result = yield controller.themeList({ cursor, limit });
+    const result = yield controller.themeList(cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/module_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { theme_id, cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.moduleList(theme_id, cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/phase_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sub_module_id, cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.phaseList(sub_module_id, cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/exercise_detail_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { phase_id, cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.exerciseDetailList(phase_id, cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/exercise_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { exercise_detail_id, cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.exerciseList(exercise_detail_id, cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/complete_lesson', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { exercise_id, exercise_details_id, phase_id, reflection } = req.body;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.completeLesson({ exercise_id, exercise_details_id, phase_id, reflection });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/start_lesson', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { exercise_id, exercise_details_id, phase_id } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.startLesson(exercise_id, exercise_details_id, phase_id);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

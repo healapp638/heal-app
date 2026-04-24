@@ -20,6 +20,7 @@ const langSchema = {
 const subModuleSchema = new mongoose_1.default.Schema({
     moduleId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Module', default: null },
     title: langSchema,
+    description: langSchema,
     status: { type: Number, default: workflow_constant_1.USER_STATUS.ACTIVE },
 }, { timestamps: true, versionKey: false });
 exports.default = mongoose_1.default.model('SubModule', subModuleSchema);

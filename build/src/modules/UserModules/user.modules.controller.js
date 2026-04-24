@@ -27,6 +27,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const user_modules_handler_1 = __importDefault(require("../UserModules/user.modules.handler"));
 const config_util_1 = require("../../utils/config.util");
+const response_util_1 = require("../../utils/response.util");
+const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const user_modules_validator_1 = require("./user.modules.validator");
 let UserModulesController = class UserModulesController extends tsoa_1.Controller {
     constructor(req, res) {
         super();
@@ -34,21 +37,140 @@ let UserModulesController = class UserModulesController extends tsoa_1.Controlle
         this.res = res;
         this.userId = req.body.user ? req.body.user.id : '';
     }
-    themeList(request) {
+    themeList(cursor, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.themeList);
-            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+            return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    moduleList(theme_id, cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateModuleList)({ theme_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.moduleList);
+            return wrappedFunc({ theme_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    phaseList(sub_module_id, cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validatePhaseList)({ sub_module_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.phaseList);
+            return wrappedFunc({ sub_module_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    exerciseDetailList(phase_id, cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateExerciseDetailList)({ phase_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.exerciseDetailList);
+            return wrappedFunc({ phase_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    exerciseList(exercise_detail_id, cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateExerciseList)({ exercise_detail_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.exerciseList);
+            return wrappedFunc({ exercise_detail_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    completeLesson(body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateCompleteLesson)(body);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.completeLesson);
+            return wrappedFunc(body, this.userId); // Invoking the wrapped function 
+        });
+    }
+    startLesson(exercise_id, exercise_details_id, phase_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateStartLesson)({ exercise_id, exercise_details_id, phase_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.startLesson);
+            return wrappedFunc(exercise_id, exercise_details_id, phase_id, this.userId); // Invoking the wrapped function 
         });
     }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/theme_list"),
+    (0, tsoa_1.Get)("/theme_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "themeList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/module_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "moduleList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/phase_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "phaseList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/exercise_detail_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "exerciseDetailList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/exercise_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "exerciseList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/complete_lesson"),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UserModulesController.prototype, "themeList", null);
+], UserModulesController.prototype, "completeLesson", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/start_lesson"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "startLesson", null);
 UserModulesController = __decorate([
     (0, tsoa_1.Tags)('User Modules Routes'),
     (0, tsoa_1.Route)('/user/modules'),

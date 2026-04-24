@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Body, Security } from 'tsoa'
+import { Route, Controller, Tags, Security, Query, Get, Post, Body } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserModules/user.modules.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
+import { showResponse } from '../../utils/response.util';
+import statusCodes from '../../constants/statusCodes';
+import { validateCompleteLesson, validateExerciseDetailList, validateExerciseList, validateModuleList, validatePhaseList, validateStartLesson } from './user.modules.validator';
 
 @Tags('User Modules Routes')
 @Route('/user/modules')
@@ -19,11 +22,78 @@ export default class UserModulesController extends Controller {
     }
 
     @Security('Bearer')
-    @Post("/theme_list")
-    public async themeList(@Body() request: { cursor: string, limit: number }): Promise<ApiResponse> {
+    @Get("/theme_list")
+    public async themeList(@Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.themeList);
-        return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+        return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
     }
+
+    @Security('Bearer')
+    @Get("/module_list")
+    public async moduleList(@Query() theme_id: string, @Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
+        const validate = validateModuleList({ theme_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.moduleList);
+        return wrappedFunc({ theme_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/phase_list")
+    public async phaseList(@Query() sub_module_id: string, @Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
+        const validate = validatePhaseList({ sub_module_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.phaseList);
+        return wrappedFunc({ sub_module_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/exercise_detail_list")
+    public async exerciseDetailList(@Query() phase_id: string, @Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
+        const validate = validateExerciseDetailList({ phase_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.exerciseDetailList);
+        return wrappedFunc({ phase_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/exercise_list")
+    public async exerciseList(@Query() exercise_detail_id: string, @Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
+        const validate = validateExerciseList({ exercise_detail_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.exerciseList);
+        return wrappedFunc({ exercise_detail_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Post("/complete_lesson")
+    public async completeLesson(@Body() body: { exercise_id: string, exercise_details_id: string, phase_id: string, reflection: string }): Promise<ApiResponse> {
+        const validate = validateCompleteLesson(body);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.completeLesson);
+        return wrappedFunc(body, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/start_lesson")
+    public async startLesson(@Query() exercise_id: string, @Query() exercise_details_id: string, @Query() phase_id: string): Promise<ApiResponse> {
+        const validate = validateStartLesson({ exercise_id, exercise_details_id, phase_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.startLesson);
+        return wrappedFunc(exercise_id, exercise_details_id, phase_id, this.userId); // Invoking the wrapped function 
+    }
+
 }
 
 

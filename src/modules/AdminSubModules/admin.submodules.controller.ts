@@ -23,7 +23,7 @@ export default class AdminSubModulesController extends Controller {
 
     @Security('Bearer')
     @Post('/create_submodule')
-    public async createSubModule(@Body() request: { title: string, moduleId: string }): Promise<ApiResponse> {
+    public async createSubModule(@Body() request: { title: string, moduleId: string, description: string }): Promise<ApiResponse> {
         const validate = validateCreateSubModule(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -34,7 +34,7 @@ export default class AdminSubModulesController extends Controller {
 
     @Security('Bearer')
     @Post('/update_submodule')
-    public async updateSubModule(@Body() request: { title: string, subModuleId: string, lang: string }): Promise<ApiResponse> {
+    public async updateSubModule(@Body() request: { title: string, subModuleId: string, lang: string,description:string }): Promise<ApiResponse> {
         const validate = validateUpdateSubModule(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

@@ -182,7 +182,7 @@ const UserAuthHandler = {
 
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
-
+            
             const userData = { is_after_social_login: false, account_type, is_profile_completed, ...result?.data, access_token, refresh_token }
 
             return showResponse(true, responseMessage.users.login_success, userData, statusCodes.SUCCESS);

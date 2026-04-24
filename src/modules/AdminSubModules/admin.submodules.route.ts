@@ -8,16 +8,16 @@ const { verifyTokenAdmin } = middlewares.auth
 const router = express.Router()
 
 router.post('/create_submodule', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { title,moduleId } = req.body
+    const { title,moduleId,description } = req.body
     const controller = new SubModuleController(req, res)
-    const result: ApiResponse = await controller.createSubModule({ title,moduleId });
+    const result: ApiResponse = await controller.createSubModule({ title,moduleId,description });
     return showOutput(res, result, result.code)
 });
 
 router.post('/update_submodule', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { title, subModuleId, lang } = req.body
+    const { title, subModuleId, lang,description } = req.body
     const controller = new SubModuleController(req, res)
-    const result: ApiResponse = await controller.updateSubModule({ title, subModuleId, lang });
+    const result: ApiResponse = await controller.updateSubModule({ title, subModuleId, lang,description });
     return showOutput(res, result, result.code)
 });
 

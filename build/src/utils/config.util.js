@@ -78,6 +78,7 @@ const getEnvironmentParams = (env, project_name, project_initial) => {
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_PROD`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_PROD`,
             JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            GOOGLE_TRANSLATE_API_KEY: `${initial_for_aws}_GOOGLE_TRANSLATE_API_KEY`,
         },
         'STAG': {
             DB_NAME: `${initial_for_aws}_DB_NAME_STAG`,
@@ -91,6 +92,7 @@ const getEnvironmentParams = (env, project_name, project_initial) => {
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_STAGE`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_STAGE`,
             JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            GOOGLE_TRANSLATE_API_KEY: `${initial_for_aws}_GOOGLE_TRANSLATE_API_KEY`,
         },
         'DEV': {
             DB_NAME: `${initial_for_aws}_DB_NAME_DEV`,
@@ -105,6 +107,7 @@ const getEnvironmentParams = (env, project_name, project_initial) => {
             STRIPE_PB_KEY: `${initial_for_aws}_STRIPE_PB_KEY_DEV`,
             STRIPE_SEC_KEY: `${initial_for_aws}_STRIPE_SEC_KEY_DEV`,
             JWT_SECRET: `${initial_for_aws}_JWT_SECRET`,
+            GOOGLE_TRANSLATE_API_KEY: `${initial_for_aws}_GOOGLE_TRANSLATE_API_KEY`,
         },
     };
     return env_obj[env]; //return matched environment and send its object
