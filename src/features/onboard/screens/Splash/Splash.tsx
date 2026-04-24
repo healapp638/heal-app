@@ -1,5 +1,6 @@
-import { Image, View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import React, { useEffect } from 'react';
+import Video from 'react-native-video';
 
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
@@ -14,16 +15,17 @@ const Splash = () => {
   useEffect(() => {
     setTimeout(() => {
       navigation.navigate(AppRoutes.Welcome as never);
-    }, 2000);
+    }, 3000);
   }, [navigation]);
   return (
     <SolidView
       view={
         <View style={styles.container}>
-          <Image
-            source={images.logo}
-            resizeMode="contain"
-            style={styles.logo}
+          <Video
+            source={images.splash}
+            resizeMode="cover"
+            style={StyleSheet.absoluteFill}
+            muted={true}
           />
         </View>
       }

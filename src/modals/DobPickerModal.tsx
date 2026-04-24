@@ -18,6 +18,7 @@ import SolidText from '../components/SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import { LocalizationContext } from '../localization/localization';
+import SolidBtn from '../components/SolidBtn';
 
 export type DobDateParts = {
   month: string;
@@ -89,7 +90,7 @@ const DobPickerModal: React.FC<Props> = ({
     selectedValue: string,
     onSelect: (val: string) => void,
     ref: React.RefObject<ScrollView | null>,
-    colWidth: any,
+    flexVal: number,
   ) => {
     const paddedData = ['', '', ...data, '', ''];
     const selectedIndex = Math.max(0, data.indexOf(selectedValue));
@@ -102,7 +103,7 @@ const DobPickerModal: React.FC<Props> = ({
     };
 
     return (
-      <View style={[styles.column, { width: colWidth }]}>
+      <View style={[styles.column, { flex: flexVal }]}>
         <ScrollView
           ref={ref}
           showsVerticalScrollIndicator={false}
@@ -111,6 +112,7 @@ const DobPickerModal: React.FC<Props> = ({
           contentOffset={{ x: 0, y: selectedIndex * ITEM_HEIGHT }}
           onMomentumScrollEnd={handleScrollEnd}
           scrollEventThrottle={16}
+          snapToAlignment="center"
         >
           {paddedData.map((item, i) => {
             const isSelected = item === selectedValue;
@@ -119,10 +121,8 @@ const DobPickerModal: React.FC<Props> = ({
                 <SolidText
                   style={[
                     styles.itemText,
-                    isSelected && [
-                      styles.itemTextSelected,
-                      { color: colors.white },
-                    ],
+                    isSelected && styles.itemTextSelected,
+                    isSelected && { color: colors.white },
                   ]}
                 >
                   {item}
@@ -163,7 +163,7 @@ const DobPickerModal: React.FC<Props> = ({
                   styles.selectionBlock,
                   {
                     backgroundColor: colors.primary,
-                    width: wp('25%'),
+                    flex: 2.5,
                     borderRadius: 10,
                   },
                 ]}
@@ -174,7 +174,7 @@ const DobPickerModal: React.FC<Props> = ({
                   styles.selectionBlock,
                   {
                     backgroundColor: colors.primary,
-                    width: wp('18%'),
+                    flex: 1.8,
                     borderRadius: 10,
                   },
                 ]}
@@ -185,7 +185,7 @@ const DobPickerModal: React.FC<Props> = ({
                   styles.selectionBlock,
                   {
                     backgroundColor: colors.primary,
-                    width: wp('25%'),
+                    flex: 2.5,
                     borderRadius: 10,
                   },
                 ]}
@@ -196,7 +196,7 @@ const DobPickerModal: React.FC<Props> = ({
               date.month,
               month => setDate((d: DobDateParts) => ({ ...d, month })),
               monthRef,
-              wp('25%'),
+              2.5,
             )}
             <View style={{ width: wp('2%') }} />
             {renderDrumPicker(
@@ -204,7 +204,7 @@ const DobPickerModal: React.FC<Props> = ({
               date.day,
               day => setDate((d: DobDateParts) => ({ ...d, day })),
               dayRef,
-              wp('18%'),
+              1.8,
             )}
             <View style={{ width: wp('2%') }} />
             {renderDrumPicker(
@@ -212,14 +212,14 @@ const DobPickerModal: React.FC<Props> = ({
               date.year,
               year => setDate((d: DobDateParts) => ({ ...d, year })),
               yearRef,
-              wp('25%'),
+              2.5,
             )}
           </View>
 
           {modalNote ? (
             <SolidText style={styles.dobNote}>{modalNote}</SolidText>
           ) : null}
-
+          {/* 
           <TouchableOpacity
             style={[styles.dobConfirmButton, { backgroundColor: colors.brown }]}
             onPress={() => {
@@ -228,7 +228,16 @@ const DobPickerModal: React.FC<Props> = ({
             }}
           >
             <SolidText style={styles.dobConfirmText}>{modalConfirm}</SolidText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+
+          <SolidBtn
+            onPress={() => {
+              setIsDobSelected(true);
+              onClose();
+            }}
+            titleTxt={modalConfirm}
+            btnStyle={{ marginBottom: -4 }}
+          />
         </View>
       </View>
     </Modal>
@@ -264,6 +273,7 @@ const style = (colors: any) =>
       color: colors.black,
       textAlign: 'center',
       includeFontPadding: false,
+      flex: 1,
     },
     closeIcon: {
       width: 24,
@@ -275,7 +285,7 @@ const style = (colors: any) =>
       height: PICKER_HEIGHT,
       overflow: 'hidden',
       alignSelf: 'center',
-      width: wp('72%'),
+      width: '100%',
     },
     selectionOverlay: {
       position: 'absolute',
@@ -294,13 +304,11 @@ const style = (colors: any) =>
       height: PICKER_HEIGHT,
       overflow: 'hidden',
       zIndex: 2,
-      alignItems: 'center',
     },
     item: {
       height: ITEM_HEIGHT,
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100%',
     },
     itemText: {
       fontFamily: AppFonts.regular,

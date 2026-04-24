@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, TextInput, BackHandler } from 'react-native';
 import {
   CommonActions,
@@ -12,35 +12,52 @@ import SolidBtn from '../../../../components/SolidBtn';
 import SuccessModal from '../../../../modals/SuccessModal';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-
-const steps = [
-  {
-    type: 'number',
-    text: 'Think of the person you call your best friend.',
-  },
-  {
-    type: 'number',
-    prefixText: 'Mentally identify: ',
-    text: 'what makes this bond different from others?',
-  },
-  {
-    type: 'number',
-    text: "What does it give you that you don't find elsewhere?",
-  },
-  {
-    type: 'reflection',
-    title: 'Reflection',
-    question: 'What is the most important quality in a friendship for you?',
-    instruction: 'In your head or on paper, take the time to answer honestly.',
-    placeholder:
-      'Express what you feel. This space is yours, without judgment.',
-  },
-];
+import { LocalizationContext } from '../../../../localization/localization';
 
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
+
+  const steps = [
+    {
+      type: 'number',
+      text:
+        localization.appkeys?.moduleExerciseStep1 ||
+        'Think of the person you call your best friend.',
+    },
+    {
+      type: 'number',
+      prefixText:
+        localization.appkeys?.moduleExerciseStep2Prefix ||
+        'Mentally identify: ',
+      text:
+        localization.appkeys?.moduleExerciseStep2 ||
+        'what makes this bond different from others?',
+    },
+    {
+      type: 'number',
+      text:
+        localization.appkeys?.moduleExerciseStep3 ||
+        "What does it give you that you don't find elsewhere?",
+    },
+    {
+      type: 'reflection',
+      title:
+        localization.appkeys?.moduleExerciseReflectionTitle || 'Reflection',
+      question:
+        localization.appkeys?.moduleExerciseReflectionQuestion ||
+        'What is the most important quality in a friendship for you?',
+      instruction:
+        localization.appkeys?.moduleExerciseReflectionInstruction ||
+        'In your head or on paper, take the time to answer honestly.',
+      placeholder:
+        localization.appkeys?.moduleExerciseReflectionPlaceholder ||
+        'Express what you feel. This space is yours, without judgment.',
+    },
+  ];
+
   const [currentStep, setCurrentStep] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
@@ -76,7 +93,10 @@ const ModuleExercise = () => {
       isScrollEnabled
       view={
         <View style={styles.mainContainer}>
-          <HeaderCommon title="Exercise" onBackPress={handleBack} />
+          <HeaderCommon
+            title={localization.appkeys?.exercise || 'Exercise'}
+            onBackPress={handleBack}
+          />
 
           <View style={styles.contentContainer}>
             {currentStepData.type === 'number' ? (
@@ -113,13 +133,19 @@ const ModuleExercise = () => {
                   placeholderTextColor="black"
                   value={reflectionText}
                   onChangeText={setReflectionText}
+                  maxFontSizeMultiplier={1.4}
+                  textAlignVertical="top"
                 />
               </View>
             )}
           </View>
 
           <SolidBtn
-            titleTxt={currentStep === steps.length - 1 ? 'Completed' : 'Next'}
+            titleTxt={
+              currentStep === steps.length - 1
+                ? localization.appkeys?.completed || 'Completed'
+                : localization.appkeys?.next || 'Next'
+            }
             onPress={handleNext}
             btnStyle={styles.nextButton}
           />
@@ -127,9 +153,12 @@ const ModuleExercise = () => {
           <SuccessModal
             visible={showModal}
             onClose={() => setShowModal(false)}
-            title="Well done"
-            subtitle="You've completed Phase 1"
-            btnLabel="Continue"
+            title={localization.appkeys?.wellDone || 'Well done'}
+            subtitle={
+              localization.appkeys?.completedPhase1 ||
+              "You've completed Phase 1"
+            }
+            btnLabel={localization.appkeys?.continue || 'Continue'}
             onPressBtn={() => {
               setShowModal(false);
               navigation.dispatch(state => {
@@ -148,6 +177,8 @@ const ModuleExercise = () => {
                 });
               });
             }}
+            subStyle={{ marginTop: -8, marginBottom: 20 }}
+            btnStyle={{ marginTop: 0, marginBottom: -4 }}
           />
         </View>
       }

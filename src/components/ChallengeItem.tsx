@@ -70,7 +70,9 @@ const ChallengeItem = ({
               !isCompleted && styles.pendingBorder,
             ]}
           >
-            <SolidText style={styles.pointsText}>{points || '0 Pts'}</SolidText>
+            <SolidText maxFontScale={1} style={styles.pointsText}>
+              {points || '0 Pts'}
+            </SolidText>
           </View>
         ) : (
           <Image

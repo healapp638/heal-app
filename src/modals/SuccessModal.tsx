@@ -8,6 +8,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from '../components/SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
+import SolidBtn from '../components/SolidBtn';
 
 interface SuccessModalProps {
   visible: boolean;
@@ -16,6 +17,8 @@ interface SuccessModalProps {
   subtitle: string;
   btnLabel?: string;
   onPressBtn?: () => void;
+  btnStyle?: object;
+  subStyle?: object;
 }
 
 const SuccessModal: React.FC<SuccessModalProps> = ({
@@ -25,6 +28,8 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
   subtitle,
   btnLabel = 'Login',
   onPressBtn,
+  btnStyle,
+  subStyle,
 }) => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
@@ -45,14 +50,15 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
           />
 
           <SolidText style={styles.modalTitle}>{title}</SolidText>
-          <SolidText style={styles.modalSubtitle}>{subtitle}</SolidText>
+          <SolidText style={[styles.modalSubtitle, subStyle]}>
+            {subtitle}
+          </SolidText>
 
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: colors.brown }]}
+          <SolidBtn
+            titleTxt={btnLabel}
             onPress={onPressBtn || onClose}
-          >
-            <SolidText style={styles.modalButtonText}>{btnLabel}</SolidText>
-          </TouchableOpacity>
+            btnStyle={btnStyle}
+          />
         </View>
       </View>
     </Modal>
@@ -75,8 +81,8 @@ const style = (colors: any) =>
       alignItems: 'center',
     },
     successIcon: {
-      width: 100,
-      height: 100,
+      width: 80,
+      height: 80,
       marginBottom: 20,
     },
     modalTitle: {
@@ -96,7 +102,6 @@ const style = (colors: any) =>
       marginBottom: 30,
       lineHeight: 24,
       includeFontPadding: false,
-      paddingHorizontal: 10,
     },
     modalButton: {
       borderRadius: 100,

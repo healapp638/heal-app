@@ -12,26 +12,26 @@ import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 
-const MONTHS = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
-];
-
 const Calendar = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const [showCreditsModal, setShowCreditsModal] = useState(false);
+
+  const MONTHS = [
+    localization.appkeys?.monthJan || 'January',
+    localization.appkeys?.monthFeb || 'February',
+    localization.appkeys?.monthMar || 'March',
+    localization.appkeys?.monthApr || 'April',
+    localization.appkeys?.monthMay || 'May',
+    localization.appkeys?.monthJun || 'June',
+    localization.appkeys?.monthJul || 'July',
+    localization.appkeys?.monthAug || 'August',
+    localization.appkeys?.monthSep || 'September',
+    localization.appkeys?.monthOct || 'October',
+    localization.appkeys?.monthNov || 'November',
+    localization.appkeys?.monthDec || 'December',
+  ];
 
   const styles = style(colors);
   const today = new Date();

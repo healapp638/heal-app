@@ -89,7 +89,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
 const styles = StyleSheet.create({
   moduleCard: {
     width: '100%',
-    height: 108,
+    minHeight: 108,
     backgroundColor: 'white',
     borderRadius: 14,
     marginBottom: 16,
@@ -146,6 +146,8 @@ const styles = StyleSheet.create({
   progressValue: {
     fontSize: AppUtils.fontSize(11),
     fontFamily: AppFonts.semiBold,
+    marginBottom: 8,
+    includeFontPadding: false,
   },
   progressBarBg: {
     height: 8,

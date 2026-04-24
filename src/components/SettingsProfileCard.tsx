@@ -20,7 +20,7 @@ const SettingsProfileCard = ({
 
   return (
     <View style={styles.profileCard}>
-      <Image source={images.avatar} style={styles.avatar} />
+      <Image source={images.user} style={styles.avatar} />
       <View style={styles.profileInfo}>
         <SolidText style={styles.userName}>{userName}</SolidText>
         <SolidText style={styles.userEmail}>{userEmail}</SolidText>

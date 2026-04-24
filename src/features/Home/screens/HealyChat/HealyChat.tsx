@@ -66,6 +66,7 @@ const HealyChat = () => {
                 placeholderTextColor="rgba(58,33,16,0.4)"
                 value={chatText}
                 onChangeText={setChatText}
+                maxFontSizeMultiplier={1.4}
               />
               <TouchableOpacity
                 onPress={() => {

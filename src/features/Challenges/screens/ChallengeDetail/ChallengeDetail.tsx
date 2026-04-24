@@ -27,14 +27,19 @@ const ChallengeDetail = () => {
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
-            title={localization.appkeys?.challenges || 'Challenges'}
+            title={localization.appkeys?.tabChallenges || 'Challenges'}
             rightIcon={images.crown}
             onRightPress={() => setShowCreditsModal(true)}
           />
 
           <View style={styles.headerTextContainer}>
-            <SolidText style={styles.title}>Moment of gratitude</SolidText>
-            <SolidText style={styles.subtitle}>Emotional well-being</SolidText>
+            <SolidText style={styles.title}>
+              {localization.appkeys?.challenge2Title || 'Moment of gratitude'}
+            </SolidText>
+            <SolidText style={styles.subtitle}>
+              {localization.appkeys?.emotionalWellbeing ||
+                'Emotional well-being'}
+            </SolidText>
           </View>
 
           <View style={styles.taskCard}>
@@ -50,7 +55,8 @@ const ChallengeDetail = () => {
             </View>
 
             <SolidText style={styles.taskText}>
-              Write down 3 things you are grateful for today
+              {localization.appkeys?.challenge2Desc ||
+                'Write down 3 things you are grateful for today'}
             </SolidText>
 
             <View style={styles.pointsBadge}>
@@ -60,24 +66,24 @@ const ChallengeDetail = () => {
                 resizeMode="contain"
                 tintColor="white"
               />
-              <SolidText style={styles.pointsText}>10 points</SolidText>
+              <SolidText style={styles.pointsText}>
+                {localization.appkeys?.tenPoints || '10 points'}
+              </SolidText>
             </View>
           </View>
 
           <View style={styles.aboutCard}>
             <SolidText style={styles.aboutTitle}>
-              About this challenge
+              {localization.appkeys?.aboutChallenge || 'About this challenge'}
             </SolidText>
             <SolidText style={styles.aboutText}>
-              Gratitude is a powerful healing tool. By taking the time to
-              acknowledge the positive aspects of your life, even the smallest
-              ones, you train your mind to see beyond the pain and appreciate
-              what surrounds you.
+              {localization.appkeys?.gratitudeChallengeAbout ||
+                'Gratitude is a powerful healing tool. By taking the time to acknowledge the positive aspects of your life, even the smallest ones, you train your mind to see beyond the pain and appreciate what surrounds you.'}
             </SolidText>
           </View>
           <View style={{ flex: 1 }} />
           <SolidBtn
-            titleTxt="Start"
+            titleTxt={localization.appkeys?.start || 'Start'}
             btnStyle={{ marginBottom: 40 }}
             onPress={handleStart}
           />

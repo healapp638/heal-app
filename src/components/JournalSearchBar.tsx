@@ -40,6 +40,7 @@ const JournalSearchBar = ({
           placeholderTextColor={colors.brown}
           value={value}
           onChangeText={onChangeText}
+          maxFontSizeMultiplier={1.4}
         />
       </View>
       <TouchableOpacity

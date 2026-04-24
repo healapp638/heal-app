@@ -24,10 +24,10 @@ const PlansSection: React.FC<PlansSectionProps> = ({
         ]}
         onPress={() => setSelectedPlan('monthly')}
       >
-        <SolidText style={styles.planLabel}>
+        <SolidText maxFontScale={1} style={styles.planLabel}>
           {localization.appkeys?.monthly}
         </SolidText>
-        <SolidText style={styles.planPrice}>
+        <SolidText maxFontScale={1} style={styles.planPrice}>
           {localization.appkeys?.monthlyPrice}
         </SolidText>
       </TouchableOpacity>
@@ -40,14 +40,14 @@ const PlansSection: React.FC<PlansSectionProps> = ({
         onPress={() => setSelectedPlan('yearly')}
       >
         <View style={styles.badge}>
-          <SolidText style={styles.badgeText}>
+          <SolidText maxFontScale={1} style={styles.badgeText}>
             {localization.appkeys?.save60}
           </SolidText>
         </View>
-        <SolidText style={styles.planLabel}>
+        <SolidText maxFontScale={1} style={styles.planLabel}>
           {localization.appkeys?.yearly}
         </SolidText>
-        <SolidText style={styles.planPrice}>
+        <SolidText maxFontScale={1} style={styles.planPrice}>
           {localization.appkeys?.yearlyPrice}
         </SolidText>
       </TouchableOpacity>

@@ -17,24 +17,6 @@ import HomeHeader from '../../../../components/HomeHeader';
 import JournalSearchBar from '../../../../components/JournalSearchBar';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 
-// Mock entries
-const mockEntries = [
-  {
-    id: '1',
-    time: '04:10 PM',
-    tag: 'Hope',
-    title: 'Lorem ipsum dolor',
-    body: 'Lorem ipsum dolor sit amet consectetur. Consectetur vitae risus quam vivamus eget id risus malesuada.',
-  },
-  {
-    id: '2',
-    time: '06:46 PM',
-    tag: 'Sorrow',
-    title: 'Lorem ipsum dolor',
-    body: 'Lorem ipsum dolor sit amet consectetur. Consectetur vitae risus quam vivamus eget id risus malesuada.',
-  },
-];
-
 const Journal = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
@@ -45,6 +27,24 @@ const Journal = () => {
   const [entries, setEntries] = useState<any[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
 
+  // Mock entries
+  const mockEntries = [
+    {
+      id: '1',
+      time: '04:10 PM',
+      tag: localization.appkeys?.tagHope || 'Hope',
+      title: 'Lorem ipsum dolor',
+      body: 'Lorem ipsum dolor sit amet consectetur. Consectetur vitae risus quam vivamus eget id risus malesuada.',
+    },
+    {
+      id: '2',
+      time: '06:46 PM',
+      tag: localization.appkeys?.tagSorrow || 'Sorrow',
+      title: 'Lorem ipsum dolor',
+      body: 'Lorem ipsum dolor sit amet consectetur. Consectetur vitae risus quam vivamus eget id risus malesuada.',
+    },
+  ];
+
   // Function to simulate adding a new entry
   const handleAddEntry = () => {
     navigation.navigate(AppRoutes.AddJournal as never);
@@ -54,9 +54,14 @@ const Journal = () => {
       const newEntry = {
         id: Math.random().toString(),
         time: '08:00 PM',
-        tag: 'Joy',
-        title: 'New Entry ' + (entries.length + 1),
-        body: 'This is a new journal entry added by clicking the plus button.',
+        tag: localization.appkeys?.tagJoy || 'Joy',
+        title:
+          (localization.appkeys?.newEntryTitle || 'New Entry') +
+          ' ' +
+          (entries.length + 1),
+        body:
+          localization.appkeys?.newEntryBody ||
+          'This is a new journal entry added by clicking the plus button.',
       };
       setEntries([newEntry, ...entries]);
     }
@@ -103,7 +108,9 @@ const Journal = () => {
 
           {/* List Content */}
           {entries.length > 0 && (
-            <SolidText style={styles.dateTitle}>April 20, 2026</SolidText>
+            <SolidText style={styles.dateTitle}>
+              {`${localization.appkeys?.monthApr || 'April'} ${new Date().getDate()}, ${new Date().getFullYear()}`}
+            </SolidText>
           )}
 
           <FlatList

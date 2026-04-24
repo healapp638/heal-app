@@ -88,6 +88,7 @@ const SolidInput: React.FC<SolidInputProps> = ({
           keyboardType={keyboardType}
           autoCapitalize={autoCapitalize}
           editable={editable}
+          maxFontSizeMultiplier={1.4}
         />
         {rightImg && (
           <Pressable style={styles.rightIconWrapper} onPress={onRightPress}>

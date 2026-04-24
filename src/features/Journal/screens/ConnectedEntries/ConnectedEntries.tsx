@@ -54,8 +54,8 @@ const ConnectedEntries = () => {
             showCrown={false}
             showStreak={false}
             onCrownPress={() => {}}
-            userName={'20 April 2026'}
-            safeSpaceLabel={'2 entries'}
+            userName={`20 ${localization.appkeys?.monthApr || 'April'} 2026`}
+            safeSpaceLabel={`2 ${localization.appkeys?.entries || 'entries'}`}
           />
 
           {/* List Content */}

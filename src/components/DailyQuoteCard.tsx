@@ -50,10 +50,16 @@ const DailyQuoteCard = ({
           end={{ x: 1, y: 1 }}
           style={styles.card}
         >
-          <SolidText style={[styles.quoteText, { color: colors.brown }]}>
+          <SolidText
+            maxFontScale={1}
+            style={[styles.quoteText, { color: colors.brown }]}
+          >
             "{quote}"
           </SolidText>
-          <SolidText style={[styles.exploreMore, { color: colors.brown }]}>
+          <SolidText
+            maxFontScale={1}
+            style={[styles.exploreMore, { color: colors.brown }]}
+          >
             {exploreLabel}
           </SolidText>
         </LinearGradient>

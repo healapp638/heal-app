@@ -28,6 +28,11 @@ import Calendar from '../../features/Journal/screens/Calendar/Calendar';
 import ConnectedEntries from '../../features/Journal/screens/ConnectedEntries/ConnectedEntries';
 import EditProfile from '../../features/settings/screens/EditProfile/EditProfile';
 import SelectLanguage from '../../features/auth/screens/SelectLanguage/SelectLanguage';
+import PrivacyAndSecurity from '../../features/settings/screens/PrivacyAndSecurity/PrivacyAndSecurity';
+import ChangePassword from '../../features/settings/screens/ChangePassword/ChangePassword';
+import HelpAndSupport from '../../features/settings/screens/HelpAndSupport/HelpAndSupport';
+import AboutHeal from '../../features/settings/screens/AboutHeal/AboutHeal';
+import EmergencyResources from '../../features/settings/screens/EmergencyResources/EmergencyResources';
 
 export default function NonAuthStack() {
   const Stack = createNativeStackNavigator();
@@ -76,6 +81,23 @@ export default function NonAuthStack() {
       <Stack.Screen
         name={AppRoutes.SelectLanguage}
         component={SelectLanguage}
+      />
+      <Stack.Screen
+        name={AppRoutes.PrivacyAndSecurity}
+        component={PrivacyAndSecurity}
+      />
+      <Stack.Screen
+        name={AppRoutes.ChangePassword}
+        component={ChangePassword}
+      />
+      <Stack.Screen
+        name={AppRoutes.HelpAndSupport}
+        component={HelpAndSupport}
+      />
+      <Stack.Screen name={AppRoutes.aboutHeal} component={AboutHeal} />
+      <Stack.Screen
+        name={AppRoutes.EmergencyResources}
+        component={EmergencyResources}
       />
     </Stack.Navigator>
   );

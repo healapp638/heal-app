@@ -89,6 +89,7 @@ const ResetPassword = () => {
             subtitle={localization.appkeys?.passChangedSubtitle}
             btnLabel={localization.appkeys?.logInBtn}
             onPressBtn={navigateToLogin}
+            btnStyle={{ marginTop: -4 }}
           />
         </View>
       }

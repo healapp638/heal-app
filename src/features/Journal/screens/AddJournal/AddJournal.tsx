@@ -115,6 +115,7 @@ const AddJournal = () => {
           {/* Title Input */}
           <TextInput
             style={styles.titleInput}
+            maxFontSizeMultiplier={1.4}
             placeholder={
               localization.appkeys?.entryTitlePlaceholder ||
               'Title of your entry...'
@@ -128,6 +129,7 @@ const AddJournal = () => {
           <View style={styles.bodyContainer}>
             <TextInput
               style={styles.bodyInput}
+              maxFontSizeMultiplier={1.4}
               placeholder={
                 localization.appkeys?.entryBodyPlaceholder ||
                 'Express what you feel... This space is yours, without judgment. 🤍'
@@ -136,6 +138,7 @@ const AddJournal = () => {
               multiline
               value={bodyText}
               onChangeText={setBodyText}
+              textAlignVertical="top"
             />
             <TouchableOpacity style={styles.micIconContainer}>
               <Image

@@ -49,6 +49,11 @@ const AppRoutes = {
   Calendar: 'Calendar',
   ConnectedEntries: 'ConnectedEntries',
   EditProfile: 'EditProfile',
+  PrivacyAndSecurity: 'PrivacyAndSecurity',
+  ChangePassword: 'ChangePassword',
+  HelpAndSupport: 'HelpAndSupport',
+  aboutHeal: 'aboutHeal',
+  EmergencyResources: 'EmergencyResources',
 };
 
 export default AppRoutes;

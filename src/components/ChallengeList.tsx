@@ -40,7 +40,9 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
       style={{ marginTop: 10, paddingHorizontal: 2 }}
       ListHeaderComponent={() => {
         return (
-          <SolidText style={styles.headerText}>Today’s Categories</SolidText>
+          <SolidText style={styles.headerText}>
+            {localization.appkeys?.todaysCategories || 'Today’s Categories'}
+          </SolidText>
         );
       }}
       renderItem={({ item }: any) => {

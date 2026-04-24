@@ -29,8 +29,7 @@ const style = (colors: any) =>
       textAlign: 'center',
       fontFamily: AppFonts.recoMedium,
       color: colors.brown,
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     subtitle: {
       fontFamily: AppFonts.regular,
@@ -44,8 +43,8 @@ const style = (colors: any) =>
       backgroundColor: colors.white,
       borderRadius: 20,
       flexDirection: 'row',
-      paddingVertical:8,
-      paddingHorizontal:4,
+      paddingVertical: 8,
+      paddingHorizontal: 4,
       marginBottom: hp(3),
       // Shadow for iOS
       shadowColor: '#000',
@@ -67,28 +66,25 @@ const style = (colors: any) =>
       flex: 1,
       paddingLeft: 15,
       justifyContent: 'space-between',
-
     },
     timelineItem: {
       flex: 1,
       justifyContent: 'center',
-
     },
     timelineTitle: {
       fontFamily: AppFonts.recoMedium,
       fontSize: AppUtils.fontSize(16),
       color: colors.black,
-      includeFontPadding: false
+      includeFontPadding: false,
     },
     timelineSub: {
       fontFamily: AppFonts.regular,
       fontSize: 12,
       color: '#666',
-      includeFontPadding: false,paddingRight:20,
-      marginTop:2,
-lineHeight:20,
-
-
+      includeFontPadding: false,
+      paddingRight: 20,
+      marginTop: 2,
+      lineHeight: 20,
     },
     reminderRow: {
       backgroundColor: colors.white,
@@ -104,8 +100,7 @@ lineHeight:20,
       fontFamily: AppFonts.regular,
       fontSize: 14,
       color: colors.black,
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     toggleIcon: {
       width: 44,
@@ -115,7 +110,7 @@ lineHeight:20,
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: 10,
-      width:'100%'
+      width: '100%',
     },
     planCard: {
       backgroundColor: colors.white,
@@ -135,15 +130,14 @@ lineHeight:20,
       fontSize: AppUtils.fontSize(18),
       color: colors.black,
       marginBottom: 5,
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     planPrice: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
       color: colors.black,
-      marginTop:4,
-      includeFontPadding: false
+      marginTop: 4,
+      includeFontPadding: false,
     },
     badge: {
       position: 'absolute',
@@ -153,14 +147,12 @@ lineHeight:20,
       borderRadius: 20,
       paddingHorizontal: 12,
       paddingVertical: 4,
-      
     },
     badgeText: {
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(11),
       color: colors.white,
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     priceInfo: {
       fontFamily: AppFonts.regular,
@@ -168,21 +160,19 @@ lineHeight:20,
       color: '#666',
       textAlign: 'center',
       marginBottom: hp(2),
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     actionBtn: {
       width: '90%',
 
       marginBottom: 25,
-      marginTop:45
+      marginTop: 45,
     },
     actionBtnText: {
       fontFamily: AppFonts.semiBold,
-      fontSize: AppUtils.fontSize(18),
-      color: colors.white,
-      includeFontPadding: false
 
+      color: colors.white,
+      includeFontPadding: false,
     },
     promoBtn: {
       alignSelf: 'center',
@@ -193,8 +183,7 @@ lineHeight:20,
       fontSize: AppUtils.fontSize(14),
       color: colors.black,
       textDecorationLine: 'underline',
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     footerLinks: {
       flexDirection: 'row',
@@ -206,8 +195,7 @@ lineHeight:20,
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(12),
       color: '#666',
-      includeFontPadding: false
-
+      includeFontPadding: false,
     },
     footerDot: {
       marginHorizontal: 8,

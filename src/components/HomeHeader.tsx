@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
   },
   userName: {
     fontSize: AppUtils.fontSize(23),

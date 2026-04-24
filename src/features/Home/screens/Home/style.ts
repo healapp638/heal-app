@@ -8,7 +8,7 @@ const style = (colors: any) =>
       flex: 1,
       paddingHorizontal: 20,
       paddingTop: Platform.OS == 'ios' ? 4 : 10,
-      paddingBottom: 120,
+      paddingBottom: 200,
     },
     header: {
       flexDirection: 'row',

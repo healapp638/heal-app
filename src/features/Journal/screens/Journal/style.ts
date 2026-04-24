@@ -71,6 +71,7 @@ const style = (colors: any) =>
       fontSize: AppUtils.fontSize(24),
       color: colors.brown,
       marginBottom: Platform.OS == 'ios' ? 8 : 4,
+      textAlign: 'center',
     },
     welcomeDesc: {
       fontFamily: AppFonts.regular,

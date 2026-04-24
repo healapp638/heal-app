@@ -89,7 +89,7 @@ const EditProfile = () => {
           {/* Profile Picture */}
           <View style={styles.profilePicContainer}>
             <View style={styles.imageWrapper}>
-              <Image source={images.avatar} style={styles.profileImage} />
+              <Image source={images.user} style={styles.profileImage} />
               <TouchableOpacity style={styles.editIconContainer}>
                 <Image
                   source={images.edit}

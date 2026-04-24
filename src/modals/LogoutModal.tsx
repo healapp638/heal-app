@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useContext } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -12,6 +12,7 @@ import SolidText from '../components/SolidText';
 import SolidBtn from '../components/SolidBtn';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
+import { LocalizationContext } from '../localization/localization';
 
 interface LogoutModalProps {
   visible: boolean;
@@ -28,14 +29,15 @@ const LogoutModal = ({
   visible,
   onClose,
   onConfirm,
-  title = 'Log Out?',
-  description = 'Are you sure you want to log out? Your safe space will be here whenever you need it.',
-  confirmLabel = 'Yes, Log Out',
-  cancelLabel = 'Stay Connected',
-  footerLabel = "We'll miss you, but take care",
+  title,
+  description,
+  confirmLabel,
+  cancelLabel,
+  footerLabel,
 }: LogoutModalProps) => {
   const { colors, images } = useTheme() as any;
   const styles = useStyles(colors);
+  const { localization } = useContext(LocalizationContext) as any;
 
   const handleConfirm = useCallback(() => {
     if (onConfirm) {
@@ -65,16 +67,30 @@ const LogoutModal = ({
             style={styles.logoutIcon}
           />
 
-          <SolidText style={styles.title}>{title}</SolidText>
-          <SolidText style={styles.description}>{description}</SolidText>
+          <SolidText style={styles.title}>
+            {title || localization.appkeys?.logoutTitle || 'Log Out?'}
+          </SolidText>
+          <SolidText style={styles.description}>
+            {description ||
+              localization.appkeys?.logoutDescription ||
+              'Are you sure you want to log out? Your safe space will be here whenever you need it.'}
+          </SolidText>
 
           <SolidBtn
-            titleTxt={confirmLabel}
+            titleTxt={
+              confirmLabel ||
+              localization.appkeys?.logoutConfirm ||
+              'Yes, Log Out'
+            }
             onPress={handleConfirm}
             btnStyle={styles.primaryBtn}
           />
           <SolidBtn
-            titleTxt={cancelLabel}
+            titleTxt={
+              cancelLabel ||
+              localization.appkeys?.logoutCancel ||
+              'Stay Connected'
+            }
             onPress={onClose}
             btnStyle={styles.secondaryBtn}
             txtStyle={styles.secondaryBtnText}
@@ -87,7 +103,11 @@ const LogoutModal = ({
               marginTop: 20,
             }}
           >
-            <SolidText style={styles.footerText}>{footerLabel}</SolidText>
+            <SolidText style={styles.footerText}>
+              {footerLabel ||
+                localization.appkeys?.logoutFooter ||
+                "We'll miss you, but take care"}
+            </SolidText>
             <Image
               source={images.heart}
               resizeMode="contain"

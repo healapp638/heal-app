@@ -119,6 +119,7 @@ const Verification = () => {
             subtitle={localization.appkeys?.confirmationEmailSent}
             btnLabel={localization.appkeys?.logInBtn}
             onPressBtn={navigateToSignIn}
+            btnStyle={{ marginTop: -6 }}
           />
         </View>
       }

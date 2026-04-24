@@ -12,7 +12,6 @@ import SectionHeader from '../../../../components/SectionHeader';
 import ChallengeCard from '../../../../components/ChallengeCard';
 import ModuleCard from '../../../../components/ModuleCard';
 import style from './style';
-import Journal from '../../../Journal/Journal';
 import JournalCard from '../../../../components/JournalCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 
@@ -27,15 +26,19 @@ const Home = () => {
       id: '1',
       background: images.moduleBack1,
       progress: '2/7',
-      title: 'Red Flags I Ignored',
-      category: 'RELATIONSHIP BASICS',
+      title: localization.appkeys?.moduleRedFlags || 'Red Flags I Ignored',
+      category:
+        localization.appkeys?.moduleRelationshipBasics || 'RELATIONSHIP BASICS',
     },
     {
       id: '2',
       background: images.moduleBack2,
       progress: '1/5',
-      title: 'The Unfinished Conversations',
-      category: 'CLOSURE & HEALING',
+      title:
+        localization.appkeys?.moduleUnfinishedConversations ||
+        'The Unfinished Conversations',
+      category:
+        localization.appkeys?.moduleClosureHealing || 'CLOSURE & HEALING',
     },
   ];
 
@@ -83,10 +86,15 @@ const Home = () => {
           <SectionHeader
             title={localization.appkeys?.homeWhatYouCanDo || 'What you can do'}
             actionLabel={localization.appkeys?.homeSeeAll || 'See All'}
-            onActionPress={() => {}}
+            onActionPress={() => {
+              navigation.navigate(AppRoutes.Challenges as never);
+            }}
           />
 
           <ChallengeCard
+            onPress={() => {
+              navigation.navigate(AppRoutes.ChallengeDetail as never);
+            }}
             title={
               localization.appkeys?.challengeCompletedTitle ||
               "Completed today's challenge"
@@ -97,7 +105,9 @@ const Home = () => {
           <SectionHeader
             title={localization.appkeys?.startedModule || 'Started Modules'}
             actionLabel={localization.appkeys?.continue || 'Continue'}
-            onActionPress={() => {}}
+            onActionPress={() => {
+              navigation.navigate(AppRoutes.Modules as never);
+            }}
             containerStyle={{ marginTop: 10 }}
           />
 
@@ -109,6 +119,9 @@ const Home = () => {
             style={{ marginTop: 10 }}
             renderItem={({ item }) => (
               <ModuleCard
+                onPress={() =>
+                  navigation.navigate(AppRoutes.ModuleThemeDetail as never)
+                }
                 background={item.background}
                 progress={item.progress}
                 title={item.title}
@@ -127,6 +140,9 @@ const Home = () => {
               localization.appkeys?.writeFeeling || "Write what you're feeling"
             }
             duration={localization.appkeys?.journalTitle || 'JOURNAL'}
+            onPress={() => {
+              navigation.navigate(AppRoutes.Journal as never);
+            }}
           />
         </View>
       }

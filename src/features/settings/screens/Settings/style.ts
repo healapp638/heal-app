@@ -68,7 +68,7 @@ const style = (colors: any) =>
       justifyContent: 'space-between',
       backgroundColor: 'white',
       borderRadius: 16,
-      paddingVertical: 18,
+      paddingVertical: Platform.OS == 'ios' ? 18 : 16,
       paddingHorizontal: 12,
       marginBottom: 12,
       // Shadow
@@ -100,7 +100,8 @@ const style = (colors: any) =>
       justifyContent: 'space-between',
       backgroundColor: '#FDE2E4',
       borderRadius: 16,
-      paddingVertical: 10,
+      paddingVertical: Platform.OS == 'ios' ? 8 : 6,
+
       paddingHorizontal: 12,
       marginBottom: 20,
       borderWidth: 1,
@@ -108,9 +109,10 @@ const style = (colors: any) =>
     },
     phoneIconContainer: {},
     phoneIcon: {
-      width: 40,
-      height: 40,
+      width: 41,
+      height: 41,
       marginRight: 10,
+      marginLeft: -4,
     },
     emergencyText: {
       flex: 1,

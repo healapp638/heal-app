@@ -17,6 +17,7 @@ const DailyStreak = () => {
 
   return (
     <SolidView
+      isScrollEnabled
       view={
         <View style={styles.container}>
           <HeaderCommon title={localization.appkeys.streak} />

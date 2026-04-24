@@ -11,6 +11,7 @@ import SettingsProfileCard from '../../../../components/SettingsProfileCard';
 import SettingsPremiumCard from '../../../../components/SettingsPremiumCard';
 import LogoutModal from '../../../../modals/LogoutModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import GetCreditsModal from '../../../../modals/GetCreditsModal';
 
 const Settings = () => {
   const navigation = useNavigation();
@@ -19,6 +20,8 @@ const Settings = () => {
   const styles = style(colors);
   const [visible, setvisible] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+
   const settingItems = [
     localization.appkeys?.personalInfo || 'Personal Information',
     localization.appkeys?.notifications || 'Notifications',
@@ -36,7 +39,9 @@ const Settings = () => {
           <HomeHeader
             showCrown
             showStreak={false}
-            onCrownPress={() => {}}
+            onCrownPress={() => {
+              setShowCreditsModal(true);
+            }}
             userName={localization.appkeys?.settingsTitle || 'Settings'}
             safeSpaceLabel={
               localization.appkeys?.manageAccount ||
@@ -53,8 +58,7 @@ const Settings = () => {
 
           {settingItems.map(item => {
             const isNotification =
-              item ===
-              (localization.appkeys?.notifications || 'Notifications');
+              item === (localization.appkeys?.notifications || 'Notifications');
             const isPersonalInfo =
               item ===
               (localization.appkeys?.personalInfo || 'Personal Information');
@@ -62,9 +66,12 @@ const Settings = () => {
               item === (localization.appkeys?.language || 'Language');
 
             const isPrivacy =
-              item === (localization.appkeys?.privacySecurity || 'Privacy & Security');
+              item ===
+              (localization.appkeys?.privacySecurity || 'Privacy & Security');
             const isHelp =
               item === (localization.appkeys?.helpSupport || 'Help & Support');
+            const isAbout =
+              item === (localization.appkeys?.aboutHeal || 'About HEAL');
 
             return (
               <SettingItem
@@ -85,9 +92,11 @@ const Settings = () => {
                   } else if (isLanguage) {
                     navigation.navigate(AppRoutes.SelectLanguage as never);
                   } else if (isPrivacy) {
-                    navigation.navigate(AppRoutes.PrivacyPolicy as never);
+                    navigation.navigate(AppRoutes.PrivacyAndSecurity as never);
                   } else if (isHelp) {
-                    navigation.navigate(AppRoutes.Terms as never);
+                    navigation.navigate(AppRoutes.HelpAndSupport as never);
+                  } else if (isAbout) {
+                    navigation.navigate(AppRoutes.aboutHeal as never);
                   }
                 }}
               />
@@ -99,6 +108,7 @@ const Settings = () => {
               localization.appkeys?.emergencyResources || 'Emergency Resources'
             }
             isPink
+            onPress={() => navigation.navigate(AppRoutes.EmergencyResources as never)}
           />
 
           <SettingsPremiumCard
@@ -110,7 +120,10 @@ const Settings = () => {
             discoverLabel={
               localization.appkeys?.discoverPremium || 'Discover Premium'
             }
-            onDiscoverPress={() => navigation.navigate(AppRoutes.Premium as never)}
+            onDiscoverPress={() =>
+              // navigation.navigate(AppRoutes.Premium as never)
+              setShowCreditsModal(true)
+            }
           />
 
           <View style={styles.footer}>
@@ -132,6 +145,11 @@ const Settings = () => {
               });
             }}
             onClose={() => setvisible(false)}
+          />
+
+          <GetCreditsModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
           />
         </View>
       }
