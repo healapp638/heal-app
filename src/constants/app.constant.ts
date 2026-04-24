@@ -46,6 +46,12 @@ const APP: AppConstant = {
   SWAGGER_PASSWORD: 'Admin@123'
 };
 
+const DATABASE_URI = {
+  ENV_MODE: process.env.ENV_MODE || 'DEV',
+  ENV_NODE_CODE: process.env.ENV_NODE_CODE || 'LOCAL',
+
+}
+
 const DB: DbConstant = {
   DB_NAME: process.env.DB_NAME || '',
   MONGODB_URI: '',
@@ -176,5 +182,6 @@ export {
   EMAIL_CREDENTIAL,
   SMS_CREDENTIAL,
   AGORA_CREDENTIAL,
-  initializeAwsCredential
+  initializeAwsCredential,
+  DATABASE_URI
 };

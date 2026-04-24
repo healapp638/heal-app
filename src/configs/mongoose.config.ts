@@ -1,9 +1,25 @@
 import mongoose from "mongoose";
-import { DB } from "../constants/app.constant";
+import { DATABASE_URI } from "../constants/app.constant";
+
+const { ENV_MODE, ENV_NODE_CODE } = DATABASE_URI;
+
+const config: any = {
+  DEV: {
+    LOCAL: 'mongodb://HealApp_Dev:HealDev_1077@34.230.216.184/HealApp_Dev',
+    SERVER: 'mongodb://HealApp_Dev:HealDev_1077@localhost/HealApp_Dev'
+  },
+  PROD: {
+    LOCAL: 'mongodb://HealApp_Prod:HealProd_1077@34.230.216.184/HealApp_Prod',
+    SERVER: 'mongodb://HealApp_Prod:HealProd_1077@localhost/HealApp_Prod'
+  }
+}
+
+const dbURI = config[ENV_MODE][ENV_NODE_CODE] || 'mongodb://localhost:27017/HealApp_local';
+console.log(dbURI, '<<<<<<<<<<<<<<<<<<<<____________________dbURI=+++++++++++++++++++++>>>>>>>');
 
 export const connection = async () => {
 
-  const MONGO_URI = await DB.MONGODB_URI
+  const MONGO_URI = dbURI
 
   if (!MONGO_URI) {
     throw new Error("MONGODB_URI is not defined or empty. Please check AWS Parameter Store or .env file.");
