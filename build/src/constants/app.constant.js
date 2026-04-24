@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeAwsCredential = exports.AGORA_CREDENTIAL = exports.SMS_CREDENTIAL = exports.EMAIL_CREDENTIAL = exports.AWS_CREDENTIAL = exports.LOGS = exports.REDIS_CREDENTIAL = exports.APP = exports.DB = exports.STRIPE_CREDENTIAL = void 0;
+exports.DATABASE_URI = exports.initializeAwsCredential = exports.AGORA_CREDENTIAL = exports.SMS_CREDENTIAL = exports.EMAIL_CREDENTIAL = exports.AWS_CREDENTIAL = exports.LOGS = exports.REDIS_CREDENTIAL = exports.APP = exports.DB = exports.STRIPE_CREDENTIAL = void 0;
 const services_1 = __importDefault(require("../services"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const path_1 = __importDefault(require("path"));
@@ -49,6 +49,11 @@ const APP = {
     SWAGGER_PASSWORD: 'Admin@123'
 };
 exports.APP = APP;
+const DATABASE_URI = {
+    ENV_MODE: process.env.ENV_MODE || 'DEV',
+    ENV_NODE_CODE: process.env.ENV_NODE_CODE || 'LOCAL',
+};
+exports.DATABASE_URI = DATABASE_URI;
 const DB = {
     DB_NAME: process.env.DB_NAME || '',
     MONGODB_URI: '',
