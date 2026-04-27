@@ -268,7 +268,7 @@ const UserAuthHandler = {
         const language = userData?.language || 'en';
 
         // const otp = commonHelper.generateOtp();
-        const otp = 123456;
+        const otp = '123456';
         // const to = `${exists?.data?.email}`
         // const user_name = `${userData?.first_name} ${userData?.last_name}`
         // const payload = { user_name, otp }
@@ -404,7 +404,7 @@ const UserAuthHandler = {
         const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
             {
                 $match: {
-                    user_id: userId,
+                    user_id: commonHelper.convertToObjectId(userId),
                     status: USER_STATUS.ACTIVE
                 }
             },
@@ -427,8 +427,19 @@ const UserAuthHandler = {
             }
         ]);
         const total_earned_points = CompletedPhases[0]?.total_points || 0;
-        const completedPercentage = (total_earned_points / total_points) * 100;
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage }, statusCodes.SUCCESS)
+        const completedPercentage = total_points > 0
+            ? (total_earned_points / total_points) * 100
+            : 0;
+
+        // Calculate level
+        const totalLevels = 5;
+
+        let currentLevel = Math.ceil((completedPercentage / 100) * totalLevels);
+
+        // Edge case fix
+        if (currentLevel === 0) currentLevel = 1;
+        if (currentLevel > totalLevels) currentLevel = totalLevels;
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {

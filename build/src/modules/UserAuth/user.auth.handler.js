@@ -280,7 +280,7 @@ const UserAuthHandler = {
         const userData = exists === null || exists === void 0 ? void 0 : exists.data;
         const language = (userData === null || userData === void 0 ? void 0 : userData.language) || 'en';
         // const otp = commonHelper.generateOtp();
-        const otp = 123456;
+        const otp = '123456';
         // const to = `${exists?.data?.email}`
         // const user_name = `${userData?.first_name} ${userData?.last_name}`
         // const payload = { user_name, otp }
@@ -401,7 +401,7 @@ const UserAuthHandler = {
         const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
             {
                 $match: {
-                    user_id: userId,
+                    user_id: commonHelper.convertToObjectId(userId),
                     status: workflow_constant_1.USER_STATUS.ACTIVE
                 }
             },
@@ -424,8 +424,18 @@ const UserAuthHandler = {
             }
         ]);
         const total_earned_points = ((_d = CompletedPhases[0]) === null || _d === void 0 ? void 0 : _d.total_points) || 0;
-        const completedPercentage = (total_earned_points / total_points) * 100;
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage }), statusCodes_1.default.SUCCESS);
+        const completedPercentage = total_points > 0
+            ? (total_earned_points / total_points) * 100
+            : 0;
+        // Calculate level
+        const totalLevels = 5;
+        let currentLevel = Math.ceil((completedPercentage / 100) * totalLevels);
+        // Edge case fix
+        if (currentLevel === 0)
+            currentLevel = 1;
+        if (currentLevel > totalLevels)
+            currentLevel = totalLevels;
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel }), statusCodes_1.default.SUCCESS);
     }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;
