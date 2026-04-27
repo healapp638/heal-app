@@ -147,7 +147,6 @@ const LightTheme = {
     microphone2: require('../assets/microphone2.png'),
     logout: require('../assets/logout.png'),
     phone2: require('../assets/phone2.png'),
-
     edit: require('../assets/edit.png'),
     user: require('../assets/user.png'),
     logoutBig: require('../assets/logoutBig.png'),

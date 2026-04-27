@@ -10,12 +10,21 @@ import SuccessModal from '../../../../modals/SuccessModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import { useRoute } from '@react-navigation/native';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
+import { isPasswordValid } from '../../utils/SignUp/signUpValidation';
 
 const ResetPassword = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+
+  const route = useRoute() as any;
+  const { email, otp } = route.params || {};
+  const { mutate: resetPassword, isPending } = usePostApi();
 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,8 +33,56 @@ const ResetPassword = () => {
   const [successVisible, setSuccessVisible] = useState(false);
 
   const handleConfirm = () => {
-    // Simulate password reset logic
-    setSuccessVisible(true);
+    if (!password) {
+      AppUtils.showToast(
+        localization.appkeys?.toastEnterPassword ||
+          'Please enter your password.',
+      );
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      AppUtils.showToast(
+        localization.appkeys?.toastPasswordRequirementsDetailed ||
+          'Password must be at least 8 characters, include 1 uppercase letter, 1 number, and 1 special character.',
+        4500,
+      );
+      return;
+    }
+
+    if (!confirmPassword) {
+      AppUtils.showToast(
+        localization.appkeys?.toastEnterConfirmPassword ||
+          'Please confirm your password.',
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      AppUtils.showToast(
+        localization.appkeys?.toastPasswordMismatch ||
+          'Passwords do not match.',
+      );
+      return;
+    }
+    resetPassword(
+      {
+        endpoint: endpoints.reset_password,
+        data: {
+          email: email?.trim()?.toLowerCase(),
+          otp: String(otp),
+          new_password: password,
+        },
+      },
+      {
+        onSuccess: () => {
+          setSuccessVisible(true);
+        },
+        onError: (error: any) => {
+          AppUtils.showToast(error.message || 'Failed to reset password');
+        },
+      },
+    );
   };
 
   const navigateToLogin = () => {
@@ -80,6 +137,8 @@ const ResetPassword = () => {
             titleTxt={localization.appkeys?.confirm}
             btnStyle={styles.confirmBtn}
             onPress={handleConfirm}
+            isLoading={isPending}
+            disabled={isPending}
           />
 
           <SuccessModal

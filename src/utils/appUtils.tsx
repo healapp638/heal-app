@@ -2,7 +2,7 @@ import checkVersion from "react-native-store-version";
 import DeviceInfo from "react-native-device-info";
 import { urls } from "../constants/urls";
 import { config, Mode } from "../../config";
-import { Platform, Text, TextInput } from "react-native";
+import { Platform } from "react-native";
 import { ToastService } from "./ToastManager";
 import { store } from "../redux/Store/store";
 import { setFontScaling } from "../redux/Reducers/userData";
@@ -11,7 +11,7 @@ interface AppUtilsInterface {
   validatePhone: (phone: string) => boolean;
   validateEmail: (email: string) => boolean;
   fontSize: (size: number) => number;
-  showToast: (text: string) => void;
+  showToast: (text: string, duration?: number) => void;
   showLog: (message: string, ...optionalParams: any[]) => void;
   disableFontScale: () => void;
   adaCompliance: () => void;
@@ -37,9 +37,9 @@ const AppUtils: AppUtilsInterface = {
     return regexp.test(email);
   },
   // Toast
-  showToast: (text: string) => {
+  showToast: (text: string, duration = 1000) => {
     setTimeout(() => {
-      ToastService.show(text, 1000)
+      ToastService.show(text, duration)
     }, 800);
   },
 

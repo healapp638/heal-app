@@ -1,13 +1,25 @@
-import React, { useEffect, useRef, useState, useContext } from 'react';
-import { Animated, Image, StyleSheet, View } from 'react-native';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+  useCallback,
+  useMemo,
+} from 'react';
+import { Animated, Image, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import { useDispatch } from 'react-redux';
+import {
+  setOnboardingCompleted,
+  setOnboardingCurrentScreen,
+} from '../../../../redux/Reducers/userData';
 
 const CHAR_INTERVAL_MS = 28;
 const SENTENCE_PAUSE_MS = 700;
@@ -15,13 +27,17 @@ const SENTENCE_PAUSE_MS = 700;
 const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
-  const sentences = [
-    localization.appkeys?.welcomeSentence1,
-    localization.appkeys?.welcomeSentence2,
-  ];
+  const sentences = useMemo(
+    () => [
+      localization.appkeys?.welcomeSentence1 || '',
+      localization.appkeys?.welcomeSentence2 || '',
+    ],
+    [localization.appkeys?.welcomeSentence1, localization.appkeys?.welcomeSentence2],
+  );
 
   const [displayedTexts, setDisplayedTexts] = useState<string[]>(['', '']);
   const [activeSentence, setActiveSentence] = useState(0);
@@ -30,6 +46,12 @@ const CreatingSpace = () => {
 
   const buttonOpacity = useRef(new Animated.Value(0)).current;
   const cursorOpacity = useRef(new Animated.Value(1)).current;
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setOnboardingCurrentScreen(AppRoutes.CreatingSpace));
+    }, [dispatch]),
+  );
 
   // Blinking cursor logic
   useEffect(() => {
@@ -84,10 +106,10 @@ const CreatingSpace = () => {
       }, SENTENCE_PAUSE_MS);
       return () => clearTimeout(timer);
     }
-  }, [activeSentence, activeChar, allDone, sentences]);
+  }, [activeSentence, activeChar, allDone, buttonOpacity, sentences]);
 
   const handleContinue = () => {
-    // Navigate home for now as it's the end of the onboarding flow
+    dispatch(setOnboardingCompleted(true));
     navigation.navigate(AppRoutes.AccessScreen as never);
   };
 

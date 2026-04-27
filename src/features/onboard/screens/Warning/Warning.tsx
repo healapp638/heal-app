@@ -1,19 +1,28 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { Image, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import { useDispatch } from 'react-redux';
+import { setOnboardingCurrentScreen } from '../../../../redux/Reducers/userData';
 
 const Warning = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setOnboardingCurrentScreen(AppRoutes.Warning));
+    }, [dispatch]),
+  );
 
   return (
     <SolidView

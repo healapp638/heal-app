@@ -1,20 +1,52 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setOnboardingAnswer,
+  setOnboardingCurrentScreen,
+} from '../../../../redux/Reducers/userData';
 
 const TimeCommitment = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-  const [selected, setSelected] = useState<string | null>(null);
+  const savedSelection = useSelector(
+    (state: any) => state.userData?.onboarding?.answers?.timeCommitment ?? null,
+  );
+  const [selected, setSelected] = useState<string | null>(savedSelection);
+
+  useEffect(() => {
+    setSelected(savedSelection);
+  }, [savedSelection]);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setOnboardingCurrentScreen(AppRoutes.TimeCommitment));
+    }, [dispatch]),
+  );
+
+  const handleBackPress = () => {
+    const routes = (navigation as any)?.getState?.()?.routes || [];
+    const previousRouteName =
+      routes.length > 1 ? routes[routes.length - 2]?.name : null;
+
+    if (previousRouteName === AppRoutes.FeelMore) {
+      navigation.goBack();
+      return;
+    }
+
+    navigation.navigate(AppRoutes.FeelMore as never);
+  };
 
   const options = [
     { id: '1', label: localization.appkeys?.option2Min },
@@ -29,7 +61,7 @@ const TimeCommitment = () => {
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
-          <HeaderProgress progress={0.8} />
+          <HeaderProgress progress={0.8} onBackPress={handleBackPress} />
 
           <Image
             source={images.heartRope}
@@ -46,7 +78,8 @@ const TimeCommitment = () => {
 
             <View style={styles.listContainer}>
               {options.map(option => {
-                const isSelected = selected === option.id;
+                const isSelected =
+                  selected === option.id || selected === option.label;
 
                 return (
                   <TouchableOpacity
@@ -55,7 +88,15 @@ const TimeCommitment = () => {
                       styles.optionCard,
                       isSelected && styles.optionCardSelected,
                     ]}
-                    onPress={() => setSelected(option.id)}
+                    onPress={() => {
+                      setSelected(option.label);
+                      dispatch(
+                        setOnboardingAnswer({
+                          key: 'timeCommitment',
+                          value: option.label,
+                        }),
+                      );
+                    }}
                     activeOpacity={0.7}
                   >
                     <SolidText

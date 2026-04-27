@@ -1,20 +1,94 @@
-import { Image, View, TouchableOpacity } from 'react-native';
-import React, { useContext } from 'react';
+import { Alert, Image, View, TouchableOpacity } from 'react-native';
+import React, { useCallback, useContext, useRef } from 'react';
 import SolidView from '../../../../components/SolidView';
 
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearOnboardingProgress } from '../../../../redux/Reducers/userData';
+import {
+  getResumeStackRoutes,
+  RESUMABLE_ONBOARDING_ROUTES,
+} from '../../utils/onboardingProgress';
+
+import ResumeModal from '../../../../modals/ResumeModal';
 
 const Welcome = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { images, colors } = useTheme() as any;
   const { appLanguage, localization } = useContext(LocalizationContext) as any;
-  console.log('appLanguage', appLanguage);
-  const styles = style(colors);
+  const onboarding = useSelector((state: any) => state.userData?.onboarding);
+  const hasPromptedOnFocus = useRef(false);
+  const [resumeModalVisible, setResumeModalVisible] = React.useState(false);
+
+  const handleResumeFlow = useCallback(() => {
+    const currentScreen = onboarding?.currentScreen;
+    if (!currentScreen) return;
+
+    const stackRoutes = getResumeStackRoutes(currentScreen);
+    if (!stackRoutes.length) return;
+
+    setResumeModalVisible(false);
+    (navigation as any).reset({
+      index: stackRoutes.length - 1,
+      routes: stackRoutes.map(name => ({ name })),
+    });
+  }, [navigation, onboarding?.currentScreen]);
+
+  const handleStartOver = useCallback(() => {
+    dispatch(clearOnboardingProgress());
+    setResumeModalVisible(false);
+  }, [dispatch]);
+
+  useFocusEffect(
+    useCallback(() => {
+      hasPromptedOnFocus.current = false;
+
+      if (onboarding?.isCompleted) {
+        dispatch(clearOnboardingProgress());
+        return () => {
+          hasPromptedOnFocus.current = false;
+        };
+      }
+
+      if (
+        onboarding?.currentScreen === AppRoutes.GetStarted ||
+        onboarding?.currentScreen === AppRoutes.HearAboutUs
+      ) {
+        return () => {
+          hasPromptedOnFocus.current = false;
+        };
+      }
+
+      const canResume =
+        onboarding?.hasStarted &&
+        !onboarding?.isCompleted &&
+        RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
+
+      if (!canResume || hasPromptedOnFocus.current) {
+        return () => {
+          hasPromptedOnFocus.current = false;
+        };
+      }
+
+      hasPromptedOnFocus.current = true;
+      setResumeModalVisible(true);
+
+      return () => {
+        hasPromptedOnFocus.current = false;
+      };
+    }, [
+      dispatch,
+      onboarding?.currentScreen,
+      onboarding?.isCompleted,
+      onboarding?.hasStarted,
+    ]),
+  );
 
   const getLangData = () => {
     switch (appLanguage) {
@@ -36,6 +110,8 @@ const Welcome = () => {
   };
 
   const { flag, code } = getLangData();
+  const styles = style(colors);
+
   return (
     <SolidView
       isScrollEnabled
@@ -83,6 +159,13 @@ const Welcome = () => {
               {localization.appkeys?.signIn}
             </SolidText>
           </SolidText>
+
+          <ResumeModal
+            visible={resumeModalVisible}
+            onClose={() => setResumeModalVisible(false)}
+            onConfirm={handleResumeFlow}
+            onStartOver={handleStartOver}
+          />
         </View>
       }
     />

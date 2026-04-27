@@ -1,6 +1,10 @@
 import React, { useContext } from 'react';
 import { View, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import { LocalizationContext } from '../../../../localization/localization';
@@ -14,8 +18,11 @@ import ModuleCard from '../../../../components/ModuleCard';
 import style from './style';
 import JournalCard from '../../../../components/JournalCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { useDispatch } from 'react-redux';
+import { getUserDetail } from '../../../../redux/Reducers/userData';
 
 const Home = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -41,6 +48,15 @@ const Home = () => {
         localization.appkeys?.moduleClosureHealing || 'CLOSURE & HEALING',
     },
   ];
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(getUserDetail());
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, []),
+  );
 
   return (
     <SolidView

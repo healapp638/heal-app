@@ -60,6 +60,51 @@ const style = (colors: any) =>
       fontWeight: Platform.OS === 'ios' ? '700' : '600',
       includeFontPadding: false,
     },
+    dividerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: hp('3%'),
+      marginTop: hp('2%'),
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.primary,
+      opacity: 0.3,
+    },
+    dividerText: {
+      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(13),
+      color: colors.black,
+      marginHorizontal: 10,
+    },
+    socialContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    socialBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.white,
+      height: Platform.OS === 'ios' ? 52 : 50,
+      borderRadius: 100,
+      width: '48%',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    socialIcon: {
+      width: 24,
+      height: 24,
+      marginRight: 10,
+    },
+    socialBtnTxt: {
+      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(15),
+      color: colors.black,
+      includeFontPadding: false,
+    },
   });
 
 export default style;

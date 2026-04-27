@@ -12,8 +12,15 @@ import SettingsPremiumCard from '../../../../components/SettingsPremiumCard';
 import LogoutModal from '../../../../modals/LogoutModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
+import { useDispatch } from 'react-redux';
+import {
+  setAuth,
+  setToken,
+  setUser,
+} from '../../../../redux/Reducers/userData';
 
 const Settings = () => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -108,7 +115,9 @@ const Settings = () => {
               localization.appkeys?.emergencyResources || 'Emergency Resources'
             }
             isPink
-            onPress={() => navigation.navigate(AppRoutes.EmergencyResources as never)}
+            onPress={() =>
+              navigation.navigate(AppRoutes.EmergencyResources as never)
+            }
           />
 
           <SettingsPremiumCard
@@ -134,6 +143,10 @@ const Settings = () => {
           <LogoutModal
             visible={visible}
             onConfirm={() => {
+              dispatch(setAuth(false));
+              dispatch(setUser(null));
+              dispatch(setToken(null));
+
               navigation.reset({
                 index: 0,
                 routes: [

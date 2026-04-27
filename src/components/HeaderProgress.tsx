@@ -1,16 +1,17 @@
 import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import AppUtils from '../utils/appUtils';
 
 interface HeaderProgressProps {
   progress?: number; // 0 to 1
   showBack?: boolean;
+  onBackPress?: () => void;
 }
 
 const HeaderProgress: React.FC<HeaderProgressProps> = ({
   progress = 0.5,
   showBack = true,
+  onBackPress,
 }) => {
   const { colors } = useTheme() as any;
   const navigation = useNavigation();
@@ -20,7 +21,13 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
       {showBack ? (
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: colors.brown }]}
-          onPress={() => navigation.goBack()}
+          onPress={() => {
+            if (onBackPress) {
+              onBackPress();
+              return;
+            }
+            navigation.goBack();
+          }}
         >
           <View
             style={[
@@ -92,4 +99,3 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 });
-

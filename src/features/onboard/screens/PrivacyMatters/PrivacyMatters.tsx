@@ -1,19 +1,39 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Image, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setOnboardingAnswer,
+  setOnboardingCurrentScreen,
+} from '../../../../redux/Reducers/userData';
+import HeaderCommon from '../../../../components/HeaderCommon';
 
 const PrivacyMatters = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-  const [accepted, setAccepted] = useState(false);
+  const savedAccepted = useSelector(
+    (state: any) => state.userData?.onboarding?.answers?.privacyAccepted ?? false,
+  );
+  const [accepted, setAccepted] = useState(savedAccepted);
+
+  useEffect(() => {
+    setAccepted(savedAccepted);
+  }, [savedAccepted]);
+
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(setOnboardingCurrentScreen(AppRoutes.PrivacyMatters));
+    }, [dispatch]),
+  );
 
   const privacyItems = [
     {
@@ -42,6 +62,11 @@ const PrivacyMatters = () => {
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
+          <View style={{ paddingHorizontal: 20,marginBottom:-50 }}>
+                      <HeaderCommon title={''} />
+
+          </View>
+
           <Image
             source={images.door}
             style={styles.doorImage}
@@ -67,7 +92,16 @@ const PrivacyMatters = () => {
 
             <TouchableOpacity
               style={styles.checkboxContainer}
-              onPress={() => setAccepted(!accepted)}
+              onPress={() => {
+                const nextAccepted = !accepted;
+                setAccepted(nextAccepted);
+                dispatch(
+                  setOnboardingAnswer({
+                    key: 'privacyAccepted',
+                    value: nextAccepted,
+                  }),
+                );
+              }}
               activeOpacity={0.8}
             >
               <Image

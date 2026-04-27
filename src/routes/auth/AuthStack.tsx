@@ -24,6 +24,7 @@ import Verification from '../../features/auth/screens/Verification/Verification'
 import ForgotPassword from '../../features/auth/screens/ForgotPassword/ForgotPassword';
 import ResetPassword from '../../features/auth/screens/ResetPassword/ResetPassword';
 import SelectLanguage from '../../features/auth/screens/SelectLanguage/SelectLanguage';
+import CompleteProfile from '../../features/auth/screens/CompleteProfile/CompleteProfile';
 
 export default function AuthStack() {
   const Stack = createNativeStackNavigator();
@@ -67,6 +68,10 @@ export default function AuthStack() {
       <Stack.Screen
         name={AppRoutes.SelectLanguage}
         component={SelectLanguage}
+      />
+      <Stack.Screen
+        name={AppRoutes.CompleteProfile}
+        component={CompleteProfile}
       />
     </Stack.Navigator>
   );

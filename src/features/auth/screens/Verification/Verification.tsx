@@ -10,15 +10,28 @@ import SuccessModal from '../../../../modals/SuccessModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
+import { useDispatch } from 'react-redux';
+import {
+  setAuth,
+  setToken,
+  setUser,
+} from '../../../../redux/Reducers/userData';
 
 const Verification = () => {
+  const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const route = useRoute() as any;
   const { localization } = useContext(LocalizationContext) as any;
+  const { email, password, from } = route.params || {};
+
   const styles = style(colors);
 
-  const from = route.params?.from;
+  const { mutate: verifyMutate, isPending: isVerifying } = usePostApi();
+  const { mutate: resendMutate, isPending: isResending } = usePostApi();
 
   const [otpCode, setOtpCode] = useState('');
   const [timer, setTimer] = useState(60);
@@ -40,19 +53,90 @@ const Verification = () => {
 
   const handleResend = () => {
     if (canResend) {
-      setTimer(60);
-      setCanResend(false);
-      // Logic to resend OTP
+      resendMutate(
+        {
+          endpoint: endpoints.resendOtp,
+          data: { email: email?.trim()?.toLowerCase() },
+        },
+        {
+          onSuccess: () => {
+            setTimer(60);
+            setCanResend(false);
+            AppUtils.showToast(
+              localization.appkeys?.otpSentSuccess || 'OTP Sent Successfully',
+            );
+          },
+          onError: (error: any) => {
+            AppUtils.showToast(error.message || 'Failed to resend OTP');
+          },
+        },
+      );
     }
   };
 
   const handleVerify = () => {
-    if (from === 'ForgotPassword') {
-      navigation.navigate(AppRoutes.ResetPassword as never);
-    } else {
-      // Simulate successful verification for SignUp
-      setSuccessVisible(true);
+    if (otpCode.length < 6) {
+      AppUtils.showToast(
+        localization.appkeys?.enterValidOtp || 'Please enter a valid OTP',
+      );
+      return;
     }
+    verifyMutate(
+      {
+        endpoint: endpoints.verifyOtp,
+        data: {
+          email: email?.trim()?.toLowerCase(),
+          ...(from !== 'ForgotPassword' &&
+            from !== 'SocialLogin' && { password }),
+          otp: String(otpCode),
+        },
+      },
+      {
+        onSuccess: (response: any) => {
+          if (from === 'ForgotPassword') {
+            navigation.navigate(
+              AppRoutes.ResetPassword as never,
+              {
+                email: email?.trim()?.toLowerCase(),
+                otp: String(otpCode),
+              } as never,
+            );
+          } else if (from === 'SignIn' || from === 'SocialLogin' || from === 'SignUp') {
+            dispatch(setUser(response?.data));
+            dispatch(setToken(response?.data?.access_token));
+            dispatch(setAuth(true));
+
+            if (response?.data?.is_profile_completed === false) {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.CompleteProfile,
+                    params: { userData: response?.data },
+                  } as never,
+                ],
+              });
+            } else {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.NonAuthStack,
+                    params: { screen: AppRoutes.Offer },
+                  } as never,
+                ],
+              });
+            }
+          } else {
+            setSuccessVisible(true);
+          }
+        },
+        onError: (error: any) => {
+          console.log('erro', error);
+          AppUtils.showToast(error.message || 'OTP Verification Failed');
+        },
+      },
+    );
   };
 
   const navigateToSignIn = () => {
@@ -98,8 +182,10 @@ const Verification = () => {
                 {timer} {localization.appkeys?.sec}
               </SolidText>
             ) : (
-              <TouchableOpacity onPress={handleResend}>
-                <SolidText style={styles.resendText}>
+              <TouchableOpacity onPress={handleResend} disabled={isResending}>
+                <SolidText
+                  style={[styles.resendText, isResending && { opacity: 0.5 }]}
+                >
                   {localization.appkeys?.resendCode}
                 </SolidText>
               </TouchableOpacity>
@@ -110,6 +196,8 @@ const Verification = () => {
             titleTxt={localization.appkeys?.verifyAndContinue}
             btnStyle={styles.verifyBtn}
             onPress={handleVerify}
+            isLoading={isVerifying}
+            disabled={isVerifying}
           />
 
           <SuccessModal

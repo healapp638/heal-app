@@ -1,4 +1,5 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
 
@@ -33,14 +34,23 @@ const style = (colors: any) =>
       height: 30,
       width: 170,
       alignSelf: 'center',
-      marginTop: 60,
     },
     quote: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
       textAlign: 'center',
-      marginTop: 10,
       color: colors.black,
+      marginTop: 10,
+    },
+    testimonialContainer: {
+      marginTop: 60,
+      height: 120,
+      width: '100%',
+    },
+    testimonialSlide: {
+      width: width * 0.9,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     btn: {
       marginTop: Platform.OS === 'ios' ? 160 : 140,

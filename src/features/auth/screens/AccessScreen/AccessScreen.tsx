@@ -8,13 +8,16 @@ import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+import useSocialLogin from '../../../../hooks/useSocialLogin';
 
 const AccessScreen = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
+  const { googleLogin, isSocialPending } = useSocialLogin();
   return (
     <SolidView
       isScrollEnabled
@@ -38,7 +41,11 @@ const AccessScreen = () => {
             </SolidText>
 
             <View style={styles.socialButtonsContainer}>
-              <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+              <TouchableOpacity
+                style={styles.socialBtn}
+                onPress={googleLogin}
+                disabled={isSocialPending}
+              >
                 <Image
                   source={images.google2}
                   style={styles.socialIcon}

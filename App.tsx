@@ -18,6 +18,10 @@ import { ToastProvider } from './src/utils/ToastManager';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
+
 function App(): React.JSX.Element {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const theme = useColorScheme();
@@ -79,13 +83,15 @@ function App(): React.JSX.Element {
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <LocalizationProvider>
-              <NavigationContainer
-                theme={theme == 'dark' ? DarkTheme : LightTheme}
-              >
-                <ToastProvider>
-                  <MainStack />
-                </ToastProvider>
-              </NavigationContainer>
+              <QueryClientProvider client={queryClient}>
+                <NavigationContainer
+                  theme={theme == 'dark' ? DarkTheme : LightTheme}
+                >
+                  <ToastProvider>
+                    <MainStack />
+                  </ToastProvider>
+                </NavigationContainer>
+              </QueryClientProvider>
             </LocalizationProvider>
           </PersistGate>
         </Provider>

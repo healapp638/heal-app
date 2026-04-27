@@ -9,6 +9,9 @@ import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import { useContext, useState } from 'react';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
 
 const ForgotPassword = () => {
   const { colors, images } = useTheme() as any;
@@ -17,14 +20,43 @@ const ForgotPassword = () => {
   const styles = style(colors);
 
   const [email, setEmail] = useState('');
+  const { mutate: forgotPassword, isPending } = usePostApi();
 
   const handleVerify = () => {
-    // if (!email) return;
-    // For Forgot Password flow, we navigate to Verification
-    // We can pass a param to indicate it's for recovery or just handle the title inside Verification
-    navigation.navigate(
-      AppRoutes.Verification as never,
-      { from: 'ForgotPassword' } as never,
+    if (!email) {
+      AppUtils.showToast(
+        localization.appkeys?.enterEmail || 'Please enter email',
+      );
+      return;
+    }
+
+    if (!AppUtils.validateEmail(email)) {
+      AppUtils.showToast(
+        localization.appkeys?.toastInvalidEmail ||
+          'Please enter a valid email address.',
+      );
+      return;
+    }
+
+    forgotPassword(
+      {
+        endpoint: endpoints.forgot_password,
+        data: { email: email?.trim()?.toLowerCase() },
+      },
+      {
+        onSuccess: () => {
+          navigation.navigate(
+            AppRoutes.Verification as never,
+            {
+              from: 'ForgotPassword',
+              email,
+            } as never,
+          );
+        },
+        onError: (error: any) => {
+          AppUtils.showToast(error.message || 'Failed to send reset code');
+        },
+      },
     );
   };
 
@@ -51,12 +83,15 @@ const ForgotPassword = () => {
             keyboardType="email-address"
             rightImg={images.mail}
             rightImgTintColor={colors.primary}
+            autoCapitalize="none"
           />
           <View style={{ flex: 1 }} />
           <SolidBtn
             titleTxt={localization.appkeys?.verifyAndContinue}
             btnStyle={styles.verifyBtn}
             onPress={handleVerify}
+            isLoading={isPending}
+            disabled={isPending}
           />
         </View>
       }

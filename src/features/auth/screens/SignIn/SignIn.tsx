@@ -9,18 +9,108 @@ import SolidBtn from '../../../../components/SolidBtn';
 import SolidInput from '../../../../components/SolidInput';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
+import localStore from '../../../../localStorage/asyncStore';
+import { storeKeys } from '../../../../localStorage/storeKeys';
+import { useDispatch } from 'react-redux';
+import {
+  setAuth,
+  setToken,
+  setUser,
+} from '../../../../redux/Reducers/userData';
+import useSocialLogin from '../../../../hooks/useSocialLogin';
 
 const SignIn = () => {
+  const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+
+  const { mutate: loginUser, isPending } = usePostApi();
+  const { googleLogin, isSocialPending } = useSocialLogin();
+
+  const handleLogin = () => {
+    if (!email) {
+      AppUtils.showToast(
+        localization.appkeys?.enterEmail || 'Please enter email',
+      );
+      return;
+    }
+    if (!AppUtils.validateEmail(email)) {
+      AppUtils.showToast(
+        localization.appkeys?.toastInvalidEmail ||
+          'Please enter a valid email address.',
+      );
+      return;
+    }
+    if (!password) {
+      AppUtils.showToast(
+        localization.appkeys?.toastEnterPassword || 'Please enter password',
+      );
+      return;
+    }
+
+    loginUser(
+      {
+        endpoint: endpoints.login,
+        data: {
+          email: email?.trim()?.toLowerCase(),
+          password: password,
+        },
+      },
+      {
+        onSuccess: async (response: any) => {
+          // console.log('response', response?.data?.is_after_social_login);
+
+          if (response?.data?.is_after_social_login) {
+            navigation.navigate(
+              AppRoutes.Verification as never,
+              {
+                email: email?.trim()?.toLowerCase(),
+                password: password,
+                from: 'SignIn',
+              } as never,
+            );
+          } else {
+            dispatch(setUser(response?.data));
+            dispatch(setToken(response?.data?.access_token));
+            dispatch(setAuth(true));
+            if (rememberMe) {
+              await localStore.storeData(storeKeys.rememberMe, {
+                email,
+                password,
+                rememberMe: true,
+              });
+            } else {
+              await localStore.removeData(storeKeys.rememberMe);
+            }
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: AppRoutes.NonAuthStack,
+                  params: { screen: AppRoutes.Offer },
+                } as never,
+              ],
+            });
+          }
+        },
+        onError: (error: any) => {
+          AppUtils.showToast(error.message || 'Login failed');
+        },
+      },
+    );
+  };
+
   useEffect(() => {
+    checkRememberMe();
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
@@ -33,6 +123,15 @@ const SignIn = () => {
     );
     return () => backHandler.remove();
   }, []);
+
+  const checkRememberMe = async () => {
+    const res = await localStore.getData(storeKeys.rememberMe);
+    if (res?.status && res?.value) {
+      setEmail(res.value.email);
+      setPassword(res.value.password);
+      setRememberMe(res.value.rememberMe);
+    }
+  };
   return (
     <SolidView
       isScrollEnabled
@@ -112,17 +211,9 @@ const SignIn = () => {
               <SolidBtn
                 titleTxt={localization.appkeys?.logInBtn}
                 btnStyle={styles.loginBtn}
-                onPress={() => {
-                  navigation.reset({
-                    index: 0,
-                    routes: [
-                      {
-                        name: AppRoutes.NonAuthStack,
-                        params: { screen: AppRoutes.Offer },
-                      } as never,
-                    ],
-                  });
-                }}
+                onPress={handleLogin}
+                isLoading={isPending}
+                disabled={isPending}
               />
 
               {/* Divider */}
@@ -136,7 +227,11 @@ const SignIn = () => {
 
               {/* Social Buttons */}
               <View style={styles.socialContainer}>
-                <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                <TouchableOpacity
+                  style={styles.socialBtn}
+                  onPress={googleLogin}
+                  disabled={isSocialPending}
+                >
                   <Image
                     source={images.google2}
                     style={styles.socialIcon}

@@ -1,6 +1,6 @@
 export const sensitiveData = {
   //Development
-  devApiUrl: "http://localhost:3000/api",
+  devApiUrl: "https://apidev.heal-app.com/api/v1",
   devFileUrl: "http://localhost:3000/api/files",
 
   //Stage

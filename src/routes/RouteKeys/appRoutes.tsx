@@ -23,6 +23,7 @@ const AppRoutes = {
   Verification: 'Verification',
   ForgotPassword: 'ForgotPassword',
   ResetPassword: 'ResetPassword',
+  CompleteProfile: 'CompleteProfile',
   Offer: 'Offer',
   SelectLanguage: 'SelectLanguage',
   Reminder: 'Reminder',
