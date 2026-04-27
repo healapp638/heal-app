@@ -40,6 +40,7 @@ export const verifyToken = async (req: Request) => {
     try {
 
         let token: any = req.headers['access_token'] || req.headers['authorization'] || req.headers['Authorization'];
+        console.log(token, "token token token1")
 
         if (!token) {
             return showResponse(false, "Token not present in headers ", {}, statusCodes.AUTH_TOKEN_ERROR);
@@ -49,7 +50,7 @@ export const verifyToken = async (req: Request) => {
             token = token.slice(7, token.length);
         }
 
-        const API_SECRET = await APP.JWT_SECRET;
+        const API_SECRET = '!@#$%^&*()';
 
         const decoded: any = await new Promise((resolve, reject) => {
             jwt.verify(token, API_SECRET as string, async (err: any, decoded: any) => {
