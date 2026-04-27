@@ -14,55 +14,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyDwQRWhC3UIJo_16AHysw9kBNl8i5Jg8Y4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "81341323740-v6ehjcn5uo31mm3np2no18v8hu62o02u.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.healwellness.app"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:81341323740:android:c23b67e69e1258c73a9719",
-        "android_client_info": {
-          "package_name": "com.healwellness.app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "81341323740-lonocvcjsjngck1lhqshib03fhgib23s.apps.googleusercontent.com",
+          "client_id": "81341323740-9t74q124j6rcbg5ha8k71ct277lbvmtl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.healwellness.app",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "package_name": "com.heal",
+            "certificate_hash": "960987e0249dc6ccf709bc1f56dffc8f9a0b39a7"
           }
         },
         {
-          "client_id": "81341323740-q9ti4j6fv6nr86at931h315lqmlbs9om.apps.googleusercontent.com",
+          "client_id": "81341323740-vaecdrmtvt6colemcolg48mggs6kutl4.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.healwellness.app",
-            "certificate_hash": "6c56ffaf1f19794d95ef167f91ac4482d762cd98"
+            "package_name": "com.heal",
+            "certificate_hash": "d48239568a0d9a11cda03d1307c48c8255dc42b1"
           }
         },
         {
@@ -83,10 +47,10 @@
               "client_type": 3
             },
             {
-              "client_id": "81341323740-v6ehjcn5uo31mm3np2no18v8hu62o02u.apps.googleusercontent.com",
+              "client_id": "81341323740-mortdk1sobcndmfb4omb5660i2e9r6p7.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.healwellness.app"
+                "bundle_id": "com.heal"
               }
             }
           ]

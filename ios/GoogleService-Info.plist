@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>557562015265-8s87aia6k2onde0d9qdlgf230e0i1cb3.apps.googleusercontent.com</string>
+	<string>81341323740-mortdk1sobcndmfb4omb5660i2e9r6p7.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.557562015265-8s87aia6k2onde0d9qdlgf230e0i1cb3</string>
+	<string>com.googleusercontent.apps.81341323740-mortdk1sobcndmfb4omb5660i2e9r6p7</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>81341323740-lonocvcjsjngck1lhqshib03fhgib23s.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCmSJ1rhYA6HH_j8CwmCdTdnP5nXYonkpM</string>
+	<string>AIzaSyDVgWE3FPqfH5pf77KTaHsbPA4MTfnQLYs</string>
 	<key>GCM_SENDER_ID</key>
-	<string>557562015265</string>
+	<string>81341323740</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.template</string>
+	<string>com.heal</string>
 	<key>PROJECT_ID</key>
-	<string>templateproject-6eb36</string>
+	<string>heal-43111</string>
 	<key>STORAGE_BUCKET</key>
-	<string>templateproject-6eb36.appspot.com</string>
+	<string>heal-43111.firebasestorage.app</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:557562015265:ios:44d299b2050aa0934ebd60</string>
+	<string>1:81341323740:ios:c39167ad3136393c3a9719</string>
 </dict>
 </plist>
