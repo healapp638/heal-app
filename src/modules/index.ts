@@ -12,6 +12,7 @@ import adminSubModulesRoutes from './AdminSubModules/admin.submodules.route'
 import adminPhasesRoutes from './AdminPhases/admin.phases.route'
 import adminExerciseRoutes from './AdminExercise/admin.exercise.route';
 import userModulesRoutes from './UserModules/user.modules.route';
+import userJournelRoutes from './UserJournel/user.journal.route';
 
 //user and admin all usertype common routes
 import commonRoutes from '../modules/Common/common.route'
@@ -36,10 +37,12 @@ Route.use('/admin/submodules', adminSubModulesRoutes);
 Route.use('/admin/phases', adminPhasesRoutes);
 Route.use('/admin/exercise', adminExerciseRoutes);
 
+
 //user routes
 Route.use('/user/auth', userAuthRoutes);
 Route.use('/user/common', userCommonRoutes);
 Route.use('/user/modules', userModulesRoutes);
+Route.use('/user/journal', userJournelRoutes);
 
 //user and admin all usertype common routes
 Route.use('/common', commonRoutes);

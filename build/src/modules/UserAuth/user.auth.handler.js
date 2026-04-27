@@ -312,7 +312,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
     }),
     verifyOtp: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
+        var _a, _b, _c;
         const { email, otp, password } = data;
         if (password) {
             const hashed = yield commonHelper.bycrptPasswordHash(password);
@@ -325,7 +325,13 @@ const UserAuthHandler = {
         }
         const language = ((_a = exists === null || exists === void 0 ? void 0 : exists.data) === null || _a === void 0 ? void 0 : _a.language) || 'en';
         yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, { isVerified: true, password: data.password });
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_verify_success"), null, statusCodes_1.default.SUCCESS);
+        const userData = exists === null || exists === void 0 ? void 0 : exists.data;
+        const is_user_social_login = !!userData.social_account.length;
+        const is_simple_login = !!userData.password;
+        const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        const is_profile_completed = !!userData.dob && !!userData.country;
+        const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_b = exists === null || exists === void 0 ? void 0 : exists.data) === null || _b === void 0 ? void 0 : _b._id, (_c = exists === null || exists === void 0 ? void 0 : exists.data) === null || _c === void 0 ? void 0 : _c.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed, account_type, is_after_social_login: false }, statusCodes_1.default.SUCCESS);
     }),
     resendOtp: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email } = data;

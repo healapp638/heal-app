@@ -320,7 +320,15 @@ const UserAuthHandler = {
         }
         const language = exists?.data?.language || 'en';
         await findOneAndUpdate(userAuthModel, queryObject, { isVerified: true, password: data.password })
-        return showResponse(true, getMessage(language || 'en', "otp_verify_success"), null, statusCodes.SUCCESS);
+
+        const userData = exists?.data
+        const is_user_social_login = !!userData.social_account.length;
+        const is_simple_login = !!userData.password;
+        const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        const is_profile_completed = !!userData.dob && !!userData.country
+
+        const { access_token, refresh_token } = await generateAccessRefreshToken(exists?.data?._id, exists?.data?.user_type, tokenUserTypeInterface.USER)
+        return showResponse(true, getMessage(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed, account_type, is_after_social_login: false }, statusCodes.SUCCESS);
     },
 
     resendOtp: async (data: any): Promise<ApiResponse> => {

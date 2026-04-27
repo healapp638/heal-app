@@ -34,6 +34,7 @@ const messages = {
         error_while_completing_lesson: "Error while completing lesson",
         lesson_completed_successfully: "Lesson completed successfully",
         lesson_started_successfully: "Lesson started successfully",
+        error_while_creating_journal: "Error while creating journal",
     },
     es: {
         USER_NOT_FOUND: "Usuario no encontrado",
@@ -67,6 +68,7 @@ const messages = {
         error_while_completing_lesson: "Error al completar la lección",
         lesson_completed_successfully: "Lección completada exitosamente",
         lesson_started_successfully: "Lección iniciada exitosamente",
+        error_while_creating_journal: "Error al crear el diario",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -100,6 +102,7 @@ const messages = {
         error_while_completing_lesson: "Erreur lors de la complétion de la leçon",
         lesson_completed_successfully: "Leçon complétée avec succès",
         lesson_started_successfully: "Leçon démarrée avec succès",
+        error_while_creating_journal: "Erreur lors de la création du journal",
     },
     zh: {
         USER_NOT_FOUND: "用户未找到",
@@ -133,6 +136,7 @@ const messages = {
         error_while_completing_lesson: "完成课程时出错",
         lesson_completed_successfully: "课程完成成功",
         lesson_started_successfully: "课程开始成功",
+        error_while_creating_journal: "创建日记时出错",
     },
     hi: {
         //hindi
@@ -167,6 +171,7 @@ const messages = {
         error_while_completing_lesson: "पाठ पूरा करते समय त्रुटि",
         lesson_completed_successfully: "पाठ सफलतापूर्वक पूरा हुआ",
         lesson_started_successfully: "पाठ सफलतापूर्वक शुरू हुआ",
+        error_while_creating_journal: "जर्नल बनाते समय त्रुटि",
     },
     de: {
         USER_NOT_FOUND: "Benutzer nicht gefunden",
@@ -200,6 +205,7 @@ const messages = {
         error_while_completing_lesson: "Fehler beim Abschließen der Lektion",
         lesson_completed_successfully: "Lektion erfolgreich abgeschlossen",
         lesson_started_successfully: "Lektion erfolgreich gestartet",
+        error_while_creating_journal: "Fehler beim Erstellen des Journals",
     },
     ru: {
         USER_NOT_FOUND: "Пользователь не найден",
@@ -233,6 +239,7 @@ const messages = {
         error_while_completing_lesson: "Ошибка при завершении урока",
         lesson_completed_successfully: "Урок успешно завершен",
         lesson_started_successfully: "Урок успешно начат",
+        error_while_creating_journal: "Ошибка при создании дневника",
     },
     pt: {
         USER_NOT_FOUND: "Usuário não encontrado",
@@ -266,6 +273,7 @@ const messages = {
         error_while_completing_lesson: "Erro ao completar a lição",
         lesson_completed_successfully: "Lição completada com sucesso",
         lesson_started_successfully: "Lição iniciada com sucesso",
+        error_while_creating_journal: "Erro ao criar o diário",
     },
     it: {
         USER_NOT_FOUND: "Utente non trovato",
@@ -299,6 +307,7 @@ const messages = {
         error_while_completing_lesson: "Errore durante la completamento della lezione",
         lesson_completed_successfully: "Lezione completata con successo",
         lesson_started_successfully: "Lezione iniziata con successo",
+        error_while_creating_journal: "Errore durante la creazione del diario",
     },
     ro: {
         USER_NOT_FOUND: "Utilizator negăsit",
@@ -332,6 +341,7 @@ const messages = {
         error_while_completing_lesson: "Eroare la completarea lecției",
         lesson_completed_successfully: "Lecția a fost completată cu succes",
         lesson_started_successfully: "Lecția a fost inițiată cu succes",
+        error_while_creating_journal: "Eroare la crearea jurnalului",
     },
 };
 const getMessage = (lang, key) => {
