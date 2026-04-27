@@ -1277,7 +1277,7 @@
 			}
 		},
 		"/user/auth/profile": {
-			"put": {
+			"post": {
 				"operationId": "UpdateUserProfile",
 				"responses": {
 					"200": {

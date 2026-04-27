@@ -129,11 +129,8 @@ const UserCommonHandler = {
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
-        const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journalId, user_id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE }, {
-            feeling,
-            title,
-            description
-        }, { new: true });
+        const updateObj = Object.assign(Object.assign(Object.assign({}, (feeling && { feeling: { [lang]: feeling } })), (title && { title: { [lang]: title } })), (description && { description: { [lang]: description } }));
+        const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journalId, user_id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE }, updateObj, { new: true });
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_updating_journal'), null, statusCodes_1.default.API_ERROR);
         }

@@ -73,7 +73,7 @@ router.get('/details', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, 
     const result = yield controller.getUserDetails();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.put('/profile', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/profile', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { fullName, country, dob, profilePic, language } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
     const result = yield controller.updateUserProfile({ fullName, country, dob, profilePic, language });

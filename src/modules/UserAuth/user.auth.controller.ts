@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Body, Get, Security, UploadedFile, FormField, Put, Delete } from 'tsoa'
+import { Route, Controller, Tags, Post, Body, Get, Security, UploadedFile, FormField, Delete } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import { validateChangePassword, validateForgotPassword, validateRefreshToken, validateDeleteOrDeactivation, validateUpdateProfile, validateRegister, validateResetPassword, validateResendOtp, validateVerifyOtp, validateLoginUser, validateSocialLogin } from '../UserAuth/user.auth.validator';
 import handler from '../UserAuth/user.auth.handler'
@@ -171,7 +171,7 @@ export default class UserAuthController extends Controller {
 * Update User Profile
 */
     @Security('Bearer')
-    @Put("/profile")
+    @Post("/profile")
     public async updateUserProfile(@Body() request: { fullName?: string, country?: string, dob?: string, profilePic?: string, language?: string }): Promise<ApiResponse> {
         const validate = validateUpdateProfile(request);
         if (validate.error) {

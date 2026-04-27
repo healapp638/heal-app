@@ -307,7 +307,7 @@ __decorate([
 ], UserAuthController.prototype, "getUserDetails", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Put)("/profile"),
+    (0, tsoa_1.Post)("/profile"),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),

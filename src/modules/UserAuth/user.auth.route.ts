@@ -73,7 +73,7 @@ router.get('/details', verifyTokenUser, async (req: Request | any, res: Response
     return showOutput(res, result, result.code)
 })
 
-router.put('/profile', verifyTokenUser, async (req: Request | any, res: Response) => {
+router.post('/profile', verifyTokenUser, async (req: Request | any, res: Response) => {
     const { fullName, country, dob, profilePic, language } = req.body
     const controller = new UserAuthController(req, res)
     const result: ApiResponse = await controller.updateUserProfile({ fullName, country, dob, profilePic, language });

@@ -124,11 +124,12 @@ const UserCommonHandler = {
         if (!user) {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
-        const response = await userJournalModel.findOneAndUpdate({ _id: journalId, user_id: userId, status: USER_STATUS.ACTIVE }, {
-            feeling,
-            title,
-            description
-        }, { new: true });
+        const updateObj: any = {
+            ...(feeling && { feeling: { [lang]: feeling } }),
+            ...(title && { title: { [lang]: title } }),
+            ...(description && { description: { [lang]: description } }),
+        }
+        const response = await userJournalModel.findOneAndUpdate({ _id: journalId, user_id: userId, status: USER_STATUS.ACTIVE }, updateObj, { new: true });
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_updating_journal'), null, statusCodes.API_ERROR)
         }
