@@ -30,6 +30,7 @@ const messages: any = {
         already_completed: "Already completed",
         error_while_completing_lesson: "Error while completing lesson",
         lesson_completed_successfully: "Lesson completed successfully",
+        lesson_started_successfully: "Lesson started successfully",
 
 
     },
@@ -64,6 +65,7 @@ const messages: any = {
         already_completed: "Ya completado",
         error_while_completing_lesson: "Error al completar la lección",
         lesson_completed_successfully: "Lección completada exitosamente",
+        lesson_started_successfully: "Lección iniciada exitosamente",
 
 
     },
@@ -98,6 +100,7 @@ const messages: any = {
         already_completed: "Déjà complété",
         error_while_completing_lesson: "Erreur lors de la complétion de la leçon",
         lesson_completed_successfully: "Leçon complétée avec succès",
+        lesson_started_successfully: "Leçon démarrée avec succès",
 
     },
     zh: {
@@ -131,6 +134,7 @@ const messages: any = {
         already_completed: "已完成",
         error_while_completing_lesson: "完成课程时出错",
         lesson_completed_successfully: "课程完成成功",
+        lesson_started_successfully: "课程开始成功",
     },
     hi: {
         //hindi
@@ -164,6 +168,7 @@ const messages: any = {
         already_completed: "पहले ही पूरा हो चुका है",
         error_while_completing_lesson: "पाठ पूरा करते समय त्रुटि",
         lesson_completed_successfully: "पाठ सफलतापूर्वक पूरा हुआ",
+        lesson_started_successfully: "पाठ सफलतापूर्वक शुरू हुआ",
 
 
     },
@@ -198,6 +203,7 @@ const messages: any = {
         already_completed: "Bereits abgeschlossen",
         error_while_completing_lesson: "Fehler beim Abschließen der Lektion",
         lesson_completed_successfully: "Lektion erfolgreich abgeschlossen",
+        lesson_started_successfully: "Lektion erfolgreich gestartet",
 
 
     },
@@ -232,6 +238,7 @@ const messages: any = {
         already_completed: "Уже завершено",
         error_while_completing_lesson: "Ошибка при завершении урока",
         lesson_completed_successfully: "Урок успешно завершен",
+        lesson_started_successfully: "Урок успешно начат",
     },
     pt: {
         USER_NOT_FOUND: "Usuário não encontrado",
@@ -264,6 +271,7 @@ const messages: any = {
         already_completed: "Já completado",
         error_while_completing_lesson: "Erro ao completar a lição",
         lesson_completed_successfully: "Lição completada com sucesso",
+        lesson_started_successfully: "Lição iniciada com sucesso",
     },
     it: {
         USER_NOT_FOUND: "Utente non trovato",
@@ -296,6 +304,7 @@ const messages: any = {
         already_completed: "Già completato",
         error_while_completing_lesson: "Errore durante la completamento della lezione",
         lesson_completed_successfully: "Lezione completata con successo",
+        lesson_started_successfully: "Lezione iniziata con successo",
     },
     ro: {
         USER_NOT_FOUND: "Utilizator negăsit",
@@ -328,6 +337,7 @@ const messages: any = {
         already_completed: "Deja completat",
         error_while_completing_lesson: "Eroare la completarea lecției",
         lesson_completed_successfully: "Lecția a fost completată cu succes",
+        lesson_started_successfully: "Lecția a fost inițiată cu succes",
     },
 };
 

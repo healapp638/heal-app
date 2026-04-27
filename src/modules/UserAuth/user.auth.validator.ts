@@ -10,12 +10,12 @@ export const validateLoginUser = (user: any) => {
 
 export const validateRegister = (user: any) => {
     return joi.object({
-        hearAboutUs: joi.string().trim().min(2).max(20).required(),
-        bringsYouHere: joi.string().required(),
-        howFellingLately: joi.string().trim().required(),
-        likeToFellMore: joi.string().min(2).max(20).required(),
-        timeYouCommit: joi.string().required(),
-        startShowingOfYourSelf: joi.string().required(),
+        hearAboutUs: joi.string().optional().allow(''),
+        bringsYouHere: joi.string().optional().allow(''),
+        howFellingLately: joi.string().optional().allow(''),
+        likeToFellMore: joi.string().optional().allow(''),
+        timeYouCommit: joi.string().optional().allow(''),
+        startShowingOfYourSelf: joi.string().optional().allow(''),
         fullName: joi.string().required(),
         country: joi.string().required(),
         email: joi.string().trim().email().required(),

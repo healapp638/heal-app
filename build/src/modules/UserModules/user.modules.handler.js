@@ -482,9 +482,28 @@ const UserCommonHandler = {
                 status: workflow_constant_1.USER_STATUS.ACTIVE
             });
         }
+        const totalPhaseInSubModule = yield admin_phases_model_1.default.countDocuments({
+            subModuleId: (0, common_helper_1.convertToObjectId)(subModuleId),
+            status: workflow_constant_1.USER_STATUS.ACTIVE
+        });
+        const completedPhaseInSubModule = yield user_modules_complete_phase_model_1.default.countDocuments({
+            user_id: (0, common_helper_1.convertToObjectId)(userId),
+            sub_module_id: (0, common_helper_1.convertToObjectId)(subModuleId),
+            status: workflow_constant_1.USER_STATUS.ACTIVE
+        });
+        if (totalPhaseInSubModule === completedPhaseInSubModule) {
+            yield user_module_start_lesson_model_1.default.updateOne({
+                user_id: (0, common_helper_1.convertToObjectId)(userId),
+                sub_module_id: (0, common_helper_1.convertToObjectId)(subModuleId),
+            }, {
+                $set: {
+                    sub_module_status: "end"
+                }
+            });
+        }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes_1.default.SUCCESS);
     }),
-    startLesson: (exercise_id, exercise_details_id, phase_id, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    startLesson: (phase_id, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const userLang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
         const submodule = yield admin_phases_model_1.default.findOne({
@@ -495,15 +514,10 @@ const UserCommonHandler = {
         const start_lesson = yield user_module_start_lesson_model_1.default.findOneAndUpdate({
             user_id: (0, common_helper_1.convertToObjectId)(userId),
             sub_module_id: (0, common_helper_1.convertToObjectId)(subModuleId),
-            phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
         }, {
             $set: {
                 user_id: (0, common_helper_1.convertToObjectId)(userId),
-                exercise_id: (0, common_helper_1.convertToObjectId)(exercise_id),
-                exercise_details_id: (0, common_helper_1.convertToObjectId)(exercise_details_id),
-                phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
                 sub_module_id: (0, common_helper_1.convertToObjectId)(subModuleId),
-                lesson_status: "start",
                 status: workflow_constant_1.USER_STATUS.ACTIVE
             }
         }, {
@@ -514,6 +528,192 @@ const UserCommonHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(userLang || 'en', 'error_while_starting_lesson'), null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'lesson_started_successfully'), null, statusCodes_1.default.SUCCESS);
+    }),
+    startSubModuleList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { cursor, limit = 10 } = data;
+        const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
+        const userLang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
+        const match = {
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            sub_module_status: "start",
+            user_id: (0, common_helper_1.convertToObjectId)(userId)
+        };
+        if (cursor) {
+            const parsedCursor = JSON.parse(cursor);
+            match.$or = [
+                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+                {
+                    createdAt: new Date(parsedCursor.createdAt),
+                    _id: { $lt: (0, common_helper_1.convertToObjectId)(parsedCursor._id) }
+                }
+            ];
+        }
+        const subModules = yield user_module_start_lesson_model_1.default.aggregate([
+            {
+                $match: match
+            },
+            {
+                $lookup: {
+                    from: 'submodules',
+                    localField: 'sub_module_id',
+                    foreignField: '_id',
+                    as: 'submodule'
+                }
+            },
+            {
+                $unwind: '$submodule'
+            },
+            {
+                $lookup: {
+                    from: 'phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'subModuleId',
+                    as: 'phase'
+                }
+            },
+            {
+                $addFields: {
+                    title: `$submodule.title.${userLang}`,
+                    description: `$submodule.description.${userLang}`,
+                    total_phase_count: { $size: '$phase' }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'completed_phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'sub_module_id',
+                    as: 'completed_phase',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: (0, common_helper_1.convertToObjectId)(userId)
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    completed_phase_count: { $size: '$completed_phase' }
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                    _id: -1
+                }
+            },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    total_phase_count: 1,
+                    completed_phase_count: 1,
+                    createdAt: 1,
+                    _id: 1
+                }
+            },
+            {
+                $limit: Number(limit)
+            }
+        ]);
+        const last = subModules[subModules.length - 1];
+        const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { subModules, nextCursor }, statusCodes_1.default.SUCCESS);
+    }),
+    endSubModuleList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { cursor, limit = 10 } = data;
+        const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
+        const userLang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
+        const match = {
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            sub_module_status: "end",
+            user_id: (0, common_helper_1.convertToObjectId)(userId)
+        };
+        if (cursor) {
+            const parsedCursor = JSON.parse(cursor);
+            match.$or = [
+                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+                {
+                    createdAt: new Date(parsedCursor.createdAt),
+                    _id: { $lt: (0, common_helper_1.convertToObjectId)(parsedCursor._id) }
+                }
+            ];
+        }
+        const subModules = yield user_module_start_lesson_model_1.default.aggregate([
+            {
+                $match: match
+            },
+            {
+                $lookup: {
+                    from: 'submodules',
+                    localField: 'sub_module_id',
+                    foreignField: '_id',
+                    as: 'submodule'
+                }
+            },
+            {
+                $unwind: '$submodule'
+            },
+            {
+                $lookup: {
+                    from: 'phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'subModuleId',
+                    as: 'phase'
+                }
+            },
+            {
+                $addFields: {
+                    title: `$submodule.title.${userLang}`,
+                    description: `$submodule.description.${userLang}`,
+                    total_phase_count: { $size: '$phase' }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'completed_phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'sub_module_id',
+                    as: 'completed_phase',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: (0, common_helper_1.convertToObjectId)(userId)
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    completed_phase_count: { $size: '$completed_phase' }
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                    _id: -1
+                }
+            },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    total_phase_count: 1,
+                    completed_phase_count: 1,
+                    createdAt: 1,
+                    _id: 1
+                }
+            },
+            {
+                $limit: Number(limit)
+            }
+        ]);
+        const last = subModules[subModules.length - 1];
+        const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { subModules, nextCursor }, statusCodes_1.default.SUCCESS);
     })
 };
 exports.default = UserCommonHandler;

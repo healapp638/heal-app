@@ -57,6 +57,8 @@ const services_1 = __importDefault(require("../../services"));
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const messages_1 = require("../../helpers/messages");
+const admin_phases_model_1 = __importDefault(require("../AdminPhases/admin.phases.model"));
+const user_modules_complete_phase_model_1 = __importDefault(require("../UserModules/user.modules.complete.phase.model"));
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -370,7 +372,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
     }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
+        var _a, _b, _c, _d;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
@@ -381,7 +383,49 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const language = ((_b = result === null || result === void 0 ? void 0 : result.data) === null || _b === void 0 ? void 0 : _b.language) || 'en';
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed }), statusCodes_1.default.SUCCESS);
+        //calculate progress
+        const Allpahses = yield admin_phases_model_1.default.aggregate([
+            {
+                $match: {
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        const total_points = ((_c = Allpahses[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0;
+        const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: userId,
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $lookup: {
+                    from: "phases",
+                    localField: "phase_id",
+                    foreignField: "_id",
+                    as: "phase"
+                }
+            },
+            {
+                $unwind: "$phase"
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: "$phase.points" }
+                }
+            }
+        ]);
+        const total_earned_points = ((_d = CompletedPhases[0]) === null || _d === void 0 ? void 0 : _d.total_points) || 0;
+        const completedPercentage = (total_earned_points / total_points) * 100;
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage }), statusCodes_1.default.SUCCESS);
     }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;

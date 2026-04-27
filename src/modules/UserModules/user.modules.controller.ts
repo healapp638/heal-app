@@ -5,7 +5,7 @@ import handler from '../UserModules/user.modules.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes';
-import { validateCompleteLesson, validateExerciseDetailList, validateExerciseList, validateModuleList, validatePhaseList, validateStartLesson } from './user.modules.validator';
+import { validateCompleteLesson, validateExerciseDetailList, validateExerciseList, validateModuleList, validatePhaseList, validateStartLesson, validateStartSubModuleList } from './user.modules.validator';
 
 @Tags('User Modules Routes')
 @Route('/user/modules')
@@ -85,13 +85,35 @@ export default class UserModulesController extends Controller {
 
     @Security('Bearer')
     @Get("/start_lesson")
-    public async startLesson(@Query() exercise_id: string, @Query() exercise_details_id: string, @Query() phase_id: string): Promise<ApiResponse> {
-        const validate = validateStartLesson({ exercise_id, exercise_details_id, phase_id });
+    public async startLesson(@Query() phase_id: string): Promise<ApiResponse> {
+        const validate = validateStartLesson({ phase_id });
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
         }
         const wrappedFunc = tryCatchWrapper(handler.startLesson);
-        return wrappedFunc(exercise_id, exercise_details_id, phase_id, this.userId); // Invoking the wrapped function 
+        return wrappedFunc(phase_id, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/start_sub_module_list")
+    public async startSubModuleList(@Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
+        const validate = validateStartSubModuleList({ cursor, limit });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.startSubModuleList);
+        return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/end_sub_module_list")
+    public async endSubModuleList(@Query() cursor?: string, @Query() limit?: number): Promise<ApiResponse> {
+        const validate = validateStartSubModuleList({ cursor, limit });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.endSubModuleList);
+        return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
     }
 
 }

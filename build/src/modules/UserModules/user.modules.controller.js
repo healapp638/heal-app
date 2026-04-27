@@ -93,14 +93,34 @@ let UserModulesController = class UserModulesController extends tsoa_1.Controlle
             return wrappedFunc(body, this.userId); // Invoking the wrapped function 
         });
     }
-    startLesson(exercise_id, exercise_details_id, phase_id) {
+    startLesson(phase_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, user_modules_validator_1.validateStartLesson)({ exercise_id, exercise_details_id, phase_id });
+            const validate = (0, user_modules_validator_1.validateStartLesson)({ phase_id });
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
             }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.startLesson);
-            return wrappedFunc(exercise_id, exercise_details_id, phase_id, this.userId); // Invoking the wrapped function 
+            return wrappedFunc(phase_id, this.userId); // Invoking the wrapped function 
+        });
+    }
+    startSubModuleList(cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateStartSubModuleList)({ cursor, limit });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.startSubModuleList);
+            return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    endSubModuleList(cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateStartSubModuleList)({ cursor, limit });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.endSubModuleList);
+            return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
         });
     }
 };
@@ -165,12 +185,28 @@ __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("/start_lesson"),
     __param(0, (0, tsoa_1.Query)()),
-    __param(1, (0, tsoa_1.Query)()),
-    __param(2, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserModulesController.prototype, "startLesson", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/start_sub_module_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "startSubModuleList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/end_sub_module_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "endSubModuleList", null);
 UserModulesController = __decorate([
     (0, tsoa_1.Tags)('User Modules Routes'),
     (0, tsoa_1.Route)('/user/modules'),

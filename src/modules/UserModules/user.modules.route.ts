@@ -50,9 +50,23 @@ router.post('/complete_lesson', verifyTokenUser, async (req: Request | any, res:
 });
 
 router.get('/start_lesson', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { exercise_id, exercise_details_id, phase_id } = req.query;
+    const { phase_id } = req.query;
     const controller = new UserModulesController(req, res)
-    const result: ApiResponse = await controller.startLesson(exercise_id, exercise_details_id, phase_id);
+    const result: ApiResponse = await controller.startLesson(phase_id);
+    return showOutput(res, result, result.code)
+});
+
+router.get('/start_sub_module_list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { cursor, limit } = req.query;
+    const controller = new UserModulesController(req, res)
+    const result: ApiResponse = await controller.startSubModuleList(cursor, limit);
+    return showOutput(res, result, result.code)
+});
+
+router.get('/end_sub_module_list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { cursor, limit } = req.query;
+    const controller = new UserModulesController(req, res)
+    const result: ApiResponse = await controller.endSubModuleList(cursor, limit);
     return showOutput(res, result, result.code)
 });
 

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateStartLesson = exports.validateCompletePhase = exports.validateCompleteLesson = exports.validateExerciseList = exports.validateExerciseDetailList = exports.validatePhaseList = exports.validateModuleList = void 0;
+exports.validateStartSubModuleList = exports.validateStartLesson = exports.validateCompletePhase = exports.validateCompleteLesson = exports.validateExerciseList = exports.validateExerciseDetailList = exports.validatePhaseList = exports.validateModuleList = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validateModuleList = (data) => {
     const schema = joi_1.default.object({
@@ -60,10 +60,16 @@ const validateCompletePhase = (data) => {
 exports.validateCompletePhase = validateCompletePhase;
 const validateStartLesson = (data) => {
     const schema = joi_1.default.object({
-        exercise_id: joi_1.default.string().required(),
-        exercise_details_id: joi_1.default.string().required(),
         phase_id: joi_1.default.string().required(),
     });
     return schema.validate(data);
 };
 exports.validateStartLesson = validateStartLesson;
+const validateStartSubModuleList = (data) => {
+    const schema = joi_1.default.object({
+        cursor: joi_1.default.string().optional(),
+        limit: joi_1.default.number().optional(),
+    });
+    return schema.validate(data);
+};
+exports.validateStartSubModuleList = validateStartSubModuleList;

@@ -55,9 +55,21 @@ router.post('/complete_lesson', verifyTokenUser, (req, res) => __awaiter(void 0,
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/start_lesson', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { exercise_id, exercise_details_id, phase_id } = req.query;
+    const { phase_id } = req.query;
     const controller = new user_modules_controller_1.default(req, res);
-    const result = yield controller.startLesson(exercise_id, exercise_details_id, phase_id);
+    const result = yield controller.startLesson(phase_id);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/start_sub_module_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.startSubModuleList(cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/end_sub_module_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.endSubModuleList(cursor, limit);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

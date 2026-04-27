@@ -15,12 +15,12 @@ const validateLoginUser = (user) => {
 exports.validateLoginUser = validateLoginUser;
 const validateRegister = (user) => {
     return joi_1.default.object({
-        hearAboutUs: joi_1.default.string().trim().min(2).max(20).required(),
-        bringsYouHere: joi_1.default.string().required(),
-        howFellingLately: joi_1.default.string().trim().required(),
-        likeToFellMore: joi_1.default.string().min(2).max(20).required(),
-        timeYouCommit: joi_1.default.string().required(),
-        startShowingOfYourSelf: joi_1.default.string().required(),
+        hearAboutUs: joi_1.default.string().optional().allow(''),
+        bringsYouHere: joi_1.default.string().optional().allow(''),
+        howFellingLately: joi_1.default.string().optional().allow(''),
+        likeToFellMore: joi_1.default.string().optional().allow(''),
+        timeYouCommit: joi_1.default.string().optional().allow(''),
+        startShowingOfYourSelf: joi_1.default.string().optional().allow(''),
         fullName: joi_1.default.string().required(),
         country: joi_1.default.string().required(),
         email: joi_1.default.string().trim().email().required(),

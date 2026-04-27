@@ -503,7 +503,7 @@ const UserCommonHandler = {
             status: USER_STATUS.ACTIVE
         });
 
-        const subModuleId = submodule?.subModuleId;
+        const subModuleId: any = submodule?.subModuleId;
         console.log(subModuleId, "subModuleId")
 
         if (totalLessonInPhase === completedLessonCount) {
@@ -512,13 +512,36 @@ const UserCommonHandler = {
                 phase_id: convertToObjectId(phase_id),
                 sub_module_id: subModuleId,
                 status: USER_STATUS.ACTIVE
-            })
+            });
+        }
+
+
+        const totalPhaseInSubModule = await adminPhasesModel.countDocuments({
+            subModuleId: convertToObjectId(subModuleId),
+            status: USER_STATUS.ACTIVE
+        })
+
+        const completedPhaseInSubModule = await userModulesCompletePhaseModel.countDocuments({
+            user_id: convertToObjectId(userId),
+            sub_module_id: convertToObjectId(subModuleId),
+            status: USER_STATUS.ACTIVE
+        })
+
+        if (totalPhaseInSubModule === completedPhaseInSubModule) {
+            await userModuleStartLessonModel.updateOne({
+                user_id: convertToObjectId(userId),
+                sub_module_id: convertToObjectId(subModuleId),
+            }, {
+                $set: {
+                    sub_module_status: "end"
+                }
+            });
         }
 
         return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes.SUCCESS);
     },
 
-    startLesson: async (exercise_id: string, exercise_details_id: string, phase_id: string, userId: string): Promise<ApiResponse> => {
+    startLesson: async (phase_id: string, userId: string): Promise<ApiResponse> => {
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const userLang = user?.language || 'en';
 
@@ -532,15 +555,10 @@ const UserCommonHandler = {
         const start_lesson = await userModuleStartLessonModel.findOneAndUpdate({
             user_id: convertToObjectId(userId),
             sub_module_id: convertToObjectId(subModuleId),
-            phase_id: convertToObjectId(phase_id),
         }, {
             $set: {
                 user_id: convertToObjectId(userId),
-                exercise_id: convertToObjectId(exercise_id),
-                exercise_details_id: convertToObjectId(exercise_details_id),
-                phase_id: convertToObjectId(phase_id),
                 sub_module_id: convertToObjectId(subModuleId),
-                lesson_status: "start",
                 status: USER_STATUS.ACTIVE
             }
         }, {
@@ -552,8 +570,203 @@ const UserCommonHandler = {
             return showResponse(false, getMessage(userLang || 'en', 'error_while_starting_lesson'), null, statusCodes.API_ERROR);
         }
 
-
         return showResponse(true, getMessage(userLang || 'en', 'lesson_started_successfully'), null, statusCodes.SUCCESS);
+    },
+
+    startSubModuleList: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { cursor, limit = 10 } = data;
+        const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+        const userLang = user?.language || 'en';
+
+        const match: any = {
+            status: USER_STATUS.ACTIVE,
+            sub_module_status: "start",
+            user_id: convertToObjectId(userId)
+        }
+
+        if (cursor) {
+            const parsedCursor = JSON.parse(cursor);
+            match.$or = [
+                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+                {
+                    createdAt: new Date(parsedCursor.createdAt),
+                    _id: { $lt: convertToObjectId(parsedCursor._id) }
+                }
+            ]
+        }
+
+        const subModules = await userModuleStartLessonModel.aggregate([
+            {
+                $match: match
+            },
+            {
+                $lookup: {
+                    from: 'submodules',
+                    localField: 'sub_module_id',
+                    foreignField: '_id',
+                    as: 'submodule'
+                }
+            },
+            {
+                $unwind: '$submodule'
+            },
+            {
+                $lookup: {
+                    from: 'phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'subModuleId',
+                    as: 'phase'
+                }
+            },
+            {
+                $addFields: {
+                    title: `$submodule.title.${userLang}`,
+                    description: `$submodule.description.${userLang}`,
+                    total_phase_count: { $size: '$phase' }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'completed_phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'sub_module_id',
+                    as: 'completed_phase',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: convertToObjectId(userId)
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    completed_phase_count: { $size: '$completed_phase' }
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                    _id: -1
+                }
+            },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    total_phase_count: 1,
+                    completed_phase_count: 1,
+                    createdAt: 1,
+                    _id: 1
+                }
+            },
+            {
+                $limit: Number(limit)
+            }
+        ])
+
+        const last = subModules[subModules.length - 1];
+        const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModules, nextCursor }, statusCodes.SUCCESS);
+    },
+
+    endSubModuleList: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { cursor, limit = 10 } = data;
+        const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+        const userLang = user?.language || 'en';
+
+        const match: any = {
+            status: USER_STATUS.ACTIVE,
+            sub_module_status: "end",
+            user_id: convertToObjectId(userId)
+        }
+
+        if (cursor) {
+            const parsedCursor = JSON.parse(cursor);
+            match.$or = [
+                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+                {
+                    createdAt: new Date(parsedCursor.createdAt),
+                    _id: { $lt: convertToObjectId(parsedCursor._id) }
+                }
+            ]
+        }
+
+        const subModules = await userModuleStartLessonModel.aggregate([
+            {
+                $match: match
+            },
+            {
+                $lookup: {
+                    from: 'submodules',
+                    localField: 'sub_module_id',
+                    foreignField: '_id',
+                    as: 'submodule'
+                }
+            },
+            {
+                $unwind: '$submodule'
+            },
+            {
+                $lookup: {
+                    from: 'phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'subModuleId',
+                    as: 'phase'
+                }
+            },
+            {
+                $addFields: {
+                    title: `$submodule.title.${userLang}`,
+                    description: `$submodule.description.${userLang}`,
+                    total_phase_count: { $size: '$phase' }
+                }
+            },
+            {
+                $lookup: {
+                    from: 'completed_phases',
+                    localField: 'sub_module_id',
+                    foreignField: 'sub_module_id',
+                    as: 'completed_phase',
+                    pipeline: [
+                        {
+                            $match: {
+                                user_id: convertToObjectId(userId)
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $addFields: {
+                    completed_phase_count: { $size: '$completed_phase' }
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                    _id: -1
+                }
+            },
+            {
+                $project: {
+                    title: 1,
+                    description: 1,
+                    total_phase_count: 1,
+                    completed_phase_count: 1,
+                    createdAt: 1,
+                    _id: 1
+                }
+            },
+            {
+                $limit: Number(limit)
+            }
+        ])
+
+        const last = subModules[subModules.length - 1];
+        const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModules, nextCursor }, statusCodes.SUCCESS);
     }
 
 }

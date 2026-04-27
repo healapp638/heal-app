@@ -10,6 +10,8 @@ import services from '../../services';
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { getMessage } from "../../helpers/messages";
+import adminPhasesModel from "../AdminPhases/admin.phases.model";
+import userModulesCompletePhaseModel from "../UserModules/user.modules.complete.phase.model";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -182,7 +184,7 @@ const UserAuthHandler = {
 
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
-            
+
             const userData = { is_after_social_login: false, account_type, is_profile_completed, ...result?.data, access_token, refresh_token }
 
             return showResponse(true, responseMessage.users.login_success, userData, statusCodes.SUCCESS);
@@ -384,7 +386,49 @@ const UserAuthHandler = {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
         }
         const language = result?.data?.language || 'en';
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed }, statusCodes.SUCCESS)
+        //calculate progress
+        const Allpahses = await adminPhasesModel.aggregate([
+            {
+                $match: {
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        const total_points = Allpahses[0]?.total_points || 0;
+        const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
+            {
+                $match: {
+                    user_id: userId,
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $lookup: {
+                    from: "phases",
+                    localField: "phase_id",
+                    foreignField: "_id",
+                    as: "phase"
+                }
+            },
+            {
+                $unwind: "$phase"
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: "$phase.points" }
+                }
+            }
+        ]);
+        const total_earned_points = CompletedPhases[0]?.total_points || 0;
+        const completedPercentage = (total_earned_points / total_points) * 100;
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {
