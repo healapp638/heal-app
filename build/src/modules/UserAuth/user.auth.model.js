@@ -22,6 +22,7 @@ const UserSchema = new mongoose_1.Schema({
     reason: { type: String },
     status: { type: Number, default: workflow_constant_1.USER_STATUS.ACTIVE },
     language: { type: String, default: "en" },
+    first_name: { type: String, default: "" },
     //******Use When Social Login Used******/
     social_account: [{
             source: {

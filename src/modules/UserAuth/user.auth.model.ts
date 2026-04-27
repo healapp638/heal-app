@@ -22,6 +22,8 @@ const UserSchema = new Schema(
         reason: { type: String },
         status: { type: Number, default: USER_STATUS.ACTIVE },
         language: { type: String, default: "en" },
+        first_name: { type: String, default: "" },
+        
 
         //******Use When Social Login Used******/
         social_account: [{

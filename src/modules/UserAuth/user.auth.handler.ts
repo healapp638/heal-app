@@ -24,7 +24,7 @@ const UserAuthHandler = {
                 email,
                 source: login_source,
                 token: social_auth,
-                name: name
+                fullName: name
             }
 
             // Check if social account exists in device_info array
@@ -166,11 +166,11 @@ const UserAuthHandler = {
                         source: login_source,
                         email: email,
                         token: social_auth,
-                        name: name
+                        fullName: name
                     }
                 ],
                 email,
-                first_name: name ? name : commonHelper.getFirstNameFromEmail(email),
+                fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
                 account_source: login_source,
                 isVerified: true,
             };

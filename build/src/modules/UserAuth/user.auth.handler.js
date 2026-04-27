@@ -69,7 +69,7 @@ const UserAuthHandler = {
                 email,
                 source: login_source,
                 token: social_auth,
-                name: name
+                fullName: name
             };
             // Check if social account exists in device_info array
             const accountIndex = (_b = (_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.social_account) === null || _b === void 0 ? void 0 : _b.findIndex((info) => (info === null || info === void 0 ? void 0 : info.source) === (data === null || data === void 0 ? void 0 : data.login_source));
@@ -192,11 +192,11 @@ const UserAuthHandler = {
                         source: login_source,
                         email: email,
                         token: social_auth,
-                        name: name
+                        fullName: name
                     }
                 ],
                 email,
-                first_name: name ? name : commonHelper.getFirstNameFromEmail(email),
+                fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
                 account_source: login_source,
                 isVerified: true,
             };
