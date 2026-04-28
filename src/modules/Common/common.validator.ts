@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { languages } from '../../constants/workflow.constant';
 
 export const validateStoreParmeterToAws = (common: any) => {
     return joi.object({
@@ -7,3 +8,10 @@ export const validateStoreParmeterToAws = (common: any) => {
     }).validate(common)
 }
 
+
+export const validateGetCommonContent = (common: any) => {
+    return joi.object({
+        lang: joi.string().trim().required().allow(...Object.values(languages)),
+        type: joi.string().trim().required().allow('about', 'privacy_policy', 'terms_conditions'),
+    }).validate(common)
+}

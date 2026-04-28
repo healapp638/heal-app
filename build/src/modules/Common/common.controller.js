@@ -40,10 +40,14 @@ let CommonController = class CommonController extends tsoa_1.Controller {
     /**
    * Get Common Content info
    */
-    getCommonContent() {
+    getCommonContent(type, lang) {
         return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, common_validator_1.validateGetCommonContent)({ lang, type });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(common_handler_1.default.getCommonContent);
-            return wrappedFunc(); // Invoking the wrapped function 
+            return wrappedFunc(type, lang); // Invoking the wrapped function 
         });
     }
     //ends
@@ -74,8 +78,10 @@ let CommonController = class CommonController extends tsoa_1.Controller {
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("/common_content"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], CommonController.prototype, "getCommonContent", null);
 __decorate([

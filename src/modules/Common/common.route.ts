@@ -17,8 +17,9 @@ router.post('/store_parameter_to_aws', addToMulter.none(), async (req: Request |
 })
 
 router.get('/common_content', async (req: Request | any, res: Response) => {
+    const {type,lang}= req.query
     const controller = new CommonController(req, res)
-    const result: ApiResponse = await controller.getCommonContent();
+    const result: ApiResponse = await controller.getCommonContent(type,lang);
     return showOutput(res, result, result.code)
 
 })

@@ -2,7 +2,7 @@ import { Translate } from '@google-cloud/translate';
 
 
 const translate = new Translate({
-    key: process.env.GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+    key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
 });
 
 

@@ -61,9 +61,9 @@ const bootstrapAdmin = function (cb) {
             last_name: 'Account',
         };
         const commonContentData = {
-            about: "<p> About us </p>",
-            privacy_policy: "<p> Privacy Policy </p>",
-            terms_conditions: "<p> Default Terms </p>",
+            about: {},
+            privacy_policy: {},
+            terms_conditions: {},
         };
         const adminDoc = yield (0, db_helpers_1.findOne)(admin_auth_model_1.default, {});
         if (!adminDoc.status) {

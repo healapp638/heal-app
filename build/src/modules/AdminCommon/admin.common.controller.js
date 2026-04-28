@@ -92,6 +92,17 @@ let AdminCommonController = class AdminCommonController extends tsoa_1.Controlle
             return wrappedFunc(request); // Invoking the wrapped function 
         });
     }
+    //ends
+    resentCommonContent(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_common_validator_1.validateResetCommonContent)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.resentCommonContent);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -125,6 +136,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AdminCommonController.prototype, "updateCommonContent", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Put)("/reset_common_content"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "resentCommonContent", null);
 AdminCommonController = __decorate([
     (0, tsoa_1.Tags)('Admin Common Routes'),
     (0, tsoa_1.Route)('/admin/common'),

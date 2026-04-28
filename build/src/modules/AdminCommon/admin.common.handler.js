@@ -18,29 +18,38 @@ const commonContent_model_1 = __importDefault(require("../../modules/AdminCommon
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
 const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const workflow_constant_1 = require("../../constants/workflow.constant");
+const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
 const AdminCommonHandler = {
     addQuestion: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { question, answer } = data;
-        const exists = yield (0, db_helpers_1.findOne)(faq_model_1.default, { question });
-        if (exists.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.API_ERROR);
-        }
-        const newObj = { question, answer };
-        const quesRef = new faq_model_1.default(newObj);
-        const response = yield (0, db_helpers_1.createOne)(quesRef);
-        if (response.status) {
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.question_added, null, statusCodes_1.default.SUCCESS);
-        }
-        return (0, response_util_1.showResponse)(false, responseMessages_1.default.admin.failed_question_add, response, statusCodes_1.default.API_ERROR);
+        const questionData = { en: question };
+        const answerData = { en: answer };
+        // Translate to all other languages in parallel
+        yield Promise.all(workflow_constant_1.SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            const [translatedQ, translatedA] = yield Promise.all([
+                (0, langauge_translate_helper_1.default)(question, lang),
+                (0, langauge_translate_helper_1.default)(answer, lang),
+            ]);
+            questionData[lang] = translatedQ;
+            answerData[lang] = translatedA;
+        })));
+        const faq = yield faq_model_1.default.create({ question: questionData, answer: answerData });
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.question_added, faq, statusCodes_1.default.SUCCESS);
     }),
     updateQuestion: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { answer, question, question_id } = data;
-        const updateObj = Object.assign(Object.assign({}, (answer && { answer })), (question && { question }));
-        const response = yield (0, db_helpers_1.findByIdAndUpdate)(faq_model_1.default, question_id, updateObj);
-        if (response.status) {
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, null, statusCodes_1.default.SUCCESS);
+        const { answer, question, question_id, language } = data;
+        const faq = yield faq_model_1.default.findOne({ _id: question_id });
+        if (!faq) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);
+        const updateData = {};
+        if (question !== undefined)
+            updateData[`question.${language}`] = question;
+        if (answer !== undefined)
+            updateData[`answer.${language}`] = answer;
+        const updated = yield faq_model_1.default.findByIdAndUpdate(question_id, { $set: updateData }, { new: true, runValidators: true }).lean();
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, updated, statusCodes_1.default.SUCCESS);
     }),
     deleteQuestion: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { question_id } = data;
@@ -55,23 +64,52 @@ const AdminCommonHandler = {
         return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, response, statusCodes_1.default.API_ERROR);
     }),
     updateCommonContent: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { about, privacy_policy, terms_conditions } = data;
-        const updateObj = Object.assign(Object.assign(Object.assign({}, (about && { about })), (privacy_policy && { privacy_policy })), (terms_conditions && { terms_conditions }));
-        let message = '';
-        if (about) {
-            message = responseMessages_1.default.admin.about_updated;
+        var _a;
+        const { type, content, language } = data;
+        const text = String(content).trim();
+        // Fetch or initialise the single document
+        let doc = yield commonContent_model_1.default.findOne();
+        if (!doc) {
+            doc = new commonContent_model_1.default({});
         }
-        if (privacy_policy) {
-            message = responseMessages_1.default.admin.privacy_policy_updated;
+        const currentEnglish = ((_a = doc[type]) === null || _a === void 0 ? void 0 : _a.en) || "";
+        // Rule 1: Non-English update but English hasn't been filled yet
+        if (language !== "en" && !currentEnglish) {
+            return (0, response_util_1.showResponse)(false, 'Please add the English content first before adding other languages.', null, statusCodes_1.default.API_ERROR);
         }
-        if (terms_conditions) {
-            message = responseMessages_1.default.admin.terms_conditions_updated;
+        const updateData = {};
+        if (language === "en") {
+            if (!currentEnglish) {
+                // Rule 2a: First-time English → translate to all other languages
+                updateData[`${type}.en`] = text;
+                const translations = yield Promise.all(workflow_constant_1.SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    const translated = yield (0, langauge_translate_helper_1.default)(text, lang);
+                    return { lang, translated };
+                })));
+                translations.forEach(({ lang, translated }) => {
+                    updateData[`${type}.${lang}`] = translated;
+                });
+            }
+            else {
+                // Rule 2b: English already exists → update English only
+                updateData[`${type}.en`] = text;
+            }
         }
-        const response = yield (0, db_helpers_1.findOneAndUpdate)(commonContent_model_1.default, {}, updateObj);
-        if (response.status) {
-            return (0, response_util_1.showResponse)(true, message, response === null || response === void 0 ? void 0 : response.data, statusCodes_1.default.SUCCESS);
+        else {
+            // Rule 3: Update specific non-English language only
+            updateData[`${type}.${language}`] = text;
         }
-        return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, {}, statusCodes_1.default.API_ERROR);
+        const updated = yield commonContent_model_1.default.findOneAndUpdate({}, { $set: updateData }, { new: true, upsert: true, runValidators: true }).lean();
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, updated, statusCodes_1.default.SUCCESS);
     }),
+    resentCommonContent: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { type } = data;
+        const updateData = {};
+        workflow_constant_1.SUPPORTED_LANGUAGES.forEach((lang) => {
+            updateData[`${type}.${lang}`] = "";
+        });
+        const updated = yield commonContent_model_1.default.findOneAndUpdate({}, { $set: updateData }, { new: true, upsert: true }).lean();
+        return (0, response_util_1.showResponse)(true, `Common content for "${type}" has been reset successfully`, updated, statusCodes_1.default.SUCCESS);
+    })
 };
 exports.default = AdminCommonHandler;

@@ -20,12 +20,11 @@ const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model
 const services_1 = __importDefault(require("../../services"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const CommonHandler = {
-    getCommonContent: () => __awaiter(void 0, void 0, void 0, function* () {
-        const getResponse = yield (0, db_helpers_1.findOne)(commonContent_model_1.default, {});
-        if (!getResponse.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
-        }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, getResponse.data, statusCodes_1.default.SUCCESS);
+    getCommonContent: (type, language) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        const doc = yield commonContent_model_1.default.findOne().lean();
+        const content = (_b = (_a = doc === null || doc === void 0 ? void 0 : doc[type]) === null || _a === void 0 ? void 0 : _a[language]) !== null && _b !== void 0 ? _b : "";
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { type, language, content }, statusCodes_1.default.SUCCESS);
     }),
     getQuestions: () => __awaiter(void 0, void 0, void 0, function* () {
         const getResponse = yield (0, db_helpers_1.findAll)(faq_model_1.default, {});

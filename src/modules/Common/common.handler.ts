@@ -1,6 +1,6 @@
 import { ApiResponse } from "../../utils/interfaces.util";
 import { showResponse } from "../../utils/response.util";
-import { findOne, findAll } from "../../helpers/db.helpers";
+import { findAll } from "../../helpers/db.helpers";
 import responseMessage from '../../constants/responseMessages'
 import commonContentModel from "../../modules/AdminCommon/commonContent.model";
 import faqModel from "../../modules/AdminCommon/faq.model";
@@ -9,13 +9,10 @@ import statusCodes from '../../constants/statusCodes'
 
 const CommonHandler = {
 
-    getCommonContent: async (): Promise<ApiResponse> => {
-        const getResponse = await findOne(commonContentModel, {});
-        if (!getResponse.status) {
-            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR)
-        }
-        return showResponse(true, responseMessage.common.data_retreive_sucess, getResponse.data, statusCodes.SUCCESS)
-
+    getCommonContent: async (type: string, language: string): Promise<ApiResponse> => {
+        const doc: any = await commonContentModel.findOne().lean();
+        const content = doc?.[type]?.[language] ?? "";
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { type, language, content }, statusCodes.SUCCESS)
     },
 
     getQuestions: async (): Promise<ApiResponse> => {

@@ -26,8 +26,9 @@ router.post('/store_parameter_to_aws', addToMulter.none(), (req, res) => __await
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/common_content', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { type, lang } = req.query;
     const controller = new common_controller_1.default(req, res);
-    const result = yield controller.getCommonContent();
+    const result = yield controller.getCommonContent(type, lang);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/questions', verifyTokenBoth, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

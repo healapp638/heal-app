@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Get, Security, FormField } from 'tsoa'
+import { Route, Controller, Tags, Post, Get, Security, FormField, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../Common/common.handler'
 import { showResponse } from '../../utils/response.util';
-import { validateStoreParmeterToAws } from './common.validator';
+import { validateGetCommonContent, validateStoreParmeterToAws } from './common.validator';
 import statusCodes from '../../constants/statusCodes'
 import { tryCatchWrapper } from '../../utils/config.util';
 
@@ -27,9 +27,13 @@ export default class CommonController extends Controller {
    */
     @Security('Bearer')
     @Get("/common_content")
-    public async getCommonContent(): Promise<ApiResponse> {
+    public async getCommonContent(@Query() type: string,@Query() lang: string): Promise<ApiResponse> {
+        const validate = validateGetCommonContent({ lang ,type});
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
         const wrappedFunc = tryCatchWrapper(handler.getCommonContent);
-        return wrappedFunc(); // Invoking the wrapped function 
+        return wrappedFunc(type,lang); // Invoking the wrapped function 
     }
     //ends
 

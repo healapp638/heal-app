@@ -1,45 +1,58 @@
 import { ApiResponse } from "../../utils/interfaces.util";
 import { showResponse } from "../../utils/response.util";
-import { findOne, createOne, findByIdAndUpdate, findOneAndUpdate, findByIdAndRemove } from "../../helpers/db.helpers";
+import { findOne, findByIdAndRemove } from "../../helpers/db.helpers";
 import commonContentModel from "../../modules/AdminCommon/commonContent.model";
 import responseMessage from '../../constants/responseMessages'
 import faqModel from '../../modules/AdminCommon/faq.model';
 import statusCodes from '../../constants/statusCodes'
+import { SUPPORTED_LANGUAGES } from "../../constants/workflow.constant";
+import translateText from "../../helpers/langauge.translate.helper";
 
 const AdminCommonHandler = {
 
     addQuestion: async (data: any): Promise<ApiResponse> => {
         const { question, answer } = data;
 
-        const exists = await findOne(faqModel, { question })
-        if (exists.status) {
-            return showResponse(false, responseMessage.common.already_existed, null, statusCodes.API_ERROR)
-        }
+        const questionData: any = { en: question };
+        const answerData: any = { en: answer };
 
-        const newObj = { question, answer }
-        const quesRef = new faqModel(newObj)
-        const response = await createOne(quesRef);
+        // Translate to all other languages in parallel
+        await Promise.all(
+            SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map(async (lang) => {
+                const [translatedQ, translatedA] = await Promise.all([
+                    translateText(question, lang),
+                    translateText(answer, lang),
+                ]);
+                questionData[lang] = translatedQ;
+                answerData[lang] = translatedA;
+            })
+        );
+        const faq = await faqModel.create({ question: questionData, answer: answerData });
 
-        if (response.status) {
-            return showResponse(true, responseMessage.admin.question_added, null, statusCodes.SUCCESS);
-        }
 
-        return showResponse(false, responseMessage.admin.failed_question_add, response, statusCodes.API_ERROR);
+        return showResponse(true, responseMessage.admin.question_added, faq, statusCodes.SUCCESS);
     },
 
     updateQuestion: async (data: any): Promise<ApiResponse> => {
-        const { answer, question, question_id } = data;
+        const { answer, question, question_id, language } = data;
 
-        const updateObj = {
-            ...(answer && { answer }),
-            ...(question && { question }),
-        };
-
-        const response = await findByIdAndUpdate(faqModel, question_id, updateObj);
-        if (response.status) {
-            return showResponse(true, responseMessage.common.update_sucess, null, statusCodes.SUCCESS);
+        const faq = await faqModel.findOne({ _id: question_id });
+        if (!faq) {
+            return showResponse(false, responseMessage.common.not_exist, null, statusCodes.API_ERROR);
         }
-        return showResponse(false, responseMessage.common.update_failed, null, statusCodes.API_ERROR);
+
+
+        const updateData: any = {};
+        if (question !== undefined) updateData[`question.${language}`] = question;
+        if (answer !== undefined) updateData[`answer.${language}`] = answer;
+
+        const updated = await faqModel.findByIdAndUpdate(
+            question_id,
+            { $set: updateData },
+            { new: true, runValidators: true }
+        ).lean();
+
+        return showResponse(true, responseMessage.common.update_sucess, updated, statusCodes.SUCCESS);
     },
 
     deleteQuestion: async (data: any): Promise<ApiResponse> => {
@@ -58,31 +71,74 @@ const AdminCommonHandler = {
     },
 
     updateCommonContent: async (data: any): Promise<ApiResponse> => {
-        const { about, privacy_policy, terms_conditions } = data
+        const { type, content, language } = data
 
-        const updateObj: any = {
-            ...(about && { about }),
-            ...(privacy_policy && { privacy_policy }),
-            ...(terms_conditions && { terms_conditions })
-        };
 
-        let message = '';
-        if (about) {
-            message = responseMessage.admin.about_updated;
-        }
-        if (privacy_policy) {
-            message = responseMessage.admin.privacy_policy_updated;
-        }
-        if (terms_conditions) {
-            message = responseMessage.admin.terms_conditions_updated;
+        const text = String(content).trim();
+
+        // Fetch or initialise the single document
+        let doc: any = await commonContentModel.findOne();
+        if (!doc) {
+            doc = new commonContentModel({});
         }
 
-        const response = await findOneAndUpdate(commonContentModel, {}, updateObj);
-        if (response.status) {
-            return showResponse(true, message, response?.data, statusCodes.SUCCESS);
+        const currentEnglish = doc[type]?.en || "";
+
+        // Rule 1: Non-English update but English hasn't been filled yet
+        if (language !== "en" && !currentEnglish) {
+            return showResponse(false, 'Please add the English content first before adding other languages.', null, statusCodes.API_ERROR)
         }
-        return showResponse(false, responseMessage.common.update_failed, {}, statusCodes.API_ERROR)
+
+        const updateData: any = {};
+
+        if (language === "en") {
+            if (!currentEnglish) {
+                // Rule 2a: First-time English → translate to all other languages
+                updateData[`${type}.en`] = text;
+
+                const translations = await Promise.all(
+                    SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map(async (lang) => {
+                        const translated = await translateText(text, lang);
+                        return { lang, translated };
+                    })
+                );
+
+                translations.forEach(({ lang, translated }) => {
+                    updateData[`${type}.${lang}`] = translated;
+                });
+            } else {
+                // Rule 2b: English already exists → update English only
+                updateData[`${type}.en`] = text;
+            }
+        } else {
+            // Rule 3: Update specific non-English language only
+            updateData[`${type}.${language}`] = text;
+        }
+
+        const updated = await commonContentModel.findOneAndUpdate(
+            {},
+            { $set: updateData },
+            { new: true, upsert: true, runValidators: true }
+        ).lean();
+
+        return showResponse(true, responseMessage.common.update_sucess, updated, statusCodes.SUCCESS);
     },
+
+    resentCommonContent: async (data: any): Promise<ApiResponse> => {
+        const { type } = data;
+        const updateData: any = {};
+        SUPPORTED_LANGUAGES.forEach((lang) => {
+            updateData[`${type}.${lang}`] = "";
+        });
+        const updated = await commonContentModel.findOneAndUpdate(
+            {},
+            { $set: updateData },
+            { new: true, upsert: true }
+        ).lean();
+
+        return showResponse(true, `Common content for "${type}" has been reset successfully`, updated, statusCodes.SUCCESS);
+    }
+
 }
 
 export default AdminCommonHandler;

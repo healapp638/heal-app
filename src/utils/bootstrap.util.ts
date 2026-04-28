@@ -20,9 +20,9 @@ export const bootstrapAdmin = async function (cb: CallbackFunction) {
   };
 
   const commonContentData = {
-    about: "<p> About us </p>",
-    privacy_policy: "<p> Privacy Policy </p>",
-    terms_conditions: "<p> Default Terms </p>",
+    about: {},
+    privacy_policy: {},
+    terms_conditions: {},
   };
 
   const adminDoc = await findOne(adminModel, {});

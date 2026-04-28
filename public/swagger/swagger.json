@@ -1547,7 +1547,24 @@
 						"Bearer": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "type",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lang",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/common/questions": {
@@ -3859,6 +3876,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"language": {
+										"type": "string"
+									},
 									"answer": {
 										"type": "string"
 									},
@@ -3870,6 +3890,7 @@
 									}
 								},
 								"required": [
+									"language",
 									"answer",
 									"question",
 									"question_id"
@@ -3955,20 +3976,64 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"terms_conditions": {
+									"language": {
 										"type": "string"
 									},
-									"privacy_policy": {
+									"content": {
 										"type": "string"
 									},
-									"about": {
+									"type": {
 										"type": "string"
 									}
 								},
 								"required": [
-									"terms_conditions",
-									"privacy_policy",
-									"about"
+									"language",
+									"content",
+									"type"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/common/reset_common_content": {
+			"put": {
+				"operationId": "ResentCommonContent",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Common Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"type": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"type"
 								],
 								"type": "object"
 							}

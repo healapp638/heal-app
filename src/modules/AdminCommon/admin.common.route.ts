@@ -17,9 +17,9 @@ router.post('/question', verifyTokenAdmin, async (req: Request | any, res: Respo
 })
 
 router.put('/question', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { answer, question, question_id } = req.body;
+    const { answer, question, question_id,language } = req.body;
     const controller = new AdminCommonController(req, res)
-    const result: ApiResponse = await controller.updateQuestion({ answer, question, question_id });
+    const result: ApiResponse = await controller.updateQuestion({ answer, question, question_id,language });
     return showOutput(res, result, result.code)
 
 })
@@ -33,11 +33,21 @@ router.delete('/question', addToMulter.none(), verifyTokenAdmin, async (req: Req
 })
 
 router.put('/common_content', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { about, privacy_policy, terms_conditions } = req.body;
+    const { type, content, language } = req.body;
     const controller = new AdminCommonController(req, res)
-    const result: ApiResponse = await controller.updateCommonContent({ about, privacy_policy, terms_conditions });
+    const result: ApiResponse = await controller.updateCommonContent({ type, content, language });
     return showOutput(res, result, result.code)
+});
 
-})
+router.put('/reset_common_content', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { type } = req.body;
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.resentCommonContent({ type});
+    return showOutput(res, result, result.code)
+});
+
+
+
+
 
 export default router

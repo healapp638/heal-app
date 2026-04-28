@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.languages = exports.EMAIL_SEND_TYPE = exports.DEACTIVATE_BY = exports.USER_STATUS = exports.ROLE = void 0;
+exports.SUPPORTED_LANGUAGES = exports.languages = exports.EMAIL_SEND_TYPE = exports.DEACTIVATE_BY = exports.USER_STATUS = exports.ROLE = void 0;
 const interfaces_util_1 = require("../utils/interfaces.util");
 const ROLE = {
     ADMIN: 1,
@@ -34,3 +34,5 @@ const languages = {
     ROMANIAN: "ro"
 };
 exports.languages = languages;
+const SUPPORTED_LANGUAGES = ["en", "zh", "hi", "es", "fr", "de", "ru", "pt", "it", "ro"];
+exports.SUPPORTED_LANGUAGES = SUPPORTED_LANGUAGES;

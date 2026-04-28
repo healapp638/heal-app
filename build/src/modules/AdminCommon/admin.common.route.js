@@ -26,9 +26,9 @@ router.post('/question', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.put('/question', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { answer, question, question_id } = req.body;
+    const { answer, question, question_id, language } = req.body;
     const controller = new admin_common_controller_1.default(req, res);
-    const result = yield controller.updateQuestion({ answer, question, question_id });
+    const result = yield controller.updateQuestion({ answer, question, question_id, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/question', addToMulter.none(), verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,9 +38,15 @@ router.delete('/question', addToMulter.none(), verifyTokenAdmin, (req, res) => _
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.put('/common_content', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { about, privacy_policy, terms_conditions } = req.body;
+    const { type, content, language } = req.body;
     const controller = new admin_common_controller_1.default(req, res);
-    const result = yield controller.updateCommonContent({ about, privacy_policy, terms_conditions });
+    const result = yield controller.updateCommonContent({ type, content, language });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.put('/reset_common_content', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { type } = req.body;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.resentCommonContent({ type });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

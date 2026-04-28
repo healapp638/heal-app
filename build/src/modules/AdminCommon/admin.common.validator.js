@@ -3,13 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateDeleteQuestion = exports.validateUpdateQuestion = exports.validateAddQuestion = exports.validateCommonContent = void 0;
+exports.validateResetCommonContent = exports.validateDeleteQuestion = exports.validateUpdateQuestion = exports.validateAddQuestion = exports.validateCommonContent = void 0;
 const joi_1 = __importDefault(require("joi"));
+const workflow_constant_1 = require("../../constants/workflow.constant");
 const validateCommonContent = (admin) => {
     return joi_1.default.object({
-        about: joi_1.default.string().optional(),
-        privacy_policy: joi_1.default.string().optional(),
-        terms_conditions: joi_1.default.string().optional(),
+        type: joi_1.default.string().required().allow('about', 'privacy_policy', 'terms_conditions'),
+        content: joi_1.default.string().required(),
+        language: joi_1.default.string().required().allow(...Object.values(workflow_constant_1.languages)),
     }).validate(admin);
 };
 exports.validateCommonContent = validateCommonContent;
@@ -25,6 +26,7 @@ const validateUpdateQuestion = (admin) => {
         question_id: joi_1.default.string().required(),
         question: joi_1.default.string().optional(),
         answer: joi_1.default.string().optional(),
+        language: joi_1.default.string().required().allow(...Object.values(workflow_constant_1.languages)),
     }).validate(admin);
 };
 exports.validateUpdateQuestion = validateUpdateQuestion;
@@ -34,3 +36,9 @@ const validateDeleteQuestion = (admin) => {
     }).validate(admin);
 };
 exports.validateDeleteQuestion = validateDeleteQuestion;
+const validateResetCommonContent = (admin) => {
+    return joi_1.default.object({
+        type: joi_1.default.string().required().allow('about', 'privacy_policy', 'terms_conditions'),
+    }).validate(admin);
+};
+exports.validateResetCommonContent = validateResetCommonContent;

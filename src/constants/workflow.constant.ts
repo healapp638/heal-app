@@ -34,11 +34,14 @@ const languages = {
     ROMANIAN: "ro"
 }
 
+const SUPPORTED_LANGUAGES = ["en", "zh", "hi", "es", "fr", "de", "ru", "pt", "it", "ro"];
+
 export {
     ROLE,
     USER_STATUS,
     DEACTIVATE_BY,
     EMAIL_SEND_TYPE,
-    languages
+    languages,
+    SUPPORTED_LANGUAGES
 };
 

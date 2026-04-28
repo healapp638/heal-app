@@ -1,10 +1,11 @@
 import joi from 'joi';
+import { languages } from '../../constants/workflow.constant';
 
 export const validateCommonContent = (admin: any) => {
     return joi.object({
-        about: joi.string().optional(),
-        privacy_policy: joi.string().optional(),
-        terms_conditions: joi.string().optional(),
+        type: joi.string().required().allow('about', 'privacy_policy', 'terms_conditions'),
+        content: joi.string().required(),
+        language: joi.string().required().allow(...Object.values(languages)),
     }).validate(admin)
 }
 
@@ -20,11 +21,18 @@ export const validateUpdateQuestion = (admin: any) => {
         question_id: joi.string().required(),
         question: joi.string().optional(),
         answer: joi.string().optional(),
+        language:joi.string().required().allow(...Object.values(languages)),
     }).validate(admin)
 }
 export const validateDeleteQuestion = (admin: any) => {
     return joi.object({
         question_id: joi.string().required()
+    }).validate(admin)
+}
+
+export const validateResetCommonContent = (admin: any) => {
+    return joi.object({
+         type: joi.string().required().allow('about', 'privacy_policy', 'terms_conditions'),
     }).validate(admin)
 }
 

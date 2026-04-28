@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Security, Put, FormField, Delete } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
-import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion } from './admin.common.validator';
+import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent } from './admin.common.validator';
 import handler from '../AdminCommon/admin.common.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
@@ -44,7 +44,7 @@ export default class AdminCommonController extends Controller {
 */
     @Security('Bearer')
     @Put("/question")
-    public async updateQuestion(@Body() request: { question_id: string, question: string, answer: string }): Promise<ApiResponse> {
+    public async updateQuestion(@Body() request: { question_id: string, question: string, answer: string, language: string }): Promise<ApiResponse> {
 
         const validate = validateUpdateQuestion(request);
         if (validate.error) {
@@ -78,7 +78,7 @@ export default class AdminCommonController extends Controller {
  */
     @Security('Bearer')
     @Put("/common_content")
-    public async updateCommonContent(@Body() request: { about: string, privacy_policy: string, terms_conditions: string }): Promise<ApiResponse> {
+    public async updateCommonContent(@Body() request: { type: string, content: string, language: string }): Promise<ApiResponse> {
 
         const validate = validateCommonContent(request);
         if (validate.error) {
@@ -86,6 +86,20 @@ export default class AdminCommonController extends Controller {
         }
 
         const wrappedFunc = tryCatchWrapper(handler.updateCommonContent);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+    //ends
+
+    @Security('Bearer')
+    @Put("/reset_common_content")
+    public async resentCommonContent(@Body() request: { type: string }): Promise<ApiResponse> {
+
+        const validate = validateResetCommonContent(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+
+        const wrappedFunc = tryCatchWrapper(handler.resentCommonContent);
         return wrappedFunc(request); // Invoking the wrapped function 
     }
     //ends

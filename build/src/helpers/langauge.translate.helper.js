@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const translate_1 = require("@google-cloud/translate");
 const translate = new translate_1.Translate({
-    key: process.env.GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+    key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
 });
 const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
