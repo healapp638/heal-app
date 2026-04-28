@@ -211,6 +211,7 @@ const uploadFileToS3 = (fileArray) => __awaiter(void 0, void 0, void 0, function
         try {
             const webpFilesArray = [];
             const promises = files.map(file => {
+                console.log(file, 'file');
                 const mime_type = file === null || file === void 0 ? void 0 : file.mimetype.split("/")[0];
                 if (mime_type == "image" && !file.originalname.endsWith(".psd")) {
                     return mediaHelper.convertImageToWebp(file === null || file === void 0 ? void 0 : file.buffer).then(imageNewBuffer => {
@@ -418,6 +419,7 @@ const uploadToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* (
             });
         });
         const s3UploadResults = yield Promise.all(s3UploadPromises);
+        console.log(s3UploadResults, "s3UploadResults");
         return s3UploadResults;
     }
     catch (error) {
