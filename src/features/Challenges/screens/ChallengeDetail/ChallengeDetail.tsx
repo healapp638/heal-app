@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Image, TouchableOpacity, ScrollView, Text } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -54,10 +54,10 @@ const ChallengeDetail = () => {
               </View>
             </View>
 
-            <SolidText style={styles.taskText}>
+            <Text maxFontSizeMultiplier={1.4} style={styles.taskText}>
               {localization.appkeys?.challenge2Desc ||
-                'Write down 3 things you are grateful for today'}
-            </SolidText>
+                'Write 3 things you are grateful for today'}
+            </Text>
 
             <View style={styles.pointsBadge}>
               <Image

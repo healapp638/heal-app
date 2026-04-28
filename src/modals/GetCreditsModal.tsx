@@ -66,7 +66,7 @@ const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
               source={images.cross2}
               style={styles.closeIcon}
               resizeMode="contain"
-              tintColor={'black'}
+              tintColor={colors.brown}
             />
           </TouchableOpacity>
 

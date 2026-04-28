@@ -37,7 +37,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
     <View key={item.id} style={styles.moduleCard}>
       <View style={styles.moduleContent}>
         <View style={styles.moduleHeader}>
-          <SolidText style={[styles.moduleTitle, { color: colors.black }]}>
+          <SolidText style={[styles.moduleTitle, { color: colors.brown }]}>
             {item.title}
           </SolidText>
           <View style={styles.levelBadge}>
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   lockedBackground: {
-    height: 78,
+    height: 90,
     width: '100%',
     marginTop: 8,
   },

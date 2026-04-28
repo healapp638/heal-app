@@ -3,7 +3,7 @@ import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
 import { hp, wp } from '../../../../utils/dimension';
 
-const style = (colors: any) =>
+const style = (colors: any, appLanguage: any) =>
   StyleSheet.create({
     mainContainer: {
       flex: 1,
@@ -34,7 +34,7 @@ const style = (colors: any) =>
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginTop: 10,
       marginBottom: hp(2),
@@ -74,7 +74,7 @@ const style = (colors: any) =>
     timelineTitle: {
       fontFamily: AppFonts.recoMedium,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     timelineSub: {
@@ -99,7 +99,7 @@ const style = (colors: any) =>
     reminderText: {
       fontFamily: AppFonts.regular,
       fontSize: 14,
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     toggleIcon: {
@@ -128,14 +128,14 @@ const style = (colors: any) =>
     planLabel: {
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(18),
-      color: colors.black,
+      color: colors.brown,
       marginBottom: 5,
       includeFontPadding: false,
     },
     planPrice: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
       marginTop: 4,
       includeFontPadding: false,
     },
@@ -181,7 +181,7 @@ const style = (colors: any) =>
     promoText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textDecorationLine: 'underline',
       includeFontPadding: false,
     },
@@ -190,6 +190,13 @@ const style = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       marginBottom: hp(4),
+      width:
+        appLanguage == 'Russian'
+          ? '30%'
+          : appLanguage == 'German'
+          ? '25%'
+          : '40%',
+      alignSelf: 'center',
     },
     footerLink: {
       fontFamily: AppFonts.regular,

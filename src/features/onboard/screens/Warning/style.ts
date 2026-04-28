@@ -15,20 +15,20 @@ const style = (colors: any) =>
       height: 77,
       alignSelf: 'center',
       marginBottom: 80,
-marginTop:-16
+      marginTop: -16,
     },
     title: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(24),
-      color: 'black',
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: 20,
-      marginTop:80
+      marginTop: 80,
     },
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
-      color: 'black',
+      color: colors.brown,
       textAlign: 'center',
       paddingHorizontal: 15,
       lineHeight: 30,

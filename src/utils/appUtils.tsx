@@ -16,6 +16,7 @@ interface AppUtilsInterface {
   disableFontScale: () => void;
   adaCompliance: () => void;
   checkAppVersion: () => Promise<boolean>;
+  getLanguageCode: (language: string) => string;
 }
 
 const AppUtils: AppUtilsInterface = {
@@ -75,6 +76,18 @@ const AppUtils: AppUtilsInterface = {
       AppUtils.showLog(e as string);
       return false;
     }
+  },
+  getLanguageCode: (language: string) => {
+    const languageMap: { [key: string]: string } = {
+      English: 'en',
+      Spanish: 'es',
+      French: 'fr',
+      German: 'de',
+      Russian: 'ru',
+      Portuguese: 'pt',
+      Italian: 'it',
+    };
+    return languageMap[language] || 'en';
   },
 };
 

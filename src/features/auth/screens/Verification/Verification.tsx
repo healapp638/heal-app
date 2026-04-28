@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import {
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
 } from '../../../../redux/Reducers/userData';
 
@@ -101,9 +102,14 @@ const Verification = () => {
                 otp: String(otpCode),
               } as never,
             );
-          } else if (from === 'SignIn' || from === 'SocialLogin' || from === 'SignUp') {
+          } else if (
+            from === 'SignIn' ||
+            from === 'SocialLogin' ||
+            from === 'SignUp'
+          ) {
             dispatch(setUser(response?.data));
             dispatch(setToken(response?.data?.access_token));
+            dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
 
             if (response?.data?.is_profile_completed === false) {
@@ -163,13 +169,13 @@ const Verification = () => {
           </SolidText>
 
           <SolidInput
-            label={localization.appkeys?.email}
+            label={localization.appkeys?.verificationCode}
             placeholder="666 ---"
             value={otpCode}
             onChangeText={setOtpCode}
             keyboardType="number-pad"
             maxLength={6}
-            rightImg={images.mail}
+            // rightImg={images.mail}
             rightImgTintColor={colors.primary}
           />
 

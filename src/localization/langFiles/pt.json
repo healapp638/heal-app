@@ -12,6 +12,7 @@
     "email": "E-mail",
     "enterEmail": "Digite seu e-mail",
     "password": "Senha",
+    "newPassword": "Nova senha",
     "enterPassword": "Digite sua senha",
     "rememberMe": "Lembrar-me",
     "forgotPassword": "Esqueceu a senha?",
@@ -49,7 +50,8 @@
     "toastPasswordRequirementsDetailed": "A senha deve ter pelo menos 8 caracteres e incluir 1 letra maiúscula, 1 número e 1 caractere especial.",
     "toastEnterConfirmPassword": "Confirme sua senha.",
     "toastPasswordMismatch": "As senhas não coincidem.",
-    "forgotPassHeader": "Esqueci a senha",
+    "forgotPassHeader": "Esqueceu a senha",
+    "forgotPassSubtitle": "Insira seu endereço de e-mail abaixo e enviaremos um código de verificação de 6 dígitos para redefinir sua senha.",
     "verificationCodeSent": "Enviamos um código de verificação de 6 dígitos para o seu endereço de e-mail.",
     "verifyAndContinue": "Verificar e continuar",
     "newPassHeader": "Nova senha",
@@ -58,6 +60,7 @@
     "passChangedSuccess": "Senha alterada com sucesso!",
     "passChangedSubtitle": "Você já pode usar sua nova senha para entrar na sua conta.",
     "verificationHeader": "Verificação",
+    "verificationCode": "Código de verificação",
     "didNotReceiveCode": "Não recebeu o código?",
     "resendCode": "Reenviar código",
     "sec": "Seg",
@@ -110,6 +113,7 @@
     "optionGoogleS": "Google",
     "optionOther": "Outro",
     "bringYouTitle": "O que traz você aqui?",
+    "safeSpaceSub": "Suas respostas nos ajudam a personalizar seu espaço seguro.",
     "optionRomantic": "Relacionamentos românticos",
     "optionFamily": "Família",
     "optionFriendship": "Amizade",
@@ -511,6 +515,10 @@
     "faqA5": "Você pode gerenciar sua assinatura na página de configurações em Assinatura.",
     "feedbackTitle": "Sua opinião importa",
     "feedbackSubtitle": "Ajude-nos a melhorar Mel compartilhando suas sugestões e feedback de experiência.",
-    "sendFeedback": "Enviar feedback"
+    "sendFeedback": "Enviar feedback",
+    "profileUpdated": "Perfil atualizado com sucesso",
+    "toastEnterOldPassword": "Por favor, insira a sua palavra-passe antiga.",
+    "toastEnterNewPassword": "Por favor, insira a sua nova palavra-passe.",
+    "toastOldNewPasswordSame": "A nova palavra-passe não pode ser igual à antiga."
   }
 }

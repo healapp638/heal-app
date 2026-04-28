@@ -20,6 +20,7 @@ import JournalCard from '../../../../components/JournalCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
+import { store } from '../../../../redux/Store/store';
 
 const Home = () => {
   const dispatch = useDispatch();

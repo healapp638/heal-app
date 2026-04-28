@@ -23,7 +23,7 @@ const style = (colors: any) =>
     welcomeSubtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
 
       marginBottom: hp('3%'),
@@ -49,7 +49,7 @@ const style = (colors: any) =>
     footerText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     signInText: {
@@ -75,12 +75,12 @@ const style = (colors: any) =>
     dividerText: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
       marginHorizontal: 10,
     },
     socialContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: Platform.OS == 'ios' ? 'space-between' : 'center',
       width: '100%',
     },
     socialBtn: {
@@ -102,7 +102,7 @@ const style = (colors: any) =>
     socialBtnTxt: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(15),
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
   });

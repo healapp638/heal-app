@@ -18,7 +18,7 @@ const style = (colors: any) =>
       width: ITEM_WIDTH,
       height: 140,
       margin: 4,
-      borderRadius: 20,
+      // borderRadius: 20,
       overflow: 'hidden',
       justifyContent: 'center',
       alignItems: 'center',

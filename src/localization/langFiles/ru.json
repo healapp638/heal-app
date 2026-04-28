@@ -9,9 +9,10 @@
     "login": "Логин",
     "welcomeBack": "С возвращением",
     "gladToSeeYou": "Мы рады видеть тебя снова. Твое безопасное пространство ждет.",
-    "email": "Email",
-    "enterEmail": "Введите ваш email",
+    "email": "Электронная почта",
+    "enterEmail": "Введите вашу почту",
     "password": "Пароль",
+    "newPassword": "Новый пароль",
     "enterPassword": "Введите ваш пароль",
     "rememberMe": "Запомнить меня",
     "forgotPassword": "Забыли пароль?",
@@ -50,6 +51,7 @@
     "toastEnterConfirmPassword": "Пожалуйста, подтвердите пароль.",
     "toastPasswordMismatch": "Пароли не совпадают.",
     "forgotPassHeader": "Забыли пароль",
+    "forgotPassSubtitle": "Введите свой адрес электронной почты ниже, и мы отправим вам 6-значный код подтверждения для сброса пароля.",
     "verificationCodeSent": "Мы отправили 6-значный код подтверждения на ваш email.",
     "verifyAndContinue": "Подтвердить и продолжить",
     "newPassHeader": "Новый пароль",
@@ -58,6 +60,7 @@
     "passChangedSuccess": "Пароль успешно изменен!",
     "passChangedSubtitle": "Теперь вы можете использовать новый пароль для входа в аккаунт.",
     "verificationHeader": "Подтверждение",
+    "verificationCode": "Код подтверждения",
     "didNotReceiveCode": "Не получили код?",
     "resendCode": "Отправить код еще раз",
     "sec": "сек",
@@ -110,6 +113,7 @@
     "optionGoogleS": "Google",
     "optionOther": "Другое",
     "bringYouTitle": "Что привело вас сюда?",
+    "safeSpaceSub": "Ваши ответы помогают нам персонализировать ваше безопасное пространство.",
     "optionRomantic": "Романтические отношения",
     "optionFamily": "Семья",
     "optionFriendship": "Дружба",
@@ -511,6 +515,10 @@
     "faqA5": "Вы можете управлять своей подпиской на странице настроек в разделе «Подписка».",
     "feedbackTitle": "Ваше мнение важно",
     "feedbackSubtitle": "Помогите нам улучшить Mel, поделившись своими предложениями и отзывами об опыте использования.",
-    "sendFeedback": "Отправить отзыв"
+    "sendFeedback": "Отправить отзыв",
+    "profileUpdated": "Профиль успешно обновлен",
+    "toastEnterOldPassword": "Пожалуйста, введите старый пароль.",
+    "toastEnterNewPassword": "Пожалуйста, введите новый пароль.",
+    "toastOldNewPasswordSame": "Новый пароль не может совпадать со старым."
   }
 }

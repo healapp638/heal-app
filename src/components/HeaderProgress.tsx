@@ -1,4 +1,10 @@
-import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  Image,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import React from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
 
@@ -13,14 +19,14 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
   showBack = true,
   onBackPress,
 }) => {
-  const { colors } = useTheme() as any;
+  const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       {showBack ? (
         <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: colors.brown }]}
+          style={[styles.backButton]}
           onPress={() => {
             if (onBackPress) {
               onBackPress();
@@ -29,20 +35,21 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
             navigation.goBack();
           }}
         >
-          <View
-            style={[
-              styles.backArrow,
-              {
-                borderLeftColor: colors.white,
-                borderBottomColor: colors.white,
-              },
-            ]}
+          <Image
+            source={images.back}
+            style={{
+              width: 14,
+              height: 14,
+            }}
+            resizeMode="contain"
           />
         </TouchableOpacity>
       ) : (
         <View style={styles.backButtonPlaceholder} />
       )}
-      <View style={[styles.progressBackground, { backgroundColor: colors.white }]}>
+      <View
+        style={[styles.progressBackground, { backgroundColor: colors.white }]}
+      >
         <View
           style={[
             styles.progressFill,
@@ -67,15 +74,12 @@ const styles = StyleSheet.create({
     height: 44,
   },
   backButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: 20,
   },
   backButtonPlaceholder: {
-    width: 32, 
+    width: 32,
     marginRight: 10,
   },
   rightPlaceholder: {

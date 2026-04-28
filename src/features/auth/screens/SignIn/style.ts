@@ -24,7 +24,7 @@ const style = (colors: any) =>
     welcomeSubtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
 
       marginBottom: hp('4%'),
@@ -35,7 +35,7 @@ const style = (colors: any) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginTop: Platform.OS=='ios'?-8:-10,
+      marginTop: Platform.OS == 'ios' ? -8 : -10,
       marginBottom: hp('4%'),
     },
     checkboxContainer: {
@@ -50,14 +50,13 @@ const style = (colors: any) =>
     rememberMeText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
     },
     forgotPasswordText: {
-
       fontSize: AppUtils.fontSize(13),
       color: colors.primary,
-      fontStyle:"italic",
-      fontWeight:Platform.OS=='ios'?'700':'600'
+      fontStyle: 'italic',
+      fontWeight: Platform.OS == 'ios' ? '700' : '600',
     },
     loginBtn: {
       backgroundColor: colors.brown,
@@ -73,18 +72,18 @@ const style = (colors: any) =>
     dividerLine: {
       flex: 1,
       height: 1,
-      backgroundColor:colors.primary,
-      opacity:0.3
+      backgroundColor: colors.primary,
+      opacity: 0.3,
     },
     dividerText: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
       marginHorizontal: 10,
     },
     socialContainer: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: Platform.OS == 'ios' ? 'space-between' : 'center',
       width: '100%',
     },
     socialBtn: {
@@ -107,8 +106,8 @@ const style = (colors: any) =>
     socialBtnTxt: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(15),
-      color: colors.black,
-      includeFontPadding:false
+      color: colors.brown,
+      includeFontPadding: false,
     },
     footer: {
       flexDirection: 'row',
@@ -116,24 +115,21 @@ const style = (colors: any) =>
       alignItems: 'center',
 
       paddingBottom: Platform.OS === 'ios' ? 20 : 10,
-      marginTop:20
+      marginTop: 20,
     },
     footerText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
-      includeFontPadding:false
+      color: colors.brown,
+      includeFontPadding: false,
     },
     signUpText: {
-
       fontSize: AppUtils.fontSize(14),
       color: colors.primary,
       marginLeft: 5,
-      fontStyle:'italic',
-      fontWeight:Platform.OS=='ios'?'700':'600',
-      includeFontPadding:false
-
-
+      fontStyle: 'italic',
+      fontWeight: Platform.OS == 'ios' ? '700' : '600',
+      includeFontPadding: false,
     },
   });
 

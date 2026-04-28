@@ -14,25 +14,24 @@ const style = (colors: any) =>
       height: 77,
       alignSelf: 'center',
       marginBottom: 50,
-      marginTop:Platform.OS=='ios'?0:20
+      marginTop: Platform.OS == 'ios' ? 0 : 20,
     },
     logo: {
       width: 180,
       height: 92,
-      marginBottom:Platform.OS=='ios'? 120:130,
-
+      marginBottom: Platform.OS == 'ios' ? 120 : 130,
     },
     title: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(22),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: 12,
     },
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       paddingHorizontal: 10,
     },

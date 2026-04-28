@@ -17,6 +17,7 @@ import { strings } from './src/constants/variables';
 import { ToastProvider } from './src/utils/ToastManager';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { navigationRef } from './src/utils/navigationRef';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -85,6 +86,7 @@ function App(): React.JSX.Element {
             <LocalizationProvider>
               <QueryClientProvider client={queryClient}>
                 <NavigationContainer
+                  ref={navigationRef}
                   theme={theme == 'dark' ? DarkTheme : LightTheme}
                 >
                   <ToastProvider>

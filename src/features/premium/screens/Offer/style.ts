@@ -13,9 +13,9 @@ const style = (colors: any) =>
     title: {
       fontSize: AppUtils.fontSize(25),
       fontFamily: AppFonts.recoMedium,
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
-paddingHorizontal:2
+      paddingHorizontal: 2,
     },
     btn: {
       bottom: 40,

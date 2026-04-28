@@ -11,7 +11,7 @@ const style = (colors: any) =>
     journeyTitle: {
       fontSize: AppUtils.fontSize(24),
       fontFamily: AppFonts.recoMedium,
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
       marginTop: -8,
     },

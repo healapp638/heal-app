@@ -8,4 +8,8 @@ export const endpoints = {
   social_login: '/user/auth/social_login',
   update_profile: '/user/auth/profile',
   user_details: '/user/auth/details',
+  change_password: '/user/auth/change_password',
+  refresh_token: '/user/auth/refresh_token',
+  upload_file: '/user/auth/upload_file',
+  common_content: '/common/common_content',
 };

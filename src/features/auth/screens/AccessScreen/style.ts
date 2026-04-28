@@ -8,7 +8,7 @@ const style = (colors: any) =>
       flex: 1,
       paddingHorizontal: 20,
     },
- 
+
     backImage: {
       width: 24,
       height: 24,
@@ -17,14 +17,13 @@ const style = (colors: any) =>
     headerText: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
     },
     logo: {
       width: 180,
       height: 92,
-      marginBottom:20,
-      marginTop:Platform.OS=='ios'?30:20
-
+      marginBottom: 20,
+      marginTop: Platform.OS == 'ios' ? 50 : 40,
     },
     title: {
       fontFamily: AppFonts.recoMedium,
@@ -32,18 +31,16 @@ const style = (colors: any) =>
       color: colors.brown,
       textAlign: 'center',
       marginBottom: 12,
-includeFontPadding:false,
-
-
+      includeFontPadding: false,
     },
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
-includeFontPadding:false,
+      includeFontPadding: false,
       paddingHorizontal: 20,
-      marginBottom:30
+      marginBottom: 30,
     },
     socialButtonsContainer: {
       width: '100%',
@@ -57,12 +54,11 @@ includeFontPadding:false,
       height: Platform.OS === 'ios' ? 52 : 50,
       borderRadius: 100,
       width: '90%',
-      marginBottom:Platform.OS=='ios'? 22:20,
-alignSelf:"center",
+      marginBottom: Platform.OS == 'ios' ? 22 : 20,
+      alignSelf: 'center',
 
-
-      borderWidth:0.5,
-      borderColor:colors.border
+      borderWidth: 0.5,
+      borderColor: colors.border,
     },
     socialIcon: {
       width: 25,
@@ -73,8 +69,8 @@ alignSelf:"center",
     socialBtnTxt: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(15),
-      color: colors.black,
-      includeFontPadding:false
+      color: colors.brown,
+      includeFontPadding: false,
     },
     bottomButtonsContainer: {
       width: '100%',
@@ -99,14 +95,14 @@ alignSelf:"center",
     footerText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(12),
-      color: colors.black,
+      color: colors.brown,
       opacity: 0.8,
     },
     dot: {
       width: 4,
       height: 4,
       borderRadius: 2,
-      backgroundColor: colors.black,
+      backgroundColor: colors.brown,
       marginHorizontal: 8,
       opacity: 0.8,
     },

@@ -9,9 +9,10 @@
     "login": "Login",
     "welcomeBack": "Bentornato",
     "gladToSeeYou": "Siamo felici di rivederti. Il tuo spazio sicuro ti aspetta.",
-    "email": "Email",
-    "enterEmail": "Inserisci la tua email",
+    "email": "E-mail",
+    "enterEmail": "Inserisci la tua e-mail",
     "password": "Password",
+    "newPassword": "Nuova password",
     "enterPassword": "Inserisci la tua password",
     "rememberMe": "Ricordami",
     "forgotPassword": "Password dimenticata?",
@@ -50,6 +51,7 @@
     "toastEnterConfirmPassword": "Conferma la tua password.",
     "toastPasswordMismatch": "Le password non corrispondono.",
     "forgotPassHeader": "Password dimenticata",
+    "forgotPassSubtitle": "Inserisci il tuo indirizzo e-mail qui sotto e ti invieremo un codice di verifica a 6 cifre per reimpostare la tua password.",
     "verificationCodeSent": "Abbiamo inviato un codice di verifica a 6 cifre al tuo indirizzo email.",
     "verifyAndContinue": "Verifica e continua",
     "newPassHeader": "Nuova password",
@@ -58,6 +60,7 @@
     "passChangedSuccess": "Password cambiata con successo!",
     "passChangedSubtitle": "Puoi usare la tua nuova password per accedere al tuo account.",
     "verificationHeader": "Verifica",
+    "verificationCode": "Codice di verifica",
     "didNotReceiveCode": "Non hai ricevuto il codice?",
     "resendCode": "Reinvia codice",
     "sec": "Sec",
@@ -110,6 +113,7 @@
     "optionGoogleS": "Google",
     "optionOther": "Altro",
     "bringYouTitle": "Cosa ti porta qui?",
+    "safeSpaceSub": "Le tue risposte ci aiutano a personalizzare il tuo spazio sicuro.",
     "optionRomantic": "Relazioni romantiche",
     "optionFamily": "Famiglia",
     "optionFriendship": "Amicizia",
@@ -511,6 +515,10 @@
     "faqA5": "Puoi gestire il tuo abbonamento dalla pagina delle impostazioni sotto Abbonamento.",
     "feedbackTitle": "La tua opinione conta",
     "feedbackSubtitle": "Aiutaci a migliorare Mel condividendo i tuoi suggerimenti e il feedback sulla tua esperienza.",
-    "sendFeedback": "Invia feedback"
+    "sendFeedback": "Invia feedback",
+    "profileUpdated": "Profilo aggiornato con successo",
+    "toastEnterOldPassword": "Inserisci la tua vecchia password.",
+    "toastEnterNewPassword": "Inserisci la tua nuova password.",
+    "toastOldNewPasswordSame": "La nuova password non può essere uguale alla vecchia."
   }
 }

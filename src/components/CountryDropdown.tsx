@@ -152,7 +152,7 @@ const style = (colors: any) =>
     label: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
       marginBottom: Platform.OS === 'ios' ? 8 : 4,
       marginLeft: 5,
       includeFontPadding: false,
@@ -198,7 +198,7 @@ const style = (colors: any) =>
     searchInput: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       borderBottomWidth: 1,
       borderBottomColor: '#EEE',
       paddingVertical: 8,
@@ -220,7 +220,7 @@ const style = (colors: any) =>
     itemText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     itemTextSelected: {

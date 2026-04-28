@@ -120,7 +120,7 @@ const style = (colors: any) =>
     label: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
       marginBottom: Platform.OS == 'ios' ? 8 : 4,
       marginLeft: 5,
       includeFontPadding: false,
@@ -147,7 +147,7 @@ const style = (colors: any) =>
     },
     textInput: {
       flex: 1,
-      color: colors.black,
+      color: colors.brown,
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(15),
       height: '100%',

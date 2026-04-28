@@ -130,7 +130,7 @@ const useStyles = (colors: any) =>
       marginBottom: 0,
     },
     secondaryBtnText: {
-      color: colors.black,
+      color: colors.brown,
     },
   });
 

@@ -1,4 +1,10 @@
-import React, { useContext, useRef, useState, useEffect, useCallback } from 'react';
+import React, {
+  useContext,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import { FlatList, Dimensions, Image, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import {
@@ -97,7 +103,7 @@ const GetStarted = () => {
               }}
             />
           </View>
-
+          <View style={{ flex: 1 }} />
           <SolidBtn
             titleTxt={localization.appkeys?.getStarted}
             btnStyle={styles.btn}

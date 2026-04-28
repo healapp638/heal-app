@@ -33,6 +33,7 @@ const SignUp = () => {
   const answers = useSelector(
     (state: any) => state?.userData?.onboarding?.answers,
   );
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   // console.log('onboarding answers in sign up', answers);
   const styles = style(colors);
   const { mutate: registerUser, isPending: isRegistering } = usePostApi();
@@ -106,6 +107,7 @@ const SignUp = () => {
       hearAboutUs: answers?.hearAboutUs || '',
       startShowingOfYourSelf: answers?.readyToStart || '',
       timeYouCommit: answers?.timeCommitment || '',
+      language: AppUtils.getLanguageCode(appLanguage),
     };
 
     registerUser(
@@ -256,20 +258,22 @@ const SignUp = () => {
                 </SolidText>
               </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.socialBtn}
-                onPress={() => {}}
-                disabled={isSocialPending || isRegistering}
-              >
-                <Image
-                  source={images.apple}
-                  style={styles.socialIcon}
-                  resizeMode="contain"
-                />
-                <SolidText style={styles.socialBtnTxt}>
-                  {localization.appkeys?.apple}
-                </SolidText>
-              </TouchableOpacity>
+              {Platform.OS === 'ios' && (
+                <TouchableOpacity
+                  style={styles.socialBtn}
+                  onPress={() => {}}
+                  disabled={isSocialPending || isRegistering}
+                >
+                  <Image
+                    source={images.apple}
+                    style={styles.socialIcon}
+                    resizeMode="contain"
+                  />
+                  <SolidText style={styles.socialBtnTxt}>
+                    {localization.appkeys?.apple}
+                  </SolidText>
+                </TouchableOpacity>
+              )}
             </View>
 
             <View style={styles.footer}>

@@ -26,7 +26,7 @@ const JournalDetailsModal = ({
   localization,
 }: JournalDetailsModalProps) => {
   const { colors, images } = useTheme() as any;
-
+  const styles = useStyle(colors);
   if (!entry) return null;
 
   return (
@@ -92,90 +92,91 @@ const JournalDetailsModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingHorizontal: 20,
-  },
-  modalContent: {
-    borderRadius: 16,
-    padding: 10,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    position: 'relative',
-    marginTop: -4,
-  },
-  modalTitle: {
-    fontFamily: AppFonts.semiBold,
-    fontSize: AppUtils.fontSize(18),
-    includeFontPadding: false,
-  },
-  closeBtn: {
-    position: 'absolute',
-    right: -4,
+const useStyle = (colors: any) =>
+  StyleSheet.create({
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      paddingHorizontal: 20,
+    },
+    modalContent: {
+      borderRadius: 16,
+      padding: 10,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 10,
+      position: 'relative',
+      marginTop: -4,
+    },
+    modalTitle: {
+      fontFamily: AppFonts.semiBold,
+      fontSize: AppUtils.fontSize(18),
+      includeFontPadding: false,
+    },
+    closeBtn: {
+      position: 'absolute',
+      right: -4,
 
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeIcon: {
-    width: 22,
-    height: 22,
-  },
-  infoBox: {
-    backgroundColor: '#F3EFEA',
-    borderRadius: 12,
-    padding: 8,
-    marginBottom: 10,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  dateText: {
-    fontFamily: AppFonts.medium,
-    fontSize: AppUtils.fontSize(16),
-    color: '#4B382A',
-  },
-  timeText: {
-    fontFamily: AppFonts.regular,
-    fontSize: AppUtils.fontSize(14),
-    color: '#776151',
-    includeFontPadding: false,
-  },
-  tagPill: {
-    paddingHorizontal: 17,
-    paddingVertical: 3,
-    borderRadius: 12,
-  },
-  tagText: {
-    fontFamily: AppFonts.semiBold,
-    fontSize: AppUtils.fontSize(10),
-    color: '#FFFFFF',
-    includeFontPadding: false,
-  },
-  entryTitle: {
-    fontFamily: AppFonts.recoMedium,
-    fontSize: AppUtils.fontSize(18),
-    marginBottom: 8,
-  },
-  bodyBox: {
-    backgroundColor: '#FCF7F3',
-    borderRadius: 12,
-    padding: 8,
-  },
-  bodyText: {
-    fontFamily: AppFonts.regular,
-    fontSize: AppUtils.fontSize(12),
-    color: 'black',
-    lineHeight: 22,
-  },
-});
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeIcon: {
+      width: 22,
+      height: 22,
+    },
+    infoBox: {
+      backgroundColor: '#F3EFEA',
+      borderRadius: 12,
+      padding: 8,
+      marginBottom: 10,
+    },
+    infoRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    dateText: {
+      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(16),
+      color: '#4B382A',
+    },
+    timeText: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(14),
+      color: '#776151',
+      includeFontPadding: false,
+    },
+    tagPill: {
+      paddingHorizontal: 17,
+      paddingVertical: 3,
+      borderRadius: 12,
+    },
+    tagText: {
+      fontFamily: AppFonts.semiBold,
+      fontSize: AppUtils.fontSize(10),
+      color: '#FFFFFF',
+      includeFontPadding: false,
+    },
+    entryTitle: {
+      fontFamily: AppFonts.recoMedium,
+      fontSize: AppUtils.fontSize(18),
+      marginBottom: 8,
+    },
+    bodyBox: {
+      backgroundColor: '#FCF7F3',
+      borderRadius: 12,
+      padding: 8,
+    },
+    bodyText: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(12),
+      color: colors.brown,
+      lineHeight: 22,
+    },
+  });
 
 export default JournalDetailsModal;

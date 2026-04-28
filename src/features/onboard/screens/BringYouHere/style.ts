@@ -9,16 +9,16 @@ const style = (colors: any) =>
       paddingHorizontal: 20,
     },
     heartRope: {
-       width: 400,
-       height: 77,
-       alignSelf: 'center',
-       marginBottom: 10,
-       marginTop:-10
+      width: 400,
+      height: 77,
+      alignSelf: 'center',
+      marginBottom: 10,
+      marginTop: -10,
     },
     title: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(22),
-      color: colors.black,
+      color: colors.brown,
       marginTop: -10,
       marginBottom: 8,
       includeFontPadding: false,
@@ -26,12 +26,11 @@ const style = (colors: any) =>
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       marginBottom: 20,
     },
     listContainer: {
       flexDirection: 'column',
-
     },
     optionCard: {
       width: '100%',
@@ -53,7 +52,7 @@ const style = (colors: any) =>
       elevation: 1,
     },
     optionCardSelected: {
-      borderColor: colors.brown, 
+      borderColor: colors.brown,
     },
     icon: {
       width: 70,
@@ -63,16 +62,15 @@ const style = (colors: any) =>
     optionText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(15),
-      color: colors.black,
-      includeFontPadding:false
+      color: colors.brown,
+      includeFontPadding: false,
     },
     optionTextSelected: {
       // additional styling if needed when selected
     },
     btn: {
       alignSelf: 'center',
-      marginBottom: 10,
-
+      marginBottom: 40,
     },
   });
 

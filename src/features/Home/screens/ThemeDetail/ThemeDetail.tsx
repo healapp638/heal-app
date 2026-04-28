@@ -34,18 +34,24 @@ const ThemeDetail = () => {
     { id: '7', image: images.hl1 }, // Repeating for grid filling
     { id: '8', image: images.hl2 },
     { id: '9', image: images.hl3 },
-    { id: '10', image: images.hl4 },
-    { id: '11', image: images.hl5 },
-    { id: '12', image: images.hl6 },
   ];
 
   const renderItem = ({ item }: { item: any }) => (
     <ImageBackground
       source={item.image}
-      style={{ height: 150, width: '32%', margin: 5 }}
+      style={styles.card}
       imageStyle={styles.imageStyle}
       resizeMode="cover"
-    ></ImageBackground>
+    >
+      <View style={styles.lockWrapper}>
+        <Image
+          source={images.simpleLock}
+          style={styles.lockIcon}
+          resizeMode="contain"
+        />
+      </View>
+      <SolidText style={styles.healText}>Heal</SolidText>
+    </ImageBackground>
   );
 
   return (

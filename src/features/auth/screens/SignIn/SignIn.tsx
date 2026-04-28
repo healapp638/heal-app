@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { BackHandler, Image, TouchableOpacity, View } from 'react-native';
+import { BackHandler, Image, TouchableOpacity, View, Platform } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -14,10 +14,11 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import localStore from '../../../../localStorage/asyncStore';
 import { storeKeys } from '../../../../localStorage/storeKeys';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
 } from '../../../../redux/Reducers/userData';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
@@ -28,6 +29,7 @@ const SignIn = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -63,6 +65,7 @@ const SignIn = () => {
         data: {
           email: email?.trim()?.toLowerCase(),
           password: password,
+          language: AppUtils.getLanguageCode(appLanguage),
         },
       },
       {
@@ -81,6 +84,7 @@ const SignIn = () => {
           } else {
             dispatch(setUser(response?.data));
             dispatch(setToken(response?.data?.access_token));
+            dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
             if (rememberMe) {
               await localStore.storeData(storeKeys.rememberMe, {
@@ -242,16 +246,18 @@ const SignIn = () => {
                   </SolidText>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
-                  <Image
-                    source={images.apple}
-                    style={styles.socialIcon}
-                    resizeMode="contain"
-                  />
-                  <SolidText style={styles.socialBtnTxt}>
-                    {localization.appkeys?.apple}
-                  </SolidText>
-                </TouchableOpacity>
+                {Platform.OS === 'ios' && (
+                  <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                    <Image
+                      source={images.apple}
+                      style={styles.socialIcon}
+                      resizeMode="contain"
+                    />
+                    <SolidText style={styles.socialBtnTxt}>
+                      {localization.appkeys?.apple}
+                    </SolidText>
+                  </TouchableOpacity>
+                )}
               </View>
             </View>
           </View>

@@ -88,7 +88,7 @@ const style = (colors: any) =>
     modalTitle: {
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(22),
-      color: colors.black,
+      color: colors.brown,
       marginBottom: 12,
       textAlign: 'center',
       includeFontPadding: false,
@@ -97,7 +97,7 @@ const style = (colors: any) =>
     modalSubtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: 30,
       lineHeight: 24,

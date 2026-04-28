@@ -23,6 +23,7 @@ interface SolidBtnProps {
   disabled?: boolean;
   img?: any;
   imgTintColor?: any;
+  maxFontScale?: any;
 }
 
 const SolidBtn: React.FC<SolidBtnProps> = ({
@@ -34,6 +35,7 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
   disabled = false,
   img,
   imgTintColor,
+  maxFontScale,
 }) => {
   const { colors } = useTheme();
   const styles = style(colors);
@@ -43,7 +45,7 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
       disabled={disabled}
       style={[styles.btn, btnStyle, disabled && styles.disabled]}
     >
-      {isLoading && <ActivityIndicator />}
+      {isLoading && <ActivityIndicator color={colors.primary} />}
       {img && (
         <Image
           resizeMode="contain"
@@ -53,7 +55,12 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
         />
       )}
       {!isLoading && (
-        <SolidText style={[styles.btntxt, txtStyle]}>{titleTxt}</SolidText>
+        <SolidText
+          maxFontScale={maxFontScale ?? 1.3}
+          style={[styles.btntxt, txtStyle]}
+        >
+          {titleTxt}
+        </SolidText>
       )}
     </TouchableOpacity>
   );

@@ -10,11 +10,11 @@ const style = (colors: any) =>
       paddingHorizontal: 20,
     },
     title: {
-          fontSize: AppUtils.fontSize(25),
+      fontSize: AppUtils.fontSize(25),
 
       textAlign: 'center',
       fontFamily: AppFonts.recoMedium,
-      color: colors.black,
+      color: colors.brown,
       marginTop: Platform.OS == 'ios' ? 20 : 30,
       paddingHorizontal: 10,
       includeFontPadding: false,
@@ -22,7 +22,7 @@ const style = (colors: any) =>
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(15),
-      color: colors.black,
+      color: colors.brown,
       alignSelf: 'center',
       marginVertical: 10,
       includeFontPadding: false,

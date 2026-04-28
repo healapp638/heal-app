@@ -53,7 +53,7 @@ const InfoModal: React.FC<InfoModalProps> = ({
               {requirements.map((req, index) => (
                 <View key={index} style={styles.requirementRow}>
                   <View
-                    style={[styles.bullet, { backgroundColor: colors.black }]}
+                    style={[styles.bullet, { backgroundColor: colors.brown }]}
                   />
                   <SolidText style={styles.requirementText}>{req}</SolidText>
                 </View>
@@ -99,7 +99,7 @@ const style = (colors: any) =>
     modalMessage: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: 20,
       lineHeight: 26,
@@ -123,7 +123,7 @@ const style = (colors: any) =>
     requirementText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
       flex: 1,
     },
     modalButton: {

@@ -23,7 +23,7 @@ const style = (colors: any) =>
     welcomeSubtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: hp('4%'),
       lineHeight: 24,
@@ -33,8 +33,8 @@ const style = (colors: any) =>
       backgroundColor: colors.brown,
       width: '90%',
       borderRadius: 100,
-marginTop:20,
-marginBottom:60
+      marginTop: 20,
+      marginBottom: 60,
     },
   });
 

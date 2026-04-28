@@ -1,14 +1,20 @@
 import React, { useContext, useState } from 'react';
 import { View, FlatList, TouchableOpacity, Image } from 'react-native';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme, useRoute } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import { LocalizationContext } from '../../../../localization/localization';
 import { useDispatch } from 'react-redux';
-import { SetAppLanguage } from '../../../../redux/Reducers/userData';
+import {
+  SetAppLanguage,
+  getUserDetail,
+} from '../../../../redux/Reducers/userData';
 import style from './style';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
 
 const SelectLanguage = () => {
   const { colors, images } = useTheme() as any;
@@ -17,7 +23,9 @@ const SelectLanguage = () => {
     LocalizationContext,
   ) as any;
   const dispatch = useDispatch();
+  const route = useRoute() as any;
   const styles = style(colors);
+  const { mutate: updateProfileApi } = usePostApi();
 
   const [selectedLang, setSelectedLang] = useState(appLanguage);
 
@@ -34,6 +42,22 @@ const SelectLanguage = () => {
   const handleSelect = () => {
     dispatch(SetAppLanguage(selectedLang));
     setAppLanguage(selectedLang);
+
+    if (route?.params?.from === 'Settings') {
+      updateProfileApi(
+        {
+          endpoint: endpoints.update_profile,
+          data: {
+            language: AppUtils.getLanguageCode(selectedLang),
+          },
+        },
+        {
+          onSuccess: () => {
+            dispatch(getUserDetail() as any);
+          },
+        },
+      );
+    }
     navigation.goBack();
   };
 

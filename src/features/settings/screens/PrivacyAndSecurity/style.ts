@@ -64,7 +64,7 @@ const style = (colors: any) =>
     securityLevelTitle: {
       fontSize: AppUtils.fontSize(14),
       fontFamily: AppFonts.medium,
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     securityLevelSubtitle: {
@@ -100,7 +100,7 @@ const style = (colors: any) =>
     settingItemTitle: {
       fontSize: AppUtils.fontSize(14),
       fontFamily: AppFonts.medium,
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     settingItemSubtitle: {

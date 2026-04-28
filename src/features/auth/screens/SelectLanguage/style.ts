@@ -11,11 +11,11 @@ const style = (colors: any) =>
     subtitle: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(21),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginTop: 2,
       marginBottom: 20,
-      lineHeight:Platform.OS=='ios'?30: 28,
+      lineHeight: Platform.OS == 'ios' ? 30 : 28,
       includeFontPadding: false,
     },
     listContent: {
@@ -54,7 +54,7 @@ const style = (colors: any) =>
       flex: 1,
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     checkIcon: {
@@ -64,7 +64,7 @@ const style = (colors: any) =>
     footerBtn: {
       position: 'absolute',
       bottom: 20,
-  
+
       backgroundColor: colors.brown,
       borderRadius: 100,
     },

@@ -3,7 +3,11 @@ import { Image, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
@@ -21,7 +25,8 @@ const PrivacyMatters = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedAccepted = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.privacyAccepted ?? false,
+    (state: any) =>
+      state.userData?.onboarding?.answers?.privacyAccepted ?? false,
   );
   const [accepted, setAccepted] = useState(savedAccepted);
 
@@ -62,9 +67,8 @@ const PrivacyMatters = () => {
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
-          <View style={{ paddingHorizontal: 20,marginBottom:-50 }}>
-                      <HeaderCommon title={''} />
-
+          <View style={{ paddingHorizontal: 20, marginBottom: -50 }}>
+            <HeaderCommon title={''} />
           </View>
 
           <Image
@@ -129,7 +133,7 @@ const PrivacyMatters = () => {
                   navigation.navigate(AppRoutes.PrivacyPolicy as never)
                 }
               >
-                <SolidText style={styles.footerText}>
+                <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.privacyPolicy}
                 </SolidText>
               </TouchableOpacity>
@@ -137,7 +141,7 @@ const PrivacyMatters = () => {
               <TouchableOpacity
                 onPress={() => navigation.navigate(AppRoutes.Terms as never)}
               >
-                <SolidText style={styles.footerText}>
+                <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.termsOfService}
                 </SolidText>
               </TouchableOpacity>

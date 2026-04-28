@@ -18,7 +18,7 @@ const style = (colors: any) =>
     },
     quoteText: {
       fontFamily: AppFonts.reco,
-      color: colors.black,
+      color: colors.brown,
       fontSize: AppUtils.fontSize(22),
       textAlign: 'center',
       lineHeight: 32,
@@ -27,7 +27,7 @@ const style = (colors: any) =>
     buildStreakText: {
       alignSelf: 'center',
       fontFamily: AppFonts.regular,
-      color: colors.black,
+      color: colors.brown,
       fontSize: AppUtils.fontSize(14),
       marginTop: 20,
     },

@@ -3,8 +3,8 @@ import auth from '@react-native-firebase/auth';
 import { Alert, Platform } from 'react-native';
 import usePostApi from './usePostApi';
 import { endpoints } from '../api/Services/endpoints';
-import { useDispatch } from 'react-redux';
-import { setAuth, setToken, setUser } from '../redux/Reducers/userData';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAuth, setToken, setRefreshToken, setUser } from '../redux/Reducers/userData';
 import { useNavigation } from '@react-navigation/native';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
 import AppUtils from '../utils/appUtils';
@@ -13,6 +13,7 @@ const useSocialLogin = () => {
   const { mutate: socialLoginMutate, isPending } = usePostApi();
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
 
   const googleLogin = async () => {
     GoogleSignin.configure({
@@ -43,6 +44,7 @@ const useSocialLogin = () => {
         email: email,
         name: name,
         os_type: Platform.OS,
+        language: AppUtils.getLanguageCode(appLanguage),
       };
 
       socialLoginMutate(
@@ -51,6 +53,7 @@ const useSocialLogin = () => {
           onSuccess: (response: any) => {
             if (response?.data?.is_profile_completed == false) {
               dispatch(setToken(response?.data?.access_token));
+              dispatch(setRefreshToken(response?.data?.refresh_token));
               dispatch(setUser(response?.data));
               dispatch(setAuth(true));
               navigation.reset({
@@ -65,6 +68,7 @@ const useSocialLogin = () => {
             } else {
               dispatch(setUser(response?.data));
               dispatch(setToken(response?.data?.access_token));
+              dispatch(setRefreshToken(response?.data?.refresh_token));
               dispatch(setAuth(true));
               navigation.reset({
                 index: 0,

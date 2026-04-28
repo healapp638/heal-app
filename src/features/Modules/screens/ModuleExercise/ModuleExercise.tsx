@@ -130,7 +130,7 @@ const ModuleExercise = () => {
                   style={styles.textInput}
                   multiline
                   placeholder={currentStepData.placeholder}
-                  placeholderTextColor="black"
+                  placeholderTextColor="#111111"
                   value={reflectionText}
                   onChangeText={setReflectionText}
                   maxFontSizeMultiplier={1.4}

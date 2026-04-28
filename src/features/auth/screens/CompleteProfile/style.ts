@@ -23,7 +23,7 @@ const style = (colors: any) =>
     welcomeSubtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: hp('3%'),
       lineHeight: 24,

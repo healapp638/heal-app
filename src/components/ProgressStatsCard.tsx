@@ -29,19 +29,19 @@ const ProgressStatsCard = ({
   return (
     <View style={styles.statsCard}>
       <View style={styles.statItem}>
-        <SolidText style={[styles.statValue, { color: colors.black }]}>
+        <SolidText style={[styles.statValue, { color: colors.brown }]}>
           {lvText} {level}
         </SolidText>
         <SolidText style={styles.statLabel}>{levelLabel}</SolidText>
       </View>
       <View style={styles.statItem}>
-        <SolidText style={[styles.statValue, { color: colors.black }]}>
+        <SolidText style={[styles.statValue, { color: colors.brown }]}>
           {progress}
         </SolidText>
         <SolidText style={styles.statLabel}>{progressLabel}</SolidText>
       </View>
       <View style={styles.statItem}>
-        <SolidText style={[styles.statValue, { color: colors.black }]}>
+        <SolidText style={[styles.statValue, { color: colors.brown }]}>
           {pts}
         </SolidText>
         <SolidText style={styles.statLabel}>{ptsLabel}</SolidText>

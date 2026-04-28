@@ -58,7 +58,7 @@ const style = (colors: any) =>
     taskText: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(18),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       lineHeight: 24,
       marginTop: 40, // Push content down below the badge

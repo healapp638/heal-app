@@ -27,7 +27,7 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
-
+  const styles = useStyles(colors);
   const filteredChallenges = data.filter(item => item.category === activeTab);
 
   return (
@@ -63,17 +63,18 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
   );
 };
 
-const styles = StyleSheet.create({
-  listContent: {
-    paddingBottom: 40,
-  },
-  headerText: {
-    fontSize: AppUtils.fontSize(16),
-    fontFamily: AppFonts.semiBold,
-    marginBottom: Platform.OS == 'ios' ? 16 : 12,
-    marginTop: 10,
-    color: 'black',
-  },
-});
+const useStyles = (colors: any) =>
+  StyleSheet.create({
+    listContent: {
+      paddingBottom: 40,
+    },
+    headerText: {
+      fontSize: AppUtils.fontSize(16),
+      fontFamily: AppFonts.semiBold,
+      marginBottom: Platform.OS == 'ios' ? 16 : 12,
+      marginTop: 10,
+      color: colors.brown,
+    },
+  });
 
 export default ChallengeList;

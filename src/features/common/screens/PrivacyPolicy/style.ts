@@ -14,7 +14,7 @@ const style = (colors: any) =>
     text: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(12),
-      color: colors.black,
+      color: colors.brown,
       lineHeight: 22,
       marginBottom: 20,
     },

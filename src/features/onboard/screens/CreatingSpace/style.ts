@@ -15,7 +15,7 @@ const style = (colors: any) =>
     title: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(28),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: hp('1%'),
       paddingHorizontal: wp('10%'),
@@ -23,11 +23,10 @@ const style = (colors: any) =>
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
-      color: colors.black,
+      color: colors.brown,
 
       textAlign: 'center',
       marginBottom: hp('4%'),
-
     },
     gif: {
       width: wp('100%'),
@@ -48,9 +47,8 @@ const style = (colors: any) =>
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
       lineHeight: 24,
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
-
     },
     cursor: {
       color: '#DF9D83',

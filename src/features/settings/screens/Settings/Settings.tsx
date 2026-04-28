@@ -12,12 +12,13 @@ import SettingsPremiumCard from '../../../../components/SettingsPremiumCard';
 import LogoutModal from '../../../../modals/LogoutModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   setAuth,
   setToken,
   setUser,
 } from '../../../../redux/Reducers/userData';
+import getEnvVars from '../../../../../env';
 
 const Settings = () => {
   const dispatch = useDispatch();
@@ -28,12 +29,14 @@ const Settings = () => {
   const [visible, setvisible] = useState(false);
   const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
-
+  const user = useSelector((state: any) => state.userData?.user);
   const settingItems = [
     localization.appkeys?.personalInfo || 'Personal Information',
     localization.appkeys?.notifications || 'Notifications',
     localization.appkeys?.language || 'Language',
     localization.appkeys?.privacySecurity || 'Privacy & Security',
+    localization.appkeys?.termsOfService || 'Terms of Service',
+    localization.appkeys?.privacyPolicy || 'Privacy Policy',
     localization.appkeys?.helpSupport || 'Help & Support',
     localization.appkeys?.aboutHeal || 'About HEAL',
   ];
@@ -58,8 +61,9 @@ const Settings = () => {
           />
 
           <SettingsProfileCard
-            userName="John Doe"
-            userEmail="Johndoe911@gmail.com"
+            source={{ uri: getEnvVars()?.fileUrl + user?.profilePic }}
+            userName={user?.fullName || user?.first_name || ''}
+            userEmail={user?.email || ''}
             onLogoutPress={() => setvisible(true)}
           />
 
@@ -79,6 +83,10 @@ const Settings = () => {
               item === (localization.appkeys?.helpSupport || 'Help & Support');
             const isAbout =
               item === (localization.appkeys?.aboutHeal || 'About HEAL');
+            const isTerms =
+              item === (localization.appkeys?.termsOfService || 'Terms of Service');
+            const isPolicy =
+              item === (localization.appkeys?.privacyPolicy || 'Privacy Policy');
 
             return (
               <SettingItem
@@ -97,13 +105,22 @@ const Settings = () => {
                   } else if (isPersonalInfo) {
                     navigation.navigate(AppRoutes.EditProfile as never);
                   } else if (isLanguage) {
-                    navigation.navigate(AppRoutes.SelectLanguage as never);
+                    navigation.navigate(
+                      AppRoutes.SelectLanguage as never,
+                      {
+                        from: 'Settings',
+                      } as never,
+                    );
                   } else if (isPrivacy) {
                     navigation.navigate(AppRoutes.PrivacyAndSecurity as never);
                   } else if (isHelp) {
                     navigation.navigate(AppRoutes.HelpAndSupport as never);
                   } else if (isAbout) {
                     navigation.navigate(AppRoutes.aboutHeal as never);
+                  } else if (isTerms) {
+                    navigation.navigate(AppRoutes.Terms as never);
+                  } else if (isPolicy) {
+                    navigation.navigate(AppRoutes.PrivacyPolicy as never);
                   }
                 }}
               />

@@ -30,7 +30,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
-
+  const styles = useStyles(colors);
   const handleBack = () => {
     if (onBackPress) {
       onBackPress();
@@ -87,38 +87,39 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
 
 export default HeaderCommon;
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+const useStyles = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
 
-    marginTop: Platform.OS === 'ios' ? 0 : 8,
-    height: 50,
-    marginBottom: 20,
-  },
-  sideContainer: {
-    width: 40,
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-  },
-  centerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    width: 14,
-    height: 14,
-  },
-  title: {
-    fontFamily: AppFonts.medium,
-    fontSize: 16,
-    color: 'black',
-    textAlign: 'center',
-    includeFontPadding: false,
-  },
-  rightPlaceholder: {
-    width: 40,
-  },
-});
+      marginTop: Platform.OS === 'ios' ? 0 : 8,
+      height: 50,
+      marginBottom: 20,
+    },
+    sideContainer: {
+      width: 40,
+      justifyContent: 'center',
+      alignItems: 'flex-start',
+    },
+    centerContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    backIcon: {
+      width: 14,
+      height: 14,
+    },
+    title: {
+      fontFamily: AppFonts.medium,
+      fontSize: 16,
+      color: colors.brown,
+      textAlign: 'center',
+      includeFontPadding: false,
+    },
+    rightPlaceholder: {
+      width: 40,
+    },
+  });

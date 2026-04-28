@@ -23,7 +23,7 @@ const style = (colors: any) =>
     welcomeSubtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       marginBottom: hp('3%'),
       lineHeight: 24,
@@ -40,21 +40,20 @@ const style = (colors: any) =>
     timerText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(13),
-      color: colors.black,
+      color: colors.brown,
     },
     resendText: {
-
       fontSize: AppUtils.fontSize(13),
       color: colors.primary,
-fontStyle:'italic',
+      fontStyle: 'italic',
       fontWeight: Platform.OS === 'ios' ? '700' : '600',
     },
     verifyBtn: {
       backgroundColor: colors.brown,
       width: '90%',
       borderRadius: 100,
-marginTop:20,
-marginBottom:60,
+      marginTop: 20,
+      marginBottom: 60,
 
       alignSelf: 'center',
     },

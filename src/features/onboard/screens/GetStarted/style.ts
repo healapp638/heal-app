@@ -28,7 +28,7 @@ const style = (colors: any) =>
       fontSize: AppUtils.fontSize(16),
       textAlign: 'center',
       marginTop: 20,
-      color: colors.black,
+      color: colors.brown,
     },
     starsImage: {
       height: 30,
@@ -39,7 +39,7 @@ const style = (colors: any) =>
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
       textAlign: 'center',
-      color: colors.black,
+      color: colors.brown,
       marginTop: 10,
     },
     testimonialContainer: {
@@ -53,7 +53,7 @@ const style = (colors: any) =>
       alignItems: 'center',
     },
     btn: {
-      marginTop: Platform.OS === 'ios' ? 160 : 140,
+      marginBottom: 40,
     },
   });
 

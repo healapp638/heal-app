@@ -24,7 +24,7 @@ const style = (colors: any) =>
     safeSpace: {
       fontSize: AppUtils.fontSize(16),
       fontFamily: AppFonts.regular,
-      color: colors.black,
+      color: colors.brown,
     },
     calendarContainer: {
       marginBottom: 20,

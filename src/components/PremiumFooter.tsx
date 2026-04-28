@@ -7,23 +7,27 @@ interface PremiumFooterProps {
   localization: any;
   styles: any;
   navigation: any;
+  appLanguage: any;
 }
 
 const PremiumFooter: React.FC<PremiumFooterProps> = ({
   localization,
   styles,
   navigation,
+  appLanguage,
 }) => {
   return (
     <View style={styles.footerLinks}>
       <TouchableOpacity>
-        <SolidText style={styles.footerLink}>{localization.appkeys?.restore}</SolidText>
+        <SolidText maxFontScale={1} style={styles.footerLink}>
+          {localization.appkeys?.restore}
+        </SolidText>
       </TouchableOpacity>
       <View style={styles.footerDot} />
       <TouchableOpacity
         onPress={() => navigation.navigate(AppRoutes.PrivacyPolicy as never)}
       >
-        <SolidText style={styles.footerLink}>
+        <SolidText maxFontScale={1} style={styles.footerLink}>
           {localization.appkeys?.privacyPolicy}
         </SolidText>
       </TouchableOpacity>
@@ -31,7 +35,7 @@ const PremiumFooter: React.FC<PremiumFooterProps> = ({
       <TouchableOpacity
         onPress={() => navigation.navigate(AppRoutes.Terms as never)}
       >
-        <SolidText style={styles.footerLink}>
+        <SolidText maxFontScale={1} style={styles.footerLink}>
           {localization.appkeys?.termsOfService}
         </SolidText>
       </TouchableOpacity>

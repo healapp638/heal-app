@@ -12,12 +12,15 @@ import ReminderToggle from '../../../../components/ReminderToggle';
 import PlansSection from '../../../../components/PlansSection';
 import PremiumFooter from '../../../../components/PremiumFooter';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { useSelector } from 'react-redux';
 
 const Premium = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
-  const styles = style(colors);
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+
+  const styles = style(colors, appLanguage);
 
   const [reminderEnabled, setReminderEnabled] = useState(true);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>(
@@ -89,6 +92,7 @@ const Premium = () => {
           </SolidText>
 
           <SolidBtn
+            maxFontScale={1}
             btnStyle={styles.actionBtn}
             txtStyle={styles.actionBtnText}
             titleTxt={localization.appkeys?.startFreeTrialBtn}
@@ -110,6 +114,7 @@ const Premium = () => {
             localization={localization}
             styles={styles}
             navigation={navigation}
+            appLanguage={appLanguage}
           />
         </View>
       }

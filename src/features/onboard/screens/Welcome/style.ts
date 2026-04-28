@@ -35,21 +35,21 @@ const style = (colors: any) =>
     langCode: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(12),
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     phoneImage: {
       height: 470,
       width: 230,
       alignSelf: 'center',
-      marginTop: 20,
+      marginTop: 38,
     },
     title: {
       fontSize: AppUtils.fontSize(26),
       textAlign: 'center',
       marginTop: 20,
       fontFamily: AppFonts.reco,
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     btn: {
@@ -59,7 +59,7 @@ const style = (colors: any) =>
       fontSize: AppUtils.fontSize(14),
       textAlign: 'center',
       fontFamily: AppFonts.regular,
-      color: colors.black,
+      color: colors.brown,
       includeFontPadding: false,
     },
     signInText: {

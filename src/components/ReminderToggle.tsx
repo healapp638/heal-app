@@ -19,7 +19,7 @@ const ReminderToggle: React.FC<ReminderToggleProps> = ({
 }) => {
   return (
     <View style={styles.reminderRow}>
-      <SolidText style={styles.reminderText}>
+      <SolidText maxFontScale={1} style={styles.reminderText}>
         {localization.appkeys?.reminderBeforeEnds}
       </SolidText>
       <TouchableOpacity onPress={onToggle}>

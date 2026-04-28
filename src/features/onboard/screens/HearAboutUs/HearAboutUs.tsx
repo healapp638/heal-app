@@ -4,7 +4,11 @@ import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
@@ -36,15 +40,47 @@ const HearAboutUs = () => {
   );
 
   const options = [
-    { id: 'tiktok', label: localization.appkeys?.optionTikTok, icon: images.tiktok },
-    { id: 'insta', label: localization.appkeys?.optionInsta, icon: images.insta },
-    { id: 'apple', label: localization.appkeys?.optionAppStore, icon: images.apple },
-    { id: 'group', label: localization.appkeys?.optionGroup, icon: images.group },
+    {
+      id: 'tiktok',
+      label: localization.appkeys?.optionTikTok,
+      icon: images.tiktok,
+    },
+    {
+      id: 'insta',
+      label: localization.appkeys?.optionInsta,
+      icon: images.insta,
+    },
+    {
+      id: 'apple',
+      label: localization.appkeys?.optionAppStore,
+      icon: images.apple,
+    },
+    {
+      id: 'group',
+      label: localization.appkeys?.optionGroup,
+      icon: images.group,
+    },
     { id: 'fb', label: localization.appkeys?.optionFB, icon: images.fb },
-    { id: 'youtube', label: localization.appkeys?.optionYoutube, icon: images.youtube },
-    { id: 'twitter', label: localization.appkeys?.optionTwitter, icon: images.twitter },
-    { id: 'google', label: localization.appkeys?.optionGoogleS, icon: images.google },
-    { id: 'other', label: localization.appkeys?.optionOther, icon: images.other },
+    {
+      id: 'youtube',
+      label: localization.appkeys?.optionYoutube,
+      icon: images.youtube,
+    },
+    {
+      id: 'twitter',
+      label: localization.appkeys?.optionTwitter,
+      icon: images.twitter,
+    },
+    {
+      id: 'google',
+      label: localization.appkeys?.optionGoogleS,
+      icon: images.google,
+    },
+    {
+      id: 'other',
+      label: localization.appkeys?.optionOther,
+      icon: images.other,
+    },
   ];
 
   return (
@@ -153,6 +189,7 @@ const HearAboutUs = () => {
                 );
               })}
             </View>
+            <View style={{ flex: 1 }} />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}

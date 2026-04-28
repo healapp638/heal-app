@@ -33,7 +33,7 @@ const PhaseCard = ({
         <SolidText style={[styles.phaseText, { color: colors.brown }]}>
           {phase}
         </SolidText>
-        <SolidText style={[styles.titleText, { color: colors.black }]}>
+        <SolidText style={[styles.titleText, { color: colors.brown }]}>
           {title}
         </SolidText>
         <SolidText style={styles.pointsText}>{points}</SolidText>
@@ -50,7 +50,7 @@ const PhaseCard = ({
             source={images.forward2}
             style={styles.forwardIcon}
             resizeMode="contain"
-            tintColor={colors.black}
+            tintColor={colors.brown}
           />
         )}
       </View>

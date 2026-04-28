@@ -4,7 +4,11 @@ import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
@@ -54,7 +58,11 @@ const BringYouHere = () => {
       label: localization.appkeys?.optionRomantic,
       icon: images.romantic,
     },
-    { id: 'family', label: localization.appkeys?.optionFamily, icon: images.family },
+    {
+      id: 'family',
+      label: localization.appkeys?.optionFamily,
+      icon: images.family,
+    },
     {
       id: 'friendship',
       label: localization.appkeys?.optionFriendship,
@@ -130,7 +138,9 @@ const BringYouHere = () => {
                       style={[
                         styles.optionText,
                         isSelected && styles.optionTextSelected,
+                        { width: '70%' },
                       ]}
+                      maxFontScale={1.2}
                     >
                       {option.label}
                     </SolidText>
@@ -138,7 +148,7 @@ const BringYouHere = () => {
                 );
               })}
             </View>
-
+            <View style={{ flex: 1 }} />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, TouchableOpacity, View, Platform } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -51,21 +51,23 @@ const AccessScreen = () => {
                   style={styles.socialIcon}
                   resizeMode="contain"
                 />
-                <SolidText style={styles.socialBtnTxt}>
+                <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
                   {localization.appkeys?.continueWithGoogle}
                 </SolidText>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
-                <Image
-                  source={images.apple}
-                  style={styles.socialIcon}
-                  resizeMode="contain"
-                />
-                <SolidText style={styles.socialBtnTxt}>
-                  {localization.appkeys?.continueWithApple}
-                </SolidText>
-              </TouchableOpacity>
+              {Platform.OS === 'ios' && (
+                <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                  <Image
+                    source={images.apple}
+                    style={styles.socialIcon}
+                    resizeMode="contain"
+                  />
+                  <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
+                    {localization.appkeys?.continueWithApple}
+                  </SolidText>
+                </TouchableOpacity>
+              )}
 
               <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
                 <Image
@@ -73,7 +75,7 @@ const AccessScreen = () => {
                   style={styles.socialIcon}
                   resizeMode="contain"
                 />
-                <SolidText style={styles.socialBtnTxt}>
+                <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
                   {localization.appkeys?.continueWithEmail}
                 </SolidText>
               </TouchableOpacity>
@@ -102,7 +104,7 @@ const AccessScreen = () => {
                   navigation.navigate(AppRoutes.PrivacyPolicy as never)
                 }
               >
-                <SolidText style={styles.footerText}>
+                <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.privacyPolicy}
                 </SolidText>
               </TouchableOpacity>
@@ -110,7 +112,7 @@ const AccessScreen = () => {
               <TouchableOpacity
                 onPress={() => navigation.navigate(AppRoutes.Terms as never)}
               >
-                <SolidText style={styles.footerText}>
+                <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.termsOfService}
                 </SolidText>
               </TouchableOpacity>

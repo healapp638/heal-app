@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, useEffect } from 'react';
 import {
   Modal,
   TouchableOpacity,
@@ -85,6 +85,30 @@ const DobPickerModal: React.FC<Props> = ({
   const dayRef = useRef<ScrollView>(null);
   const yearRef = useRef<ScrollView>(null);
 
+  useEffect(() => {
+    if (visible) {
+      // Use a small timeout to ensure the ScrollView is mounted and layout is ready
+      setTimeout(() => {
+        const mIndex = Math.max(0, MONTHS.indexOf(date.month));
+        const dIndex = Math.max(0, DAYS.indexOf(date.day));
+        const yIndex = Math.max(0, YEARS.indexOf(date.year));
+
+        monthRef.current?.scrollTo({
+          y: mIndex * ITEM_HEIGHT,
+          animated: false,
+        });
+        dayRef.current?.scrollTo({
+          y: dIndex * ITEM_HEIGHT,
+          animated: false,
+        });
+        yearRef.current?.scrollTo({
+          y: yIndex * ITEM_HEIGHT,
+          animated: false,
+        });
+      }, 100);
+    }
+  }, [visible]);
+
   const renderDrumPicker = (
     data: string[],
     selectedValue: string,
@@ -93,7 +117,8 @@ const DobPickerModal: React.FC<Props> = ({
     flexVal: number,
   ) => {
     const paddedData = ['', '', ...data, '', ''];
-    const selectedIndex = Math.max(0, data.indexOf(selectedValue));
+    const rawIndex = data.indexOf(selectedValue);
+    const selectedIndex = Math.max(0, rawIndex);
 
     const handleScrollEnd = (e: any) => {
       const y = e.nativeEvent.contentOffset.y;
@@ -113,9 +138,12 @@ const DobPickerModal: React.FC<Props> = ({
           onMomentumScrollEnd={handleScrollEnd}
           scrollEventThrottle={16}
           snapToAlignment="center"
+          removeClippedSubviews={false}
         >
           {paddedData.map((item, i) => {
-            const isSelected = item === selectedValue;
+            const isSelected =
+              item === selectedValue ||
+              (item && selectedValue?.startsWith(item) && item.length === 2);
             return (
               <View key={`${item}-${i}`} style={styles.item}>
                 <SolidText
@@ -270,7 +298,7 @@ const style = (colors: any) =>
     modalTitle: {
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(20),
-      color: colors.black,
+      color: colors.brown,
       textAlign: 'center',
       includeFontPadding: false,
       flex: 1,

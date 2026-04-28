@@ -27,7 +27,7 @@ const StartedModuleCard = ({
   onPress,
 }: StartedModuleCardProps) => {
   const { colors, images } = useTheme() as any;
-
+  const styles = useStyles(colors);
   return (
     <TouchableOpacity
       activeOpacity={0.8}
@@ -63,10 +63,12 @@ const StartedModuleCard = ({
         )}
 
         <View style={styles.moduleCardTextContainer}>
-          <SolidText style={[styles.moduleCardTitle, { color: colors.black }]}>
+          <SolidText style={[styles.moduleCardTitle, { color: colors.brown }]}>
             {title}
           </SolidText>
-          <SolidText style={[styles.moduleCardSubtitle, { color: colors.black }]}>
+          <SolidText
+            style={[styles.moduleCardSubtitle, { color: colors.brown }]}
+          >
             {subtitle}
           </SolidText>
         </View>
@@ -74,74 +76,75 @@ const StartedModuleCard = ({
           source={images.forward2}
           style={styles.forwardIcon}
           resizeMode="contain"
-          tintColor={'black'}
+          tintColor={colors.brown}
         />
       </View>
     </TouchableOpacity>
   );
 };
 
-const styles = StyleSheet.create({
-  moduleCard: {
-    width: 320,
-    padding: 12,
-    borderRadius: 16,
-    marginRight: 12,
-    // iOS shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 5,
-    // Android shadow
-    elevation: 2,
-  },
-  moduleCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  progressCircleContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-    transform: [{ rotate: '45deg' }],
-  },
-  progressCircleInner: {
-    transform: [{ rotate: '-45deg' }],
-  },
-  progressText: {
-    fontFamily: AppFonts.medium,
-    fontSize: AppUtils.fontSize(14),
-    includeFontPadding: false,
-  },
-  finishedCircle: {},
-  tickIcon: {
-    width: 36,
-    height: 36,
-  },
-  moduleCardTextContainer: {
-    flex: 1,
-    paddingHorizontal: 12,
-  },
-  moduleCardTitle: {
-    fontFamily: AppFonts.semiBold,
-    fontSize: AppUtils.fontSize(14),
-    marginBottom: Platform.OS == 'ios' ? 13 : 7,
-  },
-  moduleCardSubtitle: {
-    fontFamily: AppFonts.medium,
-    fontSize: AppUtils.fontSize(11),
-    opacity: 0.5,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  forwardIcon: {
-    width: 12,
-    height: 12,
-  },
-});
+const useStyles = (colors: any) =>
+  StyleSheet.create({
+    moduleCard: {
+      width: 320,
+      padding: 12,
+      borderRadius: 16,
+      marginRight: 12,
+      // iOS shadow
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.04,
+      shadowRadius: 5,
+      // Android shadow
+      elevation: 2,
+    },
+    moduleCardContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    progressCircleContainer: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      borderWidth: 6,
+      justifyContent: 'center',
+      alignItems: 'center',
+      transform: [{ rotate: '45deg' }],
+    },
+    progressCircleInner: {
+      transform: [{ rotate: '-45deg' }],
+    },
+    progressText: {
+      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(14),
+      includeFontPadding: false,
+    },
+    finishedCircle: {},
+    tickIcon: {
+      width: 36,
+      height: 36,
+    },
+    moduleCardTextContainer: {
+      flex: 1,
+      paddingHorizontal: 12,
+    },
+    moduleCardTitle: {
+      fontFamily: AppFonts.semiBold,
+      fontSize: AppUtils.fontSize(14),
+      marginBottom: Platform.OS == 'ios' ? 13 : 7,
+    },
+    moduleCardSubtitle: {
+      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(11),
+      opacity: 0.5,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    forwardIcon: {
+      width: 12,
+      height: 12,
+    },
+  });
 
 export default StartedModuleCard;

@@ -140,7 +140,7 @@ const style = (colors: any) =>
     },
     premiumBold: {
       fontStyle: 'italic',
-      color: 'black',
+      color: colors.brown,
       fontWeight: Platform.OS === 'ios' ? '700' : '900',
       fontSize: AppUtils.fontSize(14),
     },
@@ -180,7 +180,7 @@ const style = (colors: any) =>
     footerText: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       marginTop: 20,
     },
   });

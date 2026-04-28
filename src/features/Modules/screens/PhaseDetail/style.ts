@@ -18,7 +18,7 @@ const style = (colors: any) =>
     subtitle: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(14),
-      color: colors.black,
+      color: colors.brown,
       marginBottom: Platform.OS == 'ios' ? 14 : 12,
       includeFontPadding: false,
     },

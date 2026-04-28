@@ -12,6 +12,7 @@
     "email": "E-mail",
     "enterEmail": "Entrez votre e-mail",
     "password": "Mot de passe",
+    "newPassword": "Nouveau mot de passe",
     "enterPassword": "Entrez votre mot de passe",
     "rememberMe": "Se souvenir de moi",
     "forgotPassword": "Mot de passe oublié ?",
@@ -50,6 +51,7 @@
     "toastEnterConfirmPassword": "Veuillez confirmer votre mot de passe.",
     "toastPasswordMismatch": "Les mots de passe ne correspondent pas.",
     "forgotPassHeader": "Mot de passe oublié",
+    "forgotPassSubtitle": "Entrez votre adresse e-mail ci-dessous et nous vous enverrons un code de vérification à 6 chiffres pour réinitialiser votre mot de passe.",
     "verificationCodeSent": "Nous avons envoyé un code de vérification à 6 chiffres à votre adresse e-mail.",
     "verifyAndContinue": "Vérifier et continuer",
     "newPassHeader": "Nouveau mot de passe",
@@ -58,6 +60,7 @@
     "passChangedSuccess": "Mot de passe changé avec succès !",
     "passChangedSubtitle": "Vous pouvez utiliser votre nouveau mot de passe pour vous connecter à votre compte.",
     "verificationHeader": "Vérification",
+    "verificationCode": "Code de vérification",
     "didNotReceiveCode": "Vous n'avez pas reçu le code ?",
     "resendCode": "Renvoyer le code",
     "sec": "Sec",
@@ -110,6 +113,7 @@
     "optionGoogleS": "Google",
     "optionOther": "Autre",
     "bringYouTitle": "Qu'est-ce qui vous amène ici ?",
+    "safeSpaceSub": "Vos réponses nous aident à personnaliser votre espace sécurisé.",
     "optionRomantic": "Relations amoureuses",
     "optionFamily": "Famille",
     "optionFriendship": "Amitié",
@@ -511,6 +515,13 @@
     "faqA5": "Vous pouvez gérer votre abonnement depuis la page des paramètres sous Abonnement.",
     "feedbackTitle": "Votre avis compte",
     "feedbackSubtitle": "Aidez-nous à améliorer Mel en partageant vos suggestions et vos commentaires d'expérience.",
-    "sendFeedback": "Envoyer un commentaire"
+    "sendFeedback": "Envoyer un commentaire",
+    "profileUpdated": "Profil mis à jour avec succès",
+    "toastEnterOldPassword": "Veuillez saisir votre ancien mot de passe.",
+    "toastEnterNewPassword": "Veuillez saisir votre nouveau mot de passe.",
+    "toastOldNewPasswordSame": "Le nouveau mot de passe ne peut pas être identique à l'ancien.",
+    "UploadPicture": "Télécharger une photo",
+    "Camera": "Appareil photo",
+    "Gallary": "Galerie"
   }
 }

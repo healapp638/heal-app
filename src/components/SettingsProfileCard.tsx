@@ -8,19 +8,21 @@ type SettingsProfileCardProps = {
   userName: string;
   userEmail: string;
   onLogoutPress?: () => void;
+  source?: any;
 };
 
 const SettingsProfileCard = ({
   userName,
   userEmail,
   onLogoutPress,
+  source,
 }: SettingsProfileCardProps) => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
 
   return (
     <View style={styles.profileCard}>
-      <Image source={images.user} style={styles.avatar} />
+      <Image source={source} style={styles.avatar} />
       <View style={styles.profileInfo}>
         <SolidText style={styles.userName}>{userName}</SolidText>
         <SolidText style={styles.userEmail}>{userEmail}</SolidText>

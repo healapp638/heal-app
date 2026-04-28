@@ -8,6 +8,10 @@ import SolidInput from '../../../../components/SolidInput';
 import SuccessModal from '../../../../modals/SuccessModal';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
+import { isPasswordValid } from '../../../auth/utils/SignUp/signUpValidation';
 
 const ChangePassword = () => {
   const { colors, images } = useTheme() as any;
@@ -24,8 +28,75 @@ const ChangePassword = () => {
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
 
+  const { mutate: changePassword, isPending } = usePostApi();
+
   const handleConfirm = () => {
-    setSuccessVisible(true);
+    if (!oldPassword) {
+      AppUtils.showToast(
+        localization.appkeys?.toastEnterOldPassword ||
+          'Please enter your old password.',
+      );
+      return;
+    }
+
+    if (!password) {
+      AppUtils.showToast(
+        localization.appkeys?.toastEnterNewPassword ||
+          'Please enter your new password.',
+      );
+      return;
+    }
+
+    if (oldPassword === password) {
+      AppUtils.showToast(
+        localization.appkeys?.toastOldNewPasswordSame ||
+          'New password cannot be the same as the old password.',
+      );
+      return;
+    }
+
+    if (!isPasswordValid(password)) {
+      AppUtils.showToast(
+        localization.appkeys?.toastPasswordRequirementsDetailed ||
+          'Password must be at least 8 characters, include 1 uppercase letter, 1 number, and 1 special character.',
+        4500,
+      );
+      return;
+    }
+
+    if (!confirmPassword) {
+      AppUtils.showToast(
+        localization.appkeys?.toastEnterConfirmPassword ||
+          'Please confirm your password.',
+      );
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      AppUtils.showToast(
+        localization.appkeys?.toastPasswordMismatch ||
+          'Passwords do not match.',
+      );
+      return;
+    }
+
+    changePassword(
+      {
+        endpoint: endpoints.change_password,
+        data: {
+          old_password: oldPassword,
+          new_password: password,
+        },
+      },
+      {
+        onSuccess: () => {
+          setSuccessVisible(true);
+        },
+        onError: error => {
+          AppUtils.showToast(error.message || 'Failed to change password');
+        },
+      },
+    );
   };
 
   const navigateToSettings = () => {
@@ -84,6 +155,8 @@ const ChangePassword = () => {
             titleTxt={localization.appkeys?.confirm || 'Confirm'}
             btnStyle={styles.confirmBtn}
             onPress={handleConfirm}
+            isLoading={isPending}
+            disabled={isPending}
           />
 
           <SuccessModal

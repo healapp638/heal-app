@@ -53,6 +53,7 @@ export const userDataSlice = createSlice({
   initialState: {
     auth: false,
     token: '',
+    refreshToken: '',
     user: {},
     appLanguage: strings.english,
     fontScaling: 1.0,
@@ -67,6 +68,9 @@ export const userDataSlice = createSlice({
     },
     setToken: (state, action) => {
       state.token = action.payload;
+    },
+    setRefreshToken: (state, action) => {
+      state.refreshToken = action.payload;
     },
     setFontScaling: (state, action) => {
       state.fontScaling = action.payload;
@@ -101,6 +105,7 @@ export const {
   setAuth,
   setUser,
   setToken,
+  setRefreshToken,
   SetAppLanguage,
   setFontScaling,
   setOnboardingCurrentScreen,

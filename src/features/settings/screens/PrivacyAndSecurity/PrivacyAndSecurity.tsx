@@ -9,13 +9,14 @@ import { LocalizationContext } from '../../../../localization/localization';
 import HomeHeader from '../../../../components/HomeHeader';
 import DeleteAccountModal from '../../../../modals/DeleteAccountModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { useSelector } from 'react-redux';
 
 const PrivacyAndSecurity = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
+  const user = useSelector((state: any) => state?.userData?.user);
   const [authToggles, setAuthToggles] = useState({
     biometric: false,
     twoFactor: true,
@@ -197,34 +198,36 @@ const PrivacyAndSecurity = () => {
           </View>
 
           {/* Change Password Button */}
-          <TouchableOpacity
-            activeOpacity={0.8}
-            style={styles.changePassCard}
-            onPress={() =>
-              navigation.navigate(AppRoutes.ChangePassword as never)
-            }
-          >
-            <View style={styles.changePassLeft}>
+          {user?.account_type != 'social' && (
+            <TouchableOpacity
+              activeOpacity={0.8}
+              style={styles.changePassCard}
+              onPress={() =>
+                navigation.navigate(AppRoutes.ChangePassword as never)
+              }
+            >
+              <View style={styles.changePassLeft}>
+                <Image
+                  source={images.changePass}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    marginRight: 12,
+                    borderRadius: 22,
+                  }}
+                  resizeMode="contain"
+                />
+                <SolidText style={styles.changePassTitle}>
+                  {localization.appkeys?.changePassword || 'Change password'}
+                </SolidText>
+              </View>
               <Image
-                source={images.changePass}
-                style={{
-                  width: 40,
-                  height: 40,
-                  marginRight: 12,
-                  borderRadius: 22,
-                }}
+                source={images.forward2}
+                style={styles.arrowIcon}
                 resizeMode="contain"
               />
-              <SolidText style={styles.changePassTitle}>
-                {localization.appkeys?.changePassword || 'Change password'}
-              </SolidText>
-            </View>
-            <Image
-              source={images.forward2}
-              style={styles.arrowIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )}
 
           {/* Data Management Section */}
           <SolidText style={styles.sectionTitleManagement}>

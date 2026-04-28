@@ -72,7 +72,7 @@ const ForgotPassword = () => {
             {localization.appkeys?.forgotPassHeader}
           </SolidText>
           <SolidText style={styles.welcomeSubtitle}>
-            {localization.appkeys?.verificationCodeSent}
+            {localization.appkeys?.forgotPassSubtitle}
           </SolidText>
 
           <SolidInput

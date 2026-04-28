@@ -26,7 +26,7 @@ const DailyQuoteCard = ({
   onPress,
 }: DailyQuoteCardProps) => {
   const { colors } = useTheme() as any;
-
+  const styles = useStyle(colors);
   return (
     <Pressable onPress={onPress} style={styles.container}>
       <SolidText style={[styles.title, { color: colors.brown }]}>
@@ -68,42 +68,43 @@ const DailyQuoteCard = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: 14,
-  },
-  title: {
-    fontSize: 16,
-    fontFamily: AppFonts.semiBold,
-    marginBottom: 10,
-    includeFontPadding: false,
-  },
-  card: {
-    height: '100%',
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-    borderRadius: 18,
+const useStyle = (colors: any) =>
+  StyleSheet.create({
+    container: {
+      marginVertical: 14,
+    },
+    title: {
+      fontSize: 16,
+      fontFamily: AppFonts.semiBold,
+      marginBottom: 10,
+      includeFontPadding: false,
+    },
+    card: {
+      height: '100%',
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      borderRadius: 18,
 
-    // ✅ removed overflow: 'hidden' — it was clipping text inside
-  },
-  quoteText: {
-    fontSize: AppUtils.fontSize(16),
-    fontFamily: AppFonts.reco,
-    textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 14,
-    includeFontPadding: false,
-    width: '94%',
-    color: 'black',
-  },
-  exploreMore: {
-    fontSize: 10,
-    fontFamily: AppFonts.light,
+      // ✅ removed overflow: 'hidden' — it was clipping text inside
+    },
+    quoteText: {
+      fontSize: AppUtils.fontSize(16),
+      fontFamily: AppFonts.reco,
+      textAlign: 'center',
+      lineHeight: 24,
+      marginBottom: 14,
+      includeFontPadding: false,
+      width: '94%',
+      color: colors.brown,
+    },
+    exploreMore: {
+      fontSize: 10,
+      fontFamily: AppFonts.light,
 
-    includeFontPadding: false,
-  },
-});
+      includeFontPadding: false,
+    },
+  });
 
 export default DailyQuoteCard;

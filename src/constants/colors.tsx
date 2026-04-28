@@ -166,6 +166,9 @@ const LightTheme = {
     human: require('../assets/human.png'),
     open: require('../assets/open.png'),
     call: require('../assets/call.png'),
+    simpleLock: require('../assets/simpleLock.png'),
+    camera: require('../assets/camera.png'),
+    gallery: require('../assets/gallery.png'),
   },
 };
 
@@ -337,6 +340,9 @@ const DarkTheme = {
     human: require('../assets/human.png'),
     open: require('../assets/open.png'),
     call: require('../assets/call.png'),
+    simpleLock: require('../assets/simpleLock.png'),
+    camera: require('../assets/camera.png'),
+    gallery: require('../assets/gallery.png'),
   },
 };
 export { LightTheme, DarkTheme };

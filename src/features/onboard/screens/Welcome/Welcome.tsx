@@ -2,7 +2,11 @@ import { Alert, Image, View, TouchableOpacity } from 'react-native';
 import React, { useCallback, useContext, useRef } from 'react';
 import SolidView from '../../../../components/SolidView';
 
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import style from './style';

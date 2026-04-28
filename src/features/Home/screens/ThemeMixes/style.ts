@@ -27,12 +27,13 @@ const style = (colors: any) =>
       paddingHorizontal: 16,
       paddingVertical: 5,
       borderRadius: 20,
-      backgroundColor: '#352516',
+      backgroundColor: '#3A2110',
     },
     unlockText: {
       color: 'white',
       fontSize: AppUtils.fontSize(12),
       fontFamily: AppFonts.medium,
+      includeFontPadding: false,
     },
     title: {
       fontSize: AppUtils.fontSize(24),
