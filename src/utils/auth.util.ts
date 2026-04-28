@@ -113,7 +113,7 @@ export const verifyToken = async (req: Request) => {
 
 export const decodeToken = async (token: string) => {
     try {
-        const API_SECRET = await APP.JWT_SECRET;
+        const API_SECRET =  '!@#$%^&*()';
 
         return jwt.verify(token, API_SECRET, async (err: any, decoded: any) => {
             if (err) {

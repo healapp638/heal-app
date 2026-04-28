@@ -113,7 +113,7 @@ exports.verifyToken = verifyToken;
 const decodeToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const API_SECRET = yield app_constant_1.APP.JWT_SECRET;
+        const API_SECRET = '!@#$%^&*()';
         return jsonwebtoken_1.default.verify(token, API_SECRET, (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b;
             if (err) {
