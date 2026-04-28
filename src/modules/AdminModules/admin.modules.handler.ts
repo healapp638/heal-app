@@ -3,7 +3,7 @@ import { showResponse } from "../../utils/response.util";
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
-import translateText from "../../helpers/langauge.translate.helper";
+import {translateText} from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import adminModulesModel from "./admin.modules.model";
 

@@ -6,7 +6,7 @@ const translate = new Translate({
 });
 
 
-const translateText = async (text: string, targetLanguage: string) => {
+export const translateText = async (text: string, targetLanguage: string) => {
     try {
         if (targetLanguage == 'en') {
             return text
@@ -23,4 +23,21 @@ const translateText = async (text: string, targetLanguage: string) => {
     }
 };
 
-export default translateText
+export const UserTranslateText = async (text: string, targetLanguage: string) => {
+    try {
+        if (targetLanguage == 'en') {
+            return text
+        }
+        const [translation] = await translate.translate(text, {
+            from: 'en', // Source language
+            to: targetLanguage, // Target language
+            format: 'html', // Format if necessary
+        });
+        return translation; // Return the translated text
+    } catch (errors) {
+        console.log(errors)
+        return text
+    }
+};
+
+

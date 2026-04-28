@@ -6,7 +6,7 @@ import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import { getMessage } from "../../helpers/messages";
 import userJournalModel from "./user.journel.model";
 import { convertToObjectId } from "../../helpers/common.helper";
-import translateText from "../../helpers/langauge.translate.helper";
+import {translateText} from "../../helpers/langauge.translate.helper";
 
 const UserCommonHandler = {
 

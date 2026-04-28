@@ -19,7 +19,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const messages_1 = require("../../helpers/messages");
 const user_journel_model_1 = __importDefault(require("./user.journel.model"));
 const common_helper_1 = require("../../helpers/common.helper");
-const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
+const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const UserCommonHandler = {
     createJournal: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const { feeling, title, description } = data;
@@ -36,9 +36,9 @@ const UserCommonHandler = {
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedFeeling, translatedTitle, translatedDescription] = yield Promise.all([
-                (0, langauge_translate_helper_1.default)(feeling, lang),
-                (0, langauge_translate_helper_1.default)(title, lang),
-                (0, langauge_translate_helper_1.default)(description, lang)
+                (0, langauge_translate_helper_1.translateText)(feeling, lang),
+                (0, langauge_translate_helper_1.translateText)(title, lang),
+                (0, langauge_translate_helper_1.translateText)(description, lang)
             ]);
             obj.feeling[lang] = translatedFeeling;
             obj.title[lang] = translatedTitle;

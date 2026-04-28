@@ -8,6 +8,7 @@ import services from '../../services';
 import responseMessage from '../../constants/responseMessages'
 
 import statusCodes from '../../constants/statusCodes'
+import { EMAIL_SEND_TYPE } from "../../constants/workflow.constant";
 
 const AdminAuthHandler = {
 
@@ -35,16 +36,15 @@ const AdminAuthHandler = {
             return showResponse(false, responseMessage.admin.not_registered, null, statusCodes.API_ERROR)
         }
         const userData = exists?.data;
-        // const otp = commonHelper.generateOtp();
-        const otp = '123456'
-        // const to = `${exists?.data?.email}`
-        // const user_name = `${userData?.first_name} ${userData?.last_name}`
-        // const payload = { user_name, otp }
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = `${exists?.data?.email}`
+        const user_name = `${userData?.first_name} ${userData?.last_name}`
+        const payload = { user_name, otp }
 
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, responseMessage.admin.forgot_password_email_error, null, statusCodes.API_ERROR)
-        // }
+        const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
+        if (!emailSend.status) {
+            return showResponse(false, responseMessage.admin.forgot_password_email_error, null, statusCodes.API_ERROR)
+        }
         await findByIdAndUpdate(adminAuthModel, userData?._id, { otp });  //update otp in database
         return showResponse(true, responseMessage.admin.otp_send, null, statusCodes.SUCCESS);
     },
@@ -86,16 +86,15 @@ const AdminAuthHandler = {
         if (!result.status) {
             return showResponse(false, responseMessage.admin.not_registered, null, statusCodes.API_ERROR);
         }
-        // const adminData = result?.data;
-        // const otp = commonHelper.generateOtp();
-        const otp = '123456'
-        // const to = adminData?.email
-        // const user_name = `${adminData?.first_name} ${adminData?.last_name}`
-        // const payload = { user_name, otp }
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, responseMessage.admin.otp_send_error, null, statusCodes.API_ERROR)
-        // }
+        const adminData = result?.data;
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = adminData?.email
+        const user_name = `${adminData?.first_name} ${adminData?.last_name}`
+        const payload = { user_name, otp }
+        const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
+        if (!emailSend.status) {
+            return showResponse(false, responseMessage.admin.otp_send_error, null, statusCodes.API_ERROR)
+        }
         await findOneAndUpdate(adminAuthModel, queryObject, { otp })
         return showResponse(true, responseMessage.admin.otp_resend, null, statusCodes.SUCCESS);
     },

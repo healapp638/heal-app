@@ -98,7 +98,6 @@ const UserAuthHandler = {
         const { email, password, language } = data;
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
-        console.log(findUser, 'findUser');
         if (!findUser.status) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "user_not_registered"), null, statusCodes_1.default.API_ERROR);
         }
@@ -114,7 +113,7 @@ const UserAuthHandler = {
             yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } });
         }
         if (!userData.password) {
-            const otp = '123456';
+            const otp = commonHelper.generateRandomOtp(6);
             const otpCreatedAt = new Date();
             const obj = {
                 otp,
@@ -122,6 +121,14 @@ const UserAuthHandler = {
             };
             if (!(userData === null || userData === void 0 ? void 0 : userData.profilePic) || (userData === null || userData === void 0 ? void 0 : userData.profilePic) == '') {
                 obj.profilePic = 'file/file-1777357630130.webp';
+            }
+            const emailPayload = {
+                user_name: userData === null || userData === void 0 ? void 0 : userData.fullName,
+                otp: otp,
+            };
+            const sendEmail = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload);
+            if (!sendEmail.status) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
             }
             const res = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, obj);
             if (!res.status) {
@@ -269,10 +276,9 @@ const UserAuthHandler = {
             };
             const hashed = yield commonHelper.bycrptPasswordHash(password);
             obj.password = hashed;
-            // const otp = commonHelper.generateOtp()
-            const otp = "123456";
+            const otp = commonHelper.generateRandomOtp(6);
             obj.otp = otp;
-            // const emailPayload = { user_name: fullName, otp }
+            const emailPayload = { user_name: fullName, otp };
             // const payload = { ...data, account_source: 'email', password: hashed, otp }
             // check if user exists
             const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
@@ -285,15 +291,16 @@ const UserAuthHandler = {
             if (!result.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_register"), null, statusCodes_1.default.API_ERROR);
             }
-            // const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
-            // if (!sendEmail.status) {
-            //     return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
-            // }
+            const sendEmail = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload);
+            if (!sendEmail.status) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
+            }
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), null, statusCodes_1.default.SUCCESS);
         });
     },
     //ends
     forgotPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         const { email } = data;
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         // check if user exists
@@ -303,15 +310,14 @@ const UserAuthHandler = {
         }
         const userData = exists === null || exists === void 0 ? void 0 : exists.data;
         const language = (userData === null || userData === void 0 ? void 0 : userData.language) || 'en';
-        // const otp = commonHelper.generateOtp();
-        const otp = '123456';
-        // const to = `${exists?.data?.email}`
-        // const user_name = `${userData?.first_name} ${userData?.last_name}`
-        // const payload = { user_name, otp }
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR)
-        // }
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = `${(_a = exists === null || exists === void 0 ? void 0 : exists.data) === null || _a === void 0 ? void 0 : _a.email}`;
+        const user_name = `${userData === null || userData === void 0 ? void 0 : userData.fullName}`;
+        const payload = { user_name, otp };
+        const emailSend = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload);
+        if (!emailSend.status) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
+        }
         yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, userData === null || userData === void 0 ? void 0 : userData._id, { otp }); //update otp in database
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_send_success"), null, statusCodes_1.default.SUCCESS);
     }), //ends
@@ -366,15 +372,14 @@ const UserAuthHandler = {
         }
         const userData = result === null || result === void 0 ? void 0 : result.data;
         const language = (userData === null || userData === void 0 ? void 0 : userData.language) || 'en';
-        // const otp = commonHelper.generateOtp();
-        const otp = "123456";
-        // const to = userData?.email
-        // const user_name = `${userData?.first_name} ${userData?.last_name}`
-        // const payload = { user_name, otp }
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, getMessage(language || 'en', "otp_send_error"), null, statusCodes.API_ERROR)
-        // }
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = userData === null || userData === void 0 ? void 0 : userData.email;
+        const user_name = `${userData === null || userData === void 0 ? void 0 : userData.fullName}`;
+        const payload = { user_name, otp };
+        const emailSend = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload);
+        if (!emailSend.status) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "otp_send_error"), null, statusCodes_1.default.API_ERROR);
+        }
         yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, { otp });
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_resend"), null, statusCodes_1.default.SUCCESS);
     }), //ends

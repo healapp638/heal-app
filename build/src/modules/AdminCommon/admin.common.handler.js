@@ -19,7 +19,7 @@ const responseMessages_1 = __importDefault(require("../../constants/responseMess
 const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
-const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
+const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const AdminCommonHandler = {
     addQuestion: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { question, answer } = data;
@@ -28,8 +28,8 @@ const AdminCommonHandler = {
         // Translate to all other languages in parallel
         yield Promise.all(workflow_constant_1.SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedQ, translatedA] = yield Promise.all([
-                (0, langauge_translate_helper_1.default)(question, lang),
-                (0, langauge_translate_helper_1.default)(answer, lang),
+                (0, langauge_translate_helper_1.translateText)(question, lang),
+                (0, langauge_translate_helper_1.translateText)(answer, lang),
             ]);
             questionData[lang] = translatedQ;
             answerData[lang] = translatedA;
@@ -83,7 +83,7 @@ const AdminCommonHandler = {
                 // Rule 2a: First-time English → translate to all other languages
                 updateData[`${type}.en`] = text;
                 const translations = yield Promise.all(workflow_constant_1.SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                    const translated = yield (0, langauge_translate_helper_1.default)(text, lang);
+                    const translated = yield (0, langauge_translate_helper_1.translateText)(text, lang);
                     return { lang, translated };
                 })));
                 translations.forEach(({ lang, translated }) => {

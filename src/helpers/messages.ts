@@ -43,6 +43,7 @@ const messages: any = {
         journal_deleted_successfully: "Journal deleted successfully",
         error_while_updating_journal: "Error while updating journal",
         journal_updated_successfully: "Journal updated successfully",
+        otp_sent: "Otp sent successfully",
 
 
 
@@ -91,6 +92,7 @@ const messages: any = {
         journal_deleted_successfully: "Diario eliminado exitosamente",
         error_while_updating_journal: "Error al actualizar el diario",
         journal_updated_successfully: "Diario actualizado exitosamente",
+        otp_sent: "Otp enviado exitosamente",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -136,6 +138,7 @@ const messages: any = {
         journal_deleted_successfully: "Journal supprimé avec succès",
         error_while_updating_journal: "Erreur lors de la mise à jour du journal",
         journal_updated_successfully: "Journal mis à jour avec succès",
+        otp_sent: "Otp envoyé avec succès",
 
     },
     zh: {
@@ -182,6 +185,7 @@ const messages: any = {
         journal_deleted_successfully: "日记删除成功",
         error_while_updating_journal: "更新日记时出错",
         journal_updated_successfully: "日记更新成功",
+        otp_sent: "Otp发送成功",
 
 
 
@@ -231,6 +235,7 @@ const messages: any = {
         journal_deleted_successfully: "जर्नल सफलतापूर्वक हटाया गया",
         error_while_updating_journal: "जर्नल अपडेट करते समय त्रुटि",
         journal_updated_successfully: "जर्नल सफलतापूर्वक अपडेट किया गया",
+        otp_sent: "Otp सफलतापूर्वक भेजा गया",
 
     },
     de: {
@@ -277,6 +282,7 @@ const messages: any = {
         journal_deleted_successfully: "Tagebuch erfolgreich gelöscht",
         error_while_updating_journal: "Fehler beim Aktualisieren des Journals",
         journal_updated_successfully: "Tagebuch erfolgreich aktualisiert",
+        otp_sent: "Otp erfolgreich gesendet",
 
     },
     ru: {
@@ -323,6 +329,7 @@ const messages: any = {
         journal_deleted_successfully: "Дневник успешно удален",
         error_while_updating_journal: "Ошибка при обновлении дневника",
         journal_updated_successfully: "Дневник успешно обновлен",
+        otp_sent: "Otp успешно отправлен",
 
     },
     pt: {
@@ -369,6 +376,7 @@ const messages: any = {
         journal_deleted_successfully: "Diário deletado com sucesso",
         error_while_updating_journal: "Erro ao atualizar o diário",
         journal_updated_successfully: "Diário atualizado com sucesso",
+        otp_sent: "Otp enviado com sucesso",
 
     },
     it: {
@@ -415,6 +423,7 @@ const messages: any = {
         journal_deleted_successfully: "Diario cancellato con successo",
         error_while_updating_journal: "Errore durante l'aggiornamento del diario",
         journal_updated_successfully: "Diario aggiornato con successo",
+        otp_sent: "Otp inviato con successo",
 
     },
     ro: {
@@ -461,6 +470,7 @@ const messages: any = {
         journal_deleted_successfully: "Jurnal șters cu succes",
         error_while_updating_journal: "Eroare la actualizarea jurnalului",
         journal_updated_successfully: "Jurnal actualizat cu succes",
+        otp_sent: "Otp trimis cu succes",
 
     },
 };

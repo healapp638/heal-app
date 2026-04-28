@@ -80,7 +80,7 @@ const sendgridMail = (to_1, subject_1, body_1, ...args_1) => __awaiter(void 0, [
         }
     });
 }); //ends
-const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...args_1) => __awaiter(void 0, [emailType_1, recipientEmail_1, body_1, transportMethod_1, ...args_1], void 0, function* (emailType, recipientEmail, body, transportMethod, useLocalLogo = false) {
+const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...args_1) => __awaiter(void 0, [emailType_1, recipientEmail_1, body_1, transportMethod_1, ...args_1], void 0, function* (emailType, recipientEmail, body, transportMethod, useLocalLogo = true) {
     try {
         const { user_name, otp, html } = body;
         const to = recipientEmail;
@@ -89,6 +89,7 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
         const logoPath = useLocalLogo
             ? path_1.default.join(process.cwd(), './public', 'logo.png')
             : `${app_constant_1.APP.BITBUCKET_URL}/${app_constant_1.APP.PROJECT_LOGO}`;
+        console.log(logoPath, "logoPath");
         const attachments = useLocalLogo ? [{
                 filename: 'logo.png',
                 path: logoPath,
@@ -138,5 +139,5 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
 }); //
 const sendEmailViaSendGrid = (emailType, recipientEmail, body) => sendEmail(emailType, recipientEmail, body, 'sendgrid');
 exports.sendEmailViaSendGrid = sendEmailViaSendGrid;
-const sendEmailViaNodemail = (emailType, recipientEmail, body, useLocalLogo = false) => sendEmail(emailType, recipientEmail, body, 'nodemailer', useLocalLogo);
+const sendEmailViaNodemail = (emailType, recipientEmail, body, useLocalLogo = true) => sendEmail(emailType, recipientEmail, body, 'nodemailer', useLocalLogo);
 exports.sendEmailViaNodemail = sendEmailViaNodemail;

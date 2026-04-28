@@ -60,8 +60,8 @@ const DB = {
 };
 exports.DB = DB;
 const EMAIL_CREDENTIAL = {
-    SMTP_EMAIL: '',
-    SMTP_API_KEY: '',
+    SMTP_EMAIL: process.env.SMTP_EMAIL || '',
+    SMTP_API_KEY: process.env.SMTP_API_KEY || '',
     EMAIL_HOST: process.env.EMAIL_HOST || '',
 };
 exports.EMAIL_CREDENTIAL = EMAIL_CREDENTIAL;

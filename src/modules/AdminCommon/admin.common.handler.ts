@@ -6,7 +6,7 @@ import responseMessage from '../../constants/responseMessages'
 import faqModel from '../../modules/AdminCommon/faq.model';
 import statusCodes from '../../constants/statusCodes'
 import { SUPPORTED_LANGUAGES } from "../../constants/workflow.constant";
-import translateText from "../../helpers/langauge.translate.helper";
+import { translateText } from "../../helpers/langauge.translate.helper";
 
 const AdminCommonHandler = {
 

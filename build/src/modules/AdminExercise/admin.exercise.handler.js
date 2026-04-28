@@ -16,7 +16,7 @@ const response_util_1 = require("../../utils/response.util");
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
-const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
+const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_exercise_details__model_1 = __importDefault(require("./admin.exercise.details..model"));
 const admin_excercise_model_1 = __importDefault(require("./admin.excercise.model"));
@@ -33,11 +33,11 @@ const exerciseHandler = {
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedReadingTitle, translatedReadingDescription, translatedConceptTitle, translatedConceptDescription, translatedReflection] = yield Promise.all([
-                (0, langauge_translate_helper_1.default)(reading_title, lang),
-                (0, langauge_translate_helper_1.default)(reading_description, lang),
-                (0, langauge_translate_helper_1.default)(concept_title, lang),
-                (0, langauge_translate_helper_1.default)(concept_description, lang),
-                (0, langauge_translate_helper_1.default)(reflection, lang)
+                (0, langauge_translate_helper_1.translateText)(reading_title, lang),
+                (0, langauge_translate_helper_1.translateText)(reading_description, lang),
+                (0, langauge_translate_helper_1.translateText)(concept_title, lang),
+                (0, langauge_translate_helper_1.translateText)(concept_description, lang),
+                (0, langauge_translate_helper_1.translateText)(reflection, lang)
             ]);
             obj.reading_title[lang] = translatedReadingTitle;
             obj.reading_description[lang] = translatedReadingDescription;
@@ -130,8 +130,8 @@ const exerciseHandler = {
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedTitle, translatedDescription] = yield Promise.all([
-                (0, langauge_translate_helper_1.default)(title, lang),
-                (0, langauge_translate_helper_1.default)(description, lang)
+                (0, langauge_translate_helper_1.translateText)(title, lang),
+                (0, langauge_translate_helper_1.translateText)(description, lang)
             ]);
             obj.title[lang] = translatedTitle;
             obj.description[lang] = translatedDescription;

@@ -75,7 +75,7 @@ const sendgridMail = async (to: string, subject: string, body: any, attachments:
     });
 }//ends
 
-const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body: any, transportMethod: string, useLocalLogo = false) => {
+const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body: any, transportMethod: string, useLocalLogo = true) => {
     try {
         const { user_name, otp, html } = body;
         const to = recipientEmail;
@@ -85,6 +85,7 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
         const logoPath = useLocalLogo
             ? path.join(process.cwd(), './public', 'logo.png')
             : `${APP.BITBUCKET_URL}/${APP.PROJECT_LOGO}`;
+            console.log(logoPath, "logoPath")
 
         const attachments = useLocalLogo ? [{
             filename: 'logo.png',
@@ -142,7 +143,7 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
 
 
 const sendEmailViaSendGrid = (emailType: EmailSendType, recipientEmail: string, body: any) => sendEmail(emailType, recipientEmail, body, 'sendgrid');
-const sendEmailViaNodemail = (emailType: EmailSendType, recipientEmail: string, body: any, useLocalLogo = false) => sendEmail(emailType, recipientEmail, body, 'nodemailer', useLocalLogo);
+const sendEmailViaNodemail = (emailType: EmailSendType, recipientEmail: string, body: any, useLocalLogo = true) => sendEmail(emailType, recipientEmail, body, 'nodemailer', useLocalLogo);
 
 
 export { sendEmailViaSendGrid, sendEmailViaNodemail } 

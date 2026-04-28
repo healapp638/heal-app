@@ -54,6 +54,7 @@ const admin_auth_model_1 = __importDefault(require("../../modules/AdminAuth/admi
 const services_1 = __importDefault(require("../../services"));
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const workflow_constant_1 = require("../../constants/workflow.constant");
 const AdminAuthHandler = {
     login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password } = data;
@@ -71,6 +72,7 @@ const AdminAuthHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.login_success, Object.assign(Object.assign({}, adminData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }),
     forgotPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
         const { email } = data;
         // check if user exists
         const exists = yield (0, db_helpers_1.findOne)(admin_auth_model_1.default, { email });
@@ -78,15 +80,14 @@ const AdminAuthHandler = {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.admin.not_registered, null, statusCodes_1.default.API_ERROR);
         }
         const userData = exists === null || exists === void 0 ? void 0 : exists.data;
-        // const otp = commonHelper.generateOtp();
-        const otp = '123456';
-        // const to = `${exists?.data?.email}`
-        // const user_name = `${userData?.first_name} ${userData?.last_name}`
-        // const payload = { user_name, otp }
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, responseMessage.admin.forgot_password_email_error, null, statusCodes.API_ERROR)
-        // }
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = `${(_a = exists === null || exists === void 0 ? void 0 : exists.data) === null || _a === void 0 ? void 0 : _a.email}`;
+        const user_name = `${userData === null || userData === void 0 ? void 0 : userData.first_name} ${userData === null || userData === void 0 ? void 0 : userData.last_name}`;
+        const payload = { user_name, otp };
+        const emailSend = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload);
+        if (!emailSend.status) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.admin.forgot_password_email_error, null, statusCodes_1.default.API_ERROR);
+        }
         yield (0, db_helpers_1.findByIdAndUpdate)(admin_auth_model_1.default, userData === null || userData === void 0 ? void 0 : userData._id, { otp }); //update otp in database
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.otp_send, null, statusCodes_1.default.SUCCESS);
     }),
@@ -126,16 +127,15 @@ const AdminAuthHandler = {
         if (!result.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.admin.not_registered, null, statusCodes_1.default.API_ERROR);
         }
-        // const adminData = result?.data;
-        // const otp = commonHelper.generateOtp();
-        const otp = '123456';
-        // const to = adminData?.email
-        // const user_name = `${adminData?.first_name} ${adminData?.last_name}`
-        // const payload = { user_name, otp }
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, responseMessage.admin.otp_send_error, null, statusCodes.API_ERROR)
-        // }
+        const adminData = result === null || result === void 0 ? void 0 : result.data;
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = adminData === null || adminData === void 0 ? void 0 : adminData.email;
+        const user_name = `${adminData === null || adminData === void 0 ? void 0 : adminData.first_name} ${adminData === null || adminData === void 0 ? void 0 : adminData.last_name}`;
+        const payload = { user_name, otp };
+        const emailSend = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload);
+        if (!emailSend.status) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.admin.otp_send_error, null, statusCodes_1.default.API_ERROR);
+        }
         yield (0, db_helpers_1.findOneAndUpdate)(admin_auth_model_1.default, queryObject, { otp });
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.otp_resend, null, statusCodes_1.default.SUCCESS);
     }),

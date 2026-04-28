@@ -17,7 +17,7 @@ const responseMessages_1 = __importDefault(require("../../constants/responseMess
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const admin_theme_model_1 = __importDefault(require("./admin.theme.model"));
-const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
+const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
 const CommonHandler = {
     createTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -29,8 +29,8 @@ const CommonHandler = {
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedTitle, translatedDescription] = yield Promise.all([
-                (0, langauge_translate_helper_1.default)(title, lang),
-                (0, langauge_translate_helper_1.default)(description, lang)
+                (0, langauge_translate_helper_1.translateText)(title, lang),
+                (0, langauge_translate_helper_1.translateText)(description, lang)
             ]);
             obj.title[lang] = translatedTitle;
             obj.description[lang] = translatedDescription;

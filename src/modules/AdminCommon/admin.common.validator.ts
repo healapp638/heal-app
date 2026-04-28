@@ -21,7 +21,7 @@ export const validateUpdateQuestion = (admin: any) => {
         question_id: joi.string().required(),
         question: joi.string().optional(),
         answer: joi.string().optional(),
-        language:joi.string().required().allow(...Object.values(languages)),
+        language: joi.string().required().allow(...Object.values(languages)),
     }).validate(admin)
 }
 export const validateDeleteQuestion = (admin: any) => {
@@ -32,7 +32,7 @@ export const validateDeleteQuestion = (admin: any) => {
 
 export const validateResetCommonContent = (admin: any) => {
     return joi.object({
-         type: joi.string().required().allow('about', 'privacy_policy', 'terms_conditions'),
+        type: joi.string().required().allow('about', 'privacy_policy', 'terms_conditions'),
     }).validate(admin)
 }
 

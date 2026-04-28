@@ -5,7 +5,7 @@ import { decodeToken, generateAccessRefreshToken } from "../../utils/auth.util";
 import * as commonHelper from "../../helpers/common.helper";
 import userAuthModel from "../../modules/UserAuth/user.auth.model";
 // import { APP } from '../../constants/app.constant';
-import { DEACTIVATE_BY, USER_STATUS } from '../../constants/workflow.constant';
+import { DEACTIVATE_BY, EMAIL_SEND_TYPE, USER_STATUS } from '../../constants/workflow.constant';
 import services from '../../services';
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
@@ -56,7 +56,6 @@ const UserAuthHandler = {
         const { email, password, language } = data;
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
-        console.log(findUser, 'findUser')
         if (!findUser.status) {
             return showResponse(false, getMessage(language || 'en', "user_not_registered"), null, statusCodes.API_ERROR)
         }
@@ -76,7 +75,7 @@ const UserAuthHandler = {
 
 
         if (!userData.password) {
-            const otp = '123456';
+            const otp = commonHelper.generateRandomOtp(6);
             const otpCreatedAt = new Date();
             const obj: any = {
                 otp,
@@ -84,6 +83,14 @@ const UserAuthHandler = {
             }
             if (!userData?.profilePic || userData?.profilePic == '') {
                 obj.profilePic = 'file/file-1777357630130.webp'
+            }
+            const emailPayload = {
+                user_name: userData?.fullName,
+                otp: otp,
+            }
+            const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
+            if (!sendEmail.status) {
+                return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
             }
             const res = await findOneAndUpdate(userAuthModel, { _id: userData?._id }, obj)
             if (!res.status) {
@@ -255,10 +262,9 @@ const UserAuthHandler = {
 
         const hashed = await commonHelper.bycrptPasswordHash(password);
         obj.password = hashed
-        // const otp = commonHelper.generateOtp()
-        const otp = "123456"
+        const otp = commonHelper.generateRandomOtp(6)
         obj.otp = otp
-        // const emailPayload = { user_name: fullName, otp }
+        const emailPayload = { user_name: fullName, otp }
         // const payload = { ...data, account_source: 'email', password: hashed, otp }
 
 
@@ -275,10 +281,10 @@ const UserAuthHandler = {
             return showResponse(false, getMessage(language || 'en', "err_while_register"), null, statusCodes.API_ERROR);
         }
 
-        // const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
-        // if (!sendEmail.status) {
-        //     return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
-        // }
+        const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
+        if (!sendEmail.status) {
+            return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
+        }
 
         return showResponse(true, getMessage(language || 'en', "verification_email_sent"), null, statusCodes.SUCCESS);
     },
@@ -297,16 +303,15 @@ const UserAuthHandler = {
         const userData = exists?.data;
         const language = userData?.language || 'en';
 
-        // const otp = commonHelper.generateOtp();
-        const otp = '123456';
-        // const to = `${exists?.data?.email}`
-        // const user_name = `${userData?.first_name} ${userData?.last_name}`
-        // const payload = { user_name, otp }
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = `${exists?.data?.email}`
+        const user_name = `${userData?.fullName}`
+        const payload = { user_name, otp }
 
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR)
-        // }
+        const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.FORGOT_PASSWORD_EMAIL, to, payload)
+        if (!emailSend.status) {
+            return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR)
+        }
 
         await findByIdAndUpdate(userAuthModel, userData?._id, { otp });  //update otp in database
         return showResponse(true, getMessage(language || 'en', "otp_send_success"), null, statusCodes.SUCCESS);
@@ -371,16 +376,15 @@ const UserAuthHandler = {
         const userData = result?.data;
         const language = userData?.language || 'en';
 
-        // const otp = commonHelper.generateOtp();
-        const otp = "123456";
-        // const to = userData?.email
-        // const user_name = `${userData?.first_name} ${userData?.last_name}`
-        // const payload = { user_name, otp }
+        const otp = commonHelper.generateRandomOtp(6);
+        const to = userData?.email
+        const user_name = `${userData?.fullName}`
+        const payload = { user_name, otp }
 
-        // const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
-        // if (!emailSend.status) {
-        //     return showResponse(false, getMessage(language || 'en', "otp_send_error"), null, statusCodes.API_ERROR)
-        // }
+        const emailSend = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.SEND_OTP_EMAIL, to, payload)
+        if (!emailSend.status) {
+            return showResponse(false, getMessage(language || 'en', "otp_send_error"), null, statusCodes.API_ERROR)
+        }
 
         await findOneAndUpdate(userAuthModel, queryObject, { otp })
         return showResponse(true, getMessage(language || 'en', "otp_resend"), null, statusCodes.SUCCESS);
