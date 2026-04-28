@@ -36,6 +36,13 @@ const messages: any = {
         deactivated_account: "Deactivated account",
         login_error: "Error while logging in",
         login_success: "Login success",
+        journal_created_successfully: "Journal created successfully",
+        journal_fetched_successfully: "Journal fetched successfully",
+        error_while_getting_journal: "Error while getting journal",
+        error_while_deleting_journal: "Error while deleting journal",
+        journal_deleted_successfully: "Journal deleted successfully",
+        error_while_updating_journal: "Error while updating journal",
+        journal_updated_successfully: "Journal updated successfully",
 
 
 
@@ -77,8 +84,13 @@ const messages: any = {
         deactivated_account: "Cuenta desactivada",
         login_error: "Error al iniciar sesión",
         login_success: "Login success",
-
-
+        journal_created_successfully: "Diario creado exitosamente",
+        journal_fetched_successfully: "Diario obtenido exitosamente",
+        error_while_getting_journal: "Error al obtener el diario",
+        error_while_deleting_journal: "Error al eliminar el diario",
+        journal_deleted_successfully: "Diario eliminado exitosamente",
+        error_while_updating_journal: "Error al actualizar el diario",
+        journal_updated_successfully: "Diario actualizado exitosamente",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -117,7 +129,13 @@ const messages: any = {
         deactivated_account: "Compte désactivé",
         login_error: "Erreur lors de la connexion",
         login_success: "Connexion réussie",
-
+        journal_created_successfully: "Journal créé avec succès",
+        journal_fetched_successfully: "Journal obtenu avec succès",
+        error_while_getting_journal: "Erreur lors de l'obtention du journal",
+        error_while_deleting_journal: "Erreur lors de la suppression du journal",
+        journal_deleted_successfully: "Journal supprimé avec succès",
+        error_while_updating_journal: "Erreur lors de la mise à jour du journal",
+        journal_updated_successfully: "Journal mis à jour avec succès",
 
     },
     zh: {
@@ -157,6 +175,14 @@ const messages: any = {
         deactivated_account: "账户已停用",
         login_error: "登录时出错",
         login_success: "登录成功",
+        journal_created_successfully: "日记创建成功",
+        journal_fetched_successfully: "日记获取成功",
+        error_while_getting_journal: "获取日记时出错",
+        error_while_deleting_journal: "删除日记时出错",
+        journal_deleted_successfully: "日记删除成功",
+        error_while_updating_journal: "更新日记时出错",
+        journal_updated_successfully: "日记更新成功",
+
 
 
     },
@@ -198,8 +224,13 @@ const messages: any = {
         deactivated_account: "खाता निष्क्रिय कर दिया गया है",
         login_error: "लॉगिन में त्रुटि",
         login_success: "लॉगिन सफलता",
-
-
+        journal_created_successfully: "जर्नल सफलतापूर्वक बनाया गया",
+        journal_fetched_successfully: "जर्नल सफलतापूर्वक प्राप्त हुआ",
+        error_while_getting_journal: "जर्नल प्राप्त करते समय त्रुटि",
+        error_while_deleting_journal: "जर्नल हटाते समय त्रुटि",
+        journal_deleted_successfully: "जर्नल सफलतापूर्वक हटाया गया",
+        error_while_updating_journal: "जर्नल अपडेट करते समय त्रुटि",
+        journal_updated_successfully: "जर्नल सफलतापूर्वक अपडेट किया गया",
 
     },
     de: {
@@ -239,9 +270,13 @@ const messages: any = {
         deactivated_account: "Konto deaktiviert",
         login_error: "Fehler beim Einloggen",
         login_success: "Login erfolgreich",
-
-
-
+        journal_created_successfully: "Tagebuch erfolgreich erstellt",
+        journal_fetched_successfully: "Tagebuch erfolgreich abgerufen",
+        error_while_getting_journal: "Fehler beim Abrufen des Journals",
+        error_while_deleting_journal: "Fehler beim Löschen des Journals",
+        journal_deleted_successfully: "Tagebuch erfolgreich gelöscht",
+        error_while_updating_journal: "Fehler beim Aktualisieren des Journals",
+        journal_updated_successfully: "Tagebuch erfolgreich aktualisiert",
 
     },
     ru: {
@@ -281,6 +316,13 @@ const messages: any = {
         deactivated_account: "Аккаунт деактивирован",
         login_error: "Ошибка при входе",
         login_success: "Вход выполнен успешно",
+        journal_created_successfully: "Дневник успешно создан",
+        journal_fetched_successfully: "Дневник успешно получен",
+        error_while_getting_journal: "Ошибка при получении дневника",
+        error_while_deleting_journal: "Ошибка при удалении дневника",
+        journal_deleted_successfully: "Дневник успешно удален",
+        error_while_updating_journal: "Ошибка при обновлении дневника",
+        journal_updated_successfully: "Дневник успешно обновлен",
 
     },
     pt: {
@@ -320,6 +362,13 @@ const messages: any = {
         deactivated_account: "Conta desativada",
         login_error: "Erro ao fazer login",
         login_success: "Login realizado com sucesso",
+        journal_created_successfully: "Diário criado com sucesso",
+        journal_fetched_successfully: "Diário obtido com sucesso",
+        error_while_getting_journal: "Erro ao obter o diário",
+        error_while_deleting_journal: "Erro ao deletar o diário",
+        journal_deleted_successfully: "Diário deletado com sucesso",
+        error_while_updating_journal: "Erro ao atualizar o diário",
+        journal_updated_successfully: "Diário atualizado com sucesso",
 
     },
     it: {
@@ -359,6 +408,13 @@ const messages: any = {
         deactivated_account: "Account disattivato",
         login_error: "Errore durante il login",
         login_success: "Login effettuato con successo",
+        journal_created_successfully: "Diario creato con successo",
+        journal_fetched_successfully: "Diario ottenuto con successo",
+        error_while_getting_journal: "Errore durante l'ottenimento del diario",
+        error_while_deleting_journal: "Errore durante la cancellazione del diario",
+        journal_deleted_successfully: "Diario cancellato con successo",
+        error_while_updating_journal: "Errore durante l'aggiornamento del diario",
+        journal_updated_successfully: "Diario aggiornato con successo",
 
     },
     ro: {
@@ -398,6 +454,13 @@ const messages: any = {
         deactivated_account: "Cont dezactivat",
         login_error: "Eroare la login",
         login_success: "Login reușit",
+        journal_created_successfully: "Jurnal creat cu succes",
+        journal_fetched_successfully: "Jurnal obținut cu succes",
+        error_while_getting_journal: "Eroare la obținerea jurnalului",
+        error_while_deleting_journal: "Eroare la ștergerea jurnalului",
+        journal_deleted_successfully: "Jurnal șters cu succes",
+        error_while_updating_journal: "Eroare la actualizarea jurnalului",
+        journal_updated_successfully: "Jurnal actualizat cu succes",
 
     },
 };

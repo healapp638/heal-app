@@ -19,6 +19,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const messages_1 = require("../../helpers/messages");
 const user_journel_model_1 = __importDefault(require("./user.journel.model"));
 const common_helper_1 = require("../../helpers/common.helper");
+const langauge_translate_helper_1 = __importDefault(require("../../helpers/langauge.translate.helper"));
 const UserCommonHandler = {
     createJournal: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const { feeling, title, description } = data;
@@ -27,25 +28,41 @@ const UserCommonHandler = {
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
+        const obj = {
+            feeling: {},
+            title: {},
+            description: {}
+        };
+        const langs = Object.values(workflow_constant_1.languages);
+        yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            const [translatedFeeling, translatedTitle, translatedDescription] = yield Promise.all([
+                (0, langauge_translate_helper_1.default)(feeling, lang),
+                (0, langauge_translate_helper_1.default)(title, lang),
+                (0, langauge_translate_helper_1.default)(description, lang)
+            ]);
+            obj.feeling[lang] = translatedFeeling;
+            obj.title[lang] = translatedTitle;
+            obj.description[lang] = translatedDescription;
+        })));
         const response = yield user_journel_model_1.default.create({
             user_id: userId,
-            feeling,
-            title,
-            description
+            feeling: obj.feeling,
+            title: obj.title,
+            description: obj.description
         });
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_creating_journal'), null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_created_successfully'), null, statusCodes_1.default.SUCCESS);
     }),
-    journalList: (cursor_1, ...args_1) => __awaiter(void 0, [cursor_1, ...args_1], void 0, function* (cursor, limit = 10, userId, search_key) {
+    journalList: (cursor_1, ...args_1) => __awaiter(void 0, [cursor_1, ...args_1], void 0, function* (cursor, limit = 10, search_key, userId) {
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
-        const lang = user.language || 'en';
+        const lang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
         const match = {
-            user_id: userId,
+            user_id: (0, common_helper_1.convertToObjectId)(userId),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         };
         if (cursor) {
@@ -91,10 +108,14 @@ const UserCommonHandler = {
                 $limit: limit
             }
         ]);
+        const nextCursor = response.length > 0 ? JSON.stringify({
+            _id: response[response.length - 1]._id,
+            createdAt: response[response.length - 1].createdAt
+        }) : null;
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_getting_journal'), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), response, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { data: response, nextCursor }, statusCodes_1.default.SUCCESS);
     }),
     journalDetail: (journalId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });

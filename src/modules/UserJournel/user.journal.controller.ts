@@ -64,7 +64,7 @@ export default class UserJournalController extends Controller {
     @Security('Bearer')
     @Get("journal_detail")
     public async journalDetail(@Query() journal_id: string): Promise<ApiResponse> {
-        const validate = validateJournalDetail(journal_id);
+        const validate = validateJournalDetail({journal_id});
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }

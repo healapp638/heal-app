@@ -35,7 +35,6 @@ const CommonHandler = {
             obj.title[lang] = translatedTitle;
             obj.description[lang] = translatedDescription;
         })));
-        console.log(obj, 'FINAL obj ✅'); // now it will have data
         const createTheme = yield admin_theme_model_1.default.create({
             title: obj.title,
             description: obj.description,

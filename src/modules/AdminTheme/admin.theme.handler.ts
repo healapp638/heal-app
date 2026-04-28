@@ -31,8 +31,6 @@ const CommonHandler = {
             })
         );
 
-        console.log(obj, 'FINAL obj ✅'); // now it will have data
-
         const createTheme = await adminThemeModel.create({
             title: obj.title,
             description: obj.description,

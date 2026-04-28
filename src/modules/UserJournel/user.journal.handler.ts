@@ -2,10 +2,11 @@ import { ApiResponse } from "../../utils/interfaces.util";
 import { showResponse } from "../../utils/response.util";
 import statusCodes from '../../constants/statusCodes'
 import userAuthModel from "../UserAuth/user.auth.model";
-import { USER_STATUS } from "../../constants/workflow.constant";
+import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import { getMessage } from "../../helpers/messages";
 import userJournalModel from "./user.journel.model";
 import { convertToObjectId } from "../../helpers/common.helper";
+import translateText from "../../helpers/langauge.translate.helper";
 
 const UserCommonHandler = {
 
@@ -16,11 +17,34 @@ const UserCommonHandler = {
         if (!user) {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
+
+        const obj: any = {
+            feeling: {},
+            title: {},
+            description: {}
+        };
+
+        const langs = Object.values(languages);
+
+        await Promise.all(
+            langs.map(async (lang: string) => {
+                const [translatedFeeling, translatedTitle, translatedDescription] = await Promise.all([
+                    translateText(feeling, lang),
+                    translateText(title, lang),
+                    translateText(description, lang)
+                ]);
+
+                obj.feeling[lang] = translatedFeeling;
+                obj.title[lang] = translatedTitle;
+                obj.description[lang] = translatedDescription;
+            })
+        );
+
         const response = await userJournalModel.create({
             user_id: userId,
-            feeling,
-            title,
-            description
+            feeling: obj.feeling,
+            title: obj.title,
+            description: obj.description
         })
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_creating_journal'), null, statusCodes.API_ERROR)
@@ -28,14 +52,14 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(lang, 'journal_created_successfully'), null, statusCodes.SUCCESS)
     },
 
-    journalList: async (cursor: string, limit: number = 10, userId: string, search_key: string): Promise<ApiResponse> => {
+    journalList: async (cursor: string, limit: number = 10, search_key: string, userId: string): Promise<ApiResponse> => {
         const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
-        const lang = user.language || 'en'
+        const lang = user?.language || 'en'
         if (!user) {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
         const match: any = {
-            user_id: userId,
+            user_id: convertToObjectId(userId),
             status: USER_STATUS.ACTIVE
         }
         if (cursor) {
@@ -83,11 +107,15 @@ const UserCommonHandler = {
             {
                 $limit: limit
             }
-        ])
+        ]);
+        const nextCursor = response.length > 0 ? JSON.stringify({
+            _id: response[response.length - 1]._id,
+            createdAt: response[response.length - 1].createdAt
+        }) : null;
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_getting_journal'), null, statusCodes.API_ERROR)
         }
-        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), response, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { data: response, nextCursor }, statusCodes.SUCCESS)
     },
 
     journalDetail: async (journalId: string, userId: string,): Promise<ApiResponse> => {

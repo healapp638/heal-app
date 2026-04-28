@@ -75,7 +75,7 @@ let UserJournalController = class UserJournalController extends tsoa_1.Controlle
     }
     journalDetail(journal_id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, user_journel_validator_1.validateJournalDetail)(journal_id);
+            const validate = (0, user_journel_validator_1.validateJournalDetail)({ journal_id });
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
