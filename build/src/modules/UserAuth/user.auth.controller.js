@@ -56,9 +56,9 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     //   * User Social login 
     //   * login_source can be for google use google & for apple use apple etc
     //   */
-    socialLogin(login_source, social_auth, email, name, os_type) {
+    socialLogin(login_source, social_auth, email, name, os_type, language) {
         return __awaiter(this, void 0, void 0, function* () {
-            const request = { login_source, social_auth, email, name, os_type };
+            const request = { login_source, social_auth, email, name, os_type, language };
             const validate = (0, user_auth_validator_1.validateSocialLogin)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
@@ -251,8 +251,9 @@ __decorate([
     __param(2, (0, tsoa_1.FormField)()),
     __param(3, (0, tsoa_1.FormField)()),
     __param(4, (0, tsoa_1.FormField)()),
+    __param(5, (0, tsoa_1.FormField)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "socialLogin", null);
 __decorate([

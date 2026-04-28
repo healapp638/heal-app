@@ -11,23 +11,23 @@ const router = express.Router()
 
 
 router.post('/register', async (req: Request | any, res: Response) => {
-    const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password } = req.body;
+    const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password });
+    const result: ApiResponse = await controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language });
     return showOutput(res, result, result.code)
 })
 
 router.post('/login', ratLimiting, async (req: Request | any, res: Response) => {
-    const { email, password } = req.body;
+    const { email, password, language } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.login({ email, password });
+    const result: ApiResponse = await controller.login({ email, password, language });
     return showOutput(res, result, result.code)
 })
 
 router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
-    const { login_source, social_auth, email, name, os_type } = req.body;
+    const { login_source, social_auth, email, name, os_type, language } = req.body;
     const userAuthController = new UserAuthController(req, res)
-    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type);
+    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language);
     return showOutput(res, result, result.code)
 })
 

@@ -21,21 +21,21 @@ const { verifyTokenUser } = middlewares_1.default.auth;
 const { multer } = middlewares_1.default.fileUpload;
 const router = express_1.default.Router();
 router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password } = req.body;
+    const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password });
+    const result = yield controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+    const { email, password, language } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.login({ email, password });
+    const result = yield controller.login({ email, password, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/social_login', multer.addToMulter.none(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { login_source, social_auth, email, name, os_type } = req.body;
+    const { login_source, social_auth, email, name, os_type, language } = req.body;
     const userAuthController = new user_auth_controller_1.default(req, res);
-    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type);
+    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/forgot_password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

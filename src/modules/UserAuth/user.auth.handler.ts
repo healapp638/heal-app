@@ -53,11 +53,12 @@ const UserAuthHandler = {
     },//ends
 
     login: async (data: any): Promise<ApiResponse> => {
-        const { email, password } = data;
+        const { email, password, language } = data;
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
+        console.log(findUser, 'findUser')
         if (!findUser.status) {
-            return showResponse(false, responseMessage.users.not_registered, null, statusCodes.API_ERROR)
+            return showResponse(false, getMessage(language || 'en', "user_not_registered"), null, statusCodes.API_ERROR)
         }
 
         const userData = findUser?.data
@@ -66,14 +67,29 @@ const UserAuthHandler = {
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
         const is_profile_completed = !!userData.dob && !!userData.country
 
+        if (language) {
+            await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { language: language } })
+        }
+        if (!userData?.profilePic || userData?.profilePic == '') {
+            await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } })
+        }
+
+
         if (!userData.password) {
             const otp = '123456';
             const otpCreatedAt = new Date();
-            const res = await findOneAndUpdate(userAuthModel, { _id: userData?._id }, { otp, otpCreatedAt })
-            if (!res.status) {
-                return showResponse(false, responseMessage.common.otp_sent_error, null, statusCodes.API_ERROR);
+            const obj: any = {
+                otp,
+                otpCreatedAt
             }
-            return showResponse(true, responseMessage.common.otp_sent, {
+            if (!userData?.profilePic || userData?.profilePic == '') {
+                obj.profilePic = 'file/file-1777357630130.webp'
+            }
+            const res = await findOneAndUpdate(userAuthModel, { _id: userData?._id }, obj)
+            if (!res.status) {
+                return showResponse(false, getMessage(language || 'en', "otp_sent_error"), null, statusCodes.API_ERROR);
+            }
+            return showResponse(true, getMessage(language || 'en', "otp_sent"), {
                 is_after_social_login: true,
                 account_type,
                 is_profile_completed,
@@ -83,12 +99,12 @@ const UserAuthHandler = {
 
         //if account deactivated by admin then throw error 
         if (userData?.status == USER_STATUS.DEACTIVATED && userData?.deactivateBy === DEACTIVATE_BY.ADMIN) {
-            return showResponse(false, responseMessage.middleware.deactivated_account, null, statusCodes.API_ERROR);
+            return showResponse(false, getMessage(language || 'en', "deactivated_account"), null, statusCodes.API_ERROR);
         }
 
         const isValid = await commonHelper.verifyBycryptHash(password, userData?.password);
         if (!isValid) {
-            return showResponse(false, responseMessage.common.password_incorrect, null, statusCodes.API_ERROR)
+            return showResponse(false, getMessage(language || 'en', "password_incorrect"), null, statusCodes.API_ERROR)
         }
 
         commonHelper.keysDeleteFromObject(userData) //delete password & other keys from response
@@ -100,11 +116,11 @@ const UserAuthHandler = {
             await findOneAndUpdate(userAuthModel, { _id: userData?._id }, { status: USER_STATUS.ACTIVE, deactivateBy: '' })   //activate user again
         }
 
-        return showResponse(true, responseMessage.users.login_success, { is_after_social_login: false, account_type, is_profile_completed, ...userData, access_token, refresh_token }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed, ...userData, access_token, refresh_token }, statusCodes.SUCCESS)
     },//ends
 
     social_login: async (data: any) => {
-        const { login_source, social_auth, email, name = undefined } = data;
+        const { login_source, social_auth, email, name = undefined, language } = data;
         const queryObject = {
             status: { $ne: USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -136,15 +152,24 @@ const UserAuthHandler = {
         const is_profile_completed = !!userData?.dob && !!userData?.country
         //if account already existed then update details and return token with login success
         if (findUser.status) {
+
+            if (!findUser?.data?.profilePic || findUser?.data?.profilePic == '') {
+                await userAuthModel.findOneAndUpdate({ _id: findUser?.data?._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } })
+            }
+
+            if (!findUser?.data?.language || findUser?.data?.language == '') {
+                await userAuthModel.findOneAndUpdate({ _id: findUser?.data?._id }, { $set: { language } })
+            }
+
             //if account deactivate by admin throw error 
             if (findUser?.data?.status == USER_STATUS.DEACTIVATED && findUser.data?.deactivateBy === DEACTIVATE_BY.ADMIN) {
-                return showResponse(false, responseMessage.middleware.deactivated_account, null, statusCodes.API_ERROR);
+                return showResponse(false, getMessage(language || 'en', "deactivated_account"), null, statusCodes.API_ERROR);
             }
 
             //update social account array 
             const updateSocialInfo = await UserAuthHandler.update_social_info(findUser, userAuthModel, data)
             if (!updateSocialInfo.status) {
-                return showResponse(false, responseMessage.users.login_error, null, statusCodes.API_ERROR);
+                return showResponse(false, getMessage(language || 'en', "login_error"), null, statusCodes.API_ERROR);
             }
 
             commonHelper.keysDeleteFromObject(findUser?.data)
@@ -156,7 +181,7 @@ const UserAuthHandler = {
             if (findUser?.data?.status == USER_STATUS.DEACTIVATED && findUser.data?.deactivateBy === DEACTIVATE_BY.USER) {
                 await findOneAndUpdate(userAuthModel, { _id: findUser.data?._id }, { status: USER_STATUS.ACTIVE, deactivateBy: '' })
             }
-            return showResponse(true, responseMessage.users.login_success, userData, statusCodes.SUCCESS);
+            return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
 
         } else {
 
@@ -174,13 +199,15 @@ const UserAuthHandler = {
                 fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
                 account_source: login_source,
                 isVerified: true,
+                language: language || 'en',
+                profilePic: 'file/file-1777357630130.webp',
             };
 
             const userRef = new userAuthModel(newObj)
             const result = await createOne(userRef);
 
             if (!result.status) {
-                return showResponse(false, responseMessage.users.login_error, null, statusCodes.API_ERROR);
+                return showResponse(false, getMessage(language || 'en', "login_error"), null, statusCodes.API_ERROR);
             }
 
             commonHelper.keysDeleteFromObject(result?.data)
@@ -188,7 +215,7 @@ const UserAuthHandler = {
 
             const userData = { is_after_social_login: false, account_type, is_profile_completed, ...result?.data, access_token, refresh_token }
 
-            return showResponse(true, responseMessage.users.login_success, userData, statusCodes.SUCCESS);
+            return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
         }
     },
 
@@ -207,8 +234,10 @@ const UserAuthHandler = {
             email,
             dob,
             password,
-            language,
+            language: language || 'en',
             account_source: 'email',
+            profilePic: profile_pic || 'file/file-1777357630130.webp',
+
         }
 
         //check if match or not by email
@@ -385,11 +414,15 @@ const UserAuthHandler = {
     },
 
     getUserDetails: async (userId: string): Promise<ApiResponse> => {
-        const result = await findOne(userAuthModel, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, otp: 0 });
+        const result = await findOne(userAuthModel, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result?.data
+        console.log(userData, 'userData')
         const is_user_social_login = !!userData?.social_account?.length;
+        console.log(is_user_social_login, 'is_user_social_login')
         const is_simple_login = !!userData?.password;
+        console.log(is_simple_login, 'is_simple_login')
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        console.log(account_type, 'account_type')
         const is_profile_completed = !!userData?.dob && !!userData?.country
         if (!result.status) {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)

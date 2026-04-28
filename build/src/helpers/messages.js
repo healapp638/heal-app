@@ -35,6 +35,10 @@ const messages = {
         lesson_completed_successfully: "Lesson completed successfully",
         lesson_started_successfully: "Lesson started successfully",
         error_while_creating_journal: "Error while creating journal",
+        user_not_registered: "User not registered",
+        deactivated_account: "Deactivated account",
+        login_error: "Error while logging in",
+        login_success: "Login success",
     },
     es: {
         USER_NOT_FOUND: "Usuario no encontrado",
@@ -69,6 +73,10 @@ const messages = {
         lesson_completed_successfully: "Lección completada exitosamente",
         lesson_started_successfully: "Lección iniciada exitosamente",
         error_while_creating_journal: "Error al crear el diario",
+        user_not_registered: "Usuario no registrado",
+        deactivated_account: "Cuenta desactivada",
+        login_error: "Error al iniciar sesión",
+        login_success: "Login success",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -103,6 +111,10 @@ const messages = {
         lesson_completed_successfully: "Leçon complétée avec succès",
         lesson_started_successfully: "Leçon démarrée avec succès",
         error_while_creating_journal: "Erreur lors de la création du journal",
+        user_not_registered: "Utilisateur non enregistré",
+        deactivated_account: "Compte désactivé",
+        login_error: "Erreur lors de la connexion",
+        login_success: "Connexion réussie",
     },
     zh: {
         USER_NOT_FOUND: "用户未找到",
@@ -137,6 +149,10 @@ const messages = {
         lesson_completed_successfully: "课程完成成功",
         lesson_started_successfully: "课程开始成功",
         error_while_creating_journal: "创建日记时出错",
+        user_not_registered: "用户未注册",
+        deactivated_account: "账户已停用",
+        login_error: "登录时出错",
+        login_success: "登录成功",
     },
     hi: {
         //hindi
@@ -172,6 +188,10 @@ const messages = {
         lesson_completed_successfully: "पाठ सफलतापूर्वक पूरा हुआ",
         lesson_started_successfully: "पाठ सफलतापूर्वक शुरू हुआ",
         error_while_creating_journal: "जर्नल बनाते समय त्रुटि",
+        user_not_registered: "उपयोगकर्ता पंजीकृत नहीं है",
+        deactivated_account: "खाता निष्क्रिय कर दिया गया है",
+        login_error: "लॉगिन में त्रुटि",
+        login_success: "लॉगिन सफलता",
     },
     de: {
         USER_NOT_FOUND: "Benutzer nicht gefunden",
@@ -206,6 +226,10 @@ const messages = {
         lesson_completed_successfully: "Lektion erfolgreich abgeschlossen",
         lesson_started_successfully: "Lektion erfolgreich gestartet",
         error_while_creating_journal: "Fehler beim Erstellen des Journals",
+        user_not_registered: "Benutzer nicht registriert",
+        deactivated_account: "Konto deaktiviert",
+        login_error: "Fehler beim Einloggen",
+        login_success: "Login erfolgreich",
     },
     ru: {
         USER_NOT_FOUND: "Пользователь не найден",
@@ -240,6 +264,10 @@ const messages = {
         lesson_completed_successfully: "Урок успешно завершен",
         lesson_started_successfully: "Урок успешно начат",
         error_while_creating_journal: "Ошибка при создании дневника",
+        user_not_registered: "Пользователь не зарегистрирован",
+        deactivated_account: "Аккаунт деактивирован",
+        login_error: "Ошибка при входе",
+        login_success: "Вход выполнен успешно",
     },
     pt: {
         USER_NOT_FOUND: "Usuário não encontrado",
@@ -274,6 +302,10 @@ const messages = {
         lesson_completed_successfully: "Lição completada com sucesso",
         lesson_started_successfully: "Lição iniciada com sucesso",
         error_while_creating_journal: "Erro ao criar o diário",
+        user_not_registered: "Usuário não registrado",
+        deactivated_account: "Conta desativada",
+        login_error: "Erro ao fazer login",
+        login_success: "Login realizado com sucesso",
     },
     it: {
         USER_NOT_FOUND: "Utente non trovato",
@@ -308,6 +340,10 @@ const messages = {
         lesson_completed_successfully: "Lezione completata con successo",
         lesson_started_successfully: "Lezione iniziata con successo",
         error_while_creating_journal: "Errore durante la creazione del diario",
+        user_not_registered: "Utente non registrato",
+        deactivated_account: "Account disattivato",
+        login_error: "Errore durante il login",
+        login_success: "Login effettuato con successo",
     },
     ro: {
         USER_NOT_FOUND: "Utilizator negăsit",
@@ -342,6 +378,10 @@ const messages = {
         lesson_completed_successfully: "Lecția a fost completată cu succes",
         lesson_started_successfully: "Lecția a fost inițiată cu succes",
         error_while_creating_journal: "Eroare la crearea jurnalului",
+        user_not_registered: "Utilizator neînregistrat",
+        deactivated_account: "Cont dezactivat",
+        login_error: "Eroare la login",
+        login_success: "Login reușit",
     },
 };
 const getMessage = (lang, key) => {

@@ -25,7 +25,7 @@ export default class UserAuthController extends Controller {
      * Get User login
      */
     @Post("/login")
-    public async login(@Body() request: { email: string, password: string }): Promise<ApiResponse> {
+    public async login(@Body() request: { email: string, password: string, language: string }): Promise<ApiResponse> {
 
         request.email = request.email.toLocaleLowerCase().trim()
         const validate = validateLoginUser(request);
@@ -43,25 +43,25 @@ export default class UserAuthController extends Controller {
     //   * User Social login 
     //   * login_source can be for google use google & for apple use apple etc
     //   */
-        @Post("/social_login")
-        public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() name?: string, @FormField() os_type?: string): Promise<ApiResponse> {
-            const request = { login_source, social_auth, email, name, os_type }
+    @Post("/social_login")
+    public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() name?: string, @FormField() os_type?: string, @FormField() language?: string): Promise<ApiResponse> {
+        const request = { login_source, social_auth, email, name, os_type, language }
 
-            const validate = validateSocialLogin(request);
-            if (validate.error) {
-                return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
-            }
-
-            const wrappedFunc = tryCatchWrapper(handler.social_login);
-            return wrappedFunc(request); // Invoking the wrapped function 
+        const validate = validateSocialLogin(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
         }
+
+        const wrappedFunc = tryCatchWrapper(handler.social_login);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
     //     //ends
 
     /**
     * Save a User
     */
     @Post("/register")
-    public async register(@Body() request: { hearAboutUs: string, bringsYouHere: string, howFellingLately: string, likeToFellMore: string, timeYouCommit: string, startShowingOfYourSelf: string, fullName: string, country: string, email: string, dob: string, password: string }): Promise<ApiResponse> {
+    public async register(@Body() request: { hearAboutUs: string, bringsYouHere: string, howFellingLately: string, likeToFellMore: string, timeYouCommit: string, startShowingOfYourSelf: string, fullName: string, country: string, email: string, dob: string, password: string, language: string }): Promise<ApiResponse> {
         request.email = request.email.toLocaleLowerCase().trim()
         const validate = validateRegister(request);
         if (validate.error) {
@@ -109,7 +109,7 @@ export default class UserAuthController extends Controller {
     * Verify Otp Route  api endpoint
     */
     @Post("/verify_otp")
-    public async verifyOtp(@Body() request: { email: string, otp: string,password?:string }): Promise<ApiResponse> {
+    public async verifyOtp(@Body() request: { email: string, otp: string, password?: string }): Promise<ApiResponse> {
 
         const validate = validateVerifyOtp(request);
         if (validate.error) {

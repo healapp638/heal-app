@@ -95,25 +95,39 @@ const UserAuthHandler = {
         }
     }), //ends
     login: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { email, password } = data;
+        const { email, password, language } = data;
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
+        console.log(findUser, 'findUser');
         if (!findUser.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.not_registered, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "user_not_registered"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
         const is_profile_completed = !!userData.dob && !!userData.country;
+        if (language) {
+            yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { language: language } });
+        }
+        if (!(userData === null || userData === void 0 ? void 0 : userData.profilePic) || (userData === null || userData === void 0 ? void 0 : userData.profilePic) == '') {
+            yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } });
+        }
         if (!userData.password) {
             const otp = '123456';
             const otpCreatedAt = new Date();
-            const res = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, { otp, otpCreatedAt });
-            if (!res.status) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.otp_sent_error, null, statusCodes_1.default.API_ERROR);
+            const obj = {
+                otp,
+                otpCreatedAt
+            };
+            if (!(userData === null || userData === void 0 ? void 0 : userData.profilePic) || (userData === null || userData === void 0 ? void 0 : userData.profilePic) == '') {
+                obj.profilePic = 'file/file-1777357630130.webp';
             }
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.otp_sent, {
+            const res = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, obj);
+            if (!res.status) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "otp_sent_error"), null, statusCodes_1.default.API_ERROR);
+            }
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_sent"), {
                 is_after_social_login: true,
                 account_type,
                 is_profile_completed,
@@ -122,11 +136,11 @@ const UserAuthHandler = {
         }
         //if account deactivated by admin then throw error 
         if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.middleware.deactivated_account, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "deactivated_account"), null, statusCodes_1.default.API_ERROR);
         }
         const isValid = yield commonHelper.verifyBycryptHash(password, userData === null || userData === void 0 ? void 0 : userData.password);
         if (!isValid) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.password_incorrect, null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "password_incorrect"), null, statusCodes_1.default.API_ERROR);
         }
         commonHelper.keysDeleteFromObject(userData); //delete password & other keys from response
         console.log(userData, "userData");
@@ -135,11 +149,11 @@ const UserAuthHandler = {
         if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
             yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' }); //activate user again
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-        const { login_source, social_auth, email, name = undefined } = data;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        const { login_source, social_auth, email, name = undefined, language } = data;
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -167,23 +181,29 @@ const UserAuthHandler = {
         const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
         //if account already existed then update details and return token with login success
         if (findUser.status) {
+            if (!((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.profilePic) || ((_c = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _c === void 0 ? void 0 : _c.profilePic) == '') {
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: (_d = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _d === void 0 ? void 0 : _d._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } });
+            }
+            if (!((_e = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _e === void 0 ? void 0 : _e.language) || ((_f = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _f === void 0 ? void 0 : _f.language) == '') {
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: (_g = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _g === void 0 ? void 0 : _g._id }, { $set: { language } });
+            }
             //if account deactivate by admin throw error 
-            if (((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_c = findUser.data) === null || _c === void 0 ? void 0 : _c.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.middleware.deactivated_account, null, statusCodes_1.default.API_ERROR);
+            if (((_h = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _h === void 0 ? void 0 : _h.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_j = findUser.data) === null || _j === void 0 ? void 0 : _j.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "deactivated_account"), null, statusCodes_1.default.API_ERROR);
             }
             //update social account array 
             const updateSocialInfo = yield UserAuthHandler.update_social_info(findUser, user_auth_model_1.default, data);
             if (!updateSocialInfo.status) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.login_error, null, statusCodes_1.default.API_ERROR);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "login_error"), null, statusCodes_1.default.API_ERROR);
             }
             commonHelper.keysDeleteFromObject(findUser === null || findUser === void 0 ? void 0 : findUser.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_d = findUser.data) === null || _d === void 0 ? void 0 : _d._id, (_e = findUser.data) === null || _e === void 0 ? void 0 : _e.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_k = findUser.data) === null || _k === void 0 ? void 0 : _k._id, (_l = findUser.data) === null || _l === void 0 ? void 0 : _l.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
             const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, findUser === null || findUser === void 0 ? void 0 : findUser.data), { access_token, refresh_token });
             //if account deactivated by user then activate it again 
-            if (((_f = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _f === void 0 ? void 0 : _f.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_g = findUser.data) === null || _g === void 0 ? void 0 : _g.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
-                yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: (_h = findUser.data) === null || _h === void 0 ? void 0 : _h._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
+            if (((_m = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _m === void 0 ? void 0 : _m.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_o = findUser.data) === null || _o === void 0 ? void 0 : _o.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
+                yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: (_p = findUser.data) === null || _p === void 0 ? void 0 : _p._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
             }
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, userData, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
         else {
             //if not exist then register new user 
@@ -200,16 +220,18 @@ const UserAuthHandler = {
                 fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
                 account_source: login_source,
                 isVerified: true,
+                language: language || 'en',
+                profilePic: 'file/file-1777357630130.webp',
             };
             const userRef = new user_auth_model_1.default(newObj);
             const result = yield (0, db_helpers_1.createOne)(userRef);
             if (!result.status) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.login_error, null, statusCodes_1.default.API_ERROR);
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "login_error"), null, statusCodes_1.default.API_ERROR);
             }
             commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_j = result.data) === null || _j === void 0 ? void 0 : _j._id, (_k = result.data) === null || _k === void 0 ? void 0 : _k.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_q = result.data) === null || _q === void 0 ? void 0 : _q._id, (_r = result.data) === null || _r === void 0 ? void 0 : _r.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
             const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.login_success, userData, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
     }),
     register(data, profile_pic) {
@@ -229,8 +251,9 @@ const UserAuthHandler = {
                 email,
                 dob,
                 password,
-                language,
+                language: language || 'en',
                 account_source: 'email',
+                profilePic: profile_pic || 'file/file-1777357630130.webp',
             };
             //check if match or not by email
             const queryObject = {
@@ -380,11 +403,15 @@ const UserAuthHandler = {
     }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d;
-        const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, otp: 0 });
+        const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
+        console.log(userData, 'userData');
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
+        console.log(is_user_social_login, 'is_user_social_login');
         const is_simple_login = !!(userData === null || userData === void 0 ? void 0 : userData.password);
+        console.log(is_simple_login, 'is_simple_login');
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        console.log(account_type, 'account_type');
         const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
         if (!result.status) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);

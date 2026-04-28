@@ -868,6 +868,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"language": {
+										"type": "string"
+									},
 									"password": {
 										"type": "string"
 									},
@@ -876,6 +879,7 @@
 									}
 								},
 								"required": [
+									"language",
 									"password",
 									"email"
 								],
@@ -927,6 +931,9 @@
 									},
 									"os_type": {
 										"type": "string"
+									},
+									"language": {
+										"type": "string"
 									}
 								},
 								"required": [
@@ -967,6 +974,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"language": {
+										"type": "string"
+									},
 									"password": {
 										"type": "string"
 									},
@@ -1002,6 +1012,7 @@
 									}
 								},
 								"required": [
+									"language",
 									"password",
 									"dob",
 									"email",
