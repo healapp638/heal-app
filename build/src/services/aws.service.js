@@ -205,6 +205,7 @@ const sendSMSService = (to, Message) => __awaiter(void 0, void 0, void 0, functi
 exports.sendSMSService = sendSMSService;
 const uploadFileToS3 = (fileArray) => __awaiter(void 0, void 0, void 0, function* () {
     const files = Array.isArray(fileArray) ? fileArray : [fileArray];
+    console.log(files, 'files');
     return new Promise((resolve) => {
         var _a;
         try {

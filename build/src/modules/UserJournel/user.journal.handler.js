@@ -122,27 +122,28 @@ const UserCommonHandler = {
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), res[0], statusCodes_1.default.SUCCESS);
     }),
-    updateJournal: (data, userId, journalId) => __awaiter(void 0, void 0, void 0, function* () {
-        const { feeling, title, description } = data;
+    updateJournal: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { journal_id, feeling, title, description } = data;
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const lang = user.language || 'en';
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
         const updateObj = Object.assign(Object.assign(Object.assign({}, (feeling && { feeling: { [lang]: feeling } })), (title && { title: { [lang]: title } })), (description && { description: { [lang]: description } }));
-        const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journalId, user_id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE }, updateObj, { new: true });
+        const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journal_id, user_id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE }, updateObj, { new: true });
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_updating_journal'), null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_updated_successfully'), response, statusCodes_1.default.SUCCESS);
     }),
-    deleteJournal: (userId, journalId) => __awaiter(void 0, void 0, void 0, function* () {
+    deleteJournal: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { journal_id } = data;
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const lang = user.language || 'en';
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
-        const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journalId, user_id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE }, {
+        const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journal_id, user_id: userId }, {
             status: workflow_constant_1.USER_STATUS.DELETED
         }, { new: true });
         if (!response) {

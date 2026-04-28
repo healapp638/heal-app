@@ -525,6 +525,7 @@ const UserAuthHandler = {
     uploadFile: async (data: any): Promise<ApiResponse> => {
         const { file } = data;
         const s3Upload = await services.awsService.uploadFileToS3([file])
+        console.log(s3Upload, 's3Upload')
         if (!s3Upload.status) {
             return showResponse(false, responseMessage?.common.file_upload_error, {}, statusCodes.FILE_UPLOAD_ERROR);
         }

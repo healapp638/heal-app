@@ -511,6 +511,7 @@ const UserAuthHandler = {
     uploadFile: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { file } = data;
         const s3Upload = yield services_1.default.awsService.uploadFileToS3([file]);
+        console.log(s3Upload, 's3Upload');
         if (!s3Upload.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.file_upload_error, {}, statusCodes_1.default.FILE_UPLOAD_ERROR);
         }

@@ -175,6 +175,7 @@ const sendSMSService = async (to: number, Message: string) => {
 
 const uploadFileToS3 = async (fileArray: [any]): Promise<ApiResponse> => {
     const files = Array.isArray(fileArray) ? fileArray : [fileArray];
+    console.log(files, 'files')
     return new Promise((resolve) => {
         try {
             const webpFilesArray: any = [];

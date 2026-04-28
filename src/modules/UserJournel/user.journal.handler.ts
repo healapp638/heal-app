@@ -117,8 +117,8 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), res[0], statusCodes.SUCCESS)
     },
 
-    updateJournal: async (data: any, userId: string, journalId: string): Promise<ApiResponse> => {
-        const { feeling, title, description } = data;
+    updateJournal: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { journal_id, feeling, title, description } = data;
         const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const lang = user.language || 'en'
         if (!user) {
@@ -129,20 +129,21 @@ const UserCommonHandler = {
             ...(title && { title: { [lang]: title } }),
             ...(description && { description: { [lang]: description } }),
         }
-        const response = await userJournalModel.findOneAndUpdate({ _id: journalId, user_id: userId, status: USER_STATUS.ACTIVE }, updateObj, { new: true });
+        const response = await userJournalModel.findOneAndUpdate({ _id: journal_id, user_id: userId, status: USER_STATUS.ACTIVE }, updateObj, { new: true });
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_updating_journal'), null, statusCodes.API_ERROR)
         }
         return showResponse(true, getMessage(lang, 'journal_updated_successfully'), response, statusCodes.SUCCESS)
     },
 
-    deleteJournal: async (userId: string, journalId: string): Promise<ApiResponse> => {
+    deleteJournal: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { journal_id } = data;
         const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const lang = user.language || 'en'
         if (!user) {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
-        const response = await userJournalModel.findOneAndUpdate({ _id: journalId, user_id: userId, status: USER_STATUS.ACTIVE }, {
+        const response = await userJournalModel.findOneAndUpdate({ _id: journal_id, user_id: userId }, {
             status: USER_STATUS.DELETED
         }, { new: true });
         if (!response) {
