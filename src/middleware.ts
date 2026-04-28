@@ -4,6 +4,7 @@ import { ROUTES } from "./routerKeys";
 
 export function middleware(req: NextRequest) {
   const isAuth = req.cookies.get("auth")?.value || null;
+
   const pathname = req.nextUrl.pathname;
 
   // Guest-only routes
@@ -16,8 +17,11 @@ export function middleware(req: NextRequest) {
   // Protected routes
   const PROTECTED_ROUTES: string[] = [
     ROUTES.PRIVATE.HOME,
-    ROUTES.PRIVATE.PROFILE,
-    ROUTES.PRIVATE.SETTING,
+    ROUTES.PRIVATE.MODULE,
+    ROUTES.PRIVATE.FAQ,
+    ROUTES.PRIVATE.PRIVACYPOLICY,
+    ROUTES.PRIVATE.TERMSANDCONDITION,
+    ROUTES.PRIVATE.CONTACTUS,
   ];
 
   // Logged-in user visiting auth pages → redirect home
@@ -50,8 +54,11 @@ export const config = {
 
     // Private pages
     '/home',
-    '/profile',
-    '/setting',
+    '/module',
+    '/faq',
+    '/privacypolicy',
+    '/termsandcondition',
+    '/contactus',
   ],
 };
 

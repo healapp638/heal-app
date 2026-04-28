@@ -1,3 +1,4 @@
+
 export const ROUTES = {
     WELCOME:{
         WELCOME:`/`
@@ -13,8 +14,14 @@ export const ROUTES = {
     // Protected group
     PRIVATE:{
         HOME: "/home",
-        PROFILE: "/profile",
-        SETTING:"/setting",
+        TERMSANDCONDITION: "/termsandcondition",
+        PRIVACYPOLICY: "/privacypolicy",
+        CONTACTUS:"/contactus",
+        MODULE:"/module",
+        ADDMODULE:"/module/addModule",
+        SUBMODULE:"/module/subModule",
+        FAQ:"/faq",
+        ABOUTUS:"/aboutus",
     },
 
     // Common public pages

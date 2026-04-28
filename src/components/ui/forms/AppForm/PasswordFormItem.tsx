@@ -35,7 +35,7 @@ const PasswordFormItem = React.forwardRef<InputRef, PasswordFormItemProps>(
             disabled = false,
             prefix = <IoIosLock className='size-6 text-maincolor!' />,
             suffix,
-            minLength = 8,
+            minLength = 6,
             maxLength = 128,
             showStrength = false,
             customValidationMessage: _customValidationMessage,

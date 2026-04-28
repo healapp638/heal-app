@@ -18,6 +18,7 @@ import { formatEmail } from '@/utils/formatting/string';
 import AuthCard from '@/components/commonCard/AuthCard';
 
 export default function ForgotPasswordForm() {
+
   const router = useRouter();
   const { setResetEmail } = useResetFlow();
 
@@ -30,15 +31,11 @@ export default function ForgotPasswordForm() {
         email: data?.email,
       });
 
-      // Store email in hook state and navigate to OTP
-      const resetEmail = data?.email || '';
-      setResetEmail(resetEmail);
       router.push(ROUTES.AUTH.VERIFY_OTP);
     },
 
     onError(error: unknown) {
       // Email stored from form submission, navigate to OTP for testing
-      router.push(ROUTES.AUTH.VERIFY_OTP);
       if (error instanceof Error) {
         logger.error('Failed to send reset link', error);
       } else {
@@ -76,23 +73,23 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-     <AuthCard>
-            <div className='my-6'>
-                <p className='text-center text-black text-2xl font-semibold'>Forgot Password</p>
-                <p className='text-center text-black text-para mt-2'>Enter your Email to reset your account password.</p>
-            </div>
-            <Form
-                layout='vertical'
-                autoComplete='off'
-                onFinish={handleForgotPassword}
-                className='w-[95%] mx-auto!'
-            >
-                <EmailFormItem name="email" />
-             
-                <AppButton htmlType="submit"  className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" block>
-                    Continue
-                </AppButton>
-            </Form>
-        </AuthCard>
+    <AuthCard>
+      <div className='my-6'>
+        <p className='text-center text-black text-2xl font-semibold'>Forgot Password</p>
+        <p className='text-center text-black text-para mt-2'>Enter your Email to reset your account password.</p>
+      </div>
+      <Form
+        layout='vertical'
+        autoComplete='off'
+        onFinish={handleForgotPassword}
+        className='w-[95%] mx-auto!'
+      >
+        <EmailFormItem name="email" />
+
+        <AppButton htmlType="submit" className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" block>
+          Continue
+        </AppButton>
+      </Form>
+    </AuthCard>
   );
 }

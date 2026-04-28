@@ -40,7 +40,7 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
                             opacity: 0,
                             transition: { duration: 0.5, ease: "easeInOut" }
                         }}
-                        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white dark:bg-[#0f172a]"
+                        className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-cream dark:bg-cream"
                     >
                         <motion.div
                             initial={{ scale: 0.8, opacity: 0 }}
@@ -67,9 +67,9 @@ export default function SplashScreen({ children }: { children: React.ReactNode }
                                 transition={{ delay: 0.3, duration: 0.5 }}
                                 className="mt-4 text-center"
                             >
-                                <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                {/* <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                                     Heal
-                                </h2>
+                                </h2> */}
                                 <div className="mt-2 flex justify-center gap-1">
                                     {[0, 1, 2].map((i) => (
                                         <motion.div

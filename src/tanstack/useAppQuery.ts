@@ -13,7 +13,7 @@ export interface UseAppQueryProps<TData = any, TError = any> {
     params?: Record<string, any>;
     showErrorToast?: boolean;
     showSuccessToast?: boolean;
-    options?: Omit<UseQueryOptions<ApiResponse<TData>, TError, TData>, 'queryKey' | 'queryFn'>;
+    options?: Omit<UseQueryOptions<ApiResponse<TData>, TError, ApiResponse<TData>>, 'queryKey' | 'queryFn'>;
 }
 
 /**
@@ -34,7 +34,7 @@ export function useAppQuery<TData = any, TError = any>({
     showSuccessToast = false,
     options,
 }: UseAppQueryProps<TData, TError>) {
-    return useQuery<ApiResponse<TData>, TError, TData>({
+    return useQuery<ApiResponse<TData>, TError, ApiResponse<TData>>({
         queryKey,
         queryFn: async ({ signal }: { signal: AbortSignal }) => {
             try {

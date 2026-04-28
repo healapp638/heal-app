@@ -19,6 +19,16 @@ export const lightTheme = {
     Input: {
       borderRadius: 6,
     },
+    Table: {
+      headerBg: "#F66F76",
+      colorBgContainer: "#ffff",
+      borderColor:"#ffff"
+    },
+    Upload: {
+      colorBorder: "#F66F76",
+      colorPrimaryHover: "#F66F76",
+      colorBorderHover: "#F66F76",
+    }
   },
 }
 
@@ -40,5 +50,15 @@ export const darkTheme = {
     Input: {
       borderRadius: 6,
     },
+    Table: {
+      headerBg: "#F66F76",
+      colorBgContainer: "#ffff",
+      borderColor:"#ffff"
+    },
+    Upload: {
+      colorBorder: "#F66F76",
+      colorPrimaryHover: "#F66F76",
+      colorBorderHover: "#F66F76",
+    }
   },
 }

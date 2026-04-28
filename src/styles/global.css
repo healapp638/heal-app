@@ -36,7 +36,7 @@
 
     --primary: #ff0000;
     --primary-foreground: #ffffff;
-    --cream: #FFD8B5;
+    --cream: #F4EEE2;
     --gradient-green-orange: radial-gradient(at 100% 0%, #A8BBA2 0%, #F66F76 10%, transparent 40%), radial-gradient(at 0% 100%, #F66F76 0%, #A8BBA2 10%, transparent 40%);
 
     --secondary: #00ff00;
@@ -52,7 +52,7 @@
     --maincolor: #F66F76;
     --card: #020617;
     --card-foreground: #e5e7eb;
-    --cream: #FFD8B5;
+    --cream: #F4EEE2;
     --primary: #ff4d4f;
     --primary-foreground: #ffffff;
     --gradient-green-orange: radial-gradient(at 100% 0%, #A8BBA2 0%, #F66F76 10%, transparent 40%), radial-gradient(at 0% 100%, #F66F76 0%, #A8BBA2 10%, transparent 40%);
@@ -154,6 +154,20 @@
 
   .blackText {
     @apply text-black dark:text-white;
+  }
+
+  .ant-layout{
+    @apply bg-cream!
+  }
+
+  .ant-menu-light{
+    @apply border-maincolor! bg-cream!
+  }
+  .ant-dropdown .ant-dropdown-menu{
+    @apply bg-cream!
+  }
+  .ant-pagination .ant-pagination-item-active a{
+    @apply text-white! 
   }
 
 }

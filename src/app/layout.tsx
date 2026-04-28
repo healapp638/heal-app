@@ -18,23 +18,23 @@ import { DEFAULT_LANGUAGE, SHOW_INSTALL_PROMPT, SHOW_VERSION_UPDATE_NOTIFICATION
 export const metadata = {
   metadataBase: new URL("https://www.sachtech.com"),
   title: {
-    default: "SachTech | Software Development, SaaS, Mobile & Web Solutions",
-    template: "%s | SachTech",
+    default: "Heal | Software Development, SaaS, Mobile & Web Solutions",
+    template: "%s | Heal",
   },
   description:
-    "SachTech provides expert software development, SaaS solutions, mobile apps, and enterprise web applications.",
+    "Heal provides expert software development, SaaS solutions, mobile apps, and enterprise web applications.",
   robots: "index, follow",
   alternates: { canonical: "https://www.sachtech.com" },
   openGraph: {
-    title: "SachTech",
+    title: "Heal",
     description: "Software, SaaS, Web & Mobile App Development Experts",
     url: "https://www.sachtech.com",
-    siteName: "SachTech",
+    siteName: "Heal",
     images: [{ url: "/og-image.png" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "SachTech",
+    title: "Heal",
     description: "Build modern digital solutions.",
     images: ["/og-image.png"],
   },
@@ -131,7 +131,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
-              name: "SachTech",
+              name: "Heal",
               url: "https://www.sachtech.com",
             }),
           }}

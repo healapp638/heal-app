@@ -5,7 +5,8 @@ import { PageTransition } from '@/components/animations';
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
     return (
-        <div className="min-h-screen bg-cream! scroll-smooth relative backgroundImage">
+        // <div className="min-h-screen bg-cream! scroll-smooth relative backgroundImage">
+        <div className="min-h-screen bg-cream! scroll-smooth relative ">
             <PageTransition>
                 {children}
             </PageTransition>

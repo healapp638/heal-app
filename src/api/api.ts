@@ -15,7 +15,7 @@ declare module 'axios' {
 }
 import { ApiResponse } from './types';
 import { store } from '@/redux/store/store';
-import { logout } from '@/redux/features/auth/authSlice';
+import { logout, storeToken } from '@/redux/features/auth/authSlice';
 import { getAccessToken } from '@/redux/store/authToken';
 import logger from '@/utils/logger';
 
@@ -60,19 +60,31 @@ const resolveQueue = (token: string | null) => {
   refreshQueue.forEach((cb) => cb(token));
   refreshQueue = [];
 };
-
 /* ======================================================
    REFRESH TOKEN CALL
    ====================================================== */
 const refreshAccessToken = async (): Promise<string | null> => {
+  const state = store.getState();
+  const refreshToken = state.auth.refreshToken;
+
+  if (!refreshToken) return null;
+
   try {
-    const response = await axios.post<{ accessToken: string }>(
-      `${API_BASE_URL}/auth/refresh`,
-      {},
+    const params = new URLSearchParams();
+    params.append('refresh_token', refreshToken.replace(/"/g, ''));
+
+    const response = await axios.post<ApiResponse<{ accessToken: string }>>(
+      `${API_BASE_URL}admin/auth/refresh_token`,
+      params,
       { withCredentials: true, skipLoader: true }
     );
-
-    return response?.data?.accessToken;
+    logger.log("response inside api.interceptors.response.use", response);
+    const newToken = response?.data?.data?.accessToken;
+    if (newToken) {
+      store.dispatch(storeToken(newToken));
+    }
+    
+    return newToken || null;
   } catch {
     return null;
   }
