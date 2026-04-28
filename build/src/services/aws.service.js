@@ -387,7 +387,9 @@ const uploadToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* (
             secretAccessKey: yield app_constant_1.AWS_CREDENTIAL.AWS_SECRET,
             region: yield app_constant_1.AWS_CREDENTIAL.REGION,
         });
+        console.log(s3, 's3');
         const bucketName = yield app_constant_1.AWS_CREDENTIAL.BUCKET_NAME;
+        console.log(bucketName, 'bucketName');
         const s3UploadPromises = files.map((file) => {
             return new Promise((resolve) => {
                 var _a, _b, _c, _d, _e;

@@ -376,10 +376,14 @@ const uploadToS3 = async (files: any[], key?: string) => {
             region: await AWS_CREDENTIAL.REGION,
         });
 
+        console.log(s3, 's3')
+
         const bucketName = await AWS_CREDENTIAL.BUCKET_NAME;
 
+        console.log(bucketName, 'bucketName')
+
         const s3UploadPromises = files.map((file: any) => {
-            return new Promise((resolve) => {
+        return new Promise((resolve) => {
                 const bufferImage = key ? file : file.buffer;
                 const ext: any = path.extname(file?.originalname ?? file?.fieldname ?? file?.mimetype);
                 let fileName: string = "";
