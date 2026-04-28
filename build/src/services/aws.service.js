@@ -50,10 +50,10 @@ const node_cache_1 = __importDefault(require("node-cache"));
 const app_constant_1 = require("../constants/app.constant");
 // import * as fsHelper from '../helpers/fs.helper'
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
-// AWS.config.update({
-//     region: APP.AWS_REGION,
-//     credentials: new AWS.SharedIniFileCredentials({ profile: "" }),
-// });
+aws_sdk_1.default.config.update({
+    region: 'us-east-1',
+    // credentials: new AWS.SharedIniFileCredentials({ profile: "" }),
+});
 const path_1 = __importDefault(require("path"));
 const responseMessages_1 = __importDefault(require("../constants/responseMessages"));
 const mediaHelper = __importStar(require("../helpers/media.helper"));

@@ -2,10 +2,10 @@ import NodeCache from "node-cache";
 import { APP, AWS_CREDENTIAL } from "../constants/app.constant";
 // import * as fsHelper from '../helpers/fs.helper'
 import AWS from 'aws-sdk'
-// AWS.config.update({
-//     region: APP.AWS_REGION,
-//     credentials: new AWS.SharedIniFileCredentials({ profile: "" }),
-// });
+AWS.config.update({
+    region: 'us-east-1',
+    // credentials: new AWS.SharedIniFileCredentials({ profile: "" }),
+});
 import path from 'path'
 import responseMessage from "../constants/responseMessages";
 import * as mediaHelper from "../helpers/media.helper";

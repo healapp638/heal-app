@@ -148,7 +148,7 @@ const initializeAwsCredential = async () => {
       // stripePbKey,
       // stripeSecKey,
     ] = results;
-
+    // console.log("hhhhhhh", bucketName)
     DB.MONGODB_URI = mongodbUri;
     APP.JWT_SECRET = jwtSecret;
     // APP.CLOUDFRONT_URL = cloudfrontUrl;
