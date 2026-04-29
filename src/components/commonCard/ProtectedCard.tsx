@@ -211,10 +211,8 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                         <div className='flex gap-2 justify-center items-center'>
                             <Image
                                 src='/images/logo.png'
-                                height={50}
-                                width={60}
                                 alt="Logo"
-                                className='w-full'
+                                className="h-[41px]! object-contain"
                                 preview={false}
                                 draggable={false}
                             />
@@ -226,11 +224,10 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                     ) : (
                         <Image
                             src='/images/logo.png'
-                            height={50}
-                            width={60}
                             alt="Logo"
                             preview={false}
                             draggable={false}
+                            className="h-[41px]! object-contain"
                         />
                     )}
                 </div>

@@ -1,58 +1,31 @@
 "use client"
-
-import { AppButton } from "@/components/ui"
-import { ENDPOINTS } from "@/Endpoints"
-import { MUTATION_KEYS } from "@/tanstack/keys"
-import { useAppMutate } from "@/tanstack/useAppMutate"
-import { useAppQuery } from "@/tanstack/useAppQuery"
-import logger from "@/utils/logger"
+import { AppButton } from "@/components/ui";
+import { ENDPOINTS } from "@/Endpoints";
+import { MUTATION_KEYS } from "@/tanstack/keys";
+import { useAppMutate } from "@/tanstack/useAppMutate";
+import { useAppQuery } from "@/tanstack/useAppQuery";
+import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
+import { Button, Form, Input, Table } from "antd";
+import { useParams } from "next/navigation";
+import React from "react"
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { FaEye } from "react-icons/fa";
-import { tryCatchWrapper } from "@/utils/tryCatchWrapper"
-import { Button, Form, Input, Table } from "antd"
-import { useParams, useRouter } from "next/navigation"
-import React from "react"
-import { ROUTES } from "@/routerKeys"
+import { ROUTES } from "@/routerKeys";
+import { useRouter } from "next/navigation";
 
-interface SubModuleData {
-    _id: string;
-    title: string;
-    slug: string;
-    status: boolean;
-    description: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-}
-
-interface SubModuleResult {
-    result: SubModuleData[];
-    page: number;
-    limit: number;
-    total: number;
-}
-
-export default function AddSubModule() {
-
-    const route = useRouter()
+export default function AddPhase() {
     const params = useParams();
-    const moduleId = params?.id as string;
-
+    const subModuleId = params?.id as string;
+    const route = useRouter();
+    const [form] = Form.useForm();
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
     });
 
-    const { mutateAsync: addsubModule, isPending } = useAppMutate({
-        mutationKey: [MUTATION_KEYS.CREATE_SUB_MODULE],
-        invalidateQueryKeys: [MUTATION_KEYS.LIST_SUB_MODULE],
-        showSuccessToast: true,
-        showErrorToast: true,
-    });
-
-    const { data: listsubModule } = useAppQuery<SubModuleResult>({
-        queryKey: [MUTATION_KEYS.LIST_SUB_MODULE],
-        url: ENDPOINTS.PRIVATE.LIST_SUB_MODULE,
+    const { data: listPhase } = useAppQuery<any>({
+        queryKey: [MUTATION_KEYS.LIST_PHASE],
+        url: ENDPOINTS.PRIVATE.LIST_PHASE,
         options: {
             staleTime: Infinity,
         },
@@ -60,44 +33,58 @@ export default function AddSubModule() {
             page: pagination.current,
             pageSize: pagination.pageSize,
             lang: "en",
-            moduleId: moduleId
+            subModuleId: subModuleId
         }
     })
-    const SubModuleListData = listsubModule?.data?.result;
-    logger.log("SubModuleListData", SubModuleListData)
+    const PhaseListData = listPhase?.data?.result;
 
-
-    const handleAddPhase = (subModuleId: string) => {
-        route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}`)
-    };
-
-    const CreateSubModule = async (values: any) => {
-
+    const { mutateAsync: addPhases, isPending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.CREATE_PHASE],
+        invalidateQueryKeys: [MUTATION_KEYS.LIST_PHASE],
+        showSuccessToast: true,
+        showErrorToast: true,
+        onSuccess: () => {
+            form.resetFields();
+        }
+    });
+    const CreatePhases = async (values: any) => {
         await tryCatchWrapper(
             async () => {
-                await addsubModule({
-                    url: ENDPOINTS.PRIVATE.CREATE_SUB_MODULE,
+                await addPhases({
+                    url: ENDPOINTS.PRIVATE.CREATE_PHASE,
                     method: "POST",
                     body: {
+                        subModuleId: subModuleId,
                         title: values.title,
-                        description: values.description,
-                        moduleId: moduleId
+                        points: values.points,
                     },
                 });
             },
             {
-                errorMessage: 'Failed to add sub module',
+                errorMessage: 'Failed to add phase',
                 showToast: true,
                 onError() {
-                    console.error('Failed to add theme');
+                    console.error('Failed to add phase');
                 }
             }
         );
     }
-
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
     }, [pagination]);
+
+    // Handle pagination change
+    const handleTableChange = (newPagination: any) => {
+        setPagination({
+            current: newPagination.current,
+            pageSize: newPagination.pageSize,
+        });
+    };
+
+
+    const handleAddLesson = (phaseId: string) => {
+        route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${phaseId}`)
+    };
 
     const columns = [
         {
@@ -108,17 +95,23 @@ export default function AddSubModule() {
             ),
         },
         {
-            title: "Title",
-            dataIndex: "title",
-            key: "title",
+            title: 'Title',
+            dataIndex: 'title',
+            key: 'title',
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
         },
         {
-            title: "Add Phase",
+            title: 'Points',
+            dataIndex: 'points',
+            key: 'points',
+            render: (text: string) => <span className='font-medium text-black'>{text}</span>
+        },
+        {
+            title: "Add Lesson",
             render: (_: any, record: any) => (
                 <div>
-                    <Button onClick={() => { handleAddPhase(record?._id) }} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
-                        Add Phase
+                    <Button onClick={() => { handleAddLesson(record?._id) }} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
+                        Add Lesson
                     </Button>
                 </div>
             )
@@ -140,60 +133,70 @@ export default function AddSubModule() {
     return (
         <div>
             <h1 className="text-3xl font-bold text-black">
-                Add <span className="text-maincolor">SubModule</span>
+                Add <span className="text-maincolor">Phase</span>
             </h1>
             <div className='bg-white border-maincolor border-[1.5px] rounded-lg p-6 my-5'>
                 <Form
+                    form={form}
                     layout="vertical"
                     autoComplete='off'
-                    onFinish={CreateSubModule}
                     className='w-[95%] mx-auto!'
                     requiredMark={false}
+                    onFinish={CreatePhases}
                 >
 
                     <Form.Item
                         name="title"
-                        label={<span className='text-black font-semibold text-md'>SubModule Title :</span>}
+                        label={<span className='text-black font-semibold text-md'>Phase Title :</span>}
                         rules={[
-                            { required: true, message: 'Please enter sub module title' },
+                            { required: true, message: 'Please enter phase title' },
                         ]}
                     >
                         <Input
-                            placeholder="SubModule Title"
+                            placeholder="Phase Title"
                             className="text-black! bg-white! border-maincolor! border-[1.5px] rounded-lg p-2"
                         />
                     </Form.Item>
                     <Form.Item
-                        name="description"
-                        label={<span className='text-black font-semibold text-md'>SubModule Description :</span>}
+                        name="points"
+                        label={<span className='text-black font-semibold text-md'>Phase Points :</span>}
                         rules={[
-                            { required: true, message: 'Please enter sub module description' },
+                            { required: true, message: 'Please enter phase points' },
                         ]}
                     >
-                        <Input.TextArea
-                            placeholder="SubModule Description"
+                        <Input
+                            min="1"
+                            type="number"
+                            placeholder="Phase Points"
                             className="text-black! bg-white! border-maincolor! border-[1.5px] rounded-lg p-2"
-                            rows={3}
                         />
                     </Form.Item>
 
                     <Form.Item>
                         <AppButton htmlType="submit" isLoading={isPending} className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" block>
-                            Add SubModule
+                            Add Phase
                         </AppButton>
                     </Form.Item>
                 </Form>
             </div>
             <Table
-                rowKey="_id"
+                dataSource={PhaseListData}
                 columns={columns}
-                dataSource={SubModuleListData}
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,
-                    total: SubModuleListData?.length,
-                    onChange: (page, pageSize) => setPagination({ current: page, pageSize }),
+                    showSizeChanger: false,
+                    pageSizeOptions: ['10', '20', '50', '100'],
+                    onChange: (page, pageSize) => {
+                        setPagination({
+                            current: page,
+                            pageSize: pageSize || pagination.pageSize,
+                        });
+                    },
                 }}
+                onChange={handleTableChange}
+                scroll={{ x: 'max-content' }}
+                bordered
             />
 
         </div>

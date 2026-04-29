@@ -4,7 +4,6 @@ import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { useAppQuery } from "@/tanstack/useAppQuery";
-import logger from "@/utils/logger";
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { FaEye } from "react-icons/fa";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
@@ -31,7 +30,7 @@ interface ModuleResult {
 }
 export default function AddModule() {
 
-  const route = useRouter()
+    const route = useRouter()
     const params = useParams();
     const themeId = params?.id as string;
     const [pagination, setPagination] = React.useState({
@@ -59,7 +58,6 @@ export default function AddModule() {
         }
     })
     const ModuleListData = listModule?.data?.result;
-    logger.log("ModuleListData", listModule)
 
     const AddModule = async (values: any) => {
 
@@ -97,7 +95,7 @@ export default function AddModule() {
     };
 
     const handleAddSubModule = (moduleId: string) => {
-         route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}`)
+        route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}`)
     };
 
     const columns = [
@@ -116,7 +114,6 @@ export default function AddModule() {
         },
         {
             title: "Add SubModule",
-
             render: (_: any, record: any) => (
                 <div>
                     <Button onClick={() => { handleAddSubModule(record?._id) }} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
@@ -171,8 +168,6 @@ export default function AddModule() {
                         </AppButton>
                     </Form.Item>
                 </Form>
-
-
             </div>
             <Table
                 dataSource={ModuleListData}
@@ -191,7 +186,6 @@ export default function AddModule() {
                 }}
                 onChange={handleTableChange}
                 scroll={{ x: 'max-content' }}
-                bordered
             />
         </div>
     )

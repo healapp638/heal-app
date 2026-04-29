@@ -20,6 +20,8 @@ export const ROUTES = {
         MODULE:"/module",
         ADDMODULE:"/module/addModule",
         SUBMODULE:"/module/subModule",
+        ADDPHASES:"/module/addPhase",
+        ADDLESSONS:"/module/addLessons",
         FAQ:"/faq",
         ABOUTUS:"/aboutus",
     },
