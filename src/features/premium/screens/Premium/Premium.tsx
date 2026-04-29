@@ -47,12 +47,17 @@ const Premium = () => {
 
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       view={
         <View style={styles.mainContainer}>
           <PremiumHeader
             showCloseBtn={showCloseBtn}
-            onClose={() => navigation.goBack()}
+            onClose={() => {
+              navigation.reset({
+                index: 0,
+                routes: [{ name: AppRoutes.BottomTab as never }],
+              });
+            }}
             styles={styles}
             images={images}
           />

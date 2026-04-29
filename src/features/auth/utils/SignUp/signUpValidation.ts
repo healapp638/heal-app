@@ -102,7 +102,7 @@ export const isPasswordValid = (value: string) => {
   const hasMinLength = value.length >= 8;
   const hasUppercase = /[A-Z]/.test(value);
   const hasNumber = /\d/.test(value);
-  const hasSpecialChar = /[!@#$%^&*]/.test(value);
+  const hasSpecialChar = /[!@#$%^&*_]/.test(value);
 
   return hasMinLength && hasUppercase && hasNumber && hasSpecialChar;
 };

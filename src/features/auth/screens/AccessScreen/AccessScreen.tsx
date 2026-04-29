@@ -69,7 +69,12 @@ const AccessScreen = () => {
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+              <TouchableOpacity
+                style={styles.socialBtn}
+                onPress={() => {
+                  navigation.navigate(AppRoutes.SignIn as never);
+                }}
+              >
                 <Image
                   source={images.mail}
                   style={styles.socialIcon}

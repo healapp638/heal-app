@@ -33,6 +33,7 @@ interface SolidInputProps {
   pointerEvents?: 'none' | 'auto' | 'box-none' | 'box-only';
   onInfoPress?: () => void;
   mainStyle?: ViewStyle;
+  maxLength?: any;
 }
 
 const SolidInput: React.FC<SolidInputProps> = ({
@@ -53,6 +54,7 @@ const SolidInput: React.FC<SolidInputProps> = ({
   onInfoPress,
   rightImgTintColor,
   mainStyle,
+  maxLength,
 }) => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
@@ -89,6 +91,7 @@ const SolidInput: React.FC<SolidInputProps> = ({
           autoCapitalize={autoCapitalize}
           editable={editable}
           maxFontSizeMultiplier={1.4}
+          maxLength={maxLength}
         />
         {rightImg && (
           <Pressable style={styles.rightIconWrapper} onPress={onRightPress}>
