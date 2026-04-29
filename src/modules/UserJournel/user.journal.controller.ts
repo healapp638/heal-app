@@ -34,9 +34,9 @@ export default class UserJournalController extends Controller {
 
     @Security('Bearer')
     @Get("journal_list")
-    public async journalList(@Query() cursor?: string, @Query() limit?: string,@Query() search_key?: string): Promise<ApiResponse> {
+    public async journalList(@Query() cursor?: string, @Query() limit?: string, @Query() search_key?: string): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.journalList);
-        return wrappedFunc(cursor, limit,search_key, this.userId); // Invoking the wrapped function 
+        return wrappedFunc(cursor, limit, search_key, this.userId); // Invoking the wrapped function 
     }
 
     @Security('Bearer')
@@ -64,7 +64,7 @@ export default class UserJournalController extends Controller {
     @Security('Bearer')
     @Get("journal_detail")
     public async journalDetail(@Query() journal_id: string): Promise<ApiResponse> {
-        const validate = validateJournalDetail({journal_id});
+        const validate = validateJournalDetail({ journal_id });
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }

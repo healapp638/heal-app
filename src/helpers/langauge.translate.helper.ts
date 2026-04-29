@@ -23,13 +23,13 @@ export const translateText = async (text: string, targetLanguage: string) => {
     }
 };
 
-export const UserTranslateText = async (text: string, targetLanguage: string) => {
+export const UserTranslateText = async (text: string, targetLanguage: string, sourceLanguage: string = 'en') => {
     try {
-        if (targetLanguage == 'en') {
+        if (targetLanguage == sourceLanguage) {
             return text
         }
         const [translation] = await translate.translate(text, {
-            from: 'en', // Source language
+            from: sourceLanguage, // Source language
             to: targetLanguage, // Target language
             format: 'html', // Format if necessary
         });

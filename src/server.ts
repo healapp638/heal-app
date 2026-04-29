@@ -35,7 +35,7 @@ app.use(helmet());
 
 
 //  CORS CONFIG (FIXED)
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com"];
 app.use(
   cors({
     origin: allowedOrigins,

@@ -36,9 +36,9 @@ const UserCommonHandler = {
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedFeeling, translatedTitle, translatedDescription] = yield Promise.all([
-                (0, langauge_translate_helper_1.translateText)(feeling, lang),
-                (0, langauge_translate_helper_1.translateText)(title, lang),
-                (0, langauge_translate_helper_1.translateText)(description, lang)
+                (0, langauge_translate_helper_1.UserTranslateText)(feeling, lang, user.language),
+                (0, langauge_translate_helper_1.UserTranslateText)(title, lang, user.language),
+                (0, langauge_translate_helper_1.UserTranslateText)(description, lang, user.language)
             ]);
             obj.feeling[lang] = translatedFeeling;
             obj.title[lang] = translatedTitle;
@@ -150,7 +150,19 @@ const UserCommonHandler = {
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
-        const updateObj = Object.assign(Object.assign(Object.assign({}, (feeling && { feeling: { [lang]: feeling } })), (title && { title: { [lang]: title } })), (description && { description: { [lang]: description } }));
+        const updateObj = Object.assign(Object.assign(Object.assign({}, (feeling && { feeling: {} })), (title && { title: {} })), (description && { description: {} }));
+        const langs = Object.values(workflow_constant_1.languages);
+        yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            if (feeling) {
+                updateObj.feeling[lang] = yield (0, langauge_translate_helper_1.UserTranslateText)(feeling, lang, user.language);
+            }
+            if (title) {
+                updateObj.title[lang] = yield (0, langauge_translate_helper_1.UserTranslateText)(title, lang, user.language);
+            }
+            if (description) {
+                updateObj.description[lang] = yield (0, langauge_translate_helper_1.UserTranslateText)(description, lang, user.language);
+            }
+        })));
         const response = yield user_journel_model_1.default.findOneAndUpdate({ _id: journal_id, user_id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE }, updateObj, { new: true });
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_updating_journal'), null, statusCodes_1.default.API_ERROR);

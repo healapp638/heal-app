@@ -6,7 +6,7 @@ import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import { getMessage } from "../../helpers/messages";
 import userJournalModel from "./user.journel.model";
 import { convertToObjectId } from "../../helpers/common.helper";
-import {translateText} from "../../helpers/langauge.translate.helper";
+import { UserTranslateText } from "../../helpers/langauge.translate.helper";
 
 const UserCommonHandler = {
 
@@ -29,9 +29,9 @@ const UserCommonHandler = {
         await Promise.all(
             langs.map(async (lang: string) => {
                 const [translatedFeeling, translatedTitle, translatedDescription] = await Promise.all([
-                    translateText(feeling, lang),
-                    translateText(title, lang),
-                    translateText(description, lang)
+                    UserTranslateText(feeling, lang, user.language),
+                    UserTranslateText(title, lang, user.language),
+                    UserTranslateText(description, lang, user.language)
                 ]);
 
                 obj.feeling[lang] = translatedFeeling;
@@ -153,10 +153,26 @@ const UserCommonHandler = {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
         const updateObj: any = {
-            ...(feeling && { feeling: { [lang]: feeling } }),
-            ...(title && { title: { [lang]: title } }),
-            ...(description && { description: { [lang]: description } }),
+            ...(feeling && { feeling: {} }),
+            ...(title && { title: {} }),
+            ...(description && { description: {} }),
         }
+        const langs = Object.values(languages);
+
+        await Promise.all(
+            langs.map(async (lang: string) => {
+                if (feeling) {
+                    updateObj.feeling[lang] = await UserTranslateText(feeling, lang, user.language)
+                }
+                if (title) {
+                    updateObj.title[lang] = await UserTranslateText(title, lang, user.language)
+                }
+                if (description) {
+                    updateObj.description[lang] = await UserTranslateText(description, lang, user.language)
+                }
+            })
+        );
+
         const response = await userJournalModel.findOneAndUpdate({ _id: journal_id, user_id: userId, status: USER_STATUS.ACTIVE }, updateObj, { new: true });
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_updating_journal'), null, statusCodes.API_ERROR)

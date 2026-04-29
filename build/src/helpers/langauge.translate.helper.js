@@ -32,13 +32,13 @@ const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.translateText = translateText;
-const UserTranslateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
+const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(void 0, [text_1, targetLanguage_1, ...args_1], void 0, function* (text, targetLanguage, sourceLanguage = 'en') {
     try {
-        if (targetLanguage == 'en') {
+        if (targetLanguage == sourceLanguage) {
             return text;
         }
         const [translation] = yield translate.translate(text, {
-            from: 'en', // Source language
+            from: sourceLanguage, // Source language
             to: targetLanguage, // Target language
             format: 'html', // Format if necessary
         });
