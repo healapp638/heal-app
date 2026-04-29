@@ -47,6 +47,7 @@ const messages = {
         error_while_updating_journal: "Error while updating journal",
         journal_updated_successfully: "Journal updated successfully",
         otp_sent: "Otp sent successfully",
+        password_incorrect: "Incorrect password",
     },
     es: {
         USER_NOT_FOUND: "Usuario no encontrado",
@@ -93,6 +94,7 @@ const messages = {
         error_while_updating_journal: "Error al actualizar el diario",
         journal_updated_successfully: "Diario actualizado exitosamente",
         otp_sent: "Otp enviado exitosamente",
+        password_incorrect: "Contraseña incorrecta",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -139,6 +141,7 @@ const messages = {
         error_while_updating_journal: "Erreur lors de la mise à jour du journal",
         journal_updated_successfully: "Journal mis à jour avec succès",
         otp_sent: "Otp envoyé avec succès",
+        password_incorrect: "Mot de passe incorrect",
     },
     zh: {
         USER_NOT_FOUND: "用户未找到",
@@ -185,6 +188,7 @@ const messages = {
         error_while_updating_journal: "更新日记时出错",
         journal_updated_successfully: "日记更新成功",
         otp_sent: "Otp发送成功",
+        password_incorrect: "密码错误",
     },
     hi: {
         //hindi
@@ -232,6 +236,7 @@ const messages = {
         error_while_updating_journal: "जर्नल अपडेट करते समय त्रुटि",
         journal_updated_successfully: "जर्नल सफलतापूर्वक अपडेट किया गया",
         otp_sent: "Otp सफलतापूर्वक भेजा गया",
+        password_incorrect: "गलत पासवर्ड",
     },
     de: {
         USER_NOT_FOUND: "Benutzer nicht gefunden",
@@ -278,6 +283,7 @@ const messages = {
         error_while_updating_journal: "Fehler beim Aktualisieren des Journals",
         journal_updated_successfully: "Tagebuch erfolgreich aktualisiert",
         otp_sent: "Otp erfolgreich gesendet",
+        password_incorrect: "Falsches Passwort",
     },
     ru: {
         USER_NOT_FOUND: "Пользователь не найден",
@@ -324,6 +330,7 @@ const messages = {
         error_while_updating_journal: "Ошибка при обновлении дневника",
         journal_updated_successfully: "Дневник успешно обновлен",
         otp_sent: "Otp успешно отправлен",
+        password_incorrect: "Неверный пароль",
     },
     pt: {
         USER_NOT_FOUND: "Usuário não encontrado",
@@ -370,6 +377,7 @@ const messages = {
         error_while_updating_journal: "Erro ao atualizar o diário",
         journal_updated_successfully: "Diário atualizado com sucesso",
         otp_sent: "Otp enviado com sucesso",
+        password_incorrect: "Senha incorreta",
     },
     it: {
         USER_NOT_FOUND: "Utente non trovato",
@@ -416,6 +424,7 @@ const messages = {
         error_while_updating_journal: "Errore durante l'aggiornamento del diario",
         journal_updated_successfully: "Diario aggiornato con successo",
         otp_sent: "Otp inviato con successo",
+        password_incorrect: "Password errata",
     },
     ro: {
         USER_NOT_FOUND: "Utilizator negăsit",
@@ -462,6 +471,7 @@ const messages = {
         error_while_updating_journal: "Eroare la actualizarea jurnalului",
         journal_updated_successfully: "Jurnal actualizat cu succes",
         otp_sent: "Otp trimis cu succes",
+        password_incorrect: "Parola incorectă",
     },
 };
 const getMessage = (lang, key) => {
