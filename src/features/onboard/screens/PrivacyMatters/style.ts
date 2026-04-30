@@ -1,6 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
+import { wp } from '../../../../utils/dimension';
 
 const style = (colors: any) =>
   StyleSheet.create({
@@ -78,7 +79,7 @@ const style = (colors: any) =>
     },
     footerText: {
       fontFamily: AppFonts.regular,
-      fontSize: AppUtils.fontSize(12),
+      fontSize: wp(3),
       color: colors.brown,
       opacity: 0.8,
     },

@@ -9,6 +9,7 @@ import {
   TextStyle,
   Image,
   Platform,
+  Keyboard,
 } from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
@@ -41,7 +42,10 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
   const styles = style(colors);
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={() => {
+        Keyboard.dismiss();
+        onPress();
+      }}
       disabled={disabled}
       style={[styles.btn, btnStyle, disabled && styles.disabled]}
     >

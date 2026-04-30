@@ -144,7 +144,7 @@ const ResetPassword = () => {
           <SuccessModal
             visible={successVisible}
             onClose={() => setSuccessVisible(false)}
-            title={localization.appkeys?.passChangedSuccess}
+            title={localization.appkeys?.passCahangeSucess}
             subtitle={localization.appkeys?.passChangedSubtitle}
             btnLabel={localization.appkeys?.logInBtn}
             onPressBtn={navigateToLogin}

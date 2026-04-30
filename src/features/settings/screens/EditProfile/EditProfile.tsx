@@ -11,6 +11,7 @@ import { LocalizationContext } from '../../../../localization/localization';
 import DobPickerModal, {
   DobDateParts,
 } from '../../../../modals/DobPickerModal';
+import AgeRestrictionModal from '../../../../modals/AgeRestrictionModal';
 import style from './style';
 import HomeHeader from '../../../../components/HomeHeader';
 import CustomImagePickerModal from '../../../../modals/CustomImagePickerModal';
@@ -20,8 +21,10 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import {
   getLocalizedMonthName,
+  getLocalizedMonths,
   monthToNumber,
 } from '../../../auth/utils/SignUp/signUpHelpers';
+import { isAtLeast13YearsOld } from '../../../auth/utils/SignUp/signUpValidation';
 import { getUserDetail, setUser } from '../../../../redux/Reducers/userData';
 import getEnvVars from '../../../../../env';
 
@@ -74,6 +77,7 @@ const EditProfile = () => {
   const [dobModalVisible, setDobModalVisible] = useState(false);
   const [imagePickerVisible, setImagePickerVisible] = useState(false);
   const [countryInfoVisible, setCountryInfoVisible] = useState(false);
+  const [ageModalVisible, setAgeModalVisible] = useState(false);
 
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
@@ -134,6 +138,12 @@ const EditProfile = () => {
       AppUtils.showToast(
         localization.appkeys?.selectDobMsg || 'Please select date of birth',
       );
+      return;
+    }
+
+    const localizedMonths = getLocalizedMonths(localization);
+    if (!isAtLeast13YearsOld(selectedDate, localizedMonths)) {
+      setAgeModalVisible(true);
       return;
     }
 
@@ -297,6 +307,16 @@ const EditProfile = () => {
             visible={imagePickerVisible}
             attachments={handleImageSelect}
             pressHandler={() => setImagePickerVisible(false)}
+          />
+
+          <AgeRestrictionModal
+            visible={ageModalVisible}
+            onClose={() => setAgeModalVisible(false)}
+            title={localization.appkeys?.sorryTitle || "We're sorry!"}
+            message={
+              localization.appkeys?.ageRequirementMsg ||
+              'You must be at least 13 years old to use HEAL.'
+            }
           />
         </View>
       }

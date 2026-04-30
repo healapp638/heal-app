@@ -1,10 +1,11 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import {
   View,
   FlatList,
   ImageBackground,
   Image,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import { useTheme, useNavigation, useRoute } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -12,6 +13,7 @@ import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import GetCreditsModal from '../../../../modals/GetCreditsModal';
 
 const ThemeDetail = () => {
   const { colors, images } = useTheme() as any;
@@ -19,6 +21,7 @@ const ThemeDetail = () => {
   const navigation = useNavigation();
   const route = useRoute() as any;
   const styles = style(colors);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
 
   // Title passed from navigation params, fallback to 'Abstract' if missing
   const { title } = route.params || { title: 'Abstract' };
@@ -37,21 +40,27 @@ const ThemeDetail = () => {
   ];
 
   const renderItem = ({ item }: { item: any }) => (
-    <ImageBackground
-      source={item.image}
-      style={styles.card}
-      imageStyle={styles.imageStyle}
-      resizeMode="cover"
+    <Pressable
+      onPress={() => {
+        setShowCreditsModal(true);
+      }}
     >
-      <View style={styles.lockWrapper}>
+      <ImageBackground
+        source={item.image}
+        style={styles.card}
+        imageStyle={styles.imageStyle}
+        resizeMode="cover"
+      >
+        {/* <View style={styles.lockWrapper}>
         <Image
           source={images.simpleLock}
           style={styles.lockIcon}
           resizeMode="contain"
         />
-      </View>
-      <SolidText style={styles.healText}>Heal</SolidText>
-    </ImageBackground>
+      </View> */}
+        {/* <SolidText style={styles.healText}>Heal</SolidText> */}
+      </ImageBackground>
+    </Pressable>
   );
 
   return (
@@ -71,6 +80,10 @@ const ThemeDetail = () => {
             style={{ width: '100%', marginLeft: -8, marginTop: -10 }}
             contentContainerStyle={styles.gridContainer}
             showsVerticalScrollIndicator={false}
+          />
+          <GetCreditsModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
           />
         </View>
       }

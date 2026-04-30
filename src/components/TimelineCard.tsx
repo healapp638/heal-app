@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image } from 'react-native';
+import { View, Image, Platform } from 'react-native';
 import SolidText from './SolidText';
 
 interface TimelineCardProps {
@@ -28,33 +28,38 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
       </View>
 
       <View style={styles.timelineRight}>
-        <View style={styles.timelineItem}>
-          <SolidText style={styles.timelineTitle}>
+        <View
+          style={{
+            ...styles.timelineItem,
+            marginTop: Platform.OS == 'ios' ? 1 : 3,
+          }}
+        >
+          <SolidText maxFontScale={1} style={styles.timelineTitle}>
             {localization.appkeys?.todayFreeTrialStarts}
           </SolidText>
-          <SolidText style={styles.timelineSub}>
+          <SolidText maxFontScale={1} style={styles.timelineSub}>
             {localization.appkeys?.enjoyFullAccess}
           </SolidText>
         </View>
 
-        <View style={{ ...styles.timelineItem, marginVertical: 20 }}>
-          <SolidText style={styles.timelineTitle}>
+        <View style={styles.timelineItemCenter}>
+          <SolidText maxFontScale={1} style={styles.timelineTitle}>
             {trialReminderDate} -{' '}
             {localization.appkeys?.trialReminderDate?.split(' - ')[1] ||
               'Trial reminder'}
           </SolidText>
-          <SolidText style={styles.timelineSub}>
+          <SolidText maxFontScale={1} style={styles.timelineSub}>
             {localization.appkeys?.endingSoon}
           </SolidText>
         </View>
 
         <View style={styles.timelineItem}>
-          <SolidText style={styles.timelineTitle}>
+          <SolidText maxFontScale={1} style={styles.timelineTitle}>
             {becomeMemberDate} -{' '}
             {localization.appkeys?.becomeMemberDate?.split(' - ')[1] ||
               'Become member'}
           </SolidText>
-          <SolidText style={styles.timelineSub}>
+          <SolidText maxFontScale={1} style={styles.timelineSub}>
             {localization.appkeys?.endsUnlessCanceled}
           </SolidText>
         </View>

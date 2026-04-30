@@ -15,16 +15,12 @@ const Splash = () => {
   const auth = useSelector((state: any) => state.userData?.auth);
   const user = useSelector((state: any) => state.userData?.user);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  const handleNavigation = () => {
+    const intervalId = setInterval(() => {
       if (!auth) {
         navigation.reset({
           index: 0,
-          routes: [
-            {
-              name: AppRoutes.Welcome,
-            } as never,
-          ],
+          routes: [{ name: AppRoutes.Welcome } as never],
         });
       } else {
         if (user?.is_profile_completed == false) {
@@ -49,22 +45,25 @@ const Splash = () => {
           });
         }
       }
-    }, 3000);
-    return () => clearTimeout(timer);
-  }, []);
+      clearInterval(intervalId);
+    }, 2000);
+  };
+
   return (
-    <SolidView
-      view={
-        <View style={styles.container}>
-          <Video
-            source={images.splash}
-            resizeMode="cover"
-            style={StyleSheet.absoluteFill}
-            muted={true}
-          />
-        </View>
-      }
-    />
+    <View style={styles.container}>
+      <Video
+        source={images.splash}
+        resizeMode="cover"
+        style={StyleSheet.absoluteFill}
+        muted={true}
+        playWhenInactive={true}
+        playInBackground={false}
+        ignoreSilentSwitch={'obey'}
+        onEnd={handleNavigation}
+        onError={handleNavigation}
+        disableFocus={true}
+      />
+    </View>
   );
 };
 

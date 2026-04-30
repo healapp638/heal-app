@@ -125,9 +125,12 @@ const ThemeMixes = () => {
                   image={item.image}
                   title={item.title}
                   onPress={() =>
-                    navigation.navigate(AppRoutes.ThemeDetail as never, {
-                      title: item.title,
-                    } as never)
+                    navigation.navigate(
+                      AppRoutes.ThemeDetail as never,
+                      {
+                        title: item.title,
+                      } as never,
+                    )
                   }
                 />
               )}
@@ -150,7 +153,12 @@ const ThemeMixes = () => {
                 { paddingHorizontal: 14 },
               ]}
               style={{ marginTop: -4 }}
-              renderItem={({ item }) => <GridThemeCard image={item.image} />}
+              renderItem={({ item }) => (
+                <GridThemeCard
+                  image={item.image}
+                  onPress={() => setShowCreditsModal(true)}
+                />
+              )}
             />
           </ScrollView>
           <GetCreditsModal

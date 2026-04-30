@@ -1,12 +1,19 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, View, Image } from 'react-native';
+import {
+  ImageBackground,
+  StyleSheet,
+  View,
+  Image,
+  Pressable,
+} from 'react-native';
 import { useTheme } from '@react-navigation/native';
 
 interface GridThemeCardProps {
   image: any;
+  onPress: () => void;
 }
 
-const GridThemeCard = ({ image }: GridThemeCardProps) => {
+const GridThemeCard = ({ image, onPress }: GridThemeCardProps) => {
   const { images } = useTheme() as any;
 
   return (
@@ -16,6 +23,10 @@ const GridThemeCard = ({ image }: GridThemeCardProps) => {
       imageStyle={styles.imageStyle}
       resizeMode="contain"
     >
+      <Pressable
+        style={{ height: '100%', width: '100%' }}
+        onPress={onPress}
+      ></Pressable>
       {/* <Image source={images.h} style={styles.hLogo} resizeMode="contain" /> */}
     </ImageBackground>
   );

@@ -137,7 +137,7 @@ const Home = () => {
             renderItem={({ item }) => (
               <ModuleCard
                 onPress={() =>
-                  navigation.navigate(AppRoutes.ModuleThemeDetail as never)
+                  navigation.navigate(AppRoutes.StartedModule as never)
                 }
                 background={item.background}
                 progress={item.progress}

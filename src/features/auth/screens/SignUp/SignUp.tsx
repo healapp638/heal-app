@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, TouchableOpacity, BackHandler, Image, Platform } from 'react-native';
+import {
+  View,
+  TouchableOpacity,
+  BackHandler,
+  Image,
+  Platform,
+} from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -12,6 +18,7 @@ import DobPickerModal, {
   DobDateParts,
 } from '../../../../modals/DobPickerModal';
 import InfoModal from '../../../../modals/InfoModal';
+import AgeRestrictionModal from '../../../../modals/AgeRestrictionModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import AppUtils from '../../../../utils/appUtils';
@@ -63,6 +70,7 @@ const SignUp = () => {
   // Info Modal States
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [countryInfoVisible, setCountryInfoVisible] = useState(false);
+  const [ageModalVisible, setAgeModalVisible] = useState(false);
 
   const localizedMonths = getLocalizedMonths(localization);
 
@@ -87,7 +95,15 @@ const SignUp = () => {
     });
 
     if (!validation.isValid) {
-      AppUtils.showToast(validation.message, validation.duration);
+      if (
+        validation.message ===
+        (localization.appkeys?.ageRequirementMsg ||
+          'You must be at least 13 years old to use HEAL.')
+      ) {
+        setAgeModalVisible(true);
+      } else {
+        AppUtils.showToast(validation.message, validation.duration);
+      }
       return;
     }
 
@@ -316,6 +332,16 @@ const SignUp = () => {
               localization.appkeys?.passwordReq3,
               localization.appkeys?.passwordReq4,
             ]}
+          />
+
+          <AgeRestrictionModal
+            visible={ageModalVisible}
+            onClose={() => setAgeModalVisible(false)}
+            title={localization.appkeys?.sorryTitle || "We're sorry!"}
+            message={
+              localization.appkeys?.ageRequirementMsg ||
+              'You must be at least 13 years old to use HEAL.'
+            }
           />
         </View>
       }

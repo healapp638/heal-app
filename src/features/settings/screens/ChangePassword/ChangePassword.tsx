@@ -171,7 +171,7 @@ const ChangePassword = () => {
               localization.appkeys?.passChangedSubtitleSettings ||
               'You can use your New Password to login to your account.'
             }
-            btnLabel={localization.appkeys?.login || 'Ok'}
+            btnLabel={localization.appkeys?.ok}
             onPressBtn={navigateToSettings}
           />
         </View>

@@ -84,9 +84,11 @@ const Settings = () => {
             const isAbout =
               item === (localization.appkeys?.aboutHeal || 'About HEAL');
             const isTerms =
-              item === (localization.appkeys?.termsOfService || 'Terms of Service');
+              item ===
+              (localization.appkeys?.termsOfService || 'Terms of Service');
             const isPolicy =
-              item === (localization.appkeys?.privacyPolicy || 'Privacy Policy');
+              item ===
+              (localization.appkeys?.privacyPolicy || 'Privacy Policy');
 
             return (
               <SettingItem
@@ -137,7 +139,7 @@ const Settings = () => {
             }
           />
 
-          <SettingsPremiumCard
+          {/* <SettingsPremiumCard
             description={
               localization.appkeys?.unlockPremium ||
               'Unlock all premium features to support your healing journey'
@@ -150,7 +152,7 @@ const Settings = () => {
               // navigation.navigate(AppRoutes.Premium as never)
               setShowCreditsModal(true)
             }
-          />
+          /> */}
 
           <View style={styles.footer}>
             <SolidText style={styles.footerText}>

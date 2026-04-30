@@ -41,10 +41,10 @@ const style = (colors: any, appLanguage: any) =>
     },
     timelineCard: {
       backgroundColor: colors.white,
-      borderRadius: 20,
+      borderRadius: 24,
       flexDirection: 'row',
-      paddingVertical: 8,
-      paddingHorizontal: 4,
+      paddingVertical: 10,
+      paddingHorizontal: 5,
       marginBottom: hp(3),
       // Shadow for iOS
       shadowColor: '#000',
@@ -57,19 +57,23 @@ const style = (colors: any, appLanguage: any) =>
     timelineLeft: {
       width: wp(12),
       alignItems: 'center',
+      justifyContent: 'center',
     },
     premiumImage: {
-      width: 35,
-      height: 200,
+      width: wp(11),
+      height: Platform.OS == 'ios' ? hp(22) : hp(25),
+      resizeMode: 'stretch',
     },
     timelineRight: {
       flex: 1,
-      paddingLeft: 15,
-      justifyContent: 'space-between',
+      paddingLeft: 6,
     },
     timelineItem: {
-      flex: 1,
       justifyContent: 'center',
+    },
+    timelineItemCenter: {
+      justifyContent: 'center',
+      marginVertical: Platform.OS == 'ios' ? hp(3.5) : hp(3),
     },
     timelineTitle: {
       fontFamily: AppFonts.recoMedium,
@@ -82,7 +86,7 @@ const style = (colors: any, appLanguage: any) =>
       fontSize: 12,
       color: '#666',
       includeFontPadding: false,
-      paddingRight: 20,
+      paddingRight: 30,
       marginTop: 2,
       lineHeight: 20,
     },
@@ -200,7 +204,7 @@ const style = (colors: any, appLanguage: any) =>
     },
     footerLink: {
       fontFamily: AppFonts.regular,
-      fontSize: AppUtils.fontSize(12),
+      fontSize: wp(2.8),
       color: '#666',
       includeFontPadding: false,
     },

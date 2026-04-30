@@ -53,6 +53,7 @@ const Verification = () => {
   }, [timer]);
 
   const handleResend = () => {
+    setOtpCode('');
     if (canResend) {
       resendMutate(
         {

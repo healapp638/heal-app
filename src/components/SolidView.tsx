@@ -106,8 +106,8 @@ const style = (colors: any) =>
       flexGrow: 1,
     },
     heal: {
-      height: 70,
-      width: 70,
+      height: 80,
+      width: 80,
     },
     healContainer: {
       position: 'absolute',
