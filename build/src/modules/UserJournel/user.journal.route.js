@@ -47,4 +47,10 @@ router.get('/journal_detail', auth_middleware_1.verifyTokenUser, (req, res) => _
     const result = yield controller.journalDetail(journal_id);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.get('/journal_list_by_date', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { date } = req.query;
+    const controller = new user_journal_controller_1.default(req, res);
+    const result = yield controller.journalListByDate(date);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

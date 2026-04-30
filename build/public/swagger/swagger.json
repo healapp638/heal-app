@@ -793,6 +793,41 @@
 				]
 			}
 		},
+		"/user/journal/journal_list_by_date": {
+			"get": {
+				"operationId": "JournalListByDate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Journal Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "date",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/user/common/contactus/fill": {
 			"post": {
 				"operationId": "ContactUs",

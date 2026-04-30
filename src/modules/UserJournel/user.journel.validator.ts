@@ -33,4 +33,11 @@ const validateJournalDetail = (data: any) => {
     return schema.validate(data)
 }
 
-export { validateAddJournal, validateUpdateJournal, validateDeleteJournal, validateJournalDetail }
+const validateJournalListByDate = (data: any) => {
+    const schema = Joi.object({
+        date: Joi.string().required(),
+    })
+    return schema.validate(data)
+}
+
+export { validateAddJournal, validateUpdateJournal, validateDeleteJournal, validateJournalDetail, validateJournalListByDate }

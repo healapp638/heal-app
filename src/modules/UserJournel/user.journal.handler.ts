@@ -7,6 +7,7 @@ import { getMessage } from "../../helpers/messages";
 import userJournalModel from "./user.journel.model";
 import { convertToObjectId } from "../../helpers/common.helper";
 import { UserTranslateText } from "../../helpers/langauge.translate.helper";
+import moment from "moment";
 
 const UserCommonHandler = {
 
@@ -85,7 +86,13 @@ const UserCommonHandler = {
                 $addFields: {
                     feeling: `$feeling.${lang}`,
                     title: `$title.${lang}`,
-                    description: `$description.${lang}`
+                    description: `$description.${lang}`,
+                    date: {
+                        $dateToString: {
+                            format: "%m-%d-%Y", // 👉 change format if needed
+                            date: "$createdAt"
+                        }
+                    }
                 }
             },
             {
@@ -105,9 +112,28 @@ const UserCommonHandler = {
                 }
             },
             {
+                $group: {
+                    _id: "$date",
+                    data: { $push: "$$ROOT" }
+                }
+            },
+            {
+                $sort: {
+                    _id: -1 // latest date first
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    date: "$_id",
+                    data: 1
+                }
+            },
+            {
                 $limit: limit
             }
         ]);
+
         const nextCursor = response.length > 0 ? JSON.stringify({
             _id: response[response.length - 1]._id,
             createdAt: response[response.length - 1].createdAt
@@ -115,7 +141,7 @@ const UserCommonHandler = {
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_getting_journal'), null, statusCodes.API_ERROR)
         }
-        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { data: response, nextCursor }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { response, nextCursor }, statusCodes.SUCCESS)
     },
 
     journalDetail: async (journalId: string, userId: string,): Promise<ApiResponse> => {
@@ -195,6 +221,44 @@ const UserCommonHandler = {
         }
         return showResponse(true, getMessage(lang, 'journal_deleted_successfully'), response, statusCodes.SUCCESS)
     },
+
+    journalListByDate: async (date: string, userId: string): Promise<ApiResponse> => {
+        const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+        const lang = user.language || 'en'
+        if (!user) {
+            return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
+        }
+        const start_of_day = moment(date).startOf('day').toDate();
+        const end_of_day = moment(date).endOf('day').toDate();
+        const response = await userJournalModel.aggregate([{
+            $match: {
+                user_id: convertToObjectId(userId),
+                createdAt: {
+                    $gte: start_of_day,
+                    $lte: end_of_day
+                }
+            }
+        }, {
+            $sort: { createdAt: -1 }
+        }, {
+            $addFields: {
+                feeling: `$feeling.${lang}`,
+                title: `$title.${lang}`,
+                description: `$description.${lang}`
+            }
+        }]);
+        const total = await userJournalModel.countDocuments({
+            user_id: convertToObjectId(userId),
+            createdAt: {
+                $gte: start_of_day,
+                $lte: end_of_day
+            }
+        });
+        if (!response) {
+            return showResponse(false, getMessage(lang, 'error_while_getting_journal'), null, statusCodes.API_ERROR)
+        }
+        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { response, total }, statusCodes.SUCCESS)
+    }
 
 }
 

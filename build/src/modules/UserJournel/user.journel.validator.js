@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateJournalDetail = exports.validateDeleteJournal = exports.validateUpdateJournal = exports.validateAddJournal = void 0;
+exports.validateJournalListByDate = exports.validateJournalDetail = exports.validateDeleteJournal = exports.validateUpdateJournal = exports.validateAddJournal = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validateAddJournal = (data) => {
     const schema = joi_1.default.object({
@@ -38,3 +38,10 @@ const validateJournalDetail = (data) => {
     return schema.validate(data);
 };
 exports.validateJournalDetail = validateJournalDetail;
+const validateJournalListByDate = (data) => {
+    const schema = joi_1.default.object({
+        date: joi_1.default.string().required(),
+    });
+    return schema.validate(data);
+};
+exports.validateJournalListByDate = validateJournalListByDate;

@@ -20,6 +20,7 @@ const messages_1 = require("../../helpers/messages");
 const user_journel_model_1 = __importDefault(require("./user.journel.model"));
 const common_helper_1 = require("../../helpers/common.helper");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
+const moment_1 = __importDefault(require("moment"));
 const UserCommonHandler = {
     createJournal: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const { feeling, title, description } = data;
@@ -87,7 +88,13 @@ const UserCommonHandler = {
                 $addFields: {
                     feeling: `$feeling.${lang}`,
                     title: `$title.${lang}`,
-                    description: `$description.${lang}`
+                    description: `$description.${lang}`,
+                    date: {
+                        $dateToString: {
+                            format: "%m-%d-%Y", // 👉 change format if needed
+                            date: "$createdAt"
+                        }
+                    }
                 }
             },
             {
@@ -105,6 +112,24 @@ const UserCommonHandler = {
                 }
             },
             {
+                $group: {
+                    _id: "$date",
+                    data: { $push: "$$ROOT" }
+                }
+            },
+            {
+                $sort: {
+                    _id: -1 // latest date first
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    date: "$_id",
+                    data: 1
+                }
+            },
+            {
                 $limit: limit
             }
         ]);
@@ -115,7 +140,7 @@ const UserCommonHandler = {
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_getting_journal'), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { data: response, nextCursor }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { response, nextCursor }, statusCodes_1.default.SUCCESS);
     }),
     journalDetail: (journalId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
@@ -184,5 +209,42 @@ const UserCommonHandler = {
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_deleted_successfully'), response, statusCodes_1.default.SUCCESS);
     }),
+    journalListByDate: (date, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
+        const lang = user.language || 'en';
+        if (!user) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
+        }
+        const start_of_day = (0, moment_1.default)(date).startOf('day').toDate();
+        const end_of_day = (0, moment_1.default)(date).endOf('day').toDate();
+        const response = yield user_journel_model_1.default.aggregate([{
+                $match: {
+                    user_id: (0, common_helper_1.convertToObjectId)(userId),
+                    createdAt: {
+                        $gte: start_of_day,
+                        $lte: end_of_day
+                    }
+                }
+            }, {
+                $sort: { createdAt: -1 }
+            }, {
+                $addFields: {
+                    feeling: `$feeling.${lang}`,
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`
+                }
+            }]);
+        const total = yield user_journel_model_1.default.countDocuments({
+            user_id: (0, common_helper_1.convertToObjectId)(userId),
+            createdAt: {
+                $gte: start_of_day,
+                $lte: end_of_day
+            }
+        });
+        if (!response) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_getting_journal'), null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { response, total }, statusCodes_1.default.SUCCESS);
+    })
 };
 exports.default = UserCommonHandler;

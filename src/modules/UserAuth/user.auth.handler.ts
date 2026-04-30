@@ -57,7 +57,7 @@ const UserAuthHandler = {
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
         if (!findUser.status) {
-            return showResponse(false, getMessage(language || 'en', "user_not_registered"), null, statusCodes.API_ERROR)
+            return showResponse(false, getMessage(language || 'en', "invalid_cred"), null, statusCodes.API_ERROR)
         }
 
         const userData = findUser?.data

@@ -5,7 +5,7 @@ import handler from '../UserJournel/user.journal.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
 import { tryCatchWrapper } from '../../utils/config.util';
-import { validateAddJournal, validateDeleteJournal, validateJournalDetail, validateUpdateJournal } from './user.journel.validator';
+import { validateAddJournal, validateDeleteJournal, validateJournalDetail, validateJournalListByDate, validateUpdateJournal } from './user.journel.validator';
 
 @Tags('User Journal Routes')
 @Route('/user/journal')
@@ -70,6 +70,17 @@ export default class UserJournalController extends Controller {
         }
         const wrappedFunc = tryCatchWrapper(handler.journalDetail);
         return wrappedFunc(journal_id, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("journal_list_by_date")
+    public async journalListByDate(@Query() date: string): Promise<ApiResponse> {
+        const validate = validateJournalListByDate({ date });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.journalListByDate);
+        return wrappedFunc(date, this.userId); // Invoking the wrapped function 
     }
 }
 

@@ -48,6 +48,7 @@ const messages = {
         journal_updated_successfully: "Journal updated successfully",
         otp_sent: "Otp sent successfully",
         password_incorrect: "Incorrect password",
+        invalid_credentials: "Invalid credentials",
     },
     es: {
         USER_NOT_FOUND: "Usuario no encontrado",
@@ -95,6 +96,7 @@ const messages = {
         journal_updated_successfully: "Diario actualizado exitosamente",
         otp_sent: "Otp enviado exitosamente",
         password_incorrect: "Contraseña incorrecta",
+        invalid_credentials: "Credenciales invalidas",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -142,6 +144,7 @@ const messages = {
         journal_updated_successfully: "Journal mis à jour avec succès",
         otp_sent: "Otp envoyé avec succès",
         password_incorrect: "Mot de passe incorrect",
+        invalid_credentials: "Identifiants invalides",
     },
     zh: {
         USER_NOT_FOUND: "用户未找到",
@@ -189,6 +192,7 @@ const messages = {
         journal_updated_successfully: "日记更新成功",
         otp_sent: "Otp发送成功",
         password_incorrect: "密码错误",
+        invalid_credentials: "凭据无效",
     },
     hi: {
         //hindi
@@ -237,6 +241,7 @@ const messages = {
         journal_updated_successfully: "जर्नल सफलतापूर्वक अपडेट किया गया",
         otp_sent: "Otp सफलतापूर्वक भेजा गया",
         password_incorrect: "गलत पासवर्ड",
+        invalid_credentials: "अमान्य क्रेडेंशियल्स",
     },
     de: {
         USER_NOT_FOUND: "Benutzer nicht gefunden",
@@ -284,6 +289,7 @@ const messages = {
         journal_updated_successfully: "Tagebuch erfolgreich aktualisiert",
         otp_sent: "Otp erfolgreich gesendet",
         password_incorrect: "Falsches Passwort",
+        invalid_credentials: "Ungültige Anmeldeinformationen",
     },
     ru: {
         USER_NOT_FOUND: "Пользователь не найден",
@@ -331,6 +337,7 @@ const messages = {
         journal_updated_successfully: "Дневник успешно обновлен",
         otp_sent: "Otp успешно отправлен",
         password_incorrect: "Неверный пароль",
+        invalid_credentials: "Неверные учетные данные",
     },
     pt: {
         USER_NOT_FOUND: "Usuário não encontrado",
@@ -378,6 +385,7 @@ const messages = {
         journal_updated_successfully: "Diário atualizado com sucesso",
         otp_sent: "Otp enviado com sucesso",
         password_incorrect: "Senha incorreta",
+        invalid_credentials: "Credenciais inválidas",
     },
     it: {
         USER_NOT_FOUND: "Utente non trovato",
@@ -425,6 +433,7 @@ const messages = {
         journal_updated_successfully: "Diario aggiornato con successo",
         otp_sent: "Otp inviato con successo",
         password_incorrect: "Password errata",
+        invalid_credentials: "Credenziali inválidas",
     },
     ro: {
         USER_NOT_FOUND: "Utilizator negăsit",
@@ -472,6 +481,7 @@ const messages = {
         journal_updated_successfully: "Jurnal actualizat cu succes",
         otp_sent: "Otp trimis cu succes",
         password_incorrect: "Parola incorectă",
+        invalid_credentials: "Credenciais inválidas",
     },
 };
 const getMessage = (lang, key) => {
