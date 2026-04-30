@@ -98,7 +98,7 @@ const AddJournal = () => {
                   resizeMode="cover"
                   defaultSource={emotion.image}
                 />
-                <SolidText style={styles.emotionText}>
+                <SolidText maxFontScale={1} style={styles.emotionText}>
                   {emotion.label}
                 </SolidText>
                 {selectedEmotion === emotion.id && (

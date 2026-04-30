@@ -84,13 +84,13 @@ const HealyChat = () => {
                   resizeMode="contain"
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={styles.listenBtn}>
+              {/* <TouchableOpacity style={styles.listenBtn}>
                 <Image
                   source={images.listen}
                   style={styles.listenIcon}
                   resizeMode="contain"
                 />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
 
             {/* Listen / Voice Wave Button */}
