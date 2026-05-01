@@ -1,7 +1,7 @@
 {
-    "name": "SolarioTech",
-    "short_name": "SolarioTech",
-    "description": "Build amazing applications with our modern platform. Fast, secure, and scalable solutions for growing businesses.",
+    "name": "Heal",
+    "short_name": "Heal",
+    "description": "Heal provides expert software development, SaaS solutions, mobile apps, and enterprise web applications.",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
@@ -9,13 +9,13 @@
     "orientation": "portrait-primary",
     "icons": [
         {
-            "src": "/icons/icon-192x192.png",
+            "src": "/images/logo.png",
             "sizes": "192x192",
             "type": "image/png",
             "purpose": "any maskable"
         },
         {
-            "src": "/icons/icon-512x512.png",
+            "src": "/images/logo.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
@@ -23,13 +23,13 @@
     ],
     "screenshots": [
         {
-            "src": "/icons/screenshot-desktop.png",
+            "src": "/images/logo.png",
             "sizes": "1280x720",
             "type": "image/png",
             "form_factor": "wide"
         },
         {
-            "src": "/icons/screenshot-mobile.png",
+            "src": "/images/logo.png",
             "sizes": "750x1334",
             "type": "image/png",
             "form_factor": "narrow"
@@ -47,7 +47,7 @@
             "url": "/home",
             "icons": [
                 {
-                    "src": "/icons/icon-192x192.png",
+                    "src": "/images/logo.png",
                     "sizes": "192x192"
                 }
             ]
@@ -59,7 +59,7 @@
             "url": "/profile",
             "icons": [
                 {
-                    "src": "/icons/icon-192x192.png",
+                    "src": "/images/logo.png",
                     "sizes": "192x192"
                 }
             ]
