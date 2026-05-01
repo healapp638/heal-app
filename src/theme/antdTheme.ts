@@ -22,7 +22,12 @@ export const lightTheme = {
     Table: {
       headerBg: "#F66F76",
       colorBgContainer: "#ffff",
-      borderColor:"#ffff"
+      borderColor: "#ffff",
+      headerColor: '#ffffff',
+    },
+    Empty: {
+      colorText: "#ff4d4f",   // text "No Data"
+      colorFill: "#ffeaea",   // icon/illustration color
     },
     Upload: {
       colorBorder: "#F66F76",
@@ -53,7 +58,12 @@ export const darkTheme = {
     Table: {
       headerBg: "#F66F76",
       colorBgContainer: "#ffff",
-      borderColor:"#ffff"
+      borderColor: "#ffff",
+      headerColor: '#ffffff',
+    },
+    Empty: {
+      colorText: "#ff4d4f",   // text "No Data"
+      colorFill: "#ffeaea",   // icon/illustration color
     },
     Upload: {
       colorBorder: "#F66F76",

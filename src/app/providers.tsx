@@ -14,7 +14,16 @@ import AppThemeProvider from '@/providers/ThemeProvider'
 import CentralLoader from '@/components/ui/feedback/CentralLoader'
 import { persistor, store } from '@/redux/store/store'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000, // 1 minute
+      gcTime: 5 * 60 * 1000, // 5 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (

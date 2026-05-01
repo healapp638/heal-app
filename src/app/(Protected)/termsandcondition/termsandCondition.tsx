@@ -23,9 +23,15 @@ export default function TermsAndCondition() {
 
     const LANGUAGE_OPTIONS = [
         { value: 'en', label: 'English' },
+        { value: 'zh', label: 'Chinese' },
         { value: 'es', label: 'Spanish' },
         { value: 'fr', label: 'French' },
-        { value: 'de', label: 'German' }
+        { value: 'hi', label: 'Hindi' },
+        { value: 'de', label: 'German' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ro', label: 'Romanian' }
     ];
 
     const { mutateAsync: updateContent } = useAppMutate({
@@ -111,7 +117,7 @@ export default function TermsAndCondition() {
     }
 
     return (
-        <div>
+         <div className='p-2 md:p-6'>
             <div>
                 <h1 className="text-3xl font-bold text-black">
                     Terms and <span className="text-maincolor">Condition</span>

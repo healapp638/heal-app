@@ -33,6 +33,29 @@ export const ENDPOINTS = {
         LIST_PHASE:"admin/phases/list_phase",
         CREATE_LESSONS:"admin/exercise/create_exercise_details",
         LIST_LESSONS:"admin/exercise/list_exercise_details",
-        
+        THEME_DETAIL:"admin/theme/theme_details",
+        UPDATE_THEME:"admin/theme/update_theme",
+        DETAIL_MODULE:"admin/modules/module_details",
+        DELETE_MODULE:"admin/modules/delete_module",
+        UPDATE_MODULE:"admin/modules/update_module",
+        SUBMODULE_DETAIL:"admin/submodules/submodule_details",
+        SUBMODULE_DELETE:"admin/submodules/delete_submodule",
+        SUBMODULE_UPDATE:"admin/submodules/update_submodule",
+        PHASE_DELETE:"admin/phases/delete_phase",
+        PHASE_DETAIL:"admin/phases/phase_details",
+        PHASE_UPDATE:"admin/phases/update_phase",
+        LESSON_UPDATE:"admin/exercise/update_exercise_details",
+        LESSON_DELETE:"admin/exercise/delete_exercise_details",
+        LESSON_DETAIL:"admin/exercise/exercise_details",
+        EXERCISE_CREATE:"admin/exercise/create_exercise",
+        EXERCISE_UPDATE:"admin/exercise/update_exercise",
+        EXERCISE_DELETE:"admin/exercise/delete_exercise",
+        EXERCISE_DETAIL:"admin/exercise/single_exercise",
+        EXERCISE_LIST:"admin/exercise/list_exercise",
+        ADMIN_DETAIL:"admin/auth/details",
+        PROFILE_EDIT:"admin/auth/profile",
+        CHANGE_PASSWORD:"admin/auth/change_password",
+        ADMIN_DASHBOARD:"admin/user/dashboard"
+
     }
 }

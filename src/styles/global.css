@@ -67,6 +67,7 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-poppins);
+    scroll-behavior: smooth;
   }
 
   h1 {
@@ -163,11 +164,34 @@
   .ant-menu-light{
     @apply border-maincolor! bg-cream!
   }
+
+  .ant-menu-light.ant-menu-root.ant-menu-inline{
+    @apply border-none!
+  }
   .ant-dropdown .ant-dropdown-menu{
     @apply bg-cream!
   }
   .ant-pagination .ant-pagination-item-active a{
     @apply text-white! 
   }
+  .ant-modal .ant-modal-container {
+    @apply bg-cream!
+  }
+  .anticon >*{
+    @apply text-maincolor!
+  }
+  .ant-pagination .ant-pagination-item{
+    @apply text-white! bg-maincolor! border-none!
+  }
+  .ant-table-wrapper .ant-empty-image svg {
+  fill: #ff4d4f !important;
+}
+.ant-table-wrapper .ant-empty-description {
+  color: #ff4d4f !important;
+}
+.ant-empty-image svg path{
+  fill: var(--maincolor) !important;
+  stroke: var(--color-white) !important;
+}
 
 }

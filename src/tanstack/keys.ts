@@ -31,6 +31,30 @@ const MUTATION_KEYS = {
     LIST_PHASE: "list-phase",
     CREATE_LESSONS: "create-lessons",
     LIST_LESSONS: "list-lessons",
+    THEME_DETAIL: "theme-detail",
+    UPDATE_THEME: "update-theme",
+    DETAIL_MODULE: "detail-module",
+    DELETE_MODULE: "delete-module",
+    UPDATE_MODULE: "update-module",
+    SUBMODULE_DETAIL: "submodule-detail",
+    SUBMODULE_DELETE: "submodule-delete",
+    SUBMODULE_UPDATE: "submodule-update",
+    PHASE_DELETE: "phase-delete",
+    PHASE_DETAIL: "phase-detail",
+    PHASE_UPDATE: "phase-update",
+    LESSON_DELETE: "lesson-delete",
+    LESSON_DETAIL: "lesson-detail",
+    LESSON_UPDATE: "lesson-update",
+    EXERCISE_CREATE: "exercise-create",
+    EXERCISE_UPDATE: "exercise-update",
+    EXERCISE_DELETE: "exercise-delete",
+    EXERCISE_DETAIL: "exercise-detail",
+    EXERCISE_LIST: "exercise-list",
+    ADMIN_DETAIL: "admin-detail",
+    PROFILE_EDIT: "profile-edit",
+    ADMIN_CHANGE_PASSWORD: "admin-change-password",
+    ADMIN_DASHBOARD:"admin-dashboard"
+
 }
 
 export { QUERY_KEYS, MUTATION_KEYS }

@@ -73,17 +73,17 @@ const refreshAccessToken = async (): Promise<string | null> => {
     const params = new URLSearchParams();
     params.append('refresh_token', refreshToken.replace(/"/g, ''));
 
-    const response = await axios.post<ApiResponse<{ accessToken: string }>>(
+    const response = await axios.post<ApiResponse<{ access_token: string }>>(
       `${API_BASE_URL}admin/auth/refresh_token`,
       params,
       { withCredentials: true, skipLoader: true }
     );
-    logger.log("response inside api.interceptors.response.use", response);
-    const newToken = response?.data?.data?.accessToken;
+
+    const newToken = response?.data?.data?.access_token;
     if (newToken) {
       store.dispatch(storeToken(newToken));
     }
-    
+
     return newToken || null;
   } catch {
     return null;

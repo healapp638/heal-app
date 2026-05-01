@@ -33,7 +33,7 @@ const AppButton = forwardRef<HTMLButtonElement, AppButtonProps>(
     const classes = [
       'transition-all duration-300 ease-in-out',
       fullWidth && 'w-full',
-      animateOnHover && !isDisabled && 'hover:shadow-md',
+      animateOnHover && !isDisabled && 'hover:shadow-md active:scale-95',
       className,
     ]
       .filter(Boolean)

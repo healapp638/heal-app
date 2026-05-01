@@ -9,7 +9,7 @@ const AuthCard = ({ children }: { children: ReactNode }) => {
                 <ScaleIn duration={0.5}>
                     <div className="bg-cream! shadow-2xl shadow-cream! border-2 border-white! rounded-lg">
                         <div className='rounded-lg py-4 flex justify-center'>
-                            <Image src={'/images/logo.png'} height={120} alt="Logo" className='w-full!' preview={false} draggable={false} />
+                            <Image src={'/images/logo.png'} height={100} alt="Logo" className='w-full!' preview={false} draggable={false} />
                         </div>
                         <div className='p-4'>
                             {children}

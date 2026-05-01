@@ -39,7 +39,7 @@ const CustomEditor = ({
   }, [editorData]);
 
   return (
-    <div className="ckeditor-wrapper" style={{ minHeight: '400px' }}>
+    <div className="ckeditor-wrapper h-full" style={{ minHeight: '400px' }} >
       <CustomEditorComponent
         editor={ClassicEditor}
         data={editorData}

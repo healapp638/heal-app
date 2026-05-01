@@ -6,6 +6,7 @@ import { useAppQuery } from '@/tanstack/useAppQuery'
 import { FiTrash2 } from "react-icons/fi"
 import { FaEye } from "react-icons/fa";
 import { Button, Table } from 'antd'
+import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import DeleteModal from '@/components/ui/modals/DeleteModal'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
@@ -95,7 +96,7 @@ export default function ContactUs() {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
     }, [pagination]);
 
-    const columns = [
+    const columns: ColumnsType<ContactData> = [
         {
             title: 'Sr. No.',
             key: 'number',
@@ -119,18 +120,19 @@ export default function ContactUs() {
             title: 'Actions',
             dataIndex: 'actions',
             key: 'actions',
+            align: 'center',
             render: (_text: any, record: any) => (
-                <div className="flex gap-2">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenContactDetailModal(true); setSelectedContact(record?._id) }} className="border-0 bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setopenDeleteModal(true); setSelectedContact(record._id) }} className="border-0 text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
-                    <Button onClick={() => { setOpenContactReplyModal(true); setSelectedContact(record?._id) }} className="border-0 text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger >Reply</Button>
+                <div className="flex gap-2 justify-center items-center">
+                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenContactDetailModal(true); setSelectedContact(record?._id) }} className="border-none!  bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
+                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setopenDeleteModal(true); setSelectedContact(record._id) }} className="border-none!  text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    {/* <Button onClick={() => { setOpenContactReplyModal(true); setSelectedContact(record?._id) }} className="border-none! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger >Reply</Button> */}
                 </div>
             ),
         }
     ]
 
     return (
-        <div>
+         <div className='p-2 md:p-6'>
             <h1 className="text-3xl font-bold text-black">
                 Contact <span className="text-maincolor">Us</span>
             </h1>

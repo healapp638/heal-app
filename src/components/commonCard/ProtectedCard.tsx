@@ -13,8 +13,11 @@ import { FaFileAlt } from "react-icons/fa";
 import { MdPolicy } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
 import { RiSoundModuleFill } from "react-icons/ri";
-import { FaQuestionCircle } from "react-icons/fa";
 import { useLogout } from '@/hooks/auth/useLogout';
+import { useAppQuery } from '@/tanstack/useAppQuery';
+import { MUTATION_KEYS } from '@/tanstack/keys';
+import { ENDPOINTS } from '@/Endpoints';
+import { FILE_URL } from '@/utils/helper';
 
 const { Header, Sider, Content } = Layout;
 
@@ -30,6 +33,13 @@ interface ProtectedCardProps {
     children: React.ReactNode;
 }
 
+interface UserDetails {
+    first_name: string;
+    profile_pic: string;
+    email: string;
+    last_name: string;
+}
+
 const ProtectedCard = ({ children }: ProtectedCardProps) => {
     const pathname = usePathname();
     const router = useRouter();
@@ -40,6 +50,14 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
     const [isBreakpoint, setIsBreakpoint] = React.useState<boolean>(false);
     const [collapsed, setCollapsed] = React.useState<boolean>(false);
     const [dropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
+
+
+    const { data: adminDetail } = useAppQuery<UserDetails>({
+        queryKey: [MUTATION_KEYS.ADMIN_DETAIL],
+        url: ENDPOINTS.PRIVATE.ADMIN_DETAIL,
+        options: { staleTime: 0 },
+    });
+    const AdminDetail = adminDetail?.data
 
     React.useEffect((): void => {
         const pathWithoutQuery = pathname.split('?')[0]; // Remove query parameters
@@ -75,17 +93,17 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             key: '/module',
             label: 'Module',
         },
-        {
-            routes: ROUTES.PRIVATE.FAQ,
-            icon: (
-                <FaQuestionCircle className='text-maincolor! h-8 w-8!' />
-            ),
-            activeIcon: (
-                <FaQuestionCircle className='text-cream! h-8 w-8!' />
-            ),
-            key: '/faq',
-            label: 'FAQ',
-        },
+        // {
+        //     routes: ROUTES.PRIVATE.FAQ,
+        //     icon: (
+        //         <FaQuestionCircle className='text-maincolor! h-8 w-8!' />
+        //     ),
+        //     activeIcon: (
+        //         <FaQuestionCircle className='text-cream! h-8 w-8!' />
+        //     ),
+        //     key: '/faq',
+        //     label: 'FAQ',
+        // },
         {
             routes: ROUTES.PRIVATE.PRIVACYPOLICY,
             icon: (
@@ -108,17 +126,17 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             key: '/termsandcondition',
             label: 'Terms And Condition',
         },
-        {
-            routes: ROUTES.PRIVATE.ABOUTUS,
-            icon: (
-                <FaFileAlt className='text-maincolor! h-8 w-8!' />
-            ),
-            activeIcon: (
-                <FaFileAlt className='text-cream! h-8 w-8!' />
-            ),
-            key: '/aboutus',
-            label: 'About Us',
-        },
+        // {
+        //     routes: ROUTES.PRIVATE.ABOUTUS,
+        //     icon: (
+        //         <FaFileAlt className='text-maincolor! h-8 w-8!' />
+        //     ),
+        //     activeIcon: (
+        //         <FaFileAlt className='text-cream! h-8 w-8!' />
+        //     ),
+        //     key: '/aboutus',
+        //     label: 'About Us',
+        // },
         {
             routes: ROUTES.PRIVATE.CONTACTUS,
             icon: (
@@ -162,7 +180,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
     };
 
     const handleProfileClick = (): void => {
-        // router.push(ROUTES.DASHBOARD.PROFILE);
+        router.push(ROUTES.PRIVATE.PROFILE);
     }
 
     const menuItems: MenuProps['items'] = [
@@ -242,11 +260,11 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                     <Space className="bg-cream! h-12 cursor-pointer p-2 rounded-lg border shadow-cardCustom border-maincolor border-solid">
                         <Avatar
                             size={32}
-                            src={`/images/logo.png`}
+                            src={`${FILE_URL}${AdminDetail?.profile_pic || ""}`}
                             alt="Admin Pic"
                         />
                         <p className="font-bold text-maincolor hidden sm:inline">
-                            Admin
+                            {AdminDetail?.first_name}
                         </p>
                         {dropdownOpen ? (
                             <IoIosArrowDown className="text-maincolor" size={20} />
@@ -279,7 +297,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                         mode="inline"
                         selectedKeys={[activeIndex]}
                         onClick={({ key }) => handleMenuItemClick(key as string)}
-                        className="border-r-0 rounded-none pl-0 cursor-pointer"
+                        className=" rounded-none pl-0 cursor-pointer"
                         items={antMenuItems}
                     />
                 </Sider>

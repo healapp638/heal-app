@@ -109,7 +109,7 @@ export default function AboutUs() {
     }
 
     return (
-        <div>
+         <div className='p-2 md:p-6'>
             <div>
                 <h1 className="text-3xl font-bold text-black">
                     About <span className="text-maincolor">Us</span>

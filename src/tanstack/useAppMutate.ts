@@ -18,7 +18,7 @@ export type AppMutationVariables = {
 
 interface UseAppMutateProps {
   mutationKey: string[];
-  invalidateQueryKeys?: string | string[];
+  invalidateQueryKeys?: string | any[] | string[];
 
   showSuccessToast?: boolean;
   showErrorToast?: boolean;
@@ -71,10 +71,14 @@ export function useAppMutate({
 
       if (isSuccess) {
         if (invalidateQueryKeys) {
-          queryClient.invalidateQueries({
-            queryKey: Array.isArray(invalidateQueryKeys)
-              ? invalidateQueryKeys
-              : [invalidateQueryKeys],
+          const keys = Array.isArray(invalidateQueryKeys) && (invalidateQueryKeys.length === 0 || Array.isArray(invalidateQueryKeys[0]))
+            ? invalidateQueryKeys
+            : [invalidateQueryKeys];
+
+          keys.forEach((key) => {
+            queryClient.invalidateQueries({
+              queryKey: Array.isArray(key) ? key : [key],
+            });
           });
         }
 
