@@ -63,8 +63,8 @@ const UserCommonHandler = {
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
-        const start_date = (0, moment_1.default)().startOf('day').format("%m-%d-%Y");
-        const end_date = (0, moment_1.default)().endOf('day').format("%m-%d-%Y");
+        const start_date = (0, moment_1.default)().startOf('day').toDate();
+        const end_date = (0, moment_1.default)().endOf('day').toDate();
         const match = {
             user_id: (0, common_helper_1.convertToObjectId)(userId),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
@@ -119,6 +119,9 @@ const UserCommonHandler = {
                 }
             },
             {
+                $limit: limit
+            },
+            {
                 $group: {
                     _id: "$date",
                     data: { $push: "$$ROOT" }
@@ -135,9 +138,6 @@ const UserCommonHandler = {
                     date: "$_id",
                     data: 1
                 }
-            },
-            {
-                $limit: limit
             }
         ]);
         const nextCursor = response.length > 0 ? JSON.stringify({

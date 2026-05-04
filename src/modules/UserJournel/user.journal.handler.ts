@@ -60,8 +60,8 @@ const UserCommonHandler = {
         if (!user) {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
-        const start_date = moment().startOf('day').format("%m-%d-%Y")
-        const end_date = moment().endOf('day').format("%m-%d-%Y")
+        const start_date = moment().startOf('day').toDate();
+        const end_date = moment().endOf('day').toDate();
         const match: any = {
             user_id: convertToObjectId(userId),
             status: USER_STATUS.ACTIVE,
@@ -119,6 +119,9 @@ const UserCommonHandler = {
                 }
             },
             {
+                $limit: limit
+            },
+            {
                 $group: {
                     _id: "$date",
                     data: { $push: "$$ROOT" }
@@ -135,9 +138,6 @@ const UserCommonHandler = {
                     date: "$_id",
                     data: 1
                 }
-            },
-            {
-                $limit: limit
             }
         ]);
 
