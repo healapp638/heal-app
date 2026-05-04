@@ -75,10 +75,6 @@ const UserCommonHandler = {
         };
         if (cursor) {
             const parsedCursor = JSON.parse(cursor);
-            match._id = { $gt: parsedCursor._id };
-        }
-        if (cursor) {
-            const parsedCursor = JSON.parse(cursor);
             match.$or = [
                 { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
                 {
@@ -96,12 +92,6 @@ const UserCommonHandler = {
                     feeling: `$feeling.${lang}`,
                     title: `$title.${lang}`,
                     description: `$description.${lang}`,
-                    date: {
-                        $dateToString: {
-                            format: "%m-%d-%Y", // 👉 change format if needed
-                            date: "$createdAt"
-                        }
-                    }
                 }
             },
             {
@@ -121,24 +111,6 @@ const UserCommonHandler = {
             {
                 $limit: limit
             },
-            {
-                $group: {
-                    _id: "$date",
-                    data: { $push: "$$ROOT" }
-                }
-            },
-            {
-                $sort: {
-                    _id: -1 // latest date first
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    date: "$_id",
-                    data: 1
-                }
-            }
         ]);
         const nextCursor = response.length > 0 ? JSON.stringify({
             _id: response[response.length - 1]._id,
