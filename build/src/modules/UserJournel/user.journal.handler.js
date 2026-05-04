@@ -246,6 +246,64 @@ const UserCommonHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_getting_journal'), null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { response, total }, statusCodes_1.default.SUCCESS);
+    }),
+    journalMapList: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
+        const lang = user.language || 'en';
+        if (!user) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
+        }
+        const response = yield user_journel_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: (0, common_helper_1.convertToObjectId)(userId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $addFields: {
+                    feeling: `$feeling.${lang}`,
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`
+                }
+            },
+            // 🔥 Convert date → YYYY-MM-DD
+            {
+                $addFields: {
+                    date: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$createdAt"
+                        }
+                    }
+                }
+            },
+            {
+                $sort: { createdAt: -1 }
+            },
+            // 🔥 Group by date
+            {
+                $group: {
+                    _id: "$date",
+                    total: { $sum: 1 },
+                }
+            },
+            // 🔥 Rename fields
+            {
+                $project: {
+                    _id: 0,
+                    date: "$_id",
+                    total: 1,
+                }
+            },
+            {
+                $sort: { date: -1 }
+            }
+        ]);
+        if (!response) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_getting_journal'), null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), response, statusCodes_1.default.SUCCESS);
     })
 };
 exports.default = UserCommonHandler;

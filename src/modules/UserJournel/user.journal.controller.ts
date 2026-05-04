@@ -82,6 +82,15 @@ export default class UserJournalController extends Controller {
         const wrappedFunc = tryCatchWrapper(handler.journalListByDate);
         return wrappedFunc(date, this.userId); // Invoking the wrapped function 
     }
+
+    @Security('Bearer')
+    @Get("journal_map_list")
+    public async journalMapList(): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.journalMapList);
+        return wrappedFunc(this.userId); // Invoking the wrapped function 
+    }
+
+
 }
 
 

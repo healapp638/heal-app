@@ -40,4 +40,7 @@ const validateJournalListByDate = (data: any) => {
     return schema.validate(data)
 }
 
+
+        
+
 export { validateAddJournal, validateUpdateJournal, validateDeleteJournal, validateJournalDetail, validateJournalListByDate }

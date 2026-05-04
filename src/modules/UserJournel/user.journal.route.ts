@@ -48,6 +48,12 @@ router.get('/journal_list_by_date', verifyTokenUser, async (req: Request | any, 
     return showOutput(res, result, result.code)
 });
 
+router.get('/journal_map_list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const controller = new UserJournalController(req, res)
+    const result: ApiResponse = await controller.journalMapList();
+    return showOutput(res, result, result.code)
+});
+
 
 
 

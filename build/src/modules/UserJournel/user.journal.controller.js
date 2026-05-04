@@ -93,6 +93,12 @@ let UserJournalController = class UserJournalController extends tsoa_1.Controlle
             return wrappedFunc(date, this.userId); // Invoking the wrapped function 
         });
     }
+    journalMapList() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_journal_handler_1.default.journalMapList);
+            return wrappedFunc(this.userId); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -144,6 +150,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserJournalController.prototype, "journalListByDate", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("journal_map_list"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserJournalController.prototype, "journalMapList", null);
 UserJournalController = __decorate([
     (0, tsoa_1.Tags)('User Journal Routes'),
     (0, tsoa_1.Route)('/user/journal'),

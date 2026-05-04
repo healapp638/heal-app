@@ -828,6 +828,32 @@
 				]
 			}
 		},
+		"/user/journal/journal_map_list": {
+			"get": {
+				"operationId": "JournalMapList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Journal Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/common/contactus/fill": {
 			"post": {
 				"operationId": "ContactUs",

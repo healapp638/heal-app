@@ -259,6 +259,70 @@ const UserCommonHandler = {
             return showResponse(false, getMessage(lang, 'error_while_getting_journal'), null, statusCodes.API_ERROR)
         }
         return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { response, total }, statusCodes.SUCCESS)
+    },
+
+    journalMapList: async (userId: string): Promise<ApiResponse> => {
+        const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+        const lang = user.language || 'en'
+        if (!user) {
+            return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
+        }
+        const response = await userJournalModel.aggregate([
+            {
+                $match: {
+                    user_id: convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+
+            {
+                $addFields: {
+                    feeling: `$feeling.${lang}`,
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`
+                }
+            },
+            // 🔥 Convert date → YYYY-MM-DD
+            {
+                $addFields: {
+                    date: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$createdAt"
+                        }
+                    }
+                }
+            },
+
+            {
+                $sort: { createdAt: -1 }
+            },
+
+            // 🔥 Group by date
+            {
+                $group: {
+                    _id: "$date",
+                    total: { $sum: 1 },
+                }
+            },
+
+            // 🔥 Rename fields
+            {
+                $project: {
+                    _id: 0,
+                    date: "$_id",
+                    total: 1,
+                }
+            },
+
+            {
+                $sort: { date: -1 }
+            }
+        ]);
+        if (!response) {
+            return showResponse(false, getMessage(lang, 'error_while_getting_journal'), null, statusCodes.API_ERROR)
+        }
+        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), response, statusCodes.SUCCESS)
     }
 
 }
