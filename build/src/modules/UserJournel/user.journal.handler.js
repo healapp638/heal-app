@@ -57,6 +57,7 @@ const UserCommonHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_created_successfully'), null, statusCodes_1.default.SUCCESS);
     }),
     journalList: (cursor_1, ...args_1) => __awaiter(void 0, [cursor_1, ...args_1], void 0, function* (cursor, limit = 10, search_key, userId) {
+        limit = Number(limit);
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const lang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
         if (!user) {

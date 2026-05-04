@@ -54,6 +54,7 @@ const UserCommonHandler = {
     },
 
     journalList: async (cursor: string, limit: number = 10, search_key: string, userId: string): Promise<ApiResponse> => {
+        limit = Number(limit)
         const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const lang = user?.language || 'en'
         if (!user) {
