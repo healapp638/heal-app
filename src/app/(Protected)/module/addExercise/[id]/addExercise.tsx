@@ -1,19 +1,19 @@
 "use client"
 
-import { AppButton } from "@/components/ui"
-import AddExerciseModal from "@/components/ui/modals/addExerciseModal"
-import { FiTrash2, FiEdit } from "react-icons/fi"
+import React from "react"
+import { Button, Select, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
-import { MUTATION_KEYS } from "@/tanstack/keys";
-import { useAppQuery } from "@/tanstack/useAppQuery";
-import { Button, Table } from "antd";
+import { AppButton } from "@/components/ui"
+import { ColumnsType } from "antd/es/table";
 import { useParams } from "next/navigation";
-import React from "react"
-import DeleteModal from "@/components/ui/modals/DeleteModal";
+import { MUTATION_KEYS } from "@/tanstack/keys";
+import { FiTrash2, FiEdit } from "react-icons/fi"
+import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { ColumnsType } from "antd/es/table";
+import DeleteModal from "@/components/ui/modals/DeleteModal";
+import AddExerciseModal from "@/components/ui/modals/addExerciseModal"
 
 interface ExerciseData {
     _id: string;
@@ -52,8 +52,26 @@ export default function AddExercise() {
         pageSize: 10,
     });
 
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+
+    const LANGUAGE_OPTIONS = [
+        { value: 'en', label: 'English' },
+        { value: 'zh', label: 'Chinese' },
+        { value: 'es', label: 'Spanish' },
+        { value: 'fr', label: 'French' },
+        { value: 'hi', label: 'Hindi' },
+        { value: 'de', label: 'German' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ro', label: 'Romanian' }
+    ];
+    const handleLanguageChange = (value: string) => {
+        setSelectedLanguage(value);
+    };
+
     const { data: listExercises } = useAppQuery<ExerciseResult>({
-        queryKey: [MUTATION_KEYS.EXERCISE_LIST, pagination, lessonId],
+        queryKey: [MUTATION_KEYS.EXERCISE_LIST, pagination, lessonId, selectedLanguage],
         url: ENDPOINTS.PRIVATE.EXERCISE_LIST,
         options: {
             staleTime: Infinity,
@@ -61,46 +79,46 @@ export default function AddExercise() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            lang: "en",
+            lang: selectedLanguage || "en",
             exercise_details_id: lessonId
         }
     })
     const listExercisesData = listExercises?.data?.result;
 
 
-        const { mutateAsync: DeleteExercise, isPending: isDeleting } = useAppMutate({
-            mutationKey: [MUTATION_KEYS.EXERCISE_DELETE],
-            invalidateQueryKeys: [MUTATION_KEYS.EXERCISE_LIST],
-            showSuccessToast: true,
-            showErrorToast: true,
-            onSuccess: () => {
-                setOpenDeleteExerciseModal(false);
-                setExerciseId("");
-            }
-        });
-    
-        const handleDeleteExercise = async () => {
-            await tryCatchWrapper(
-                async () => {
-                    await DeleteExercise({
-                        url: ENDPOINTS.PRIVATE.EXERCISE_DELETE,
-                        method: "DELETE",
-                        body: {
-                            exercise_id: exerciseId,
-                        },
-                    });
-                },
-                {
-                    errorMessage: 'Failed to delete exercise',
-                    showToast: true,
-                    onError() {
-                        console.error('Failed to delete exercise');
-                        setOpenDeleteExerciseModal(false)
-                        setExerciseId("")
-                    },
-                }
-            );
+    const { mutateAsync: DeleteExercise, isPending: isDeleting } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.EXERCISE_DELETE],
+        invalidateQueryKeys: [MUTATION_KEYS.EXERCISE_LIST],
+        showSuccessToast: true,
+        showErrorToast: true,
+        onSuccess: () => {
+            setOpenDeleteExerciseModal(false);
+            setExerciseId("");
         }
+    });
+
+    const handleDeleteExercise = async () => {
+        await tryCatchWrapper(
+            async () => {
+                await DeleteExercise({
+                    url: ENDPOINTS.PRIVATE.EXERCISE_DELETE,
+                    method: "DELETE",
+                    body: {
+                        exercise_id: exerciseId,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to delete exercise',
+                showToast: true,
+                onError() {
+                    console.error('Failed to delete exercise');
+                    setOpenDeleteExerciseModal(false)
+                    setExerciseId("")
+                },
+            }
+        );
+    }
 
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
@@ -114,7 +132,7 @@ export default function AddExercise() {
         });
     };
 
-    const columns:ColumnsType<ExerciseData> = [
+    const columns: ColumnsType<ExerciseData> = [
         {
             title: 'Sr. No.',
             key: 'number',
@@ -149,9 +167,17 @@ export default function AddExercise() {
                 <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Exercises</span>
                 </h1>
-                <AppButton onClick={() => setOpenModal(true)} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
-                    Add Exercise
-                </AppButton>
+                <div className='flex justify-center gap-2'>
+                    <Select
+                        value={selectedLanguage}
+                        onChange={handleLanguageChange}
+                        options={LANGUAGE_OPTIONS}
+                        className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    />
+                    <AppButton onClick={() => setOpenModal(true)} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                        Add Exercise
+                    </AppButton>
+                </div>
             </div>
             <Table
                 rowKey="_id"
@@ -174,10 +200,9 @@ export default function AddExercise() {
                 bordered
             />
             <AddExerciseModal openModal={openModal} setOpenModal={setOpenModal} lessonId={lessonId} onClose={() => setExerciseId("")} />
-            <AddExerciseModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} lessonId={lessonId} isUpdate={true} exerciseId={exerciseId} onClose={() => setExerciseId("")} />
-            <AddExerciseModal openModal={openViewModal} setOpenModal={setOpenViewModal} lessonId={lessonId} isView={true} exerciseId={exerciseId} onClose={() => setExerciseId("")} />
+            <AddExerciseModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} lessonId={lessonId} isUpdate={true} exerciseId={exerciseId} onClose={() => setExerciseId("")} selectedLanguage={selectedLanguage} />
+            <AddExerciseModal openModal={openViewModal} setOpenModal={setOpenViewModal} lessonId={lessonId} isView={true} exerciseId={exerciseId} onClose={() => setExerciseId("")} selectedLanguage={selectedLanguage} />
             <DeleteModal title='Exercise' openDeleteModal={openDeleteExerciseModal} setopenDeleteModal={setOpenDeleteExerciseModal} handleDelete={handleDeleteExercise} loading={isDeleting} />
-
 
         </div>
     )

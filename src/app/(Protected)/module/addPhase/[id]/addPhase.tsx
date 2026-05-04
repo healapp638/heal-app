@@ -1,20 +1,21 @@
 "use client"
-import { AppButton } from "@/components/ui";
-import { ENDPOINTS } from "@/Endpoints";
-import { MUTATION_KEYS } from "@/tanstack/keys";
-import { useAppMutate } from "@/tanstack/useAppMutate";
-import { useAppQuery } from "@/tanstack/useAppQuery";
-import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { Button, Table } from "antd";
-import { useParams } from "next/navigation";
+
 import React from "react"
-import { FiTrash2, FiEdit } from "react-icons/fi"
-import { FaEye } from "react-icons/fa";
+import { Button, Select, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
+import { ENDPOINTS } from "@/Endpoints";
+import { FaEye } from "react-icons/fa";
+import { AppButton } from "@/components/ui";
+import { useParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import AddPhaseModal from "@/components/ui/modals/addPhaseModal";
-import DeleteModal from "@/components/ui/modals/DeleteModal";
 import { ColumnsType } from "antd/es/table";
+import { MUTATION_KEYS } from "@/tanstack/keys";
+import { FiTrash2, FiEdit } from "react-icons/fi"
+import { useAppQuery } from "@/tanstack/useAppQuery";
+import { useAppMutate } from "@/tanstack/useAppMutate";
+import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
+import DeleteModal from "@/components/ui/modals/DeleteModal";
+import AddPhaseModal from "@/components/ui/modals/addPhaseModal";
 
 interface PhaseData {
     _id: string;
@@ -49,9 +50,26 @@ export default function AddPhase() {
         current: 1,
         pageSize: 10,
     });
+     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+    
+        const LANGUAGE_OPTIONS = [
+            { value: 'en', label: 'English' },
+            { value: 'zh', label: 'Chinese' },
+            { value: 'es', label: 'Spanish' },
+            { value: 'fr', label: 'French' },
+            { value: 'hi', label: 'Hindi' },
+            { value: 'de', label: 'German' },
+            { value: 'ru', label: 'Russian' },
+            { value: 'pt', label: 'Portuguese' },
+            { value: 'it', label: 'Italian' },
+            { value: 'ro', label: 'Romanian' }
+        ];
+        const handleLanguageChange = (value: string) => {
+            setSelectedLanguage(value);
+        };
 
     const { data: listPhase } = useAppQuery<PhaseResult>({
-        queryKey: [MUTATION_KEYS.LIST_PHASE, pagination, subModuleId],
+        queryKey: [MUTATION_KEYS.LIST_PHASE, pagination, subModuleId,selectedLanguage],
         url: ENDPOINTS.PRIVATE.LIST_PHASE,
         options: {
             staleTime: Infinity,
@@ -59,7 +77,7 @@ export default function AddPhase() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            lang: "en",
+            lang: selectedLanguage||"en",
             subModuleId: subModuleId
         }
     })
@@ -167,9 +185,17 @@ export default function AddPhase() {
                 <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Phase</span>
                 </h1>
+                <div className='flex justify-center gap-2'>
+                    <Select
+                        value={selectedLanguage}
+                        onChange={handleLanguageChange}
+                        options={LANGUAGE_OPTIONS}
+                        className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    />
                 <AppButton onClick={() => { setOpenAddPhaseModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                     Add Phases
                 </AppButton>
+                </div>
             </div>
 
             <Table
@@ -193,8 +219,8 @@ export default function AddPhase() {
             />
             <AddPhaseModal openAddPhaseModal={openAddPhaseModal} setOpenAddPhaseModal={setOpenAddPhaseModal} subModuleId={subModuleId} />
             <DeleteModal title='Phase' openDeleteModal={openDeletePhaseModal} setopenDeleteModal={setOpenDeletePhaseModal} handleDelete={handleDeletePhase} loading={isDeleting} />
-            <AddPhaseModal openAddPhaseModal={openPhaseUpdateModal} setOpenAddPhaseModal={setOpenPhaseUpdateModal} subModuleId={subModuleId} isUpdate={true} phaseID={selectPhase} />
-            <AddPhaseModal openAddPhaseModal={openPhaseViewModal} setOpenAddPhaseModal={setOpenPhaseViewModal} subModuleId={subModuleId} isView={true} phaseID={selectPhase} />
+            <AddPhaseModal openAddPhaseModal={openPhaseUpdateModal} setOpenAddPhaseModal={setOpenPhaseUpdateModal} subModuleId={subModuleId} isUpdate={true} phaseID={selectPhase} selectedLanguage={selectedLanguage} />
+            <AddPhaseModal openAddPhaseModal={openPhaseViewModal} setOpenAddPhaseModal={setOpenPhaseViewModal} subModuleId={subModuleId} isView={true} phaseID={selectPhase} selectedLanguage={selectedLanguage} />
 
         </div>
     )

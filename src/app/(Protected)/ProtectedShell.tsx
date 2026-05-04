@@ -1,10 +1,10 @@
 'use client'
 
 import { ReactNode } from 'react'
-import { ConfigProvider } from 'antd'
 import enUS from 'antd/locale/en_US'
-import { lightTheme, darkTheme } from "@/theme/antdTheme"
+import { ConfigProvider } from 'antd'
 import { useTheme } from "next-themes"
+import { lightTheme, darkTheme } from "@/theme/antdTheme"
 import PageTransition from '@/components/animations/PageTransition'
 import ProtectedCard from '@/components/commonCard/ProtectedCard'
 

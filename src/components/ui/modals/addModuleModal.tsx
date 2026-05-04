@@ -18,6 +18,7 @@ interface AddModuleModalProps {
     isView?: boolean;
     isUpdate?: boolean;
     moduleId?: string;
+    selectedLanguage?:string;
     onClose?: () => void;
 }
 
@@ -25,7 +26,7 @@ interface ModuleDetail {
     title: string;
 }
 
-const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, moduleId, onClose }: AddModuleModalProps) => {
+const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, moduleId, onClose , selectedLanguage }: AddModuleModalProps) => {
 
     const [form] = Form.useForm();
     const handleCancel = () => {
@@ -34,11 +35,11 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
         if (onClose) onClose();
     }
     const { data: ModuleDetail, isPending: isLoadingModuleDetail } = useAppQuery<ModuleDetail>({
-        queryKey: [MUTATION_KEYS.DETAIL_MODULE, moduleId],
+        queryKey: [MUTATION_KEYS.DETAIL_MODULE, moduleId,selectedLanguage || "en"],
         url: `${ENDPOINTS.PRIVATE.DETAIL_MODULE}`,
         params: {
             moduleId: moduleId,
-            lang: "en"
+            lang: selectedLanguage||"en"
         },
         options: {
             staleTime: Infinity,
@@ -59,7 +60,7 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
 
     const { mutateAsync: updateModule, isPending: isUpdating } = useAppMutate({
         mutationKey: [MUTATION_KEYS.UPDATE_MODULE],
-        invalidateQueryKeys: [[MUTATION_KEYS.LIST_MODULE], [MUTATION_KEYS.DETAIL_MODULE]],
+        invalidateQueryKeys: [[MUTATION_KEYS.LIST_MODULE], [MUTATION_KEYS.DETAIL_MODULE, moduleId, selectedLanguage || "en"]],
         showSuccessToast: true,
         showErrorToast: true,
         onSuccess() {
@@ -77,7 +78,7 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
                     body: {
                         moduleId: moduleId,
                         title: values.title,
-                        lang: "en"
+                        lang: selectedLanguage || "en"
                     },
                 });
             },
@@ -118,12 +119,12 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
     }
 
     React.useEffect(() => {
-        if ((isUpdate || isView) && !!moduleId) {
+        if ((isUpdate || isView) && !!moduleId && openModal) {
             form.setFieldsValue({
                 title: moduleData?.title,
             });
         }
-    }, [isUpdate, isView, moduleId, moduleData, form])
+    }, [isUpdate, isView, moduleId, moduleData, form, openModal])
 
 
     return (

@@ -1,16 +1,15 @@
 "use client"
 
 import React from "react"
+import { Avatar, Space } from "antd";
+import { CiLock } from "react-icons/ci";
 import { ENDPOINTS } from "@/Endpoints";
+import { FILE_URL } from "@/utils/helper";
+import { AppButton } from "@/components/ui";
+import { BiSolidEditAlt } from "react-icons/bi";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppQuery } from "@/tanstack/useAppQuery";
-import { FILE_URL } from "@/utils/helper";
-import { Avatar, Space } from "antd";
 import { UserOutlined, MailOutlined } from "@ant-design/icons";
-import { BiSolidEditAlt } from "react-icons/bi";
-import { CiLock } from "react-icons/ci";
-
-import { AppButton } from "@/components/ui";
 import EditProfileModal from "@/components/ui/modals/EditProfileModal";
 import ChangePasswordModal from "@/components/ui/modals/changePassword";
 

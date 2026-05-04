@@ -1,17 +1,18 @@
 "use client"
+
 import React from 'react'
 import { Form, Input } from 'antd'
 import logger from '@/utils/logger'
 import { ROUTES } from '@/routerKeys'
-import { useRouter } from 'next/navigation'
-import AuthCard from '@/components/commonCard/AuthCard'
-import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
-import { formatEmail, trimString } from '@/utils/helper'
-import { MUTATION_KEYS } from '@/tanstack/keys'
-import { useAppMutate } from '@/tanstack/useAppMutate'
 import { ENDPOINTS } from '@/Endpoints'
-import { useResetFlow } from '@/hooks/auth/useResetFlow'
+import { useRouter } from 'next/navigation'
 import { AppButton } from '@/components/ui'
+import { MUTATION_KEYS } from '@/tanstack/keys'
+import AuthCard from '@/components/commonCard/AuthCard'
+import { useAppMutate } from '@/tanstack/useAppMutate'
+import { formatEmail, trimString } from '@/utils/helper'
+import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
+import { useResetFlow } from '@/hooks/auth/useResetFlow'
 
 const OTPForm = () => {
 

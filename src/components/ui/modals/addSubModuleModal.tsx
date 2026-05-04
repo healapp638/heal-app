@@ -17,6 +17,7 @@ interface AddSubModuleModalProps {
     onClose?: () => void;
     subModuleId?: string;
     isUpdate?: boolean;
+    selectedLanguage?:string;
     isView?: boolean;
 }
 
@@ -30,7 +31,7 @@ interface SubModuleDetail {
     __v: number;
 }
 
-const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModuleId, isUpdate, isView }: AddSubModuleModalProps) => {
+const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModuleId, isUpdate, isView, selectedLanguage }: AddSubModuleModalProps) => {
     const [form] = Form.useForm();
 
     const handleCancel = () => {
@@ -40,11 +41,11 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
     }
 
     const { data: SubModuleDetail, isPending: isLoadingSubModuleDetail } = useAppQuery<SubModuleDetail>({
-        queryKey: [MUTATION_KEYS.SUBMODULE_DETAIL, subModuleId],
+        queryKey: [MUTATION_KEYS.SUBMODULE_DETAIL, subModuleId,selectedLanguage || "en"],
         url: `${ENDPOINTS.PRIVATE.SUBMODULE_DETAIL}`,
         params: {
             subModuleId: subModuleId,
-            lang: "en"
+            lang: selectedLanguage ||"en"
         },
         options: {
             staleTime: Infinity,
@@ -54,17 +55,17 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
     const SubModuleData = SubModuleDetail?.data
 
     React.useEffect(() => {
-        if (SubModuleData && (isUpdate || isView)) {
+        if (SubModuleData && (isUpdate || isView) && openModal) {
             form.setFieldsValue({
                 title: SubModuleData?.title,
                 description: SubModuleData?.description,
             });
         }
-    }, [SubModuleData, isUpdate, isView, form]);
+    }, [SubModuleData, isUpdate, isView, form, openModal]);
 
     const { mutateAsync: updateSubModule, isPending: isUpdating } = useAppMutate({
         mutationKey: [MUTATION_KEYS.SUBMODULE_UPDATE],
-        invalidateQueryKeys: [[MUTATION_KEYS.LIST_SUB_MODULE], [MUTATION_KEYS.SUBMODULE_DETAIL]],
+        invalidateQueryKeys: [[MUTATION_KEYS.LIST_SUB_MODULE], [MUTATION_KEYS.SUBMODULE_DETAIL, subModuleId, selectedLanguage || "en"]],
         showSuccessToast: true,
         showErrorToast: true,
         onSuccess() {
@@ -83,7 +84,7 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
                         subModuleId: subModuleId,
                         title: values.title,
                         description: values.description,
-                        lang: "en"
+                        lang: selectedLanguage || "en"
                     },
                 });
             },
@@ -139,6 +140,7 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
             onCancel={handleCancel}
             footer={false}
             centered
+            destroyOnHidden={true}
             closeIcon={<div className={'bg-maincolor text-white flex justify-center items-center rounded-full p-1.5 relative -top-2 -right-2'}><RxCross2 style={{ fontSize: 18 }} /></div>}
         >
             <h1 className="text-3xl font-bold text-center text-black">

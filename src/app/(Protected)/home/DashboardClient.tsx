@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { Col, Row } from 'antd'
-import { useAppQuery } from '@/tanstack/useAppQuery';
-import { MUTATION_KEYS } from '@/tanstack/keys';
 import { ENDPOINTS } from '@/Endpoints';
+import { MUTATION_KEYS } from '@/tanstack/keys';
+import { useAppQuery } from '@/tanstack/useAppQuery';
 import { FaUser,FaUserFriends } from "react-icons/fa";
 
 

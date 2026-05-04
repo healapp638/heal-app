@@ -178,7 +178,7 @@
     @apply bg-cream!
   }
   .anticon >*{
-    @apply text-maincolor!
+    @apply text-black! font-bold!
   }
   .ant-pagination .ant-pagination-item{
     @apply text-white! bg-maincolor! border-none!

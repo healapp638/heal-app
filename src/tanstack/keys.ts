@@ -53,7 +53,10 @@ const MUTATION_KEYS = {
     ADMIN_DETAIL: "admin-detail",
     PROFILE_EDIT: "profile-edit",
     ADMIN_CHANGE_PASSWORD: "admin-change-password",
-    ADMIN_DASHBOARD:"admin-dashboard"
+    ADMIN_DASHBOARD: "admin-dashboard",
+    USERS_LIST: "users-list",
+    USERS_DETAIL: "users-detail",
+    USERS_STATUS: "users-status",
 
 }
 

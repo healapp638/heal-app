@@ -1,14 +1,6 @@
 'use client'
 
-import {
-    FadeIn,
-    SlideIn,
-    ScaleIn,
-    StaggerChildren,
-    HoverScale,
-    AnimatedCounter,
-    ProgressBar,
-} from '@/components/animations'
+import { FadeIn, SlideIn, ScaleIn, StaggerChildren, HoverScale, AnimatedCounter, ProgressBar, } from '@/components/animations'
 import { Button } from 'antd'
 
 export default function AnimationDemo() {

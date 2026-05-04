@@ -35,9 +35,10 @@ interface AddExerciseModalProps {
     isUpdate?: boolean;
     exerciseId?: string;
     onClose?: () => void;
+    selectedLanguage?: string;
 }
 
-const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate, exerciseId, onClose }: AddExerciseModalProps) => {
+const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate, exerciseId, onClose, selectedLanguage }: AddExerciseModalProps) => {
 
     const [form] = Form.useForm();
     const handleCancel = () => {
@@ -81,7 +82,7 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
 
     const { mutateAsync: updateExercise, isPending: isUpdating } = useAppMutate({
         mutationKey: [MUTATION_KEYS.EXERCISE_UPDATE],
-        invalidateQueryKeys: [[MUTATION_KEYS.EXERCISE_LIST], [MUTATION_KEYS.EXERCISE_DETAIL]],
+        invalidateQueryKeys: [[MUTATION_KEYS.EXERCISE_LIST], [MUTATION_KEYS.EXERCISE_DETAIL, exerciseId, selectedLanguage || "en"]],
         showSuccessToast: true,
         showErrorToast: true,
         onSuccess: () => {
@@ -97,7 +98,7 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
                     method: "POST",
                     body: {
                         exercise_id: exerciseId,
-                        lang: "en",
+                        lang: selectedLanguage||"en",
                         ...values
                     },
                 });
@@ -114,11 +115,11 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
     }
 
     const { data: exerciseDetail, isLoading: isLoadingExerciseDetail } = useAppQuery<ExerciseResult>({
-        queryKey: [MUTATION_KEYS.EXERCISE_DETAIL, exerciseId],
+        queryKey: [MUTATION_KEYS.EXERCISE_DETAIL, exerciseId,selectedLanguage||"en"],
         url: ENDPOINTS.PRIVATE.EXERCISE_DETAIL,
         params: {
             exercise_id: exerciseId,
-            lang: "en"
+            lang: selectedLanguage||"en"
         },
         options: {
             staleTime: Infinity,
@@ -127,13 +128,13 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
     })
     const exerciseDetailData = exerciseDetail?.data
     React.useEffect(() => {
-        if (exerciseDetailData && (isUpdate || isView)) {
+        if (exerciseDetailData && (isUpdate || isView) && openModal) {
             form.setFieldsValue({
                 title: exerciseDetailData?.title,
                 description: exerciseDetailData?.description,
             });
         }
-    }, [exerciseDetailData, isUpdate, isView, form]);
+    }, [exerciseDetailData, isUpdate, isView, form, openModal]);
 
 
     return (
@@ -142,6 +143,7 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
             onCancel={handleCancel}
             centered
             footer={false}
+            destroyOnHidden={true}
             closeIcon={<div className={'bg-maincolor text-white flex justify-center items-center rounded-full p-1.5 relative -top-2 -right-2'}><RxCross2 style={{ fontSize: 18 }} /></div>}
         >
             <h1 className="text-3xl font-bold text-center text-black">

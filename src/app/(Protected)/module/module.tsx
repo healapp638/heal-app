@@ -1,19 +1,19 @@
 "use client"
 
 import React from 'react'
+import { ROUTES } from '@/routerKeys';
+import { FaEye } from "react-icons/fa";
+import { ENDPOINTS } from '@/Endpoints';
+import { FILE_URL } from '@/utils/helper';
 import { AppButton } from '@/components/ui'
-import { Button, Image, Table } from 'antd';
+import { useRouter } from 'next/navigation';
+import { Button, Image, Select, Table } from 'antd';
+import { MUTATION_KEYS } from '@/tanstack/keys';
 import type { ColumnsType } from 'antd/es/table';
 import { FiTrash2, FiEdit } from "react-icons/fi"
-import { FaEye } from "react-icons/fa";
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper';
-import { ENDPOINTS } from '@/Endpoints';
-import { MUTATION_KEYS } from '@/tanstack/keys';
 import { useAppMutate } from '@/tanstack/useAppMutate';
 import { useAppQuery } from '@/tanstack/useAppQuery';
-import { FILE_URL } from '@/utils/helper';
-import { useRouter } from 'next/navigation';
-import { ROUTES } from '@/routerKeys';
 import AddThemeModal from '@/components/ui/modals/addThemeModal';
 import DeleteModal from '@/components/ui/modals/DeleteModal';
 
@@ -44,8 +44,26 @@ export default function Module() {
     const [openViewModal, setOpenViewModal] = React.useState(false);
     const [selectedTheme, setSelectedTheme] = React.useState("");
 
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+
+    const LANGUAGE_OPTIONS = [
+        { value: 'en', label: 'English' },
+        { value: 'zh', label: 'Chinese' },
+        { value: 'es', label: 'Spanish' },
+        { value: 'fr', label: 'French' },
+        { value: 'hi', label: 'Hindi' },
+        { value: 'de', label: 'German' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ro', label: 'Romanian' }
+    ];
+    const handleLanguageChange = (value: string) => {
+        setSelectedLanguage(value);
+    };
+
     const { data: listTheme } = useAppQuery<ThemeResponse>({
-        queryKey: [MUTATION_KEYS.LIST_THEME],
+        queryKey: [MUTATION_KEYS.LIST_THEME, selectedLanguage, pagination],
         url: ENDPOINTS.PRIVATE.LIST_THEME,
         options: {
             staleTime: Infinity,
@@ -53,6 +71,7 @@ export default function Module() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
+            lang: selectedLanguage
         }
     })
     const ThemeListData = listTheme?.data?.result;
@@ -163,9 +182,17 @@ export default function Module() {
                 <h1 className="text-3xl font-bold text-black m-0!">
                     Add <span className="text-maincolor">Themes</span>
                 </h1>
-                <AppButton onClick={() => setOpenModal(true)} className="bg-maincolor! w-26! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
-                    Add Theme
-                </AppButton>
+                <div className='flex justify-center gap-2'>
+                    <Select
+                        value={selectedLanguage}
+                        onChange={handleLanguageChange}
+                        options={LANGUAGE_OPTIONS}
+                        className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    />
+                    <AppButton onClick={() => setOpenModal(true)} className="bg-maincolor! w-26! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                        Add Theme
+                    </AppButton>
+                </div>
             </div>
             <Table
                 dataSource={ThemeListData}
@@ -187,8 +214,8 @@ export default function Module() {
                 bordered
             />
             <AddThemeModal openModal={openModal} setOpenModal={setOpenModal} onClose={() => setSelectedTheme("")} />
-            <AddThemeModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} isUpdate={true} themeId={selectedTheme} onClose={() => setSelectedTheme("")} />
-            <AddThemeModal openModal={openViewModal} setOpenModal={setOpenViewModal} isView={true} themeId={selectedTheme} onClose={() => setSelectedTheme("")} />
+            <AddThemeModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} isUpdate={true} themeId={selectedTheme} onClose={() => { setSelectedTheme("")}} selectedLanguage={selectedLanguage} />
+            <AddThemeModal openModal={openViewModal} setOpenModal={setOpenViewModal} isView={true} themeId={selectedTheme} onClose={() => setSelectedTheme("")} selectedLanguage={selectedLanguage} />
             <DeleteModal title='Theme' openDeleteModal={openDeleteModal} setopenDeleteModal={setOpenDeleteModal} handleDelete={handleDeleteTheme} loading={isDeleting} />
         </div>
     )

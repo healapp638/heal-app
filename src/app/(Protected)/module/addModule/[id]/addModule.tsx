@@ -1,20 +1,20 @@
 "use client"
 
 import React from "react"
-import { AppButton } from "@/components/ui";
-import { ENDPOINTS } from "@/Endpoints";
-import { MUTATION_KEYS } from "@/tanstack/keys";
-import { useAppMutate } from "@/tanstack/useAppMutate";
-import { useAppQuery } from "@/tanstack/useAppQuery";
-import { FiTrash2, FiEdit } from "react-icons/fi"
-import { FaEye } from "react-icons/fa";
-import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { Button, Table } from "antd";
-import { useParams, useRouter } from "next/navigation";
+import { Button, Select, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
-import AddModuleModal from "@/components/ui/modals/addModuleModal";
-import DeleteModal from "@/components/ui/modals/DeleteModal";
+import { FaEye } from "react-icons/fa";
+import { ENDPOINTS } from "@/Endpoints";
 import { ColumnsType } from "antd/es/table";
+import { AppButton } from "@/components/ui";
+import { MUTATION_KEYS } from "@/tanstack/keys";
+import { FiTrash2, FiEdit } from "react-icons/fi"
+import { useAppQuery } from "@/tanstack/useAppQuery";
+import { useAppMutate } from "@/tanstack/useAppMutate";
+import { useParams, useRouter } from "next/navigation";
+import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
+import DeleteModal from "@/components/ui/modals/DeleteModal";
+import AddModuleModal from "@/components/ui/modals/addModuleModal";
 
 interface ModuleData {
     _id: string;
@@ -47,6 +47,24 @@ export default function AddModule() {
 
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false)
     const [openViewModal, setOpenViewModal] = React.useState(false)
+
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+
+    const LANGUAGE_OPTIONS = [
+        { value: 'en', label: 'English' },
+        { value: 'zh', label: 'Chinese' },
+        { value: 'es', label: 'Spanish' },
+        { value: 'fr', label: 'French' },
+        { value: 'hi', label: 'Hindi' },
+        { value: 'de', label: 'German' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ro', label: 'Romanian' }
+    ];
+    const handleLanguageChange = (value: string) => {
+        setSelectedLanguage(value);
+    };
 
     const { mutateAsync: DeleteModule, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.DELETE_MODULE],
@@ -83,7 +101,7 @@ export default function AddModule() {
     }
 
     const { data: listModule } = useAppQuery<ModuleResult>({
-        queryKey: [MUTATION_KEYS.LIST_MODULE, pagination, themeId],
+        queryKey: [MUTATION_KEYS.LIST_MODULE, pagination, themeId, selectedLanguage],
         url: ENDPOINTS.PRIVATE.LIST_MODULE,
         options: {
             staleTime: Infinity,
@@ -91,7 +109,7 @@ export default function AddModule() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            lang: "en",
+            lang: selectedLanguage || "en",
             themeId: themeId
         }
     })
@@ -156,9 +174,17 @@ export default function AddModule() {
                 <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Module</span>
                 </h1>
-                <AppButton onClick={() => { setOpenAddModal(true) }} className="bg-maincolor! w-26! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
-                    Add Module
-                </AppButton>
+                <div className='flex justify-center gap-2'>
+                    <Select
+                        value={selectedLanguage}
+                        onChange={handleLanguageChange}
+                        options={LANGUAGE_OPTIONS}
+                        className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    />
+                    <AppButton onClick={() => { setOpenAddModal(true) }} className="bg-maincolor! w-26! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                        Add Module
+                    </AppButton>
+                </div>
             </div>
 
             <Table
@@ -181,8 +207,8 @@ export default function AddModule() {
             />
 
             <AddModuleModal openModal={openAddModal} setOpenModal={setOpenAddModal} ThemeID={themeId} onClose={() => setSelectedModule("")} />
-            <AddModuleModal openModal={openViewModal} setOpenModal={setOpenViewModal} ThemeID={themeId} isView={true} moduleId={selectedModule} onClose={() => setSelectedModule("")} />
-            <AddModuleModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} ThemeID={themeId} isUpdate={true} moduleId={selectedModule} onClose={() => setSelectedModule("")} />
+            <AddModuleModal openModal={openViewModal} setOpenModal={setOpenViewModal} ThemeID={themeId} isView={true} moduleId={selectedModule} onClose={() => setSelectedModule("")} selectedLanguage={selectedLanguage} />
+            <AddModuleModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} ThemeID={themeId} isUpdate={true} moduleId={selectedModule} onClose={() => setSelectedModule("")} selectedLanguage={selectedLanguage} />
             <DeleteModal title='Module' openDeleteModal={openDeleteModule} setopenDeleteModal={setOpenDeleteModule} handleDelete={handleDeleteModule} loading={isDeleting} />
 
         </div>

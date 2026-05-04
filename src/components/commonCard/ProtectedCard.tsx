@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, Dropdown, Layout, Menu, Space, MenuProps, Image } from 'antd'
 import type { MenuItemType as AntMenuItem } from 'antd/es/menu/interface';
 import { IoIosArrowDown, IoIosArrowUp, IoIosLogOut } from 'react-icons/io';
-import { FaUserCircle } from 'react-icons/fa';
+import { FaUser, FaUserCircle } from 'react-icons/fa';
 import { MdDashboard } from "react-icons/md";
 import { FaFileAlt } from "react-icons/fa";
 import { MdPolicy } from "react-icons/md";
@@ -83,6 +83,17 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             label: 'Dashboard',
         },
         {
+            routes: ROUTES.PRIVATE.USERS,
+            icon: (
+                <FaUser className='text-maincolor! h-8 w-8!' />
+            ),
+            activeIcon: (
+                <FaUser className='text-cream! h-8 w-8!' />
+            ),
+            key: '/users',
+            label: 'Users',
+        },
+        {
             routes: ROUTES.PRIVATE.MODULE,
             icon: (
                 <RiSoundModuleFill className='text-maincolor! h-8 w-8!' />
@@ -148,9 +159,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             key: '/contactus',
             label: 'Contact Us',
         },
-
     ];
-
 
     // Setting Active Sider - Similar to the original code
     React.useEffect((): void => {
@@ -160,8 +169,10 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
         if (pathWithoutQuery.startsWith('/module')) {
             setActiveIndex(ROUTES.PRIVATE.MODULE); // Match /user_detail/:userId
         }
+        else if (pathWithoutQuery.startsWith('/users')) {
+            setActiveIndex(ROUTES.PRIVATE.USERS); // Match /user_detail/:userId
+        }
     }, [pathname]);
-
 
     const handleDropdownVisibleChange = (visible: boolean): void => {
         setDropdownOpen(visible);

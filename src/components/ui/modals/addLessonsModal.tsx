@@ -18,6 +18,7 @@ interface AddLessonsModalProps {
     isUpdate?: boolean;
     isView?: boolean;
     lessonID?: string;
+    selectedLanguage?:string;
 }
 
 interface LessonDetail {
@@ -36,7 +37,7 @@ interface AddLessonsFormValues {
     reflection: string;
 }
 
-const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId, onClose, isUpdate, isView, lessonID }: AddLessonsModalProps) => {
+const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId, onClose, isUpdate, isView, lessonID,selectedLanguage }: AddLessonsModalProps) => {
 
 
     const [form] = Form.useForm<AddLessonsFormValues>();
@@ -46,12 +47,13 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
         if (onClose) onClose();
     }
 
+    
     const { data: lessonDetail, isLoading: isLoadingLessonDetail } = useAppQuery<LessonDetail>({
-        queryKey: [MUTATION_KEYS.LESSON_DETAIL, lessonID],
+        queryKey: [MUTATION_KEYS.LESSON_DETAIL, lessonID,selectedLanguage||"en"],
         url: `${ENDPOINTS.PRIVATE.LESSON_DETAIL}`,
         params: {
             exercise_details_id: lessonID,
-            lang: "en"
+            lang: selectedLanguage||"en"
         },
         options: {
             staleTime: Infinity,
@@ -60,7 +62,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
     })
     const lessonDetailData = lessonDetail?.data
     React.useEffect(() => {
-        if (lessonDetailData && (isUpdate || isView)) {
+        if (lessonDetailData && (isUpdate || isView) && openAddLessonsModal) {
             form.setFieldsValue({
                 reading_title: lessonDetailData?.reading_title,
                 reading_description: lessonDetailData?.reading_description,
@@ -69,7 +71,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                 reflection: lessonDetailData?.reflection,
             });
         }
-    }, [lessonDetailData, isUpdate, isView, form]);
+    }, [lessonDetailData, isUpdate, isView, form, openAddLessonsModal]);
 
 
     const { mutateAsync: addLessons, isPending } = useAppMutate({
@@ -107,7 +109,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
 
     const { mutateAsync: UpdateLesson, isPending: isUpdating } = useAppMutate({
         mutationKey: [MUTATION_KEYS.LESSON_UPDATE],
-        invalidateQueryKeys: [[MUTATION_KEYS.LIST_LESSONS], [MUTATION_KEYS.LESSON_DETAIL]],
+        invalidateQueryKeys: [[MUTATION_KEYS.LIST_LESSONS], [MUTATION_KEYS.LESSON_DETAIL, lessonID, selectedLanguage || "en"]],
         showSuccessToast: true,
         showErrorToast: true,
         onSuccess() {
@@ -123,7 +125,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                     url: ENDPOINTS.PRIVATE.LESSON_UPDATE,
                     method: "POST",
                     body: {
-                        lang: "en",
+                        lang: selectedLanguage||"en",
                         exercise_details_id: lessonID,
                         ...values,
                     },
@@ -147,6 +149,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
             onCancel={handleCancel}
             centered
             footer={false}
+            destroyOnHidden={true}
             closeIcon={<div className={'bg-maincolor text-white flex justify-center items-center rounded-full p-1.5 relative -top-2 -right-2'}><RxCross2 style={{ fontSize: 18 }} /></div>}
         >
             <h1 className="text-3xl font-bold text-center text-black">

@@ -55,7 +55,9 @@ export const ENDPOINTS = {
         ADMIN_DETAIL:"admin/auth/details",
         PROFILE_EDIT:"admin/auth/profile",
         CHANGE_PASSWORD:"admin/auth/change_password",
-        ADMIN_DASHBOARD:"admin/user/dashboard"
-
+        ADMIN_DASHBOARD:"admin/user/dashboard",
+        USERS_LIST:"admin/user/list",
+        USERS_DETAIL:"admin/user/details",
+        USERS_STATUS:"admin/user/status",
     }
 }

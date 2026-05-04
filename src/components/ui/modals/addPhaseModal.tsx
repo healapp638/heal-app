@@ -18,6 +18,7 @@ interface AddPhaseProps {
     onClose?: () => void;
     isUpdate?: boolean;
     isView?: boolean;
+    selectedLanguage?:string;
     phaseID?: string;
 }
 
@@ -30,7 +31,7 @@ interface PhaseDetail {
     __v: number;
 }
 
-const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, onClose, isUpdate, isView, phaseID }: AddPhaseProps) => {
+const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, onClose, isUpdate, isView, phaseID ,selectedLanguage}: AddPhaseProps) => {
 
 
     const [form] = Form.useForm();
@@ -41,11 +42,11 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
     }
 
     const { data: PhaseDetail, isPending: isLoadingPhaseDetail } = useAppQuery<PhaseDetail>({
-        queryKey: [MUTATION_KEYS.PHASE_DETAIL, phaseID],
+        queryKey: [MUTATION_KEYS.PHASE_DETAIL, phaseID, selectedLanguage || "en"],
         url: `${ENDPOINTS.PRIVATE.PHASE_DETAIL}`,
         params: {
             phaseId: phaseID,
-            lang: "en"
+            lang: selectedLanguage||"en"
         },
         options: {
             staleTime: Infinity,
@@ -55,13 +56,13 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
     const PhaseData = PhaseDetail?.data
 
     React.useEffect(() => {
-        if (PhaseData && (isUpdate || isView)) {
+        if (PhaseData && (isUpdate || isView) && openAddPhaseModal) {
             form.setFieldsValue({
                 title: PhaseData?.title,
                 points: PhaseData?.points,
             });
         }
-    }, [PhaseData, isUpdate, isView, form]);
+    }, [PhaseData, isUpdate, isView, form, openAddPhaseModal]);
 
     const { mutateAsync: addPhases, isPending } = useAppMutate({
         mutationKey: [MUTATION_KEYS.CREATE_PHASE],
@@ -99,7 +100,7 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
 
     const { mutateAsync: UpdatePhases, isPending: isUpdating } = useAppMutate({
         mutationKey: [MUTATION_KEYS.PHASE_UPDATE],
-        invalidateQueryKeys: [[MUTATION_KEYS.LIST_PHASE], [MUTATION_KEYS.PHASE_DETAIL]],
+        invalidateQueryKeys: [[MUTATION_KEYS.LIST_PHASE], [MUTATION_KEYS.PHASE_DETAIL, phaseID, selectedLanguage || "en"]],
         showSuccessToast: true,
         showErrorToast: true,
         onSuccess() {
@@ -118,7 +119,7 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
                         phaseId: phaseID,
                         title: values.title,
                         points: values.points,
-                        lang: "en"
+                        lang: selectedLanguage||"en"
                     },
                 });
             },
@@ -138,8 +139,9 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
         <Modal
             open={openAddPhaseModal}
             onCancel={handleCancel}
-            centered
             footer={false}
+            centered
+            destroyOnHidden={true}
             closeIcon={<div className={'bg-maincolor text-white flex justify-center items-center rounded-full p-1.5 relative -top-2 -right-2'}><RxCross2 style={{ fontSize: 18 }} /></div>}
         >
             <h1 className="text-3xl font-bold text-center text-black">

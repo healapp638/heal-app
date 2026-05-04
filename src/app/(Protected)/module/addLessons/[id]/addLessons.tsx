@@ -1,20 +1,20 @@
 "use client"
 
 import React from "react"
-import { useAppQuery } from "@/tanstack/useAppQuery";
-import { ENDPOINTS } from "@/Endpoints";
-import { useAppMutate } from "@/tanstack/useAppMutate";
-import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { useParams, useRouter } from "next/navigation";
-import { MUTATION_KEYS } from "@/tanstack/keys";
-import { Button, Table } from "antd";
-import { AppButton } from "@/components/ui";
-import { FiTrash2, FiEdit } from "react-icons/fi"
+import { Button, Select, Table } from "antd";
 import { FaEye } from "react-icons/fa";
-import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
-import DeleteModal from "@/components/ui/modals/DeleteModal";
 import { ROUTES } from "@/routerKeys";
+import { ENDPOINTS } from "@/Endpoints";
 import { ColumnsType } from "antd/es/table";
+import { AppButton } from "@/components/ui";
+import { MUTATION_KEYS } from "@/tanstack/keys";
+import { FiTrash2, FiEdit } from "react-icons/fi"
+import { useAppQuery } from "@/tanstack/useAppQuery";
+import { useAppMutate } from "@/tanstack/useAppMutate";
+import { useParams, useRouter } from "next/navigation";
+import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
+import DeleteModal from "@/components/ui/modals/DeleteModal";
+import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
 
 interface LessonData {
     _id: string;
@@ -53,8 +53,26 @@ export default function AddLessons() {
         pageSize: 10,
     });
 
+     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+        
+            const LANGUAGE_OPTIONS = [
+                { value: 'en', label: 'English' },
+                { value: 'zh', label: 'Chinese' },
+                { value: 'es', label: 'Spanish' },
+                { value: 'fr', label: 'French' },
+                { value: 'hi', label: 'Hindi' },
+                { value: 'de', label: 'German' },
+                { value: 'ru', label: 'Russian' },
+                { value: 'pt', label: 'Portuguese' },
+                { value: 'it', label: 'Italian' },
+                { value: 'ro', label: 'Romanian' }
+            ];
+            const handleLanguageChange = (value: string) => {
+                setSelectedLanguage(value);
+            };
+
     const { data: listLessons } = useAppQuery<LessonResult>({
-        queryKey: [MUTATION_KEYS.LIST_LESSONS, pagination, phaseId],
+        queryKey: [MUTATION_KEYS.LIST_LESSONS, pagination, phaseId,selectedLanguage],
         url: ENDPOINTS.PRIVATE.LIST_LESSONS,
         options: {
             staleTime: Infinity,
@@ -62,7 +80,7 @@ export default function AddLessons() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            lang: "en",
+            lang: selectedLanguage||"en",
             phase_id: phaseId
         }
     })
@@ -170,10 +188,18 @@ export default function AddLessons() {
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Lessons</span>
-                </h1>
+                </h1> 
+                <div className='flex justify-center gap-2'>
+                    <Select
+                        value={selectedLanguage}
+                        onChange={handleLanguageChange}
+                        options={LANGUAGE_OPTIONS}
+                        className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    />
                 <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                     Add Lessons
                 </AppButton>
+                </div>
             </div>
             <Table
                 dataSource={listLessonsData}
@@ -196,8 +222,8 @@ export default function AddLessons() {
             />
             <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openAddLessonsModal} setOpenAddLessonsModal={setOpenAddLessonsModal} />
             <DeleteModal title='Lesson' openDeleteModal={openDeleteLessonModal} setopenDeleteModal={setOpenDeleteLessonModal} handleDelete={handleDeleteLesson} loading={isDeleting} />
-            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openViewLessonModal} setOpenAddLessonsModal={setOpenViewLessonModal} isView={true} lessonID={lessonId} />
-            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openUpdateLessonModal} setOpenAddLessonsModal={setOpenUpdateLessonModal} isUpdate={true} lessonID={lessonId} />
+            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openViewLessonModal} setOpenAddLessonsModal={setOpenViewLessonModal} isView={true} lessonID={lessonId} selectedLanguage={selectedLanguage}/>
+            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openUpdateLessonModal} setOpenAddLessonsModal={setOpenUpdateLessonModal} isUpdate={true} lessonID={lessonId} selectedLanguage={selectedLanguage}/>
         </div>
     )
 }

@@ -20,15 +20,17 @@ interface AddThemeModalProps {
     isView?: boolean;
     themeId?: string;
     onClose?: () => void;
+    selectedLanguage?:string;
 }
 
 interface ThemeDetail {
     title: string;
     description: string;
     imgUrl: string;
+    
 }
 
-const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onClose }: AddThemeModalProps) => {
+const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onClose ,selectedLanguage }: AddThemeModalProps) => {
 
     const [form] = Form.useForm();
     const [fileList, setFileList] = React.useState<any[]>([]);
@@ -45,11 +47,11 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
     }
 
     const { data: themeDetail, isPending: isLoadingThemeDetail } = useAppQuery<ThemeDetail>({
-        queryKey: [MUTATION_KEYS.THEME_DETAIL, themeId],
+        queryKey: [MUTATION_KEYS.THEME_DETAIL, themeId, selectedLanguage || 'en'],
         url: `${ENDPOINTS.PRIVATE.THEME_DETAIL}`,
         params: {
             themeId: themeId,
-            lang: "en"
+            lang: selectedLanguage || 'en'
         },
         options: {
             staleTime: Infinity,
@@ -69,8 +71,8 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
     });
 
     const { mutateAsync: updateTheme, isPending: isUpdating } = useAppMutate({
-        mutationKey: [MUTATION_KEYS.UPDATE_THEME],
-        invalidateQueryKeys: [[MUTATION_KEYS.LIST_THEME], [MUTATION_KEYS.THEME_DETAIL]],
+        mutationKey: [MUTATION_KEYS.UPDATE_THEME, selectedLanguage || 'en'],
+        invalidateQueryKeys: [[MUTATION_KEYS.LIST_THEME, selectedLanguage || 'en'], [MUTATION_KEYS.THEME_DETAIL, themeId, selectedLanguage || 'en']],
         showSuccessToast: true,
         showErrorToast: true,
         onSuccess() {
@@ -89,7 +91,7 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
             description: values.description,
             imgUrl: fileUrl,
             ...(isUpdate && { themeId: themeId }),
-            ...(isUpdate && { lang: 'en' })
+            ...(isUpdate && { lang: selectedLanguage || 'en' })
         };
 
         await tryCatchWrapper(
@@ -215,6 +217,7 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
                 onCancel={handleCancel}
                 footer={false}
                 centered
+                destroyOnHidden={true}
                 closeIcon={<div className={'bg-maincolor text-white flex justify-center items-center rounded-full p-1.5 relative -top-2 -right-2'}><RxCross2 style={{ fontSize: 18 }} /></div>}
             >
                 <h1 className="text-3xl font-bold text-center text-black">

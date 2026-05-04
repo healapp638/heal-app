@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/integration/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
@@ -35,13 +35,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   )
 }
 
-
-
 function InnerProviders({ children }: { children: React.ReactNode }) {
   const { theme, resolvedTheme } = useTheme()
-  const [mounted, setMounted] = useState(false)
+  const [mounted, setMounted] = React.useState(false)
 
-  useEffect(() => {
+  React.useEffect(() => {
     setMounted(true)
   }, [])
 
