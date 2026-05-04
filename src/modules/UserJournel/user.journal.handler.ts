@@ -60,9 +60,15 @@ const UserCommonHandler = {
         if (!user) {
             return showResponse(false, getMessage(lang, 'user_not_found'), null, statusCodes.API_ERROR)
         }
+        const start_date = moment().startOf('day').format("%m-%d-%Y")
+        const end_date = moment().endOf('day').format("%m-%d-%Y")
         const match: any = {
             user_id: convertToObjectId(userId),
-            status: USER_STATUS.ACTIVE
+            status: USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: new Date(start_date),
+                $lte: new Date(end_date)
+            }
         }
         if (cursor) {
             const parsedCursor = JSON.parse(cursor);
@@ -99,10 +105,10 @@ const UserCommonHandler = {
             {
                 $match: {
                     ...(search_key && {
-                        title: {
-                            $regex: search_key,
-                            $options: 'i'
-                        }
+                        $or: [
+                            { title: { $regex: search_key, $options: 'i' } },
+                            { description: { $regex: search_key, $options: 'i' } }
+                        ]
                     })
                 }
             },

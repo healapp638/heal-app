@@ -63,9 +63,15 @@ const UserCommonHandler = {
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'user_not_found'), null, statusCodes_1.default.API_ERROR);
         }
+        const start_date = (0, moment_1.default)().startOf('day').format("%m-%d-%Y");
+        const end_date = (0, moment_1.default)().endOf('day').format("%m-%d-%Y");
         const match = {
             user_id: (0, common_helper_1.convertToObjectId)(userId),
-            status: workflow_constant_1.USER_STATUS.ACTIVE
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: new Date(start_date),
+                $lte: new Date(end_date)
+            }
         };
         if (cursor) {
             const parsedCursor = JSON.parse(cursor);
@@ -100,10 +106,10 @@ const UserCommonHandler = {
             },
             {
                 $match: Object.assign({}, (search_key && {
-                    title: {
-                        $regex: search_key,
-                        $options: 'i'
-                    }
+                    $or: [
+                        { title: { $regex: search_key, $options: 'i' } },
+                        { description: { $regex: search_key, $options: 'i' } }
+                    ]
                 }))
             },
             {
