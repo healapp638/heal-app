@@ -144,7 +144,17 @@ export default function AddExercise() {
             title: 'Title',
             dataIndex: 'title',
             key: 'title',
-            render: (text: string) => <span className='font-medium text-black'>{text}</span>
+            render: (text: string) => <span className='font-medium text-black'>{text || "N/A"}</span>
+        },
+        {
+            title: 'Description',
+            dataIndex: 'description',
+            key: 'description',
+            render: (text: string) => {
+                const words = text?.split(' ') || [];
+                const truncatedText = words.length > 5 ? words.slice(0, 5).join(' ') + '...' : text;
+                return <span className='font-medium text-black' title={text}>{truncatedText}</span>
+            }
         },
         {
             title: 'Actions',
