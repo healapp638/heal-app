@@ -633,7 +633,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "cursor",
+						"name": "page",
 						"required": false,
 						"schema": {
 							"type": "string"

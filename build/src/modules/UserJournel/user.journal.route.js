@@ -24,9 +24,9 @@ router.post('/create_journal', auth_middleware_1.verifyTokenUser, (req, res) => 
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/journal_list', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { cursor, limit, search_key } = req.query;
+    const { page, limit, search_key } = req.query;
     const controller = new user_journal_controller_1.default(req, res);
-    const result = yield controller.journalList(cursor, limit, search_key);
+    const result = yield controller.journalList(page, limit, search_key);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.put('/update_journal', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

@@ -56,8 +56,9 @@ const UserCommonHandler = {
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_created_successfully'), null, statusCodes_1.default.SUCCESS);
     }),
-    journalList: (cursor_1, ...args_1) => __awaiter(void 0, [cursor_1, ...args_1], void 0, function* (cursor, limit = 10, search_key, userId) {
+    journalList: (page_1, ...args_1) => __awaiter(void 0, [page_1, ...args_1], void 0, function* (page, limit = 10, search_key, userId) {
         limit = Number(limit);
+        console.log(limit, 'limit');
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const lang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
         if (!user) {
@@ -73,17 +74,7 @@ const UserCommonHandler = {
                 $lte: new Date(end_date)
             }
         };
-        if (cursor) {
-            const parsedCursor = JSON.parse(cursor);
-            match.$or = [
-                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
-                {
-                    createdAt: new Date(parsedCursor.createdAt),
-                    _id: { $lt: (0, common_helper_1.convertToObjectId)(parsedCursor._id) }
-                }
-            ];
-        }
-        const response = yield user_journel_model_1.default.aggregate([
+        const response = [
             {
                 $match: match
             },
@@ -105,21 +96,12 @@ const UserCommonHandler = {
             {
                 $sort: {
                     createdAt: -1,
-                    _id: -1
                 }
-            },
-            {
-                $limit: limit
-            },
-        ]);
-        const nextCursor = response.length > 0 ? JSON.stringify({
-            _id: response[response.length - 1]._id,
-            createdAt: response[response.length - 1].createdAt
-        }) : null;
-        if (!response) {
-            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_getting_journal'), null, statusCodes_1.default.API_ERROR);
-        }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { response, nextCursor }, statusCodes_1.default.SUCCESS);
+            }
+        ];
+        const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(user_journel_model_1.default, response, page, limit);
+        const result = yield user_journel_model_1.default.aggregate(aggregation);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_fetched_successfully'), { result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     journalDetail: (journalId, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });

@@ -47,10 +47,10 @@ let UserJournalController = class UserJournalController extends tsoa_1.Controlle
             return wrappedFunc(request, this.userId); // Invoking the wrapped function 
         });
     }
-    journalList(cursor, limit, search_key) {
+    journalList(page, limit, search_key) {
         return __awaiter(this, void 0, void 0, function* () {
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_journal_handler_1.default.journalList);
-            return wrappedFunc(cursor, limit, search_key, this.userId); // Invoking the wrapped function 
+            return wrappedFunc(page, limit, search_key, this.userId); // Invoking the wrapped function 
         });
     }
     updateJournal(request) {

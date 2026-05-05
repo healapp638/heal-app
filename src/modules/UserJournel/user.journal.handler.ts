@@ -5,7 +5,7 @@ import userAuthModel from "../UserAuth/user.auth.model";
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import { getMessage } from "../../helpers/messages";
 import userJournalModel from "./user.journel.model";
-import { convertToObjectId } from "../../helpers/common.helper";
+import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import { UserTranslateText } from "../../helpers/langauge.translate.helper";
 import moment from "moment";
 
@@ -53,8 +53,9 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(lang, 'journal_created_successfully'), null, statusCodes.SUCCESS)
     },
 
-    journalList: async (cursor: string, limit: number = 10, search_key: string, userId: string): Promise<ApiResponse> => {
+    journalList: async (page: string, limit: number = 10, search_key: string, userId: string): Promise<ApiResponse> => {
         limit = Number(limit)
+        console.log(limit,'limit')
         const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const lang = user?.language || 'en'
         if (!user) {
@@ -70,18 +71,8 @@ const UserCommonHandler = {
                 $lte: new Date(end_date)
             }
         }
-        if (cursor) {
-            const parsedCursor = JSON.parse(cursor);
-            match.$or = [
-                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
-                {
-                    createdAt: new Date(parsedCursor.createdAt),
-                    _id: { $lt: convertToObjectId(parsedCursor._id) }
-                }
-            ]
-        }
 
-        const response = await userJournalModel.aggregate([
+        const response = [
             {
                 $match: match
             },
@@ -105,23 +96,14 @@ const UserCommonHandler = {
             {
                 $sort: {
                     createdAt: -1,
-                    _id: -1
                 }
-            },
-            {
-                $limit: limit
-            },
-          
-        ]);
+            }
 
-        const nextCursor = response.length > 0 ? JSON.stringify({
-            _id: response[response.length - 1]._id,
-            createdAt: response[response.length - 1].createdAt
-        }) : null;
-        if (!response) {
-            return showResponse(false, getMessage(lang, 'error_while_getting_journal'), null, statusCodes.API_ERROR)
-        }
-        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { response, nextCursor }, statusCodes.SUCCESS)
+
+        ];
+        const { totalCount, aggregation } = await getCountAndPagination(userJournalModel, response, page, limit)
+        const result = await userJournalModel.aggregate(aggregation)
+        return showResponse(true, getMessage(lang, 'journal_fetched_successfully'), { result, totalCount }, statusCodes.SUCCESS)
     },
 
     journalDetail: async (journalId: string, userId: string,): Promise<ApiResponse> => {

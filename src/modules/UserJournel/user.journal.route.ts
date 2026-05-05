@@ -14,9 +14,9 @@ router.post('/create_journal', verifyTokenUser, async (req: Request | any, res: 
 });
 
 router.get('/journal_list', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { cursor, limit, search_key } = req.query;
+    const { page,limit,search_key} = req.query;
     const controller = new UserJournalController(req, res)
-    const result: ApiResponse = await controller.journalList(cursor, limit, search_key);
+    const result: ApiResponse = await controller.journalList(page, limit, search_key);
     return showOutput(res, result, result.code)
 });
 
