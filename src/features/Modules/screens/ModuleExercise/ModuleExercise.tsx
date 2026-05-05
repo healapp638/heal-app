@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { View, TextInput, BackHandler } from 'react-native';
 import {
   CommonActions,
   useNavigation,
   useTheme,
+  useRoute,
 } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -13,46 +15,49 @@ import SuccessModal from '../../../../modals/SuccessModal';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import { ToastService } from '../../../../utils/ToastManager';
 
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
+  const queryClient = useQueryClient();
+
+  const route = useRoute();
+  const { lesson, phase, exercises = [] } = (route.params as any) || {};
 
   const steps = [
-    {
-      type: 'number',
-      text:
-        localization.appkeys?.moduleExerciseStep1 ||
-        'Think of the person you call your best friend.',
-    },
-    {
-      type: 'number',
-      prefixText:
-        localization.appkeys?.moduleExerciseStep2Prefix ||
-        'Mentally identify: ',
-      text:
-        localization.appkeys?.moduleExerciseStep2 ||
-        'what makes this bond different from others?',
-    },
-    {
-      type: 'number',
-      text:
-        localization.appkeys?.moduleExerciseStep3 ||
-        "What does it give you that you don't find elsewhere?",
-    },
+    ...exercises.map((ex: any) => ({
+      type: ex.type || 'number',
+      text: ex.description || ex.text || '',
+      prefixText: ex.prefix_text || '',
+      title:
+        ex.title ||
+        localization.appkeys?.moduleExerciseReflectionTitle ||
+        'Reflection',
+      question: ex.question || '',
+      instruction: ex.instruction || '',
+      placeholder: ex.placeholder || '',
+    })),
     {
       type: 'reflection',
       title:
-        localization.appkeys?.moduleExerciseReflectionTitle || 'Reflection',
+        lesson?.reflection_title ||
+        localization.appkeys?.moduleExerciseReflectionTitle ||
+        'Reflection',
       question:
+        lesson?.reflection_question ||
         localization.appkeys?.moduleExerciseReflectionQuestion ||
         'What is the most important quality in a friendship for you?',
       instruction:
+        lesson?.reflection_instruction ||
         localization.appkeys?.moduleExerciseReflectionInstruction ||
         'In your head or on paper, take the time to answer honestly.',
       placeholder:
+        lesson?.reflection_placeholder ||
         localization.appkeys?.moduleExerciseReflectionPlaceholder ||
         'Express what you feel. This space is yours, without judgment.',
     },
@@ -61,6 +66,8 @@ const ModuleExercise = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
+
+  const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -74,7 +81,35 @@ const ModuleExercise = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      setShowModal(true);
+      if (!reflectionText.trim()) {
+        ToastService.show(
+          localization.appkeys?.pleaseEnterReflection ||
+            'Please enter your reflection',
+        );
+        return;
+      }
+
+      const lastExerciseId =
+        exercises.length > 0 ? exercises[exercises.length - 1]._id : '';
+
+      completeLesson(
+        {
+          endpoint: endpoints.complete_lesson,
+          data: {
+            reflection: reflectionText,
+            phase_id: phase?._id,
+            exercise_details_id: lesson?._id,
+            exercise_id: lastExerciseId,
+          },
+        },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['phase_list'] });
+            queryClient.invalidateQueries({ queryKey: ['module_list'] });
+            setShowModal(true);
+          },
+        },
+      );
     }
   };
 
@@ -148,6 +183,7 @@ const ModuleExercise = () => {
             }
             onPress={handleNext}
             btnStyle={styles.nextButton}
+            isLoading={isCompleting}
           />
 
           <SuccessModal
@@ -155,8 +191,8 @@ const ModuleExercise = () => {
             onClose={() => setShowModal(false)}
             title={localization.appkeys?.wellDone || 'Well done'}
             subtitle={
-              localization.appkeys?.completedPhase1 ||
-              "You've completed Phase 1"
+              localization.appkeys?.completedPhase ||
+              `You've completed ${phase?.phase || 'Phase 1'}`
             }
             btnLabel={localization.appkeys?.continue || 'Continue'}
             onPressBtn={() => {

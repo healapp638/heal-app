@@ -136,8 +136,8 @@ const EmergencyResources = () => {
             status={localization.appkeys?.available247 || 'Available 24/7'}
             number="Text SHOUT to 85258"
           />
-
-          <View style={styles.additionalSection}>
+          <View style={{ height: 20 }} />
+          {/* <View style={styles.additionalSection}>
             <SolidText style={styles.countryTitle}>
               {localization.appkeys?.additionalSupport || 'Additional Support'}
             </SolidText>
@@ -159,7 +159,7 @@ const EmergencyResources = () => {
                 'Mental Health First Aid'
               }
             />
-          </View>
+          </View> */}
         </View>
       }
     />

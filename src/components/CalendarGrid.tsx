@@ -22,6 +22,8 @@ interface CalendarGridProps {
   todayDay: number;
   isCurrentMonth: boolean;
   onDayPress?: (day: number) => void;
+  markedDates?: { [date: string]: number };
+  selectedDay?: number;
 }
 
 const CalendarGrid = ({
@@ -30,6 +32,8 @@ const CalendarGrid = ({
   todayDay,
   isCurrentMonth,
   onDayPress,
+  markedDates = {},
+  selectedDay,
 }: CalendarGridProps) => {
   const { colors } = useTheme() as any;
 
@@ -78,6 +82,12 @@ const CalendarGrid = ({
               }
 
               const isToday = isCurrentMonth && day === todayDay;
+              const isSelected = day === selectedDay;
+              const dateString = `${year}-${String(month + 1).padStart(
+                2,
+                '0',
+              )}-${String(day).padStart(2, '0')}`;
+              const hasEntries = markedDates[dateString] > 0;
 
               return (
                 <View key={`day-${day}`} style={styles.dayCell}>
@@ -89,7 +99,7 @@ const CalendarGrid = ({
                     <View
                       style={[
                         styles.dayCircle,
-                        isToday && {
+                        isSelected && {
                           backgroundColor: colors.calendarTodayBg,
                         },
                       ]}
@@ -98,11 +108,23 @@ const CalendarGrid = ({
                         style={[
                           styles.dayText,
                           { color: colors.calendarDayBrown },
-                          isToday && styles.dayTextToday,
+                          isSelected && styles.dayTextToday,
                         ]}
                       >
                         {day}
                       </SolidText>
+                      {hasEntries && (
+                        <View
+                          style={[
+                            styles.dot,
+                            {
+                              backgroundColor: isSelected
+                                ? 'white'
+                                : colors.calendarDayBrown,
+                            },
+                          ]}
+                        />
+                      )}
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -155,6 +177,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   dayText: {
     fontFamily: AppFonts.regular,
@@ -163,6 +186,12 @@ const styles = StyleSheet.create({
   },
   dayTextToday: {
     color: 'white',
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 2,
   },
 });
 

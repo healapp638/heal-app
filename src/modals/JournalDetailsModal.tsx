@@ -66,7 +66,7 @@ const JournalDetailsModal = ({
             {/* Info Box */}
             <View style={styles.infoBox}>
               <View style={styles.infoRow}>
-                <SolidText style={styles.dateText}>April 20, 2026</SolidText>
+                <SolidText style={styles.dateText}>{entry.date}</SolidText>
                 <View
                   style={[styles.tagPill, { backgroundColor: colors.brown }]}
                 >
@@ -78,7 +78,7 @@ const JournalDetailsModal = ({
 
             {/* Title */}
             <SolidText style={[styles.entryTitle, { color: colors.brown }]}>
-              {localization.appkeys?.journalEntryTitle || 'Title'}
+              {entry.title}
             </SolidText>
 
             {/* Body Box */}
@@ -165,11 +165,14 @@ const useStyle = (colors: any) =>
       fontFamily: AppFonts.recoMedium,
       fontSize: AppUtils.fontSize(18),
       marginBottom: 8,
+      marginLeft: 10,
+      marginTop: 10,
     },
     bodyBox: {
       backgroundColor: '#FCF7F3',
       borderRadius: 12,
       padding: 8,
+      marginBottom: 8,
     },
     bodyText: {
       fontFamily: AppFonts.regular,

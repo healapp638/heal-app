@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@d11/react-native-fast-image": "^8.11.1",
+    "@dev-amirzubair/react-native-voice": "^1.0.4",
     "@notifee/react-native": "^9.1.8",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "^8.4.4",

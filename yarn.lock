@@ -1043,6 +1043,13 @@
   resolved "https://registry.npmjs.org/@d11/react-native-fast-image/-/react-native-fast-image-8.11.1.tgz"
   integrity sha512-KG5Oxs1TWbwMf0ibZwE4EKMSSC0vpBQG6yPAB3WwcYtSzlY4JICjjpXPP+oixwQ/hO/sm6EGBNkVHOlfg4aJ+g==
 
+"@dev-amirzubair/react-native-voice@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@dev-amirzubair/react-native-voice/-/react-native-voice-1.0.4.tgz#c3fd28f814f53081bd0719c4e8d8f5f3b65b19e8"
+  integrity sha512-/JTxJbs9oc/tvtwiM8mcrnXktL645yeT5YXHNCqon80m6SD7JuMCtu+j8QY0Y50M0wa9Ion33ntY0lQp1KRVsQ==
+  dependencies:
+    invariant "^2.2.4"
+
 "@eslint-community/eslint-utils@^4.2.0", "@eslint-community/eslint-utils@^4.4.0":
   version "4.8.0"
   resolved "https://registry.npmjs.org/@eslint-community/eslint-utils/-/eslint-utils-4.8.0.tgz"

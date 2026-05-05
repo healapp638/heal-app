@@ -1,6 +1,17 @@
-import React, { useEffect } from 'react';
-import { View, FlatList, BackHandler } from 'react-native';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import {
+  View,
+  FlatList,
+  BackHandler,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
+import {
+  useNavigation,
+  useTheme,
+  useRoute,
+  useFocusEffect,
+} from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -9,37 +20,66 @@ import PhaseCard from '../../../../components/PhaseCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import useGetApi from '../../../../hooks/useGetApi';
+import { endpoints } from '../../../../api/Services/endpoints';
 
 const StartedModule = () => {
   const { colors } = useTheme() as any;
-  const { localization } = React.useContext(LocalizationContext) as any;
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const navigation = useNavigation();
+  const route = useRoute();
+  const { subModule } = route.params as any;
 
-  const phasesData = [
-    {
-      id: '1',
-      phase: localization.appkeys?.phase1 || 'Phase 1',
-      title:
-        localization.appkeys?.phase1Title || 'Defining Friendship for Yourself',
-      points: '10 Pts',
-      isLocked: false,
-    },
-    {
-      id: '2',
-      phase: localization.appkeys?.phase2 || 'Phase 2',
-      title: localization.appkeys?.phase2Title || 'Reciprocity in Friendship',
-      points: '10 Pts',
-      isLocked: true,
-    },
-    {
-      id: '3',
-      phase: localization.appkeys?.phase3 || 'Phase 3',
-      title: localization.appkeys?.phase3Title || 'Different Types of Friends',
-      points: '10 Pts',
-      isLocked: true,
-    },
-  ];
+  const [phases, setPhases] = useState<any[]>([]);
+  const [cursor, setCursor] = useState<string | null>(null);
+  const [subModuleDetail, setSubModuleDetail] = useState<any>(subModule);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { data, isLoading, refetch, isFetching } = useGetApi(
+    endpoints.phase_list,
+    ['phase_list', subModule?._id, cursor],
+    { sub_module_id: subModule?._id, cursor, limit: 10 },
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
+
+  useEffect(() => {
+    if (data?.data) {
+      const responseData = data.data;
+      if (responseData.subModule) {
+        setSubModuleDetail(responseData.subModule);
+      }
+      const fetchedPhases = (responseData.phases || [])?.filter(
+        (p: any) => !p.isCompleted,
+      );
+      if (cursor === null) {
+        setPhases(fetchedPhases);
+      } else {
+        setPhases(prev => [...prev, ...fetchedPhases]);
+      }
+    }
+    setIsRefreshing(false);
+  }, [data]);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    setCursor(null);
+    refetch();
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  };
+
+  const loadMore = () => {
+    const nextCursor = data?.data?.nextCursor || data?.data?.next_cursor;
+    if (nextCursor && !isFetching) {
+      setCursor(nextCursor);
+    }
+  };
 
   const renderHeader = () => (
     <>
@@ -47,12 +87,14 @@ const StartedModule = () => {
 
       <View style={styles.headerTextContainer}>
         <SolidText style={[styles.title, { color: colors.brown }]}>
-          {localization.appkeys?.trueFriendshipTitle ||
+          {subModuleDetail?.title ||
+            localization.appkeys?.trueFriendshipTitle ||
             'What is a True Friendship?'}
         </SolidText>
         <SolidText style={[styles.subtitle, { color: colors.brown }]}>
-          {localization.appkeys?.trueFriendshipDesc ||
-            'We often say we have friends — but what does that really mean? This module helps you clarify what friendship represents for you and what you expect from it'}
+          {subModuleDetail?.description ||
+            localization.appkeys?.trueFriendshipDesc ||
+            'We often say we have friends — but what does that really mean?'}
         </SolidText>
       </View>
 
@@ -70,6 +112,7 @@ const StartedModule = () => {
       </SolidText>
     </>
   );
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -80,29 +123,68 @@ const StartedModule = () => {
     );
     return () => backHandler.remove();
   }, []);
+
   return (
     <SolidView
       view={
         <View style={styles.mainContainer}>
           <FlatList
-            data={phasesData}
-            keyExtractor={item => item.id}
+            data={phases}
+            keyExtractor={(item, index) => (item._id || index).toString()}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
             ListHeaderComponent={renderHeader}
-            renderItem={({ item }) => (
-              <PhaseCard
-                phase={item.phase}
-                title={item.title}
-                points={item.points}
-                isLocked={item.isLocked}
-                onPress={() => {
-                  if (!item.isLocked) {
-                    navigation.navigate(AppRoutes.PhaseDetail as never);
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            renderItem={({ item, index }) => {
+              // Logic for locking: first phase is unlocked, others locked if previous not completed
+              // Note: For a real app, the backend should ideally return the lock status.
+              const isLocked =
+                index === 0 ? false : !phases[index - 1].isCompleted;
+
+              return (
+                <PhaseCard
+                  phase={
+                    item.phase ||
+                    `${localization.appkeys?.phase || 'Phase'} ${index + 1}`
                   }
-                }}
-              />
-            )}
+                  title={item.title}
+                  points={`${item.points || 0} Pts`}
+                  isLocked={isLocked}
+                  onPress={() => {
+                    if (!isLocked) {
+                      navigation.navigate(
+                        AppRoutes.PhaseDetail as never,
+                        {
+                          phase: item,
+                        } as never,
+                      );
+                    }
+                  }}
+                />
+              );
+            }}
+            ListEmptyComponent={
+              isLoading && cursor === null ? (
+                <ActivityIndicator
+                  size="large"
+                  color={colors.brown}
+                  style={{ marginTop: 50 }}
+                />
+              ) : null
+            }
+            ListFooterComponent={
+              isFetching && cursor !== null ? (
+                <ActivityIndicator
+                  size="small"
+                  color={colors.brown}
+                  style={{ marginVertical: 20 }}
+                />
+              ) : null
+            }
           />
         </View>
       }

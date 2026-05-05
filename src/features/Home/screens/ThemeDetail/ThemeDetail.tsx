@@ -31,7 +31,7 @@ const ThemeDetail = () => {
     { id: '1', image: images.hl1 },
     { id: '2', image: images.hl2 },
     { id: '3', image: images.hl3 },
-    { id: '4', image: images.hl4 },
+    { id: '4', image: images.hl2 },
     { id: '5', image: images.hl5 },
     { id: '6', image: images.hl6 },
     { id: '7', image: images.hl1 }, // Repeating for grid filling

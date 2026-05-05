@@ -19,9 +19,15 @@ const ModuleThemeCard = ({ item, onPress }: ModuleThemeCardProps) => {
       style={[styles.themeCard, { backgroundColor: colors.white }]}
       onPress={onPress}
     >
-      <Image source={item.icon} style={styles.themeIcon} resizeMode="contain" />
+      <Image
+        source={
+          typeof item.icon === 'string' ? { uri: item.icon } : item.icon
+        }
+        style={styles.themeIcon}
+        resizeMode="contain"
+      />
       <SolidText style={[styles.themeLabel, { color: colors.brown }]}>
-        {item.label}
+        {item.title || item.label}
       </SolidText>
       <Image
         source={images.forward2}

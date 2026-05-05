@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, Image, TouchableOpacity, Platform } from 'react-native';
+import { View, Image, TouchableOpacity, Platform, Linking } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -9,6 +9,7 @@ import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import HomeHeader from '../../../../components/HomeHeader';
+import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 
 const AboutHeal = () => {
   const navigation = useNavigation();
@@ -41,8 +42,20 @@ const AboutHeal = () => {
     </View>
   );
 
-  const LinkItem = ({ label, icon }: { label: string; icon: any }) => (
-    <TouchableOpacity style={styles.linkCard} activeOpacity={0.7}>
+  const LinkItem = ({
+    label,
+    icon,
+    onPress,
+  }: {
+    label: string;
+    icon: any;
+    onPress?: () => void;
+  }) => (
+    <TouchableOpacity
+      style={styles.linkCard}
+      activeOpacity={0.7}
+      onPress={onPress}
+    >
       <SolidText style={styles.linkText}>{label}</SolidText>
       <Image source={icon} style={styles.linkIcon} resizeMode="contain" />
     </TouchableOpacity>
@@ -185,14 +198,19 @@ const AboutHeal = () => {
           <LinkItem
             label={localization.appkeys?.website || 'Website'}
             icon={images.open}
+            onPress={() => Linking.openURL('https://www.heal-app.com/')}
           />
           <LinkItem
             label={localization.appkeys?.termsOfService || 'Terms of Service'}
             icon={images.open}
+            onPress={() => navigation.navigate(AppRoutes.Terms as never)}
           />
           <LinkItem
             label={localization.appkeys?.privacyPolicy || 'Privacy Policy'}
             icon={images.open}
+            onPress={() =>
+              navigation.navigate(AppRoutes.PrivacyPolicy as never)
+            }
           />
 
           <View style={styles.footerContainer}>

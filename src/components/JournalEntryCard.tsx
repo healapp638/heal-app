@@ -49,7 +49,7 @@ const JournalEntryCard = ({
 const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
+    borderRadius: 14,
     padding: 10,
     marginBottom: 14,
     // iOS shadow
