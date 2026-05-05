@@ -6,7 +6,6 @@ import { FaEye } from "react-icons/fa";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
 import { ColumnsType } from "antd/es/table";
-import { AppButton } from "@/components/ui";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
