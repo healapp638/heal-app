@@ -43,6 +43,7 @@ export default function Module() {
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false);
     const [openViewModal, setOpenViewModal] = React.useState(false);
     const [selectedTheme, setSelectedTheme] = React.useState("");
+    const [loadingModuleId, setLoadingModuleId] = React.useState<string | null>(null);
 
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
@@ -122,6 +123,7 @@ export default function Module() {
     };
 
     const handleAddModule = (themeId: string) => {
+        setLoadingModuleId(themeId);
         route.push(`${ROUTES.PRIVATE.ADDMODULE}/${themeId}`)
     }
 
@@ -157,7 +159,11 @@ export default function Module() {
             key: "add_module",
             render: (_: any, record: Theme) => (
                 <div>
-                    <Button onClick={() => handleAddModule(record?._id)} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
+                    <Button 
+                        loading={loadingModuleId === record?._id}
+                        onClick={() => handleAddModule(record?._id)} 
+                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
+                    >
                         Add Module
                     </Button>
                 </div>

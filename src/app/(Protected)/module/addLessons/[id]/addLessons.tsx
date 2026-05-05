@@ -48,6 +48,7 @@ export default function AddLessons() {
     const [lessonId, setLessonId] = React.useState<string>("");
     const [openUpdateLessonModal, setOpenUpdateLessonModal] = React.useState(false);
     const [openViewLessonModal, setOpenViewLessonModal] = React.useState(false);
+    const [loadingExerciseId, setLoadingExerciseId] = React.useState<string | null>(null);
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
@@ -87,6 +88,7 @@ export default function AddLessons() {
     const listLessonsData = listLessons?.data?.result;
 
     const handleAddExercise = (lessonId: string) => {
+        setLoadingExerciseId(lessonId);
         route.push(`${ROUTES.PRIVATE.ADDEXERCISE}/${lessonId}`)
     };
 
@@ -161,7 +163,11 @@ export default function AddLessons() {
             title: "Add Exercise",
             render: (_: any, record: any) => (
                 <div>
-                    <Button onClick={() => handleAddExercise(record?._id)} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
+                    <Button 
+                        loading={loadingExerciseId === record?._id}
+                        onClick={() => handleAddExercise(record?._id)} 
+                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
+                    >
                         Add Exercise
                     </Button>
                 </div>

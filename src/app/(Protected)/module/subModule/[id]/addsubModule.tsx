@@ -44,6 +44,7 @@ export default function AddSubModule() {
     const [selectedSubModule, setSelectedSubModule] = React.useState("")
     const [openUpdateSubModuleModal, setOpenUpdateSubModuleModal] = React.useState(false)
     const [openViewSubModuleModal, setOpenViewSubModuleModal] = React.useState(false)
+    const [loadingPhaseId, setLoadingPhaseId] = React.useState<string | null>(null);
 
     const [pagination, setPagination] = React.useState({
         current: 1,
@@ -68,11 +69,8 @@ export default function AddSubModule() {
     };
 
     const { data: listsubModule } = useAppQuery<SubModuleResult>({
-        queryKey: [MUTATION_KEYS.LIST_SUB_MODULE, selectedLanguage || "en"],
+        queryKey: [MUTATION_KEYS.LIST_SUB_MODULE, selectedLanguage || "en", moduleId, pagination],
         url: ENDPOINTS.PRIVATE.LIST_SUB_MODULE,
-        options: {
-            staleTime: Infinity,
-        },
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
@@ -118,6 +116,7 @@ export default function AddSubModule() {
 
 
     const handleAddPhase = (subModuleId: string) => {
+        setLoadingPhaseId(subModuleId);
         route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}`)
     };
 
@@ -143,7 +142,11 @@ export default function AddSubModule() {
             title: "Add Phase",
             render: (_: any, record: any) => (
                 <div>
-                    <Button onClick={() => { handleAddPhase(record?._id) }} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
+                    <Button 
+                        loading={loadingPhaseId === record?._id}
+                        onClick={() => { handleAddPhase(record?._id) }} 
+                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
+                    >
                         Add Phase
                     </Button>
                 </div>

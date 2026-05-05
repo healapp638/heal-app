@@ -48,7 +48,6 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
             lang: selectedLanguage ||"en"
         },
         options: {
-            staleTime: Infinity,
             enabled: openModal && !!subModuleId,
         },
     })

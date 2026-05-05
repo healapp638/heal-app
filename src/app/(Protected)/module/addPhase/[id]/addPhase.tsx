@@ -45,6 +45,7 @@ export default function AddPhase() {
     const [openPhaseUpdateModal, setOpenPhaseUpdateModal] = React.useState(false);
     const [openPhaseViewModal, setOpenPhaseViewModal] = React.useState(false);
     const [selectPhase, setSelectPhase] = React.useState("");
+    const [loadingLessonId, setLoadingLessonId] = React.useState<string | null>(null);
 
     const [pagination, setPagination] = React.useState({
         current: 1,
@@ -97,6 +98,7 @@ export default function AddPhase() {
     };
 
     const handleAddLesson = (phaseId: string) => {
+        setLoadingLessonId(phaseId);
         route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${phaseId}`)
     };
 
@@ -158,7 +160,11 @@ export default function AddPhase() {
             title: "Add Lesson",
             render: (_: any, record: any) => (
                 <div>
-                    <Button onClick={() => { handleAddLesson(record?._id) }} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
+                    <Button 
+                        loading={loadingLessonId === record?._id}
+                        onClick={() => { handleAddLesson(record?._id) }} 
+                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
+                    >
                         Add Lesson
                     </Button>
                 </div>

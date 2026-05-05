@@ -47,6 +47,7 @@ export default function AddModule() {
 
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false)
     const [openViewModal, setOpenViewModal] = React.useState(false)
+    const [loadingSubModuleId, setLoadingSubModuleId] = React.useState<string | null>(null);
 
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
@@ -128,6 +129,7 @@ export default function AddModule() {
     };
 
     const handleAddSubModule = (moduleId: string) => {
+        setLoadingSubModuleId(moduleId);
         route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}`)
     };
     const columns: ColumnsType<ModuleData> = [
@@ -148,7 +150,11 @@ export default function AddModule() {
             title: "Add SubModule",
             render: (_: any, record: any) => (
                 <div>
-                    <Button onClick={() => { handleAddSubModule(record?._id) }} className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" >
+                    <Button 
+                        loading={loadingSubModuleId === record?._id}
+                        onClick={() => { handleAddSubModule(record?._id) }} 
+                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
+                    >
                         Add SubModule
                     </Button>
                 </div>
