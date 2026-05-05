@@ -433,7 +433,7 @@
 			}
 		},
 		"/user/modules/start_lesson": {
-			"get": {
+			"post": {
 				"operationId": "StartLesson",
 				"responses": {
 					"200": {
@@ -455,16 +455,25 @@
 						"Bearer": []
 					}
 				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "phase_id",
-						"required": true,
-						"schema": {
-							"type": "string"
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"phase_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"phase_id"
+								],
+								"type": "object"
+							}
 						}
 					}
-				]
+				}
 			}
 		},
 		"/user/modules/start_sub_module_list": {

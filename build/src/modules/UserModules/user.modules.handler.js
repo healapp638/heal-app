@@ -373,7 +373,7 @@ const UserCommonHandler = {
         ]);
         const last = lessons[lessons.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { phase: phase[0], lessons, nextCursor }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { phase: phase[0], lesson: lessons[0], nextCursor }, statusCodes_1.default.SUCCESS);
     }),
     exerciseList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const { exercise_detail_id, cursor, limit = 10 } = data;

@@ -84,14 +84,14 @@ export default class UserModulesController extends Controller {
     }
 
     @Security('Bearer')
-    @Get("/start_lesson")
-    public async startLesson(@Query() phase_id: string): Promise<ApiResponse> {
-        const validate = validateStartLesson({ phase_id });
+    @Post("/start_lesson")
+    public async startLesson(@Body() body: { phase_id: string }): Promise<ApiResponse> {
+        const validate = validateStartLesson(body);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
         }
         const wrappedFunc = tryCatchWrapper(handler.startLesson);
-        return wrappedFunc(phase_id, this.userId); // Invoking the wrapped function 
+        return wrappedFunc(body.phase_id, this.userId); // Invoking the wrapped function 
     }
 
     @Security('Bearer')

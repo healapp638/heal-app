@@ -389,7 +389,7 @@ const UserCommonHandler = {
 
         const last = lessons[lessons.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { phase: phase[0], lessons, nextCursor }, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { phase: phase[0], lesson: lessons[0], nextCursor }, statusCodes.SUCCESS);
     },
 
     exerciseList: async (data: any, userId: string): Promise<ApiResponse> => {

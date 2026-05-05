@@ -93,14 +93,14 @@ let UserModulesController = class UserModulesController extends tsoa_1.Controlle
             return wrappedFunc(body, this.userId); // Invoking the wrapped function 
         });
     }
-    startLesson(phase_id) {
+    startLesson(body) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, user_modules_validator_1.validateStartLesson)({ phase_id });
+            const validate = (0, user_modules_validator_1.validateStartLesson)(body);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
             }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.startLesson);
-            return wrappedFunc(phase_id, this.userId); // Invoking the wrapped function 
+            return wrappedFunc(body.phase_id, this.userId); // Invoking the wrapped function 
         });
     }
     startSubModuleList(cursor, limit) {
@@ -183,10 +183,10 @@ __decorate([
 ], UserModulesController.prototype, "completeLesson", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Get)("/start_lesson"),
-    __param(0, (0, tsoa_1.Query)()),
+    (0, tsoa_1.Post)("/start_lesson"),
+    __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserModulesController.prototype, "startLesson", null);
 __decorate([
