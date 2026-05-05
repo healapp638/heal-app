@@ -50,7 +50,7 @@ router.post('/complete_lesson', verifyTokenUser, async (req: Request | any, res:
 });
 
 router.post('/start_lesson', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { phase_id } = req.query;
+    const { phase_id } = req.body;
     const controller = new UserModulesController(req, res)
     const result: ApiResponse = await controller.startLesson({phase_id});
     return showOutput(res, result, result.code)

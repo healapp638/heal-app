@@ -55,7 +55,7 @@ router.post('/complete_lesson', verifyTokenUser, (req, res) => __awaiter(void 0,
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/start_lesson', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phase_id } = req.query;
+    const { phase_id } = req.body;
     const controller = new user_modules_controller_1.default(req, res);
     const result = yield controller.startLesson({ phase_id });
     return (0, response_util_1.showOutput)(res, result, result.code);
