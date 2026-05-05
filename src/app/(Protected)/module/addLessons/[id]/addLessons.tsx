@@ -202,9 +202,9 @@ export default function AddLessons() {
                         options={LANGUAGE_OPTIONS}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                     />
-                <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                {/* <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                     Add Lessons
-                </AppButton>
+                </AppButton> */}
                 </div>
             </div>
             <Table
