@@ -91,7 +91,7 @@ export default class UserModulesController extends Controller {
             return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
         }
         const wrappedFunc = tryCatchWrapper(handler.startLesson);
-        return wrappedFunc(body.phase_id, this.userId); // Invoking the wrapped function 
+        return wrappedFunc(body, this.userId); // Invoking the wrapped function 
     }
 
     @Security('Bearer')

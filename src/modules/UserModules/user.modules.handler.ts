@@ -541,7 +541,8 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes.SUCCESS);
     },
 
-    startLesson: async (phase_id: string, userId: string): Promise<ApiResponse> => {
+    startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { phase_id } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const userLang = user?.language || 'en';
 

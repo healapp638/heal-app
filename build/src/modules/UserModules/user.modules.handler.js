@@ -503,7 +503,8 @@ const UserCommonHandler = {
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes_1.default.SUCCESS);
     }),
-    startLesson: (phase_id, userId) => __awaiter(void 0, void 0, void 0, function* () {
+    startLesson: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { phase_id } = data;
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const userLang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
         const submodule = yield admin_phases_model_1.default.findOne({

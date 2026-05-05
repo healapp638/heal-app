@@ -100,7 +100,7 @@ let UserModulesController = class UserModulesController extends tsoa_1.Controlle
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
             }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.startLesson);
-            return wrappedFunc(body.phase_id, this.userId); // Invoking the wrapped function 
+            return wrappedFunc(body, this.userId); // Invoking the wrapped function 
         });
     }
     startSubModuleList(cursor, limit) {
