@@ -19,6 +19,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_phases_model_1 = __importDefault(require("./admin.phases.model"));
+const admin_submodules_model_1 = __importDefault(require("../AdminSubModules/admin.submodules.model"));
 const phaseHandler = {
     createPhase: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, points, subModuleId } = data;
@@ -64,6 +65,15 @@ const phaseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),
     listPhase: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en', subModuleId) {
+        const sub_module_details = yield admin_submodules_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(subModuleId) } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                }
+            }
+        ]);
         const aggregate = [
             { $match: { status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, subModuleId: (0, common_helper_1.convertToObjectId)(subModuleId) } },
             {
@@ -80,7 +90,7 @@ const phaseHandler = {
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_phases_model_1.default, aggregate, page, limit);
         const result = yield admin_phases_model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { sub_module_details: sub_module_details[0], result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     phaseDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { phaseId, lang } = data;

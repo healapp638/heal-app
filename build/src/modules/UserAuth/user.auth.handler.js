@@ -96,10 +96,13 @@ const UserAuthHandler = {
     }), //ends
     login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password, language } = data;
+        console.log(data, 'data');
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
+        console.log(findUser, 'findUser');
         if (!findUser.status) {
-            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "invalid_cred"), null, statusCodes_1.default.API_ERROR);
+            console.log('user not found');
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
         const is_user_social_login = !!userData.social_account.length;

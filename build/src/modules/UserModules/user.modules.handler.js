@@ -282,9 +282,23 @@ const UserCommonHandler = {
                 }
             }
         ]);
-        const last = phases[phases.length - 1];
+        // Add isLocked logic
+        const updatedPhases = phases.map((phase, index, arr) => {
+            var _a;
+            let isLocked = true;
+            // First phase always unlocked
+            if (index === 0) {
+                isLocked = false;
+            }
+            // Unlock if previous phase completed
+            else if ((_a = arr[index - 1]) === null || _a === void 0 ? void 0 : _a.isCompleted) {
+                isLocked = false;
+            }
+            return Object.assign(Object.assign({}, phase), { isLocked });
+        });
+        const last = updatedPhases[updatedPhases.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases, nextCursor }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases: updatedPhases, nextCursor }, statusCodes_1.default.SUCCESS);
     }),
     exerciseDetailList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const { phase_id, cursor, limit = 10 } = data;

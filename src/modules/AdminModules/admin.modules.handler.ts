@@ -3,9 +3,10 @@ import { showResponse } from "../../utils/response.util";
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
-import {translateText} from "../../helpers/langauge.translate.helper";
+import { translateText } from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import adminModulesModel from "./admin.modules.model";
+import adminThemeModel from "../AdminTheme/admin.theme.model";
 
 const CommonHandler = {
 
@@ -85,10 +86,19 @@ const CommonHandler = {
                 }
             },
             { $sort: { createdAt: -1 } },
-        ]
+        ];
+        const them_details = await adminThemeModel.aggregate([
+            { $match: { _id: convertToObjectId(themeId) } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                }
+            }
+        ])
         const { totalCount, aggregation } = await getCountAndPagination(adminModulesModel, aggregate, page, limit)
         const result = await adminModulesModel.aggregate(aggregation)
-        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { them_details: them_details[0], result, totalCount }, statusCodes.SUCCESS)
     },
 
     moduleDetails: async (data: any): Promise<ApiResponse> => {

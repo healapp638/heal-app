@@ -3,9 +3,10 @@ import { showResponse } from "../../utils/response.util";
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
-import {translateText} from "../../helpers/langauge.translate.helper";
+import { translateText } from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import adminSubmodulesModel from "./admin.submodules.model";
+import adminModulesModel from "../AdminModules/admin.modules.model";
 
 const CommonHandler = {
 
@@ -73,6 +74,14 @@ const CommonHandler = {
     },
 
     listSubModule: async (page: number, limit: number, search: string = '', lang: string = 'en', moduleId: string): Promise<ApiResponse> => {
+        const module_details = await adminModulesModel.aggregate([
+            { $match: { _id: convertToObjectId(moduleId) } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                }
+            }
+        ])
         const aggregate = [
             { $match: { status: { $ne: USER_STATUS.DELETED }, moduleId: convertToObjectId(moduleId) } },
             {
@@ -90,7 +99,7 @@ const CommonHandler = {
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminSubmodulesModel, aggregate, page, limit)
         const result = await adminSubmodulesModel.aggregate(aggregation)
-        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { module_details: module_details[0], result, totalCount }, statusCodes.SUCCESS)
     },
 
     subModuleDetails: async (data: any): Promise<ApiResponse> => {

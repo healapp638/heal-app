@@ -20,6 +20,7 @@ const langauge_translate_helper_1 = require("../../helpers/langauge.translate.he
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_exercise_details__model_1 = __importDefault(require("./admin.exercise.details..model"));
 const admin_excercise_model_1 = __importDefault(require("./admin.excercise.model"));
+const admin_phases_model_1 = __importDefault(require("../AdminPhases/admin.phases.model"));
 const exerciseHandler = {
     createExerciseDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { reading_title, reading_description, concept_title, concept_description, reflection, phase_id } = data;
@@ -80,6 +81,15 @@ const exerciseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),
     listExerciseDetails: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en', phase_id) {
+        const phaseDetails = yield admin_phases_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(phase_id), status: { $ne: workflow_constant_1.USER_STATUS.DELETED } } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                }
+            }
+        ]);
         const aggregate = [
             { $match: { status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, phase_id: (0, common_helper_1.convertToObjectId)(phase_id) } },
             {
@@ -100,7 +110,7 @@ const exerciseHandler = {
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_exercise_details__model_1.default, aggregate, page, limit);
         const result = yield admin_exercise_details__model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { phaseDetails: phaseDetails[0], result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     exerciseDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { exercise_details_id, lang } = data;
@@ -168,6 +178,20 @@ const exerciseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),
     listExercise: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en', exercise_details_id) {
+        const exerciseDetails = yield admin_exercise_details__model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(exercise_details_id), status: { $ne: workflow_constant_1.USER_STATUS.DELETED } } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                    concept_description: `$concept_description.${lang}`,
+                    reading_description: `$reading_description.${lang}`,
+                    reading_title: `$reading_title.${lang}`,
+                    concept_title: `$concept_title.${lang}`,
+                    reflection: `$reflection.${lang}`,
+                }
+            }
+        ]);
         const aggregate = [
             { $match: { status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, exercise_details_id: (0, common_helper_1.convertToObjectId)(exercise_details_id) } },
             {
@@ -185,7 +209,7 @@ const exerciseHandler = {
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_excercise_model_1.default, aggregate, page, limit);
         const result = yield admin_excercise_model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { exerciseDetails: exerciseDetails[0], result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     singleExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { exercise_id, lang } = data;

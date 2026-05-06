@@ -19,6 +19,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_submodules_model_1 = __importDefault(require("./admin.submodules.model"));
+const admin_modules_model_1 = __importDefault(require("../AdminModules/admin.modules.model"));
 const CommonHandler = {
     createSubModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, moduleId, description } = data;
@@ -67,6 +68,14 @@ const CommonHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),
     listSubModule: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en', moduleId) {
+        const module_details = yield admin_modules_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(moduleId) } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                }
+            }
+        ]);
         const aggregate = [
             { $match: { status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, moduleId: (0, common_helper_1.convertToObjectId)(moduleId) } },
             {
@@ -84,7 +93,7 @@ const CommonHandler = {
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_submodules_model_1.default, aggregate, page, limit);
         const result = yield admin_submodules_model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { module_details: module_details[0], result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     subModuleDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { subModuleId, lang } = data;

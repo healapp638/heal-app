@@ -289,12 +289,31 @@ const UserCommonHandler = {
                     completedPhase: 0
                 }
             }
-        ])
+        ]);
+
+        // Add isLocked logic
+        const updatedPhases = phases.map((phase, index, arr) => {
+            let isLocked = true;
+
+            // First phase always unlocked
+            if (index === 0) {
+                isLocked = false;
+            }
+            // Unlock if previous phase completed
+            else if (arr[index - 1]?.isCompleted) {
+                isLocked = false;
+            }
+
+            return {
+                ...phase,
+                isLocked
+            };
+        });
 
 
-        const last = phases[phases.length - 1];
+        const last = updatedPhases[updatedPhases.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases, nextCursor }, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases: updatedPhases, nextCursor }, statusCodes.SUCCESS);
     },
 
     exerciseDetailList: async (data: any, userId: string): Promise<ApiResponse> => {

@@ -19,6 +19,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_modules_model_1 = __importDefault(require("./admin.modules.model"));
+const admin_theme_model_1 = __importDefault(require("../AdminTheme/admin.theme.model"));
 const CommonHandler = {
     createModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, themeId } = data;
@@ -78,9 +79,18 @@ const CommonHandler = {
             },
             { $sort: { createdAt: -1 } },
         ];
+        const them_details = yield admin_theme_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(themeId) } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                }
+            }
+        ]);
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_modules_model_1.default, aggregate, page, limit);
         const result = yield admin_modules_model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { them_details: them_details[0], result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     moduleDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { moduleId, lang } = data;

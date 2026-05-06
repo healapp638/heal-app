@@ -3,10 +3,11 @@ import { showResponse } from "../../utils/response.util";
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
-import {translateText} from "../../helpers/langauge.translate.helper";
+import { translateText } from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import adminExerciseDetailsModel from "./admin.exercise.details..model";
 import adminExerciseModel from "./admin.excercise.model";
+import adminPhasesModel from "../AdminPhases/admin.phases.model";
 
 const exerciseHandler = {
 
@@ -88,6 +89,18 @@ const exerciseHandler = {
     },
 
     listExerciseDetails: async (page: number, limit: number, search: string = '', lang: string = 'en', phase_id: string): Promise<ApiResponse> => {
+
+        const phaseDetails = await adminPhasesModel.aggregate([
+            { $match: { _id: convertToObjectId(phase_id), status: { $ne: USER_STATUS.DELETED } } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                }
+            }
+        ]);
+
+
         const aggregate = [
             { $match: { status: { $ne: USER_STATUS.DELETED }, phase_id: convertToObjectId(phase_id) } },
             {
@@ -108,7 +121,7 @@ const exerciseHandler = {
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminExerciseDetailsModel, aggregate, page, limit)
         const result = await adminExerciseDetailsModel.aggregate(aggregation)
-        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { phaseDetails: phaseDetails[0], result, totalCount }, statusCodes.SUCCESS)
     },
 
     exerciseDetails: async (data: any): Promise<ApiResponse> => {
@@ -194,6 +207,21 @@ const exerciseHandler = {
     },
 
     listExercise: async (page: number, limit: number, search: string = '', lang: string = 'en', exercise_details_id: string): Promise<ApiResponse> => {
+        const exerciseDetails = await adminExerciseDetailsModel.aggregate([
+            { $match: { _id: convertToObjectId(exercise_details_id), status: { $ne: USER_STATUS.DELETED } } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                    concept_description: `$concept_description.${lang}`,
+                    reading_description: `$reading_description.${lang}`,
+                    reading_title: `$reading_title.${lang}`,
+                    concept_title: `$concept_title.${lang}`,
+                    reflection: `$reflection.${lang}`,
+                }
+            }
+        ]);
+
         const aggregate = [
             { $match: { status: { $ne: USER_STATUS.DELETED }, exercise_details_id: convertToObjectId(exercise_details_id) } },
             {
@@ -211,7 +239,7 @@ const exerciseHandler = {
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminExerciseModel, aggregate, page, limit)
         const result = await adminExerciseModel.aggregate(aggregation)
-        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { exerciseDetails: exerciseDetails[0], result, totalCount }, statusCodes.SUCCESS)
     },
 
     singleExercise: async (data: any): Promise<ApiResponse> => {

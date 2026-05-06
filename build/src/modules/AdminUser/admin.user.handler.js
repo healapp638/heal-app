@@ -59,13 +59,12 @@ const AdminUserHandler = {
     getUsersList: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { sort_column = 'createdAt', sort_direction = 'desc', page, limit, search_key = '', status } = data;
         const queryObject = {
-            user_type: workflow_constant_1.ROLE.USER, // 3 for users
-            // is_verified: true,
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED },
             $or: [
                 { email: { $regex: search_key, $options: 'i' } },
                 { first_name: { $regex: search_key, $options: 'i' } },
-            ]
+            ],
+            isVerified: true
         };
         //if used social login n project 
         // const queryObject: any = {

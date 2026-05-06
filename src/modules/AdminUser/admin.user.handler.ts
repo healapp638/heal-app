@@ -16,13 +16,12 @@ const AdminUserHandler = {
         const { sort_column = 'createdAt', sort_direction = 'desc', page, limit, search_key = '', status } = data
 
         const queryObject: any = {
-            user_type: ROLE.USER, // 3 for users
-            // is_verified: true,
             status: { $ne: USER_STATUS.DELETED },
             $or: [
                 { email: { $regex: search_key, $options: 'i' } },
                 { first_name: { $regex: search_key, $options: 'i' } },
-            ]
+            ],
+            isVerified: true
         }
 
         //if used social login n project 

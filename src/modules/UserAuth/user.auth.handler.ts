@@ -54,10 +54,13 @@ const UserAuthHandler = {
 
     login: async (data: any): Promise<ApiResponse> => {
         const { email, password, language } = data;
+        console.log(data,'data');
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
+        console.log(findUser,'findUser');
         if (!findUser.status) {
-            return showResponse(false, getMessage(language || 'en', "invalid_cred"), null, statusCodes.API_ERROR)
+            console.log('user not found')
+            return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR)
         }
 
         const userData = findUser?.data
