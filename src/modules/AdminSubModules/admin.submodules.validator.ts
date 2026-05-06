@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { languages } from '../../constants/workflow.constant';
+import { languages, USER_STATUS } from '../../constants/workflow.constant';
 
 export const validateCreateSubModule = (common: any) => {
     return joi.object({
@@ -21,6 +21,7 @@ export const validateUpdateSubModule = (common: any) => {
 export const validateDeleteSubModule = (common: any) => {
     return joi.object({
         subModuleId: joi.string().trim().required(),
+        status: joi.number().required().allow(USER_STATUS.ACTIVE, USER_STATUS.DEACTIVATED, USER_STATUS.DELETED),
     }).validate(common)
 }
 

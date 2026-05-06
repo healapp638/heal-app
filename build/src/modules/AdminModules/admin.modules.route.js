@@ -31,9 +31,9 @@ router.post('/update_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, 
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { moduleId } = req.body;
+    const { moduleId, status } = req.body;
     const controller = new admin_modules_controller_1.default(req, res);
-    const result = yield controller.deleteModule({ moduleId });
+    const result = yield controller.deleteModule({ moduleId, status });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_module', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

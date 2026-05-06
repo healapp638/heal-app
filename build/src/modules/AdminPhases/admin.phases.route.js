@@ -31,9 +31,9 @@ router.post('/update_phase', verifyTokenAdmin, (req, res) => __awaiter(void 0, v
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_phase', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { phaseId } = req.body;
+    const { phaseId, status } = req.body;
     const controller = new admin_phases_controller_1.default(req, res);
-    const result = yield controller.deletePhase({ phaseId });
+    const result = yield controller.deletePhase({ phaseId, status });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_phase', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

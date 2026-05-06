@@ -57,8 +57,8 @@ const CommonHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
     deleteModule: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { moduleId } = data;
-        const deleteTheme = yield admin_modules_model_1.default.findOneAndUpdate({ _id: moduleId }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
+        const { moduleId, status } = data;
+        const deleteTheme = yield admin_modules_model_1.default.findOneAndUpdate({ _id: moduleId }, { $set: { status: status } }, { new: true });
         if (!deleteTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }

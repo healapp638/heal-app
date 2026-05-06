@@ -22,9 +22,9 @@ router.post('/update_theme', verifyTokenAdmin, async (req: Request | any, res: R
 });
 
 router.delete('/delete_theme', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { themeId } = req.body
+    const { themeId, status } = req.body
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.deleteTheme({ themeId });
+    const result: ApiResponse = await controller.deleteTheme({ themeId, status });
     return showOutput(res, result, result.code)
 });
 

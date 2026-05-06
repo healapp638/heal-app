@@ -45,7 +45,7 @@ export default class AdminThemeController extends Controller {
 
     @Security('Bearer')
     @Delete('/delete_theme')
-    public async deleteTheme(@Body() request: { themeId: string }): Promise<ApiResponse> {
+    public async deleteTheme(@Body() request: { themeId: string, status: string }): Promise<ApiResponse> {
         const validate = validateDeleteTheme(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

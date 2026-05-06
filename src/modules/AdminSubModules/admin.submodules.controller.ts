@@ -45,7 +45,7 @@ export default class AdminSubModulesController extends Controller {
 
     @Security('Bearer')
     @Delete('/delete_submodule')
-    public async deleteSubModule(@Body() request: { subModuleId: string }): Promise<ApiResponse> {
+    public async deleteSubModule(@Body() request: { subModuleId: string,status:string }): Promise<ApiResponse> {
         const validate = validateDeleteSubModule(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

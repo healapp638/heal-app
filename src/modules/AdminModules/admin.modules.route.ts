@@ -22,9 +22,9 @@ router.post('/update_module', verifyTokenAdmin, async (req: Request | any, res: 
 });
 
 router.delete('/delete_module', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { moduleId } = req.body
+    const { moduleId,status } = req.body
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.deleteModule({ moduleId });
+    const result: ApiResponse = await controller.deleteModule({ moduleId,status });
     return showOutput(res, result, result.code)
 });
 

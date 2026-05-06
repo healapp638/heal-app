@@ -22,9 +22,9 @@ router.post('/update_phase', verifyTokenAdmin, async (req: Request | any, res: R
 });
 
 router.delete('/delete_phase', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { phaseId } = req.body
+    const { phaseId,status } = req.body
     const controller = new PhaseController(req, res)
-    const result: ApiResponse = await controller.deletePhase({ phaseId });
+    const result: ApiResponse = await controller.deletePhase({ phaseId,status });
     return showOutput(res, result, result.code)
 });
 

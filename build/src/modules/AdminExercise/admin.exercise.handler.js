@@ -73,8 +73,8 @@ const exerciseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
     deleteExerciseDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { exercise_details_id } = data;
-        const deleteExerciseDetails = yield admin_exercise_details__model_1.default.findOneAndUpdate({ _id: exercise_details_id }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
+        const { exercise_details_id, status } = data;
+        const deleteExerciseDetails = yield admin_exercise_details__model_1.default.findOneAndUpdate({ _id: exercise_details_id }, { $set: { status: status } }, { new: true });
         if (!deleteExerciseDetails) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }
@@ -170,8 +170,8 @@ const exerciseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
     deleteExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { exercise_id } = data;
-        const deleteExercise = yield admin_excercise_model_1.default.findOneAndUpdate({ _id: exercise_id }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
+        const { exercise_id, status } = data;
+        const deleteExercise = yield admin_excercise_model_1.default.findOneAndUpdate({ _id: exercise_id }, { $set: { status: status } }, { new: true });
         if (!deleteExercise) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }

@@ -26,6 +26,7 @@ exports.validateUpdateSubModule = validateUpdateSubModule;
 const validateDeleteSubModule = (common) => {
     return joi_1.default.object({
         subModuleId: joi_1.default.string().trim().required(),
+        status: joi_1.default.number().required().allow(workflow_constant_1.USER_STATUS.ACTIVE, workflow_constant_1.USER_STATUS.DEACTIVATED, workflow_constant_1.USER_STATUS.DELETED),
     }).validate(common);
 };
 exports.validateDeleteSubModule = validateDeleteSubModule;

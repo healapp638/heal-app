@@ -65,8 +65,8 @@ const CommonHandler = {
     },
 
     deleteSubModule: async (data: any): Promise<ApiResponse> => {
-        const { subModuleId } = data
-        const deleteTheme = await adminSubmodulesModel.findOneAndUpdate({ _id: subModuleId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+        const { subModuleId,status } = data
+        const deleteTheme = await adminSubmodulesModel.findOneAndUpdate({ _id: subModuleId }, { $set: { status: status } }, { new: true })
         if (!deleteTheme) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }

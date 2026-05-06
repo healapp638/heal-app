@@ -31,9 +31,9 @@ router.post('/update_exercise_details', verifyTokenAdmin, (req, res) => __awaite
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_exercise_details', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { exercise_details_id } = req.body;
+    const { exercise_details_id, status } = req.body;
     const controller = new admin_exercise_controller_1.default(req, res);
-    const result = yield controller.deleteExerciseDetails({ exercise_details_id });
+    const result = yield controller.deleteExerciseDetails({ exercise_details_id, status });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_exercise_details', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -62,9 +62,9 @@ router.post('/update_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { exercise_id } = req.body;
+    const { exercise_id, status } = req.body;
     const controller = new admin_exercise_controller_1.default(req, res);
-    const result = yield controller.deleteExercise({ exercise_id });
+    const result = yield controller.deleteExercise({ exercise_id, status });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

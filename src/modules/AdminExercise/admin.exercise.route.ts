@@ -22,9 +22,9 @@ router.post('/update_exercise_details', verifyTokenAdmin, async (req: Request | 
 });
 
 router.delete('/delete_exercise_details', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { exercise_details_id } = req.body
+    const { exercise_details_id, status } = req.body
     const controller = new ExerciseController(req, res)
-    const result: ApiResponse = await controller.deleteExerciseDetails({ exercise_details_id });
+    const result: ApiResponse = await controller.deleteExerciseDetails({ exercise_details_id, status });
     return showOutput(res, result, result.code)
 });
 
@@ -59,9 +59,9 @@ router.post('/update_exercise', verifyTokenAdmin, async (req: Request | any, res
 });
 
 router.delete('/delete_exercise', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { exercise_id } = req.body
+    const { exercise_id, status } = req.body
     const controller = new ExerciseController(req, res)
-    const result: ApiResponse = await controller.deleteExercise({ exercise_id });
+    const result: ApiResponse = await controller.deleteExercise({ exercise_id, status });
     return showOutput(res, result, result.code)
 });
 

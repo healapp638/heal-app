@@ -413,13 +413,9 @@ const UserAuthHandler = {
         var _a, _b, _c, _d;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
-        console.log(userData, 'userData');
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
-        console.log(is_user_social_login, 'is_user_social_login');
         const is_simple_login = !!(userData === null || userData === void 0 ? void 0 : userData.password);
-        console.log(is_simple_login, 'is_simple_login');
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        console.log(account_type, 'account_type');
         const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
         if (!result.status) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);

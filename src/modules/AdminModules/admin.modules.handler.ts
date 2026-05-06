@@ -64,8 +64,8 @@ const CommonHandler = {
     },
 
     deleteModule: async (data: any): Promise<ApiResponse> => {
-        const { moduleId } = data
-        const deleteTheme = await adminModulesModel.findOneAndUpdate({ _id: moduleId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+        const { moduleId,status} = data
+        const deleteTheme = await adminModulesModel.findOneAndUpdate({ _id: moduleId }, { $set: { status: status } }, { new: true })
         if (!deleteTheme) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }

@@ -1,5 +1,5 @@
 import joi from 'joi';
-import { languages } from '../../constants/workflow.constant';
+import { languages, USER_STATUS } from '../../constants/workflow.constant';
 
 export const validateCreateExerciseDetails = (common: any) => {
     return joi.object({
@@ -27,6 +27,7 @@ export const validateUpdateExerciseDetails = (common: any) => {
 export const validateDeleteExerciseDetails = (common: any) => {
     return joi.object({
         exercise_details_id: joi.string().trim().required(),
+        status: joi.number().required().allow(USER_STATUS.ACTIVE, USER_STATUS.DEACTIVATED, USER_STATUS.DELETED),
     }).validate(common)
 }
 
@@ -67,6 +68,7 @@ export const validateUpdateExercise = (common: any) => {
 export const validateDeleteExercise = (common: any) => {
     return joi.object({
         exercise_id: joi.string().trim().required(),
+        status: joi.number().required().allow(USER_STATUS.ACTIVE, USER_STATUS.DEACTIVATED, USER_STATUS.DELETED),
     }).validate(common)
 }
 

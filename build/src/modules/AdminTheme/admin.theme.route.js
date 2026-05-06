@@ -31,9 +31,9 @@ router.post('/update_theme', verifyTokenAdmin, (req, res) => __awaiter(void 0, v
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_theme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { themeId } = req.body;
+    const { themeId, status } = req.body;
     const controller = new admin_theme_controller_1.default(req, res);
-    const result = yield controller.deleteTheme({ themeId });
+    const result = yield controller.deleteTheme({ themeId, status });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_theme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

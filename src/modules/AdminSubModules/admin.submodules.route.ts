@@ -22,9 +22,9 @@ router.post('/update_submodule', verifyTokenAdmin, async (req: Request | any, re
 });
 
 router.delete('/delete_submodule', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { subModuleId } = req.body
+    const { subModuleId,status } = req.body
     const controller = new SubModuleController(req, res)
-    const result: ApiResponse = await controller.deleteSubModule({ subModuleId });
+    const result: ApiResponse = await controller.deleteSubModule({ subModuleId,status });
     return showOutput(res, result, result.code)
 });
 

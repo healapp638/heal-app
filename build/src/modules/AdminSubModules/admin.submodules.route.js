@@ -31,9 +31,9 @@ router.post('/update_submodule', verifyTokenAdmin, (req, res) => __awaiter(void 
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_submodule', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { subModuleId } = req.body;
+    const { subModuleId, status } = req.body;
     const controller = new admin_submodules_controller_1.default(req, res);
-    const result = yield controller.deleteSubModule({ subModuleId });
+    const result = yield controller.deleteSubModule({ subModuleId, status });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/list_submodule', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

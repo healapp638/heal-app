@@ -80,8 +80,8 @@ const exerciseHandler = {
     },
 
     deleteExerciseDetails: async (data: any): Promise<ApiResponse> => {
-        const { exercise_details_id } = data
-        const deleteExerciseDetails = await adminExerciseDetailsModel.findOneAndUpdate({ _id: exercise_details_id }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+        const { exercise_details_id, status } = data
+        const deleteExerciseDetails = await adminExerciseDetailsModel.findOneAndUpdate({ _id: exercise_details_id }, { $set: { status: status } }, { new: true })
         if (!deleteExerciseDetails) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }
@@ -198,8 +198,8 @@ const exerciseHandler = {
     },
 
     deleteExercise: async (data: any): Promise<ApiResponse> => {
-        const { exercise_id } = data
-        const deleteExercise = await adminExerciseModel.findOneAndUpdate({ _id: exercise_id }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+        const { exercise_id, status } = data
+        const deleteExercise = await adminExerciseModel.findOneAndUpdate({ _id: exercise_id }, { $set: { status: status } }, { new: true })
         if (!deleteExercise) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }

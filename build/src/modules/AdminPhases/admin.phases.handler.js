@@ -57,8 +57,8 @@ const phaseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
     deletePhase: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { phaseId } = data;
-        const deletePhase = yield admin_phases_model_1.default.findOneAndUpdate({ _id: phaseId }, { $set: { status: workflow_constant_1.USER_STATUS.DELETED } }, { new: true });
+        const { phaseId, status } = data;
+        const deletePhase = yield admin_phases_model_1.default.findOneAndUpdate({ _id: phaseId }, { $set: { status: status } }, { new: true });
         if (!deletePhase) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }

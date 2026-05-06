@@ -45,7 +45,7 @@ export default class AdminExerciseController extends Controller {
 
     @Security('Bearer')
     @Delete('/delete_exercise_details')
-    public async deleteExerciseDetails(@Body() request: { exercise_details_id: string }): Promise<ApiResponse> {
+    public async deleteExerciseDetails(@Body() request: { exercise_details_id: string,status:string }): Promise<ApiResponse> {
         const validate = validateDeleteExerciseDetails(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -100,7 +100,7 @@ export default class AdminExerciseController extends Controller {
 
     @Security('Bearer')
     @Delete('/delete_exercise')
-    public async deleteExercise(@Body() request: { exercise_id: string }): Promise<ApiResponse> {
+    public async deleteExercise(@Body() request: { exercise_id: string,status:string }): Promise<ApiResponse> {
         const validate = validateDeleteExercise(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

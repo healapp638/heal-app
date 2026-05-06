@@ -45,7 +45,7 @@ export default class AdminPhasesController extends Controller {
 
     @Security('Bearer')
     @Delete('/delete_phase')
-    public async deletePhase(@Body() request: { phaseId: string }): Promise<ApiResponse> {
+    public async deletePhase(@Body() request: { phaseId: string,status:string }): Promise<ApiResponse> {
         const validate = validateDeletePhase(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

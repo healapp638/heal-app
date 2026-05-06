@@ -423,13 +423,9 @@ const UserAuthHandler = {
     getUserDetails: async (userId: string): Promise<ApiResponse> => {
         const result = await findOne(userAuthModel, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result?.data
-        console.log(userData, 'userData')
         const is_user_social_login = !!userData?.social_account?.length;
-        console.log(is_user_social_login, 'is_user_social_login')
         const is_simple_login = !!userData?.password;
-        console.log(is_simple_login, 'is_simple_login')
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        console.log(account_type, 'account_type')
         const is_profile_completed = !!userData?.dob && !!userData?.country
         if (!result.status) {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)

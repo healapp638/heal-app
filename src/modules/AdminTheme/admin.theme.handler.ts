@@ -4,7 +4,7 @@ import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import adminThemeModel from "./admin.theme.model";
-import {translateText} from "../../helpers/langauge.translate.helper";
+import { translateText } from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 
 const CommonHandler = {
@@ -63,8 +63,8 @@ const CommonHandler = {
     },
 
     deleteTheme: async (data: any): Promise<ApiResponse> => {
-        const { themeId } = data
-        const deleteTheme = await adminThemeModel.findOneAndUpdate({ _id: themeId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+        const { themeId, status } = data
+        const deleteTheme = await adminThemeModel.findOneAndUpdate({ _id: themeId }, { $set: { status: status } }, { new: true })
         if (!deleteTheme) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }

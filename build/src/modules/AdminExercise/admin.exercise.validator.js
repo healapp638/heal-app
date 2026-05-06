@@ -32,6 +32,7 @@ exports.validateUpdateExerciseDetails = validateUpdateExerciseDetails;
 const validateDeleteExerciseDetails = (common) => {
     return joi_1.default.object({
         exercise_details_id: joi_1.default.string().trim().required(),
+        status: joi_1.default.number().required().allow(workflow_constant_1.USER_STATUS.ACTIVE, workflow_constant_1.USER_STATUS.DEACTIVATED, workflow_constant_1.USER_STATUS.DELETED),
     }).validate(common);
 };
 exports.validateDeleteExerciseDetails = validateDeleteExerciseDetails;
@@ -72,6 +73,7 @@ exports.validateUpdateExercise = validateUpdateExercise;
 const validateDeleteExercise = (common) => {
     return joi_1.default.object({
         exercise_id: joi_1.default.string().trim().required(),
+        status: joi_1.default.number().required().allow(workflow_constant_1.USER_STATUS.ACTIVE, workflow_constant_1.USER_STATUS.DEACTIVATED, workflow_constant_1.USER_STATUS.DELETED),
     }).validate(common);
 };
 exports.validateDeleteExercise = validateDeleteExercise;

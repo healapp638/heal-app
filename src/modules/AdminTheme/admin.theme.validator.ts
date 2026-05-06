@@ -1,4 +1,5 @@
 import joi from 'joi';
+import { USER_STATUS } from '../../constants/workflow.constant';
 
 export const validateCreateTheme = (common: any) => {
     return joi.object({
@@ -21,6 +22,7 @@ export const validateUpdateTheme = (common: any) => {
 export const validateDeleteTheme = (common: any) => {
     return joi.object({
         themeId: joi.string().trim().required(),
+        status: joi.number().required().allow(USER_STATUS.ACTIVE, USER_STATUS.DEACTIVATED, USER_STATUS.DELETED),
     }).validate(common)
 }
 

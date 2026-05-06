@@ -62,8 +62,8 @@ const phaseHandler = {
     },
 
     deletePhase: async (data: any): Promise<ApiResponse> => {
-        const { phaseId } = data
-        const deletePhase = await adminPhasesModel.findOneAndUpdate({ _id: phaseId }, { $set: { status: USER_STATUS.DELETED } }, { new: true })
+        const { phaseId,status } = data
+        const deletePhase = await adminPhasesModel.findOneAndUpdate({ _id: phaseId }, { $set: { status: status } }, { new: true })
         if (!deletePhase) {
             return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
         }
