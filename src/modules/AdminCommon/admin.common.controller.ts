@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Body, Security, Put, FormField, Delete } from 'tsoa'
+import { Route, Controller, Tags, Post, Body, Security, Put, FormField, Delete, UploadedFile, Get, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent } from './admin.common.validator';
 import handler from '../AdminCommon/admin.common.handler'
@@ -103,6 +103,23 @@ export default class AdminCommonController extends Controller {
         return wrappedFunc(request); // Invoking the wrapped function 
     }
     //ends
+
+
+    /**
+ * Read Excel
+ */
+    @Post("/readExcel")
+    public async excelRead(@UploadedFile() file: Express.Multer.File): Promise<ApiResponse> {
+        return handler.excelRead({ file })
+    }
+    //ends
+
+    @Security('Bearer')
+    @Get('/listExcelImports')
+    public async listModule(@Query() page?: number, @Query() limit?: number, @Query() search?: string): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.listExcelImport);
+        return wrappedFunc(page, limit, search); // Invoking the wrapped function 
+    }
 }
 
 

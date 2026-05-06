@@ -7,6 +7,16 @@ import faqModel from '../../modules/AdminCommon/faq.model';
 import statusCodes from '../../constants/statusCodes'
 import { SUPPORTED_LANGUAGES } from "../../constants/workflow.constant";
 import { translateText } from "../../helpers/langauge.translate.helper";
+// import xlsx from 'xlsx';
+// import Theme from '../AdminTheme/admin.theme.model';
+// import Module from '../AdminModules/admin.modules.model';
+// import SubModule from '../AdminSubModules/admin.submodules.model';
+// import Phase from '../AdminPhases/admin.phases.model';
+// import ExerciseDetails from '../AdminExercise/admin.exercise.details..model';
+// import Exercise from '../AdminExercise/admin.excercise.model';
+import { excelQueue } from "../../processQueue/queue";
+import adminExelModel from "./admin.exel.model";
+import { getCountAndPagination } from "../../helpers/common.helper";
 
 const AdminCommonHandler = {
 
@@ -137,8 +147,51 @@ const AdminCommonHandler = {
         ).lean();
 
         return showResponse(true, `Common content for "${type}" has been reset successfully`, updated, statusCodes.SUCCESS);
-    }
+    },
 
+excelRead: async (data: any): Promise<ApiResponse> => {
+    try {
+        const { file } = data;
+
+        if (!file || (!file.data && !file.buffer)) {
+            return showResponse(false, "No file data found.", null, statusCodes.VALIDATION_ERROR);
+        }
+
+        const fileBuffer = file.data || file.buffer;
+        console.log(fileBuffer,"fileBuffer")
+
+        // ✅ PUSH TO QUEUE
+        const job = await excelQueue.add("process-excel", {
+            fileBuffer
+        }, {
+            attempts: 3,
+            backoff: {
+                type: "exponential",
+                delay: 5000
+            }
+        });
+
+        return showResponse(true, "File queued successfully", {
+            jobId: job.id
+        }, statusCodes.SUCCESS);
+
+    } catch (error) {
+        return showResponse(false, "Queue error", error, statusCodes.API_ERROR);
+    }
+},
+    listExcelImport: async (page: number, limit: number, search: string = ''): Promise<ApiResponse> => {
+        const aggregate = [
+            {
+                $match: {
+                    excelTheme: { $regex: search, $options: 'i' },
+                }
+            },
+            { $sort: { createdAt: -1 } },
+        ]
+        const { totalCount, aggregation } = await getCountAndPagination(adminExelModel, aggregate, page, limit)
+        const result = await adminExelModel.aggregate(aggregation)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+    },
 }
 
 export default AdminCommonHandler;

@@ -24,4 +24,6 @@ const themeSchema = new mongoose.Schema(
     { timestamps: true, versionKey: false }
 );
 
+themeSchema.index({ "title.en": 1 }, { unique: true });
+
 export default mongoose.model('Theme', themeSchema);

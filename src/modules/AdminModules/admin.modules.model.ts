@@ -23,4 +23,9 @@ const moduleSchema = new mongoose.Schema(
     { timestamps: true, versionKey: false }
 );
 
+moduleSchema.index(
+  { themeId: 1, "title.en": 1 },
+  { unique: true }
+);
+
 export default mongoose.model('Module', moduleSchema);

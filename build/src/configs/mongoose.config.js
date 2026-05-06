@@ -34,7 +34,7 @@ const connection = () => __awaiter(void 0, void 0, void 0, function* () {
         throw new Error("MONGODB_URI is not defined or empty. Please check AWS Parameter Store or .env file.");
     }
     mongoose_1.default.Promise = global.Promise;
-    yield mongoose_1.default.connect(MONGO_URI, {});
+    yield mongoose_1.default.connect(MONGO_URI, { serverSelectionTimeoutMS: 5000, heartbeatFrequencyMS: 2000, });
     const db = mongoose_1.default.connection;
     db.once('open', () => {
         console.log("connection established", MONGO_URI);

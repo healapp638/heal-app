@@ -24,4 +24,9 @@ const phaseSchema = new mongoose.Schema(
     { timestamps: true, versionKey: false }
 );
 
+phaseSchema.index(
+  { subModuleId: 1, "title.en": 1 },
+  { unique: true }
+);
+
 export default mongoose.model('Phase', phaseSchema);

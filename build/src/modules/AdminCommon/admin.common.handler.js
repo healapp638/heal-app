@@ -20,6 +20,16 @@ const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
+// import xlsx from 'xlsx';
+// import Theme from '../AdminTheme/admin.theme.model';
+// import Module from '../AdminModules/admin.modules.model';
+// import SubModule from '../AdminSubModules/admin.submodules.model';
+// import Phase from '../AdminPhases/admin.phases.model';
+// import ExerciseDetails from '../AdminExercise/admin.exercise.details..model';
+// import Exercise from '../AdminExercise/admin.excercise.model';
+const queue_1 = require("../../processQueue/queue");
+const admin_exel_model_1 = __importDefault(require("./admin.exel.model"));
+const common_helper_1 = require("../../helpers/common.helper");
 const AdminCommonHandler = {
     addQuestion: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { question, answer } = data;
@@ -110,6 +120,45 @@ const AdminCommonHandler = {
         });
         const updated = yield commonContent_model_1.default.findOneAndUpdate({}, { $set: updateData }, { new: true, upsert: true }).lean();
         return (0, response_util_1.showResponse)(true, `Common content for "${type}" has been reset successfully`, updated, statusCodes_1.default.SUCCESS);
-    })
+    }),
+    excelRead: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { file } = data;
+            if (!file || (!file.data && !file.buffer)) {
+                return (0, response_util_1.showResponse)(false, "No file data found.", null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const fileBuffer = file.data || file.buffer;
+            console.log(fileBuffer, "fileBuffer");
+            // ✅ PUSH TO QUEUE
+            const job = yield queue_1.excelQueue.add("process-excel", {
+                fileBuffer
+            }, {
+                attempts: 3,
+                backoff: {
+                    type: "exponential",
+                    delay: 5000
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "File queued successfully", {
+                jobId: job.id
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            return (0, response_util_1.showResponse)(false, "Queue error", error, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    listExcelImport: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '') {
+        const aggregate = [
+            {
+                $match: {
+                    excelTheme: { $regex: search, $options: 'i' },
+                }
+            },
+            { $sort: { createdAt: -1 } },
+        ];
+        const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_exel_model_1.default, aggregate, page, limit);
+        const result = yield admin_exel_model_1.default.aggregate(aggregation);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+    }),
 };
 exports.default = AdminCommonHandler;

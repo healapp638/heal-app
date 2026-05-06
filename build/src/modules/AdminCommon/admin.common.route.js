@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const admin_common_controller_1 = __importDefault(require("./admin.common.controller"));
 const response_util_1 = require("../../utils/response.util");
 const middlewares_1 = __importDefault(require("../../middlewares"));
+const { multer } = middlewares_1.default.fileUpload;
 const { verifyTokenAdmin } = middlewares_1.default.auth;
 const { addToMulter } = middlewares_1.default.fileUpload.multer;
 const router = express_1.default.Router();
@@ -47,6 +48,17 @@ router.put('/reset_common_content', verifyTokenAdmin, (req, res) => __awaiter(vo
     const { type } = req.body;
     const controller = new admin_common_controller_1.default(req, res);
     const result = yield controller.resentCommonContent({ type });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/readExcel', multer.addToMulter.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.excelRead(req.file);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/listExcelImports', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit, search } = req.query;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.listModule(page, limit, search);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

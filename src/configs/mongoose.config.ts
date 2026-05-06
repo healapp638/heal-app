@@ -27,7 +27,7 @@ export const connection = async () => {
 
   mongoose.Promise = global.Promise;
 
-  await mongoose.connect(MONGO_URI as string, {} as mongoose.ConnectOptions)
+  await mongoose.connect(MONGO_URI as string, {serverSelectionTimeoutMS: 5000,heartbeatFrequencyMS: 2000,} as mongoose.ConnectOptions)
 
   const db = mongoose.connection;
 

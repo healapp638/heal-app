@@ -4,8 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start:dev": "pm2 start build/src/server.js --name 'heal_api_3001'",
-    "restart:dev": "pm2 restart heal_api_3001",
+    "start:dev": "pm2 start build/src/server.js --name 'heal_api_3001' && pm2 start build/src/helpers/worker.helper.js --name 'excel_import_worker'",
+    "restart:dev": "pm2 restart heal_api_3001 && pm2 restart excel_import_worker",
     "start:prod": "pm2 start build/src/server.js --name 'heal_api_3001'",
     "restart:prod": "pm2 restart heal_api_3001",
     "start": "export AWS_PROFILE=heal && export AWS_SDK_LOAD_CONFIG=1 && pm2 restart heal_api_3001 || pm2 start build/src/server.js --name 'heal_api_3001'",
@@ -13,7 +13,7 @@
     "predev": "npm run swagger",
     "prebuild": "mkdir -p build && [ -f .env ] && cp .env build/ && mkdir -p build/public && cp -r public/swagger build/public",
     "build": "tsc",
-    "dev": "npm run lint && export AWS_PROFILE=heal && export AWS_SDK_LOAD_CONFIG=1 && concurrently \"nodemon\" \"nodemon -x tsoa spec\"",
+    "dev": "npm run lint && export AWS_PROFILE=heal && export AWS_SDK_LOAD_CONFIG=1 && concurrently \"nodemon\" \"nodemon -x tsoa spec\" \"nodemon -x ts-node src/helpers/worker.helper.ts\"",
     "swagger": "tsoa spec",
     "prestart": "mkdir -p build/src/templates && cp -a src/templates build/src",
     "lint": "eslint . --ext .ts",
@@ -35,6 +35,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
     "bull": "^4.16.5",
+    "bullmq": "^5.76.5",
     "compression": "^1.8.1",
     "cors": "^2.8.5",
     "cross-env": "^10.0.0",
@@ -64,7 +65,8 @@
     "swagger-ui-express": "^5.0.1",
     "translatte": "^3.0.1",
     "tsoa": "^6.6.0",
-    "winston": "^3.17.0"
+    "winston": "^3.17.0",
+    "xlsx": "^0.18.5"
   },
   "author": "STS",
   "license": "ISC",

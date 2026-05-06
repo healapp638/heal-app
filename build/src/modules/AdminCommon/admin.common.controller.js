@@ -103,6 +103,22 @@ let AdminCommonController = class AdminCommonController extends tsoa_1.Controlle
             return wrappedFunc(request); // Invoking the wrapped function 
         });
     }
+    //ends
+    /**
+ * Read Excel
+ */
+    excelRead(file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return admin_common_handler_1.default.excelRead({ file });
+        });
+    }
+    //ends
+    listModule(page, limit, search) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.listExcelImport);
+            return wrappedFunc(page, limit, search); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -144,6 +160,23 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AdminCommonController.prototype, "resentCommonContent", null);
+__decorate([
+    (0, tsoa_1.Post)("/readExcel"),
+    __param(0, (0, tsoa_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "excelRead", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/listExcelImports'),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, String]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "listModule", null);
 AdminCommonController = __decorate([
     (0, tsoa_1.Tags)('Admin Common Routes'),
     (0, tsoa_1.Route)('/admin/common'),

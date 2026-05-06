@@ -24,4 +24,9 @@ const subModuleSchema = new mongoose.Schema(
     { timestamps: true, versionKey: false }
 );
 
+subModuleSchema.index(
+  { moduleId: 1, "title.en": 1 },
+  { unique: true }
+);
+
 export default mongoose.model('SubModule', subModuleSchema);

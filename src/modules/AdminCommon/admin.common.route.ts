@@ -3,6 +3,7 @@ import AdminCommonController from './admin.common.controller'
 import { showOutput } from '../../utils/response.util'
 import { ApiResponse } from '../../utils/interfaces.util'
 import middlewares from '../../middlewares'
+const { multer } = middlewares.fileUpload
 const { verifyTokenAdmin } = middlewares.auth
 const { addToMulter } = middlewares.fileUpload.multer
 const router = express.Router()
@@ -45,8 +46,17 @@ router.put('/reset_common_content', verifyTokenAdmin, async (req: Request | any,
     const result: ApiResponse = await controller.resentCommonContent({ type});
     return showOutput(res, result, result.code)
 });
-
-
+router.post('/readExcel', multer.addToMulter.single('file'), async (req: Request | any, res: Response) => {
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.excelRead(req.file as Express.Multer.File);
+    return showOutput(res, result, result.code)
+})
+router.get('/listExcelImports', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { page, limit, search } = req.query
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.listModule(page, limit, search);
+    return showOutput(res, result, result.code)
+});
 
 
 

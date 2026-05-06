@@ -23,4 +23,5 @@ const themeSchema = new mongoose_1.default.Schema({
     description: langSchema,
     status: { type: Number, default: workflow_constant_1.USER_STATUS.ACTIVE },
 }, { timestamps: true, versionKey: false });
+themeSchema.index({ "title.en": 1 }, { unique: true });
 exports.default = mongoose_1.default.model('Theme', themeSchema);
