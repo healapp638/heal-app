@@ -125,7 +125,7 @@ const AdminUserHandler = {
     updateUserStatus: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { user_id, status } = data;
         const parsedStatus = Number(status);
-        const queryObject = { _id: user_id, user_type: workflow_constant_1.ROLE.USER }; //usertype should be USER  = 3
+        const queryObject = { _id: user_id }; //usertype should be USER  = 3
         // const result = await findOne(userModel, queryObject);
         // if (!result.status) {
         //     return showResponse(false, responseMessage.users.invalid_user, null, statusCodes.API_ERROR);

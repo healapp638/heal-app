@@ -97,7 +97,7 @@ const AdminUserHandler = {
         const { user_id, status } = data;
 
         const parsedStatus = Number(status);
-        const queryObject = { _id: user_id, user_type: ROLE.USER } //usertype should be USER  = 3
+        const queryObject = { _id: user_id } //usertype should be USER  = 3
 
         // const result = await findOne(userModel, queryObject);
         // if (!result.status) {
