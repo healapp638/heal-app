@@ -2212,11 +2212,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"status": {
+										"type": "string"
+									},
 									"themeId": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"status",
 									"themeId"
 								],
 								"type": "object"
@@ -2468,11 +2472,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"status": {
+										"type": "string"
+									},
 									"subModuleId": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"status",
 									"subModuleId"
 								],
 								"type": "object"
@@ -2734,11 +2742,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"status": {
+										"type": "string"
+									},
 									"phaseId": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"status",
 									"phaseId"
 								],
 								"type": "object"
@@ -2990,11 +3002,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"status": {
+										"type": "string"
+									},
 									"moduleId": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"status",
 									"moduleId"
 								],
 								"type": "object"
@@ -3278,11 +3294,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"status": {
+										"type": "string"
+									},
 									"exercise_details_id": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"status",
 									"exercise_details_id"
 								],
 								"type": "object"
@@ -3542,11 +3562,15 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"status": {
+										"type": "string"
+									},
 									"exercise_id": {
 										"type": "string"
 									}
 								},
 								"required": [
+									"status",
 									"exercise_id"
 								],
 								"type": "object"
