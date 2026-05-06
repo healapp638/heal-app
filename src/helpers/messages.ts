@@ -46,6 +46,7 @@ const messages: any = {
         otp_sent: "Otp sent successfully",
         password_incorrect: "Incorrect password",
         invalid_credentials: "Invalid credentials",
+        please_complete_your_onboarding: "Please complete your onboarding",
 
 
 
@@ -97,6 +98,7 @@ const messages: any = {
         otp_sent: "Otp enviado exitosamente",
         password_incorrect: "Contraseña incorrecta",
         invalid_credentials: "Credenciales invalidas",
+        please_complete_your_onboarding: "Por favor complete su incorporación",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -145,6 +147,7 @@ const messages: any = {
         otp_sent: "Otp envoyé avec succès",
         password_incorrect: "Mot de passe incorrect",
         invalid_credentials: "Identifiants invalides",
+        please_complete_your_onboarding: "Veuillez compléter votre onboarding",
 
     },
     zh: {
@@ -194,6 +197,7 @@ const messages: any = {
         otp_sent: "Otp发送成功",
         password_incorrect: "密码错误",
         invalid_credentials: "凭据无效",
+        please_complete_your_onboarding: "请完成您的入职培训",
 
 
 
@@ -246,6 +250,7 @@ const messages: any = {
         otp_sent: "Otp सफलतापूर्वक भेजा गया",
         password_incorrect: "गलत पासवर्ड",
         invalid_credentials: "अमान्य क्रेडेंशियल्स",
+        please_complete_your_onboarding: "कृपया अपना ऑनबोर्डिंग पूरा करें",
 
     },
     de: {
@@ -295,6 +300,7 @@ const messages: any = {
         otp_sent: "Otp erfolgreich gesendet",
         password_incorrect: "Falsches Passwort",
         invalid_credentials: "Ungültige Anmeldeinformationen",
+        please_complete_your_onboarding: "Bitte vervollständigen Sie Ihr Onboarding",
 
     },
     ru: {
@@ -344,6 +350,7 @@ const messages: any = {
         otp_sent: "Otp успешно отправлен",
         password_incorrect: "Неверный пароль",
         invalid_credentials: "Неверные учетные данные",
+        please_complete_your_onboarding: "Пожалуйста, завершите ваше обучение",
 
     },
     pt: {
@@ -393,6 +400,7 @@ const messages: any = {
         otp_sent: "Otp enviado com sucesso",
         password_incorrect: "Senha incorreta",
         invalid_credentials: "Credenciais inválidas",
+        please_complete_your_onboarding: "Por favor, complete seu onboarding",
 
 
     },
@@ -443,6 +451,7 @@ const messages: any = {
         otp_sent: "Otp inviato con successo",
         password_incorrect: "Password errata",
         invalid_credentials: "Credenziali inválidas",
+        please_complete_your_onboarding: "Per favore, completa il tuo onboarding",
 
     },
     ro: {
@@ -492,6 +501,7 @@ const messages: any = {
         otp_sent: "Otp trimis cu succes",
         password_incorrect: "Parola incorectă",
         invalid_credentials: "Credenciais inválidas",
+        please_complete_your_onboarding: "Vă rugăm să completați onboarding-ul",
 
     },
 };

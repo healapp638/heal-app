@@ -17,6 +17,7 @@ const admin_phases_route_1 = __importDefault(require("./AdminPhases/admin.phases
 const admin_exercise_route_1 = __importDefault(require("./AdminExercise/admin.exercise.route"));
 const user_modules_route_1 = __importDefault(require("./UserModules/user.modules.route"));
 const user_journal_route_1 = __importDefault(require("./UserJournel/user.journal.route"));
+const user_challenges_route_1 = __importDefault(require("./UserChallenges/user.challenges.route"));
 //user and admin all usertype common routes
 const common_route_1 = __importDefault(require("../modules/Common/common.route"));
 //user routes
@@ -38,6 +39,7 @@ Route.use('/user/auth', user_auth_route_1.default);
 Route.use('/user/common', user_common_route_1.default);
 Route.use('/user/modules', user_modules_route_1.default);
 Route.use('/user/journal', user_journal_route_1.default);
+Route.use('/user/challenges', user_challenges_route_1.default);
 //user and admin all usertype common routes
 Route.use('/common', common_route_1.default);
 exports.default = Route;

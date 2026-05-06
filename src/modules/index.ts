@@ -13,6 +13,7 @@ import adminPhasesRoutes from './AdminPhases/admin.phases.route'
 import adminExerciseRoutes from './AdminExercise/admin.exercise.route';
 import userModulesRoutes from './UserModules/user.modules.route';
 import userJournelRoutes from './UserJournel/user.journal.route';
+import userChallengesRoutes from './UserChallenges/user.challenges.route';
 
 //user and admin all usertype common routes
 import commonRoutes from '../modules/Common/common.route'
@@ -43,6 +44,7 @@ Route.use('/user/auth', userAuthRoutes);
 Route.use('/user/common', userCommonRoutes);
 Route.use('/user/modules', userModulesRoutes);
 Route.use('/user/journal', userJournelRoutes);
+Route.use('/user/challenges', userChallengesRoutes);
 
 //user and admin all usertype common routes
 Route.use('/common', commonRoutes);

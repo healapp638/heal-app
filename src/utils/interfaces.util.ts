@@ -45,6 +45,7 @@ export interface AppConstant {
     AWS_REGION: string
     SWAGGER_USER_NAME: any
     SWAGGER_PASSWORD: any
+    OPENAI_API_KEY: any
 }
 
 export interface DbConstant {

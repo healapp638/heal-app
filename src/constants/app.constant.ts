@@ -44,7 +44,8 @@ const APP: AppConstant = {
   PROJECT_LOGO: 'file/file-1735634891680.webp',
   AWS_REGION: 'us-east-1',
   SWAGGER_USER_NAME: 'admin',
-  SWAGGER_PASSWORD: 'Admin@123'
+  SWAGGER_PASSWORD: 'Admin@123',
+  OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
 };
 
 const DATABASE_URI = {

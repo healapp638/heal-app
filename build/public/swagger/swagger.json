@@ -911,6 +911,33 @@
 				}
 			}
 		},
+		"/user/challenges/add": {
+			"post": {
+				"operationId": "Add",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Add Challenges",
+				"tags": [
+					"User Challenges Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/auth/login": {
 			"post": {
 				"operationId": "Login",
