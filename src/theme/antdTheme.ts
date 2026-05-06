@@ -19,14 +19,18 @@ export const lightTheme = {
     Input: {
       borderRadius: 6,
     },
+    Switch: {
+      colorPrimary: "#F66F76",
+      colorTextQuaternary: "#000000",
+      colorPrimaryHover: "#F66F76",
+      colorTextTertiary: "#000000"
+    },
     Table: {
       headerBg: "#F66F76",
       colorBgContainer: "#ffff",
       borderColor: "#f66f7610",
       headerColor: '#ffffff',
-
       rowHoverBg: "#f66f7610"
-
     },
     Empty: {
       colorText: "#ff4d4f",   // text "No Data"
@@ -59,6 +63,12 @@ export const darkTheme = {
       borderColor: "#f66f7610",
       headerColor: '#ffffff',
       rowHoverBg: "#f66f7610"
+    },
+    Switch: {
+      colorPrimary: "#F66F76",
+      colorTextQuaternary: "#000000",
+      colorPrimaryHover: "#F66F76",
+      colorTextTertiary: "#000000"
     },
     Empty: {
       colorText: "#ff4d4f",   // text "No Data"

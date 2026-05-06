@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Table } from "antd";
+import { Select, Switch, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
 import { FaEye } from "react-icons/fa";
@@ -23,7 +23,7 @@ interface PhaseData {
     _id: string;
     title: string;
     points: number;
-    status: boolean;
+    status: number;
     description: string;
     createdAt: string;
     updatedAt: string;
@@ -120,6 +120,7 @@ export default function AddPhase() {
                     url: ENDPOINTS.PRIVATE.PHASE_DELETE,
                     method: "DELETE",
                     body: {
+                        status:2,
                         phaseId: selectPhase,
                     },
                 });
@@ -131,6 +132,35 @@ export default function AddPhase() {
                     console.error('Failed to delete theme');
                     setOpenDeletePhaseModal(false)
                     setSelectPhase("")
+                },
+            }
+        );
+    }
+
+     const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.PHASE_DELETE],
+        invalidateQueryKeys: [MUTATION_KEYS.LIST_PHASE],
+        showSuccessToast: false,
+        showErrorToast: true,
+    });
+
+    const handleStatusChangeClick = async (changeStatus: number, phaseId: string) => {
+        await tryCatchWrapper(
+            async () => {
+                await StatusChange({
+                    url: ENDPOINTS.PRIVATE.PHASE_DELETE,
+                    method: "DELETE",
+                    body: {
+                        status:changeStatus,
+                        phaseId: phaseId,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to delete module',
+                showToast: true,
+                onError() {
+                    console.error('Failed to delete theme');
                 },
             }
         );
@@ -170,6 +200,22 @@ export default function AddPhase() {
         //         </div>
         //     )
         // },
+         {
+            title: "Status",
+            key: 'status',
+            render: (_: any, record: any) => {
+                const changeStatus = record.status === 1 ? 3 : 1;
+                return (
+                    <div onClick={(e) => { e.stopPropagation(); }}>
+                        <Switch
+                            checked={record.status === 1}
+                            loading={isStatusChangePending}
+                            onChange={() => handleStatusChangeClick(changeStatus, record?._id)}
+                        />
+                    </div>
+                )
+            }
+        },
         {
             title: 'Actions',
             dataIndex: 'actions',

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Table } from "antd";
+import { Select, Switch, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
@@ -16,13 +16,14 @@ import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
 import { FaPlus } from "react-icons/fa";
 import IconButton from "@/components/ui/IconButton";
+import { AppButton } from "@/components/ui";
 
 
 interface LessonData {
     _id: string;
     lesson_title: string;
     content: string;
-    status: boolean;
+    status: number;
     language_id: string;
     category_id: string;
     lesson_order: number;
@@ -37,6 +38,7 @@ interface LessonResult {
     page: number;
     limit: number;
     total: number;
+    totalCount?: number;
 }
 
 export default function AddLessons() {
@@ -110,6 +112,38 @@ export default function AddLessons() {
                     url: ENDPOINTS.PRIVATE.LESSON_DELETE,
                     method: "DELETE",
                     body: {
+                        status: 2,
+                        exercise_details_id: lessonId,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to delete lesson',
+                showToast: true,
+                onError() {
+                    console.error('Failed to delete lesson');
+                    setOpenDeleteLessonModal(false)
+                    setLessonId("")
+                },
+            }
+        );
+    }
+
+    const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.LESSON_DELETE],
+        invalidateQueryKeys: [MUTATION_KEYS.LIST_LESSONS],
+        showSuccessToast: false,
+        showErrorToast: true,
+    });
+
+    const handleStatusChangeClick = async (changeStatus: number, lessonId: string) => {
+        await tryCatchWrapper(
+            async () => {
+                await StatusChange({
+                    url: ENDPOINTS.PRIVATE.LESSON_DELETE,
+                    method: "DELETE",
+                    body: {
+                        status: changeStatus,
                         exercise_details_id: lessonId,
                     },
                 });
@@ -174,6 +208,22 @@ export default function AddLessons() {
         //     )
         // },
         {
+            title: "Status",
+            key: 'status',
+            render: (_: any, record: any) => {
+                const changeStatus = record.status === 1 ? 3 : 1;
+                return (
+                    <div onClick={(e) => { e.stopPropagation(); }}>
+                        <Switch
+                            checked={record.status === 1}
+                            loading={isStatusChangePending}
+                            onChange={() => handleStatusChangeClick(changeStatus, record?._id)}
+                        />
+                    </div>
+                )
+            }
+        },
+        {
             title: 'Actions',
             dataIndex: 'actions',
             key: 'actions',
@@ -203,15 +253,15 @@ export default function AddLessons() {
                         options={LANGUAGE_OPTIONS}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                     />
-                    {/* <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
-                    Add Lessons
-                </AppButton> */}
+                    {listLessons?.data && (listLessons?.data?.totalCount ?? 0) < 1 && <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                        Add Lessons
+                    </AppButton>}
                 </div>
             </div>
             <Table
                 dataSource={listLessonsData}
                 columns={columns}
-                  onRow={(record) => ({
+                onRow={(record) => ({
                     onClick: () => handleAddExercise(record?._id)
                 })}
                 pagination={{

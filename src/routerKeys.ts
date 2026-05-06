@@ -27,6 +27,7 @@ export const ROUTES = {
         ADDEXERCISE:"/module/addExercise",
         PROFILE:"/profile",
         USERS:"/users",
+        USERDETAIL:"/users/userDetail",
     },
 
     // Common public pages

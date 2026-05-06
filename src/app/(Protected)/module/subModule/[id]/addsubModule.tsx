@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Table } from "antd"
+import { Select, Switch, Table } from "antd"
 import { ROUTES } from "@/routerKeys"
 import { ENDPOINTS } from "@/Endpoints"
 import { FaEye } from "react-icons/fa";
@@ -22,7 +22,7 @@ interface SubModuleData {
     _id: string;
     title: string;
     slug: string;
-    status: boolean;
+    status: number;
     description: string;
     createdAt: string;
     updatedAt: string;
@@ -98,7 +98,41 @@ export default function AddSubModule() {
                     url: ENDPOINTS.PRIVATE.SUBMODULE_DELETE,
                     method: "DELETE",
                     body: {
+                        status: 2,
                         subModuleId: selectedSubModule,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to delete module',
+                showToast: true,
+                onError() {
+                    console.error('Failed to delete theme');
+                    setOpenDeleteModule(false)
+                    setSelectedSubModule("")
+                },
+            }
+        );
+    }
+
+
+    const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.SUBMODULE_DELETE],
+        invalidateQueryKeys: [MUTATION_KEYS.LIST_SUB_MODULE],
+        showSuccessToast: false,
+        showErrorToast: true,
+
+    });
+
+    const handleStatusChangeClick = async (changeStatus: number, subModuleId: string) => {
+        await tryCatchWrapper(
+            async () => {
+                await StatusChange({
+                    url: ENDPOINTS.PRIVATE.SUBMODULE_DELETE,
+                    method: "DELETE",
+                    body: {
+                        status: changeStatus,
+                        subModuleId: subModuleId,
                     },
                 });
             },
@@ -136,6 +170,22 @@ export default function AddSubModule() {
             dataIndex: "title",
             key: "title",
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
+        },
+        {
+            title: "Status",
+            key: 'status',
+            render: (_: any, record: any) => {
+                const changeStatus = record.status === 1 ? 3 : 1;
+                return (
+                    <div onClick={(e) => { e.stopPropagation(); }}>
+                        <Switch
+                            checked={record.status === 1}
+                            loading={isStatusChangePending}
+                            onChange={() => handleStatusChangeClick(changeStatus, record?._id)}
+                        />
+                    </div>
+                )
+            }
         },
         {
             title: 'Actions',
@@ -185,6 +235,7 @@ export default function AddSubModule() {
                     total: SubModuleListData?.length,
                     onChange: (page, pageSize) => setPagination({ current: page, pageSize }),
                 }}
+                className="cursor-pointer"
             />
             <AddSubModuleModal openModal={openAddSubModuleModal} setOpenModal={setOpenAddSubModuleModal} moduleId={moduleId} />
             <AddSubModuleModal openModal={openUpdateSubModuleModal} setOpenModal={setOpenUpdateSubModuleModal} moduleId={moduleId} subModuleId={selectedSubModule} isUpdate={true} selectedLanguage={selectedLanguage} />

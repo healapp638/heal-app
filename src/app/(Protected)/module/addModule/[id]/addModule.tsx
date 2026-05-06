@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Table } from "antd";
+import { Select, Switch, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
@@ -22,7 +22,7 @@ interface ModuleData {
     _id: string;
     title: string;
     slug: string;
-    status: boolean;
+    status: number;
     createdAt: string;
     updatedAt: string;
     __v: number;
@@ -73,6 +73,37 @@ export default function AddModule() {
         setSelectedLanguage(value);
     };
 
+
+    const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.DELETE_MODULE],
+        invalidateQueryKeys: [MUTATION_KEYS.LIST_MODULE],
+        showSuccessToast: false,
+        showErrorToast: true,
+    });
+
+    const handleStatusChangeClick = async (moduleId: string, changeStatus: number) => {
+        await tryCatchWrapper(
+            async () => {
+                await StatusChange({
+                    url: ENDPOINTS.PRIVATE.DELETE_MODULE,
+                    method: "DELETE",
+                    body: {
+                        status: changeStatus,
+                        moduleId: moduleId,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to change status',
+                showToast: true,
+                onError() {
+                    console.error('Failed to change status');
+                },
+            }
+        );
+    }
+
+
     const { mutateAsync: DeleteModule, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.DELETE_MODULE],
         invalidateQueryKeys: [MUTATION_KEYS.LIST_MODULE],
@@ -91,6 +122,7 @@ export default function AddModule() {
                     url: ENDPOINTS.PRIVATE.DELETE_MODULE,
                     method: "DELETE",
                     body: {
+                        status: 2,
                         moduleId: selectedModule,
                     },
                 });
@@ -164,6 +196,22 @@ export default function AddModule() {
         //         </div>
         //     )
         // },
+        {
+            title: "Status",
+            key: 'status',
+            render: (_: any, record: any) => {
+                const changeStatus = record.status === 1 ? 3 : 1;
+                return (
+                    <div onClick={(e) => { e.stopPropagation(); }}>
+                        <Switch
+                            checked={record.status === 1}
+                            loading={isStatusChangePending}
+                            onChange={() => handleStatusChangeClick(record?._id, changeStatus)}
+                        />
+                    </div>
+                )
+            }
+        },
         {
             title: 'Actions',
             dataIndex: 'actions',

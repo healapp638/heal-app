@@ -172,6 +172,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
         else if (pathWithoutQuery.startsWith('/users')) {
             setActiveIndex(ROUTES.PRIVATE.USERS); // Match /user_detail/:userId
         }
+        
     }, [pathname]);
 
     const handleDropdownVisibleChange = (visible: boolean): void => {

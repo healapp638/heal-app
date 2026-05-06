@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Table } from "antd";
+import { Select, Switch, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
 import { AppButton } from "@/components/ui"
@@ -21,7 +21,7 @@ interface ExerciseData {
     title: string;
     description: string;
     content: string;
-    status: boolean;
+    status: number;
     exercise_type: string;
     language_id: string;
     category_id: string;
@@ -105,6 +105,38 @@ export default function AddExercise() {
                     url: ENDPOINTS.PRIVATE.EXERCISE_DELETE,
                     method: "DELETE",
                     body: {
+                        status:2,
+                        exercise_id: exerciseId,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to delete exercise',
+                showToast: true,
+                onError() {
+                    console.error('Failed to delete exercise');
+                    setOpenDeleteExerciseModal(false)
+                    setExerciseId("")
+                },
+            }
+        );
+    }
+
+        const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.EXERCISE_DELETE],
+        invalidateQueryKeys: [MUTATION_KEYS.EXERCISE_LIST],
+        showSuccessToast: false,
+        showErrorToast: true,
+    });
+
+    const handleStatusChangeClick = async (changeStatus: number, exerciseId: string) => {
+        await tryCatchWrapper(
+            async () => {
+                await StatusChange({
+                    url: ENDPOINTS.PRIVATE.EXERCISE_DELETE,
+                    method: "DELETE",
+                    body: {
+                        status:changeStatus,
                         exercise_id: exerciseId,
                     },
                 });
@@ -155,6 +187,20 @@ export default function AddExercise() {
                 const words = text?.split(' ') || [];
                 const truncatedText = words.length > 5 ? words.slice(0, 5).join(' ') + '...' : text;
                 return <span className='font-medium text-black' title={text}>{truncatedText}</span>
+            }
+        },
+        {
+            title: "Status",
+            key: 'status',
+            render: (_: any, record: any) => {
+                const changeStatus = record.status === 1 ? 3 : 1;
+                return <Switch
+                    checked={record.status === 1}
+                    loading={isStatusChangePending}
+                    onChange={(_checked) => {
+                        handleStatusChangeClick(changeStatus, record._id);
+                    }}
+                />
             }
         },
         {
@@ -209,6 +255,7 @@ export default function AddExercise() {
                 onChange={handleTableChange}
                 scroll={{ x: 'max-content' }}
                 bordered
+                className="cursor-pointer"
             />
             <AddExerciseModal openModal={openModal} setOpenModal={setOpenModal} lessonId={lessonId} onClose={() => setExerciseId("")} />
             <AddExerciseModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} lessonId={lessonId} isUpdate={true} exerciseId={exerciseId} onClose={() => setExerciseId("")} selectedLanguage={selectedLanguage} />

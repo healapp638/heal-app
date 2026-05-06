@@ -7,7 +7,7 @@ import { ENDPOINTS } from '@/Endpoints';
 import { FILE_URL } from '@/utils/helper';
 import { AppButton } from '@/components/ui'
 import { useRouter } from 'next/navigation';
-import {  Image, Select, Table } from 'antd';
+import { Image, Select, Switch, Table } from 'antd';
 import { MUTATION_KEYS } from '@/tanstack/keys';
 import type { ColumnsType } from 'antd/es/table';
 import { FiTrash2, FiEdit } from "react-icons/fi"
@@ -78,6 +78,36 @@ export default function Module() {
     })
     const ThemeListData = listTheme?.data?.result;
 
+    const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+        mutationKey: [MUTATION_KEYS.DELETE_THEME],
+        invalidateQueryKeys: [MUTATION_KEYS.LIST_THEME],
+        showSuccessToast: false,
+        showErrorToast: true,
+
+    });
+
+    const handleStatusChangeClick = async (id: string, changeStatus: number) => {
+        await tryCatchWrapper(
+            async () => {
+                await StatusChange({
+                    url: ENDPOINTS.PRIVATE.DELETE_THEME,
+                    method: "DELETE",
+                    body: {
+                        status: changeStatus,
+                        themeId: id,
+                    },
+                });
+            },
+            {
+                errorMessage: 'Failed to delete theme',
+                showToast: true,
+                onError() {
+                    console.error('Failed to delete theme');
+                },
+            }
+        );
+    }
+
     const { mutateAsync: DeleteTheme, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.DELETE_THEME],
         invalidateQueryKeys: [MUTATION_KEYS.LIST_THEME],
@@ -96,6 +126,7 @@ export default function Module() {
                     url: ENDPOINTS.PRIVATE.DELETE_THEME,
                     method: "DELETE",
                     body: {
+                        status: 2,
                         themeId: selectedTheme,
                     },
                 });
@@ -154,6 +185,22 @@ export default function Module() {
             dataIndex: "title",
             key: "title",
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
+        },
+        {
+            title: "Status",
+            key: 'status',
+            render: (_: any, record: Theme) => {
+                const changeStatus = record.status === 1 ? 3 : 1;
+                return (
+                    <div onClick={(e) => { e.stopPropagation();  }}>
+                        <Switch
+                            checked={record.status === 1}
+                            loading={isStatusChangePending}
+                            onChange={() => handleStatusChangeClick(record?._id, changeStatus)}
+                        />
+                    </div>
+                )
+            }
         },
         {
             title: "Actions",
