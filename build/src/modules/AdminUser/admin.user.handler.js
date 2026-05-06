@@ -126,10 +126,10 @@ const AdminUserHandler = {
         const { user_id, status } = data;
         const parsedStatus = Number(status);
         const queryObject = { _id: user_id, user_type: workflow_constant_1.ROLE.USER }; //usertype should be USER  = 3
-        const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
-        if (!result.status) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_user, null, statusCodes_1.default.API_ERROR);
-        }
+        // const result = await findOne(userModel, queryObject);
+        // if (!result.status) {
+        //     return showResponse(false, responseMessage.users.invalid_user, null, statusCodes.API_ERROR);
+        // }
         const editObj = { status: parsedStatus, deactivate_by: '' };
         if (parsedStatus === workflow_constant_1.USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = workflow_constant_1.DEACTIVATE_BY.ADMIN;

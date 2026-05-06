@@ -99,10 +99,10 @@ const AdminUserHandler = {
         const parsedStatus = Number(status);
         const queryObject = { _id: user_id, user_type: ROLE.USER } //usertype should be USER  = 3
 
-        const result = await findOne(userModel, queryObject);
-        if (!result.status) {
-            return showResponse(false, responseMessage.users.invalid_user, null, statusCodes.API_ERROR);
-        }
+        // const result = await findOne(userModel, queryObject);
+        // if (!result.status) {
+        //     return showResponse(false, responseMessage.users.invalid_user, null, statusCodes.API_ERROR);
+        // }
 
         const editObj = { status: parsedStatus, deactivate_by: '' }
 
