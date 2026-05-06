@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Button, Select, Table } from "antd";
+import { Select, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
@@ -14,6 +14,9 @@ import { useParams, useRouter } from "next/navigation";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
+import { FaPlus } from "react-icons/fa";
+import IconButton from "@/components/ui/IconButton";
+
 
 interface LessonData {
     _id: string;
@@ -47,32 +50,31 @@ export default function AddLessons() {
     const [lessonId, setLessonId] = React.useState<string>("");
     const [openUpdateLessonModal, setOpenUpdateLessonModal] = React.useState(false);
     const [openViewLessonModal, setOpenViewLessonModal] = React.useState(false);
-    const [loadingExerciseId, setLoadingExerciseId] = React.useState<string | null>(null);
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
     });
 
-     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
-        
-            const LANGUAGE_OPTIONS = [
-                { value: 'en', label: 'English' },
-                { value: 'zh', label: 'Chinese' },
-                { value: 'es', label: 'Spanish' },
-                { value: 'fr', label: 'French' },
-                { value: 'hi', label: 'Hindi' },
-                { value: 'de', label: 'German' },
-                { value: 'ru', label: 'Russian' },
-                { value: 'pt', label: 'Portuguese' },
-                { value: 'it', label: 'Italian' },
-                { value: 'ro', label: 'Romanian' }
-            ];
-            const handleLanguageChange = (value: string) => {
-                setSelectedLanguage(value);
-            };
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+
+    const LANGUAGE_OPTIONS = [
+        { value: 'en', label: 'English' },
+        { value: 'zh', label: 'Chinese' },
+        { value: 'es', label: 'Spanish' },
+        { value: 'fr', label: 'French' },
+        { value: 'hi', label: 'Hindi' },
+        { value: 'de', label: 'German' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ro', label: 'Romanian' }
+    ];
+    const handleLanguageChange = (value: string) => {
+        setSelectedLanguage(value);
+    };
 
     const { data: listLessons } = useAppQuery<LessonResult>({
-        queryKey: [MUTATION_KEYS.LIST_LESSONS, pagination, phaseId,selectedLanguage],
+        queryKey: [MUTATION_KEYS.LIST_LESSONS, pagination, phaseId, selectedLanguage],
         url: ENDPOINTS.PRIVATE.LIST_LESSONS,
         options: {
             staleTime: Infinity,
@@ -80,14 +82,13 @@ export default function AddLessons() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            lang: selectedLanguage||"en",
+            lang: selectedLanguage || "en",
             phase_id: phaseId
         }
     })
     const listLessonsData = listLessons?.data?.result;
 
     const handleAddExercise = (lessonId: string) => {
-        setLoadingExerciseId(lessonId);
         route.push(`${ROUTES.PRIVATE.ADDEXERCISE}/${lessonId}`)
     };
 
@@ -156,22 +157,22 @@ export default function AddLessons() {
             title: "Concept Title",
             dataIndex: "concept_title",
             key: "concept_title",
-            render: (text: string) => <span className='font-medium text-black'>{text}</span>
+            render: (text: string) => <span className='font-medium text-black'>{text || 'N/A'}</span>
         },
-        {
-            title: "Add Exercise",
-            render: (_: any, record: any) => (
-                <div>
-                    <Button 
-                        loading={loadingExerciseId === record?._id}
-                        onClick={() => handleAddExercise(record?._id)} 
-                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
-                    >
-                        Add Exercise
-                    </Button>
-                </div>
-            )
-        },
+        // {
+        //     title: "Add Exercise",
+        //     render: (_: any, record: any) => (
+        //         <div>
+        //             <Button
+        //                 loading={loadingExerciseId === record?._id}
+        //                 onClick={() => handleAddExercise(record?._id)}
+        //                 className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!"
+        //             >
+        //                 Add Exercise
+        //             </Button>
+        //         </div>
+        //     )
+        // },
         {
             title: 'Actions',
             dataIndex: 'actions',
@@ -179,9 +180,10 @@ export default function AddLessons() {
             align: "center",
             render: (_text: any, record: any) => (
                 <div className="flex gap-2  justify-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setLessonId(record?._id); setOpenViewLessonModal(true) }} className="border-none! cursor-pointer! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiEdit size={20} />} onClick={() => { setLessonId(record?._id); setOpenUpdateLessonModal(true) }} className="border-none! cursor-pointer!  bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setLessonId(record?._id); setOpenDeleteLessonModal(true) }} className="border-none! cursor-pointer!  text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddExercise(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenViewLessonModal(true); setLessonId(record?._id) }} className="" />
+                    <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenUpdateLessonModal(true); setLessonId(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeleteLessonModal(true); setLessonId(record?._id) }} className="" />
                 </div>
             ),
         },
@@ -193,7 +195,7 @@ export default function AddLessons() {
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Lessons</span>
-                </h1> 
+                </h1>
                 <div className='flex justify-center gap-2'>
                     <Select
                         value={selectedLanguage}
@@ -201,7 +203,7 @@ export default function AddLessons() {
                         options={LANGUAGE_OPTIONS}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                     />
-                {/* <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                    {/* <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                     Add Lessons
                 </AppButton> */}
                 </div>
@@ -209,6 +211,9 @@ export default function AddLessons() {
             <Table
                 dataSource={listLessonsData}
                 columns={columns}
+                  onRow={(record) => ({
+                    onClick: () => handleAddExercise(record?._id)
+                })}
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,
@@ -223,12 +228,13 @@ export default function AddLessons() {
                 }}
                 onChange={handleTableChange}
                 scroll={{ x: 'max-content' }}
+                className="cursor-pointer"
                 bordered
             />
             <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openAddLessonsModal} setOpenAddLessonsModal={setOpenAddLessonsModal} />
             <DeleteModal title='Lesson' openDeleteModal={openDeleteLessonModal} setopenDeleteModal={setOpenDeleteLessonModal} handleDelete={handleDeleteLesson} loading={isDeleting} />
-            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openViewLessonModal} setOpenAddLessonsModal={setOpenViewLessonModal} isView={true} lessonID={lessonId} selectedLanguage={selectedLanguage}/>
-            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openUpdateLessonModal} setOpenAddLessonsModal={setOpenUpdateLessonModal} isUpdate={true} lessonID={lessonId} selectedLanguage={selectedLanguage}/>
+            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openViewLessonModal} setOpenAddLessonsModal={setOpenViewLessonModal} isView={true} lessonID={lessonId} selectedLanguage={selectedLanguage} />
+            <AddLessonsModal phaseId={phaseId} openAddLessonsModal={openUpdateLessonModal} setOpenAddLessonsModal={setOpenUpdateLessonModal} isUpdate={true} lessonID={lessonId} selectedLanguage={selectedLanguage} />
         </div>
     )
 }

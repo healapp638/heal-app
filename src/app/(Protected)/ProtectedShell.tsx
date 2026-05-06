@@ -17,7 +17,7 @@ export default function ProtectedShell({ children }: { children: ReactNode }) {
       theme={theme === "dark" ? darkTheme : lightTheme}
       componentSize="middle"
     >
-      <div className="min-h-screen  bg-cream! scroll-smooth relative">
+      <div className="min-h-screen  bg-white! scroll-smooth relative">
 
         {/* Header */}
 

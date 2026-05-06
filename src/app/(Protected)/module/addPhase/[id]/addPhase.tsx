@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Button, Select, Table } from "antd";
+import { Select, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
 import { FaEye } from "react-icons/fa";
@@ -16,6 +16,8 @@ import { useAppMutate } from "@/tanstack/useAppMutate";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddPhaseModal from "@/components/ui/modals/addPhaseModal";
+import { FaPlus } from "react-icons/fa";
+import IconButton from "@/components/ui/IconButton";
 
 interface PhaseData {
     _id: string;
@@ -45,32 +47,31 @@ export default function AddPhase() {
     const [openPhaseUpdateModal, setOpenPhaseUpdateModal] = React.useState(false);
     const [openPhaseViewModal, setOpenPhaseViewModal] = React.useState(false);
     const [selectPhase, setSelectPhase] = React.useState("");
-    const [loadingLessonId, setLoadingLessonId] = React.useState<string | null>(null);
 
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
     });
-     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
-    
-        const LANGUAGE_OPTIONS = [
-            { value: 'en', label: 'English' },
-            { value: 'zh', label: 'Chinese' },
-            { value: 'es', label: 'Spanish' },
-            { value: 'fr', label: 'French' },
-            { value: 'hi', label: 'Hindi' },
-            { value: 'de', label: 'German' },
-            { value: 'ru', label: 'Russian' },
-            { value: 'pt', label: 'Portuguese' },
-            { value: 'it', label: 'Italian' },
-            { value: 'ro', label: 'Romanian' }
-        ];
-        const handleLanguageChange = (value: string) => {
-            setSelectedLanguage(value);
-        };
+    const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
+
+    const LANGUAGE_OPTIONS = [
+        { value: 'en', label: 'English' },
+        { value: 'zh', label: 'Chinese' },
+        { value: 'es', label: 'Spanish' },
+        { value: 'fr', label: 'French' },
+        { value: 'hi', label: 'Hindi' },
+        { value: 'de', label: 'German' },
+        { value: 'ru', label: 'Russian' },
+        { value: 'pt', label: 'Portuguese' },
+        { value: 'it', label: 'Italian' },
+        { value: 'ro', label: 'Romanian' }
+    ];
+    const handleLanguageChange = (value: string) => {
+        setSelectedLanguage(value);
+    };
 
     const { data: listPhase } = useAppQuery<PhaseResult>({
-        queryKey: [MUTATION_KEYS.LIST_PHASE, pagination, subModuleId,selectedLanguage],
+        queryKey: [MUTATION_KEYS.LIST_PHASE, pagination, subModuleId, selectedLanguage],
         url: ENDPOINTS.PRIVATE.LIST_PHASE,
         options: {
             staleTime: Infinity,
@@ -78,7 +79,7 @@ export default function AddPhase() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            lang: selectedLanguage||"en",
+            lang: selectedLanguage || "en",
             subModuleId: subModuleId
         }
     })
@@ -98,7 +99,6 @@ export default function AddPhase() {
     };
 
     const handleAddLesson = (phaseId: string) => {
-        setLoadingLessonId(phaseId);
         route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${phaseId}`)
     };
 
@@ -156,20 +156,20 @@ export default function AddPhase() {
             key: 'points',
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
         },
-        {
-            title: "Add Lesson",
-            render: (_: any, record: any) => (
-                <div>
-                    <Button 
-                        loading={loadingLessonId === record?._id}
-                        onClick={() => { handleAddLesson(record?._id) }} 
-                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
-                    >
-                        Add Lesson
-                    </Button>
-                </div>
-            )
-        },
+        // {
+        //     title: "Add Lesson",
+        //     render: (_: any, record: any) => (
+        //         <div>
+        //             <Button
+        //                 loading={loadingLessonId === record?._id}
+        //                 onClick={() => { handleAddLesson(record?._id) }}
+        //                 className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!"
+        //             >
+        //                 Add Lesson
+        //             </Button>
+        //         </div>
+        //     )
+        // },
         {
             title: 'Actions',
             dataIndex: 'actions',
@@ -177,9 +177,10 @@ export default function AddPhase() {
             align: "center",
             render: (_text: any, record: any) => (
                 <div className="flex gap-2  justify-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setSelectPhase(record?._id); setOpenPhaseViewModal(true) }} className="border-none! cursor-pointer! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiEdit size={20} />} onClick={() => { setSelectPhase(record?._id); setOpenPhaseUpdateModal(true) }} className="border-none! cursor-pointer! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setSelectPhase(record?._id); setOpenDeletePhaseModal(true) }} className="border-none! cursor-pointer! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddLesson(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenPhaseViewModal(true); setSelectPhase(record?._id) }} className="" />
+                    <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenPhaseUpdateModal(true); setSelectPhase(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeletePhaseModal(true); setSelectPhase(record?._id) }} className="" />
                 </div>
             ),
         },
@@ -198,15 +199,18 @@ export default function AddPhase() {
                         options={LANGUAGE_OPTIONS}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                     />
-                <AppButton onClick={() => { setOpenAddPhaseModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
-                    Add Phases
-                </AppButton>
+                    <AppButton onClick={() => { setOpenAddPhaseModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
+                        Add Phases
+                    </AppButton>
                 </div>
             </div>
 
             <Table
                 dataSource={PhaseListData}
                 columns={columns}
+                onRow={(record) => ({
+                    onClick: () => handleAddLesson(record?._id)
+                })}
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,
@@ -222,6 +226,7 @@ export default function AddPhase() {
                 onChange={handleTableChange}
                 scroll={{ x: 'max-content' }}
                 bordered
+                className="cursor-pointer"
             />
             <AddPhaseModal openAddPhaseModal={openAddPhaseModal} setOpenAddPhaseModal={setOpenAddPhaseModal} subModuleId={subModuleId} />
             <DeleteModal title='Phase' openDeleteModal={openDeletePhaseModal} setopenDeleteModal={setOpenDeletePhaseModal} handleDelete={handleDeletePhase} loading={isDeleting} />

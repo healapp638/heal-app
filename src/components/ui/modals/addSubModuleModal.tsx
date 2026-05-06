@@ -56,8 +56,8 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
     React.useEffect(() => {
         if (SubModuleData && (isUpdate || isView) && openModal) {
             form.setFieldsValue({
-                title: SubModuleData?.title,
-                description: SubModuleData?.description,
+                title: SubModuleData?.title || 'N/A',
+                description: SubModuleData?.description || 'N/A',
             });
         }
     }, [SubModuleData, isUpdate, isView, form, openModal]);

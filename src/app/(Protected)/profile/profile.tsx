@@ -42,7 +42,7 @@ const Profile = () => {
             </div>
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-md">
                 {/* Header Banner */}
-                <div className="h-40 bg-linear-to-r from-maincolor to-cream relative">
+                <div className="h-40 bg-linear-to-r from-maincolor to-secondary-light relative">
                     <div className="absolute -bottom-16 left-8 p-1 bg-cream rounded-full shadow-2xl">
                         {AdminDetail?.profile_pic ? (
                             <Avatar

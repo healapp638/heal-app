@@ -20,17 +20,17 @@ interface AddThemeModalProps {
     isView?: boolean;
     themeId?: string;
     onClose?: () => void;
-    selectedLanguage?:string;
+    selectedLanguage?: string;
 }
 
 interface ThemeDetail {
     title: string;
     description: string;
     imgUrl: string;
-    
+
 }
 
-const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onClose ,selectedLanguage }: AddThemeModalProps) => {
+const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onClose, selectedLanguage }: AddThemeModalProps) => {
 
     const [form] = Form.useForm();
     const [fileList, setFileList] = React.useState<any[]>([]);
@@ -161,7 +161,6 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
         try {
             // Find the full object from the fileList state (using ref to ensure latest)
             const fullFileObject = fileListRef.current.find(f => f.uid === file.uid) || { originFileObj: file, uid: file.uid, name: file.name };
-
             await handleAddFile(fullFileObject);
             onSuccess("ok");
         } catch (err) {
@@ -210,6 +209,7 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
             }
         }
     }, [openModal, isView, isUpdate, ThemeDetail, form]);
+
     return (
         <>
             <Modal
@@ -223,7 +223,7 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
                 <h1 className="text-3xl font-bold text-center text-black">
                     {isUpdate ? "Update" : isView ? "View" : "Add"} <span className="text-maincolor">Theme</span>
                 </h1>
-                {(isLoadingThemeDetail && (isView || isUpdate)) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white border-maincolor border-[1.5px] rounded-lg p-6 my-5'>
+                {(isLoadingThemeDetail && (isView || isUpdate)) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white rounded-lg p-6 my-5'>
                     <Form
                         form={form}
                         layout="vertical"

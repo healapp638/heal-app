@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Button, Select, Table } from "antd"
+import { Select, Table } from "antd"
 import { ROUTES } from "@/routerKeys"
 import { ENDPOINTS } from "@/Endpoints"
 import { FaEye } from "react-icons/fa";
@@ -15,6 +15,8 @@ import { useParams, useRouter } from "next/navigation"
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper"
 import DeleteModal from "@/components/ui/modals/DeleteModal"
 import AddSubModuleModal from "@/components/ui/modals/addSubModuleModal"
+import { FaPlus } from "react-icons/fa";
+import IconButton from "@/components/ui/IconButton"
 
 interface SubModuleData {
     _id: string;
@@ -44,8 +46,6 @@ export default function AddSubModule() {
     const [selectedSubModule, setSelectedSubModule] = React.useState("")
     const [openUpdateSubModuleModal, setOpenUpdateSubModuleModal] = React.useState(false)
     const [openViewSubModuleModal, setOpenViewSubModuleModal] = React.useState(false)
-    const [loadingPhaseId, setLoadingPhaseId] = React.useState<string | null>(null);
-
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
@@ -116,7 +116,6 @@ export default function AddSubModule() {
 
 
     const handleAddPhase = (subModuleId: string) => {
-        setLoadingPhaseId(subModuleId);
         route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}`)
     };
 
@@ -139,29 +138,16 @@ export default function AddSubModule() {
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
         },
         {
-            title: "Add Phase",
-            render: (_: any, record: any) => (
-                <div>
-                    <Button 
-                        loading={loadingPhaseId === record?._id}
-                        onClick={() => { handleAddPhase(record?._id) }} 
-                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
-                    >
-                        Add Phase
-                    </Button>
-                </div>
-            )
-        },
-        {
             title: 'Actions',
             dataIndex: 'actions',
             key: 'actions',
             align: "center",
             render: (_text: any, record: any) => (
                 <div className="flex gap-2  justify-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenViewSubModuleModal(true); setSelectedSubModule(record?._id) }} className="border-none! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiEdit size={20} />} onClick={() => { setOpenUpdateSubModuleModal(true); setSelectedSubModule(record?._id) }} className="border-none! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setOpenDeleteModule(true); setSelectedSubModule(record?._id) }} className="border-none! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddPhase(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenViewSubModuleModal(true); setSelectedSubModule(record?._id) }} className="" />
+                    <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenUpdateSubModuleModal(true); setSelectedSubModule(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeleteModule(true); setSelectedSubModule(record?._id) }} className="" />
                 </div>
             ),
         },
@@ -190,6 +176,9 @@ export default function AddSubModule() {
                 rowKey="_id"
                 columns={columns}
                 dataSource={SubModuleListData}
+                onRow={(record) => ({
+                    onClick: () => handleAddPhase(record?._id)
+                })}
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,

@@ -77,7 +77,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
 
             ),
             activeIcon: (
-                <MdDashboard className='text-cream! h-8 w-8!' />
+                <MdDashboard className='text-white! h-8 w-8!' />
             ),
             key: '/adminData',
             label: 'Dashboard',
@@ -88,7 +88,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                 <FaUser className='text-maincolor! h-8 w-8!' />
             ),
             activeIcon: (
-                <FaUser className='text-cream! h-8 w-8!' />
+                <FaUser className='text-white! h-8 w-8!' />
             ),
             key: '/users',
             label: 'Users',
@@ -99,7 +99,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                 <RiSoundModuleFill className='text-maincolor! h-8 w-8!' />
             ),
             activeIcon: (
-                <RiSoundModuleFill className='text-cream! h-8 w-8!' />
+                <RiSoundModuleFill className='text-white! h-8 w-8!' />
             ),
             key: '/module',
             label: 'Module',
@@ -121,7 +121,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                 <MdPolicy className='text-maincolor! h-8 w-8!' />
             ),
             activeIcon: (
-                <MdPolicy className='text-cream! h-8 w-8!' />
+                <MdPolicy className='text-white! h-8 w-8!' />
             ),
             key: '/privacypolicy',
             label: 'Privacy Policy',
@@ -132,7 +132,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                 <FaFileAlt className='text-maincolor! h-8 w-8!' />
             ),
             activeIcon: (
-                <FaFileAlt className='text-cream! h-8 w-8!' />
+                <FaFileAlt className='text-white! h-8 w-8!' />
             ),
             key: '/termsandcondition',
             label: 'Terms And Condition',
@@ -154,7 +154,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                 <FaPhoneAlt className='text-maincolor! h-8 w-8!' />
             ),
             activeIcon: (
-                <FaPhoneAlt className='text-cream! h-8 w-8!' />
+                <FaPhoneAlt className='text-white! h-8 w-8!' />
             ),
             key: '/contactus',
             label: 'Contact Us',
@@ -222,19 +222,19 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
         key: item.key,
         icon: activeIndex === item.key ? item.activeIcon : item.icon,
         label: (
-            <span className={`font-medium ${activeIndex === item.key ? 'text-cream pl-2 ' : 'text-maincolor pl-2'}`}>
+            <span className={`font-medium ${activeIndex === item.key ? 'text-white! pl-2 ' : 'text-maincolor pl-2'}`}>
                 {item.label}
             </span>
         ),
         className: activeIndex === item.key
-            ? 'bg-maincolor! border border-maincolor' // Active item - background stays maincolor, text white
-            : 'bg-cream hover:bg-cream! border border-maincolor',
+            ? 'bg-maincolor!' // Active item - background stays maincolor, text white
+            : 'bg-white  bg-lightmaincolor! hover:bg-lightmaincolor!',
 
     }));
 
     return (
         <Layout>
-            <Header className="bg-cream! sticky top-0 z-50 border border-maincolor flex justify-between items-center rounded-lg px-4 lg:px-8 py-4">
+            <Header className="bg-white! sticky top-0 z-50 shadow-sm! flex justify-between items-center rounded-lg px-4 lg:px-8 py-4">
                 <div className="flex items-center gap-3">
                     {isBreakpoint ? (
                         <div className='flex gap-2 justify-center items-center'>
@@ -266,9 +266,9 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                     menu={{ items: menuItems }}
                     onOpenChange={handleDropdownVisibleChange}
                     open={dropdownOpen}
-                    className='bg-cream!'
+                    className='bg-white!'
                 >
-                    <Space className="bg-cream! h-12 cursor-pointer p-2 rounded-lg border shadow-cardCustom border-maincolor border-solid">
+                    <Space className="bg-white! h-12 cursor-pointer p-2 rounded-lg border shadow-cardCustom border-maincolor border-solid">
                         <Avatar
                             size={32}
                             src={`${FILE_URL}${AdminDetail?.profile_pic || ""}`}
@@ -285,10 +285,11 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                     </Space>
                 </Dropdown>
             </Header>
+            {/* <Divider className='text-maincolor! bg-maincolor! h-0.25'/> */}
             <Layout className="h-full p-2">
                 <Sider
                     width={280}
-                    className='border border-maincolor rounded-lg cursor-pointer bg-cream!'
+                    className='rounded-lg cursor-pointer bg-white! shadow-sm!'
                     style={{
                         position: 'sticky',
                         top: '110px',
@@ -312,7 +313,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
                         items={antMenuItems}
                     />
                 </Sider>
-                <Content className="p-4 bg-cream! h-[calc(100dvh-120px)] overflow-y-auto">
+                <Content className="p-4 bg-white! h-[calc(100dvh-120px)] overflow-y-auto">
                     {children}
                 </Content>
             </Layout>

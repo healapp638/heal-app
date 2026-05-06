@@ -22,8 +22,11 @@ export const lightTheme = {
     Table: {
       headerBg: "#F66F76",
       colorBgContainer: "#ffff",
-      borderColor: "#ffff",
+      borderColor: "#f66f7610",
       headerColor: '#ffffff',
+
+      rowHoverBg: "#f66f7610"
+
     },
     Empty: {
       colorText: "#ff4d4f",   // text "No Data"
@@ -40,7 +43,6 @@ export const lightTheme = {
 export const darkTheme = {
   algorithm: theme.darkAlgorithm,
   token: {
-    colorPrimary: "#1DA57A",
     borderRadius: 8,
     fontSize: 16,
     colorText: "#ffffff",
@@ -48,18 +50,15 @@ export const darkTheme = {
     controlHeight: 40,
   },
   components: {
-    Button: {
-      borderRadius: 10,
-      colorPrimaryBg: "#a30000",
-    },
     Input: {
       borderRadius: 6,
     },
     Table: {
       headerBg: "#F66F76",
       colorBgContainer: "#ffff",
-      borderColor: "#ffff",
+      borderColor: "#f66f7610",
       headerColor: '#ffffff',
+      rowHoverBg: "#f66f7610"
     },
     Empty: {
       colorText: "#ff4d4f",   // text "No Data"

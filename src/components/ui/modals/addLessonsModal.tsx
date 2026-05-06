@@ -64,11 +64,11 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
     React.useEffect(() => {
         if (lessonDetailData && (isUpdate || isView) && openAddLessonsModal) {
             form.setFieldsValue({
-                reading_title: lessonDetailData?.reading_title,
-                reading_description: lessonDetailData?.reading_description,
-                concept_title: lessonDetailData?.concept_title,
-                concept_description: lessonDetailData?.concept_description,
-                reflection: lessonDetailData?.reflection,
+                reading_title: lessonDetailData?.reading_title || 'N/A',
+                reading_description: lessonDetailData?.reading_description || 'N/A',
+                concept_title: lessonDetailData?.concept_title || 'N/A',
+                concept_description: lessonDetailData?.concept_description || 'N/A',
+                reflection: lessonDetailData?.reflection || 'N/A',
             });
         }
     }, [lessonDetailData, isUpdate, isView, form, openAddLessonsModal]);
@@ -156,7 +156,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                 {isUpdate ? "Update" : isView ? "View" : "Add"} <span className="text-maincolor">Lessons</span>
             </h1>
 
-            {isLoadingLessonDetail && (isUpdate || isView) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white border-maincolor border-[1.5px] rounded-lg p-6 my-5'>
+            {isLoadingLessonDetail && (isUpdate || isView) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white  rounded-lg p-6 my-5'>
                 <Form
                     form={form}
                     layout="vertical"

@@ -117,7 +117,7 @@ export default function PrivacyPolicy() {
     }
 
     return (
-         <div className='p-2 md:p-6'>
+        <div className='p-2 md:p-6'>
             <div>
                 <h1 className="text-3xl font-bold text-black">
                     Privacy  <span className="text-maincolor">Policy</span>
@@ -128,8 +128,7 @@ export default function PrivacyPolicy() {
                     value={selectedLanguage}
                     onChange={handleLanguageChange}
                     options={LANGUAGE_OPTIONS}
-                    className='w-32'
-                    placeholder="Select language"
+                    className='w-32 bg-maincolor! font-bold text-white! border-none!'
                 />
                 <div className='flex flex-wrap gap-4'>
                     <AppButton

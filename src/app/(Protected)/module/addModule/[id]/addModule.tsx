@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Button, Select, Table } from "antd";
+import { Select, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
@@ -15,6 +15,8 @@ import { useParams, useRouter } from "next/navigation";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddModuleModal from "@/components/ui/modals/addModuleModal";
+import { FaPlus } from "react-icons/fa";
+import IconButton from "@/components/ui/IconButton";
 
 interface ModuleData {
     _id: string;
@@ -26,8 +28,13 @@ interface ModuleData {
     __v: number;
 }
 
+interface ThemeData {
+    title: string;
+}
+
 interface ModuleResult {
     result: ModuleData[];
+    them_details: ThemeData;
     page: number;
     limit: number;
     total: number;
@@ -47,7 +54,6 @@ export default function AddModule() {
 
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false)
     const [openViewModal, setOpenViewModal] = React.useState(false)
-    const [loadingSubModuleId, setLoadingSubModuleId] = React.useState<string | null>(null);
 
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
@@ -115,7 +121,6 @@ export default function AddModule() {
         }
     })
     const ModuleListData = listModule?.data?.result;
-
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
     }, [pagination]);
@@ -129,7 +134,6 @@ export default function AddModule() {
     };
 
     const handleAddSubModule = (moduleId: string) => {
-        setLoadingSubModuleId(moduleId);
         route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}`)
     };
     const columns: ColumnsType<ModuleData> = [
@@ -146,20 +150,20 @@ export default function AddModule() {
             key: 'title',
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
         },
-        {
-            title: "Add SubModule",
-            render: (_: any, record: any) => (
-                <div>
-                    <Button 
-                        loading={loadingSubModuleId === record?._id}
-                        onClick={() => { handleAddSubModule(record?._id) }} 
-                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
-                    >
-                        Add SubModule
-                    </Button>
-                </div>
-            )
-        },
+        // {
+        //     title: "Add SubModule",
+        //     render: (_: any, record: any) => (
+        //         <div>
+        //             <Button
+        //                 loading={loadingSubModuleId === record?._id}
+        //                 onClick={() => { handleAddSubModule(record?._id) }}
+        //                 className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!"
+        //             >
+        //                 Add SubModule
+        //             </Button>
+        //         </div>
+        //     )
+        // },
         {
             title: 'Actions',
             dataIndex: 'actions',
@@ -167,9 +171,10 @@ export default function AddModule() {
             align: "center",
             render: (_text: any, record: any) => (
                 <div className="flex gap-2  justify-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenViewModal(true); setSelectedModule(record?._id) }} className="border-none!  bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiEdit size={20} />} onClick={() => { setOpenUpdateModal(true); setSelectedModule(record?._id) }} className="border-none! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setSelectedModule(record?._id); setOpenDeleteModule(true) }} className="border-none! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddSubModule(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenViewModal(true); setSelectedModule(record?._id) }} className="" />
+                    <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenUpdateModal(true); setSelectedModule(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeleteModule(true); setSelectedModule(record?._id) }} className="" />
                 </div>
             ),
         },
@@ -196,6 +201,10 @@ export default function AddModule() {
             <Table
                 columns={columns}
                 dataSource={ModuleListData}
+                onRow={(record) => ({
+                    onClick: () => handleAddSubModule(record?._id)
+                })}
+                className='cursor-pointer'
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,

@@ -130,8 +130,8 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
     React.useEffect(() => {
         if (exerciseDetailData && (isUpdate || isView) && openModal) {
             form.setFieldsValue({
-                title: exerciseDetailData?.title,
-                description: exerciseDetailData?.description,
+                title: exerciseDetailData?.title || 'N/A',
+                description: exerciseDetailData?.description || 'N/A',
             });
         }
     }, [exerciseDetailData, isUpdate, isView, form, openModal]);
@@ -149,7 +149,7 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
             <h1 className="text-3xl font-bold text-center text-black">
                 {isUpdate ? "Update" : isView ? "View" : "Add"} <span className="text-maincolor">Exercise</span>
             </h1>
-            {isLoadingExerciseDetail && (isUpdate || isView) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white border-maincolor border-[1.5px] rounded-lg p-6 my-5'>
+            {isLoadingExerciseDetail && (isUpdate || isView) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white  rounded-lg p-6 my-5'>
                 <Form
                     form={form}
                     layout="vertical"

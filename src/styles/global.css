@@ -13,9 +13,12 @@
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
 
+  --color-secondary-light: var(--secondary-light);
+  --color-secondary-color: var(--secondary-color);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-maincolor: var(--maincolor);
+  --color-lightmaincolor: var(--lightmaincolor);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-cream: var(--cream);
@@ -38,10 +41,16 @@
     --primary-foreground: #ffffff;
     --cream: #F4EEE2;
     --gradient-green-orange: radial-gradient(at 100% 0%, #A8BBA2 0%, #F66F76 10%, transparent 40%), radial-gradient(at 0% 100%, #F66F76 0%, #A8BBA2 10%, transparent 40%);
+    --gradient-main: 
+      radial-gradient(at 0% 0%, #f66f7610 0%, #F66F76 10%, transparent 40%), 
+      radial-gradient(at 100% 100%, #F66F76 0%, #f66f7610 10%, transparent 40%);
+    --secondary-color:#ffd8b5;
+    --secondary-light:#f66f766d;
 
     --secondary: #00ff00;
     --secondary-foreground: #003300;
     --maincolor: #F66F76;
+    --lightmaincolor:#f66f7610;
     --border: #e5e7eb;
     --ring: #ff0000;
   }
@@ -50,12 +59,19 @@
     --background: #0f172a;
     --foreground: #e5e7eb;
     --maincolor: #F66F76;
+    --lightmaincolor:#f66f7610;
     --card: #020617;
+    --secondary-color:#ffd8b5;
+    --secondary-light:#f66f766d;
+
     --card-foreground: #e5e7eb;
     --cream: #F4EEE2;
     --primary: #ff4d4f;
     --primary-foreground: #ffffff;
     --gradient-green-orange: radial-gradient(at 100% 0%, #A8BBA2 0%, #F66F76 10%, transparent 40%), radial-gradient(at 0% 100%, #F66F76 0%, #A8BBA2 10%, transparent 40%);
+    --gradient-main: 
+      radial-gradient(at 0% 0%, #f66f7610 0%, #F66F76 10%, transparent 40%), 
+      radial-gradient(at 100% 100%, #F66F76 0%, #f66f7610 10%, transparent 40%);
     --secondary: #22c55e;
     --secondary-foreground: #052e16;
 
@@ -112,6 +128,7 @@
   animation: slideInDown 0.3s ease-out;
 }
 
+
 .custom-online-message .ant-message-notice-content {
   background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
   color: white;
@@ -123,6 +140,10 @@
 
 .gradient-green-orange {
   background: var(--gradient-green-orange);
+}
+
+.gradient-main {
+  background: var(--gradient-main);
 }
 
 .backgroundImage {
@@ -158,18 +179,18 @@
   }
 
   .ant-layout{
-    @apply bg-cream!
+    @apply bg-white!
   }
 
   .ant-menu-light{
-    @apply border-maincolor! bg-cream!
+    @apply bg-white!
   }
 
   .ant-menu-light.ant-menu-root.ant-menu-inline{
     @apply border-none!
   }
   .ant-dropdown .ant-dropdown-menu{
-    @apply bg-cream!
+    @apply bg-white! cursor-pointer!
   }
   .ant-pagination .ant-pagination-item-active a{
     @apply text-white! 
@@ -177,6 +198,7 @@
   .ant-modal .ant-modal-container {
     @apply bg-cream!
   }
+  
   .anticon >*{
     @apply text-black! font-bold!
   }
@@ -194,4 +216,7 @@
   stroke: var(--color-white) !important;
 }
 
+}
+.buttonGradient{
+  background: linear-gradient(135deg, #F66F76 0%, #f66f7610 100%)!important;
 }

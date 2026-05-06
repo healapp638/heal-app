@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Button, Select, Table } from "antd";
+import { Select, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
 import { AppButton } from "@/components/ui"
@@ -14,6 +14,7 @@ import { useAppMutate } from "@/tanstack/useAppMutate";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddExerciseModal from "@/components/ui/modals/addExerciseModal"
+import IconButton from "@/components/ui/IconButton";
 
 interface ExerciseData {
     _id: string;
@@ -163,9 +164,9 @@ export default function AddExercise() {
             align: "center",
             render: (_text: any, record: any) => (
                 <div className="flex gap-2 justify-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenViewModal(true); setExerciseId(record._id) }} className="border-none! cursor-pointer! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiEdit size={20} />} onClick={() => { setOpenUpdateModal(true); setExerciseId(record._id) }} className="border-none! cursor-pointer! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setOpenDeleteExerciseModal(true); setExerciseId(record._id) }} className="border-none! cursor-pointer! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenViewModal(true); setExerciseId(record?._id) }} className="" />
+                    <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenUpdateModal(true); setExerciseId(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeleteExerciseModal(true); setExerciseId(record?._id) }} className="" />
                 </div>
             ),
         },

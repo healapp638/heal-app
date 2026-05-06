@@ -148,7 +148,7 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
                 {isUpdate ? "Update" : isView ? "View" : "Add"} <span className="text-maincolor">Phase</span>
             </h1>
 
-            {(isLoadingPhaseDetail && (isUpdate || isView)) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white border-maincolor border-[1.5px] rounded-lg p-6 my-5'>
+            {(isLoadingPhaseDetail && (isUpdate || isView)) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white rounded-lg p-6 my-5'>
                 <Form
                     form={form}
                     layout="vertical"

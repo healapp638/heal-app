@@ -3,15 +3,15 @@
 import { ENDPOINTS } from '@/Endpoints'
 import { MUTATION_KEYS } from '@/tanstack/keys'
 import { useAppQuery } from '@/tanstack/useAppQuery'
-import { FiTrash2 } from "react-icons/fi"
-import { FaEye } from "react-icons/fa";
-import { Button, Table } from 'antd'
+import { FiTrash2 ,FiEdit} from "react-icons/fi"
+import { Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import DeleteModal from '@/components/ui/modals/DeleteModal'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
 import { useAppMutate } from '@/tanstack/useAppMutate'
 import ContactModule from './contactModule'
+import IconButton from '@/components/ui/IconButton'
 
 interface ContactData {
     _id: string;
@@ -123,8 +123,8 @@ export default function ContactUs() {
             align: 'center',
             render: (_text: any, record: any) => (
                 <div className="flex gap-2 justify-center items-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenContactDetailModal(true); setSelectedContact(record?._id) }} className="border-none!  bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setopenDeleteModal(true); setSelectedContact(record._id) }} className="border-none!  text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                     <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenContactDetailModal(true); setSelectedContact(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setopenDeleteModal(true); setSelectedContact(record?._id) }} className="" />
                     {/* <Button onClick={() => { setOpenContactReplyModal(true); setSelectedContact(record?._id) }} className="border-none! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger >Reply</Button> */}
                 </div>
             ),

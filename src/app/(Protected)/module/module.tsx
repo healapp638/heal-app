@@ -7,7 +7,7 @@ import { ENDPOINTS } from '@/Endpoints';
 import { FILE_URL } from '@/utils/helper';
 import { AppButton } from '@/components/ui'
 import { useRouter } from 'next/navigation';
-import { Button, Image, Select, Table } from 'antd';
+import {  Image, Select, Table } from 'antd';
 import { MUTATION_KEYS } from '@/tanstack/keys';
 import type { ColumnsType } from 'antd/es/table';
 import { FiTrash2, FiEdit } from "react-icons/fi"
@@ -16,6 +16,8 @@ import { useAppMutate } from '@/tanstack/useAppMutate';
 import { useAppQuery } from '@/tanstack/useAppQuery';
 import AddThemeModal from '@/components/ui/modals/addThemeModal';
 import DeleteModal from '@/components/ui/modals/DeleteModal';
+import { FaPlus } from "react-icons/fa";
+import IconButton from '@/components/ui/IconButton';
 
 export interface Theme {
     _id: string;
@@ -43,7 +45,6 @@ export default function Module() {
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false);
     const [openViewModal, setOpenViewModal] = React.useState(false);
     const [selectedTheme, setSelectedTheme] = React.useState("");
-    const [loadingModuleId, setLoadingModuleId] = React.useState<string | null>(null);
 
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
@@ -123,7 +124,6 @@ export default function Module() {
     };
 
     const handleAddModule = (themeId: string) => {
-        setLoadingModuleId(themeId);
         route.push(`${ROUTES.PRIVATE.ADDMODULE}/${themeId}`)
     }
 
@@ -143,6 +143,8 @@ export default function Module() {
                 src={`${FILE_URL}${imgUrl}`}
                 alt="image"
                 height={72}
+                preview={false}
+                draggable={false}
                 width={72}
                 className="w-18 h-18 rounded-lg object-cover"
             />
@@ -154,31 +156,17 @@ export default function Module() {
             render: (text: string) => <span className='font-medium text-black'>{text}</span>
         },
         {
-            title: "Add Module",
-            dataIndex: "add_module",
-            key: "add_module",
-            render: (_: any, record: Theme) => (
-                <div>
-                    <Button 
-                        loading={loadingModuleId === record?._id}
-                        onClick={() => handleAddModule(record?._id)} 
-                        className="bg-maincolor! w-fit font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
-                    >
-                        Add Module
-                    </Button>
-                </div>
-            )
-        },
-        {
             title: "Actions",
             align: "center",
             render: (_: any, record: Theme) => (
                 <div className="flex gap-2  justify-center">
-                    <Button icon={<FaEye size={20} />} onClick={() => { setOpenViewModal(true); setSelectedTheme(record?._id) }} className="border-none! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiEdit size={20} />} onClick={() => { setOpenUpdateModal(true); setSelectedTheme(record?._id) }} className="border-none! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" />
-                    <Button icon={<FiTrash2 size={20} />} onClick={() => { setOpenDeleteModal(true); setSelectedTheme(record?._id) }} className="border-none! text-white! bg-maincolor! hover:bg-maincolor! hover:text-white! shadow-none" danger />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddModule(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenViewModal(true); setSelectedTheme(record?._id) }} className="" />
+                    <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenUpdateModal(true); setSelectedTheme(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeleteModal(true); setSelectedTheme(record?._id) }} className="" />
                 </div>
             ),
+            width: 200,
         }
     ];
 
@@ -186,7 +174,7 @@ export default function Module() {
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4" >
                 <h1 className="text-3xl font-bold text-black m-0!">
-                    Add <span className="text-maincolor">Themes</span>
+                    <span className="text-maincolor">Themes</span>
                 </h1>
                 <div className='flex justify-center gap-2'>
                     <Select
@@ -203,6 +191,9 @@ export default function Module() {
             <Table
                 dataSource={ThemeListData}
                 columns={columns}
+                onRow={(record) => ({
+                    onClick: () => handleAddModule(record?._id)
+                })}
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,
@@ -218,9 +209,10 @@ export default function Module() {
                 onChange={handleTableChange}
                 scroll={{ x: 'max-content' }}
                 bordered
+                className='cursor-pointer!'
             />
             <AddThemeModal openModal={openModal} setOpenModal={setOpenModal} onClose={() => setSelectedTheme("")} />
-            <AddThemeModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} isUpdate={true} themeId={selectedTheme} onClose={() => { setSelectedTheme("")}} selectedLanguage={selectedLanguage} />
+            <AddThemeModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} isUpdate={true} themeId={selectedTheme} onClose={() => { setSelectedTheme("") }} selectedLanguage={selectedLanguage} />
             <AddThemeModal openModal={openViewModal} setOpenModal={setOpenViewModal} isView={true} themeId={selectedTheme} onClose={() => setSelectedTheme("")} selectedLanguage={selectedLanguage} />
             <DeleteModal title='Theme' openDeleteModal={openDeleteModal} setopenDeleteModal={setOpenDeleteModal} handleDelete={handleDeleteTheme} loading={isDeleting} />
         </div>

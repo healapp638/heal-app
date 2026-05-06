@@ -140,7 +140,7 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
             <h1 className="text-3xl font-bold text-center text-black">
                 {isUpdate ? "Update" : isView ? "View" : "Add"} <span className="text-maincolor">Module</span>
             </h1>
-            {(isLoadingModuleDetail && (isView || isUpdate)) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white border-maincolor border-[1.5px] rounded-lg p-6 my-5'>
+            {(isLoadingModuleDetail && (isView || isUpdate)) ? <p className="text-maincolor! p-6 text-center">Loading...</p> : <div className='bg-white rounded-lg p-6 my-5'>
                 <Form
                     form={form}
                     layout="vertical"
