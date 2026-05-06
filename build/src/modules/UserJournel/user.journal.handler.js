@@ -58,7 +58,6 @@ const UserCommonHandler = {
     }),
     journalList: (page_1, ...args_1) => __awaiter(void 0, [page_1, ...args_1], void 0, function* (page, limit = 10, search_key, userId) {
         limit = Number(limit);
-        console.log(limit, 'limit');
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const lang = (user === null || user === void 0 ? void 0 : user.language) || 'en';
         if (!user) {
@@ -89,7 +88,8 @@ const UserCommonHandler = {
                 $match: Object.assign({}, (search_key && {
                     $or: [
                         { title: { $regex: search_key, $options: 'i' } },
-                        { description: { $regex: search_key, $options: 'i' } }
+                        { description: { $regex: search_key, $options: 'i' } },
+                        { feeling: { $regex: search_key, $options: 'i' } }
                     ]
                 }))
             },

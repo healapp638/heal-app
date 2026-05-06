@@ -55,7 +55,6 @@ const UserCommonHandler = {
 
     journalList: async (page: string, limit: number = 10, search_key: string, userId: string): Promise<ApiResponse> => {
         limit = Number(limit)
-        console.log(limit,'limit')
         const user: any = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const lang = user?.language || 'en'
         if (!user) {
@@ -88,7 +87,8 @@ const UserCommonHandler = {
                     ...(search_key && {
                         $or: [
                             { title: { $regex: search_key, $options: 'i' } },
-                            { description: { $regex: search_key, $options: 'i' } }
+                            { description: { $regex: search_key, $options: 'i' } },
+                            { feeling: { $regex: search_key, $options: 'i' } }
                         ]
                     })
                 }
