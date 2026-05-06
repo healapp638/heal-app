@@ -13,7 +13,7 @@ const USER_STATUS = {
     DEACTIVATED: 3,
 };
 
-
+ 
 const DEACTIVATE_BY = {
     USER: 'user',
     ADMIN: 'admin',
