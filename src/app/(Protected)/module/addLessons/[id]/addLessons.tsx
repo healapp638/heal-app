@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Switch, Table } from "antd";
+import { Breadcrumb, ConfigProvider, Select, Switch, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
@@ -10,7 +10,7 @@ import { MUTATION_KEYS } from "@/tanstack/keys";
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
@@ -32,9 +32,15 @@ interface LessonData {
     updatedAt: string;
     __v: number;
 }
+interface PhaseData {
+    _id: string;
+    title: string;
+    status: number;
+}
 
 interface LessonResult {
     result: LessonData[];
+    phaseDetails:PhaseData;
     page: number;
     limit: number;
     total: number;
@@ -46,6 +52,13 @@ export default function AddLessons() {
     const params = useParams();
     const phaseId = params?.id as string;
     const route = useRouter();
+    const searchParams = useSearchParams();
+    const themeTitle = searchParams.get("themeTitle")
+    const themeId = searchParams.get("themeId")
+    const moduleTitle = searchParams.get("moduleTitle")
+    const moduleID = searchParams.get("moduleID")
+    const subModuleTitle = searchParams.get("subModuleTitle")
+    const subModuleId = searchParams.get("subModuleId")
 
     const [openAddLessonsModal, setOpenAddLessonsModal] = React.useState(false);
     const [openDeleteLessonModal, setOpenDeleteLessonModal] = React.useState(false);
@@ -89,9 +102,10 @@ export default function AddLessons() {
         }
     })
     const listLessonsData = listLessons?.data?.result;
+    const PhaseData = listLessons?.data?.phaseDetails;
 
     const handleAddExercise = (lessonId: string) => {
-        route.push(`${ROUTES.PRIVATE.ADDEXERCISE}/${lessonId}`)
+        route.push(`${ROUTES.PRIVATE.ADDEXERCISE}/${lessonId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}&subModuleTitle=${subModuleTitle}&subModuleId=${subModuleId}&phaseTitle=${PhaseData?.title}&phaseId=${phaseId}`)
     };
 
     const { mutateAsync: DeleteLesson, isPending: isDeleting } = useAppMutate({
@@ -243,9 +257,42 @@ export default function AddLessons() {
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-black">
+                {/* <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Lessons</span>
-                </h1>
+                </h1> */}
+                 <ConfigProvider
+                    theme={{
+                        components: {
+                            Breadcrumb: {
+                                itemColor: 'black', // Custom color for breadcrumb items
+                                separatorColor: 'black', // Custom color for separator
+                            },
+                        },
+                    }}
+                >
+                    <div className="mb-4">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(ROUTES.PRIVATE.MODULE) }}>{themeTitle || ''}</span>,
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDMODULE}/${themeId}`) }} >{moduleTitle || ''}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleID}?themeTitle=${themeTitle}&themeId=${themeId}`) }}>{subModuleTitle}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}`) }}>{PhaseData?.title}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold">Lessons</span>
+                                },
+                            ]}
+                            separator={<span className="text-h2 text-black-200 font-bold">/</span>}
+                        />
+                    </div>
+                </ConfigProvider>
                 <div className='flex justify-center gap-2'>
                     <Select
                         value={selectedLanguage}

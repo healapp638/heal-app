@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Switch, Table } from "antd";
+import { Breadcrumb, ConfigProvider, Select, Switch, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
@@ -153,6 +153,7 @@ export default function AddModule() {
         }
     })
     const ModuleListData = listModule?.data?.result;
+    const ThemeData=listModule?.data?.them_details;
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
     }, [pagination]);
@@ -166,7 +167,7 @@ export default function AddModule() {
     };
 
     const handleAddSubModule = (moduleId: string) => {
-        route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}`)
+        route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}?themeId=${themeId}&themeTitle=${ThemeData?.title}`)
     };
     const columns: ColumnsType<ModuleData> = [
         {
@@ -230,9 +231,33 @@ export default function AddModule() {
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-black">
+                {/* <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Module</span>
-                </h1>
+                </h1> */}
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Breadcrumb: {
+                                itemColor: 'black', // Custom color for breadcrumb items
+                                separatorColor: 'black', // Custom color for separator
+                            },
+                        },
+                    }}
+                >
+                    <div className="mb-4">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={()=>{route.push(ROUTES.PRIVATE.MODULE)}}>{ThemeData?.title || ''}</span>,
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold">Module</span>
+                                },
+                            ]}
+                            separator={<span className="text-h2 text-black-200 font-bold">/</span>}
+                        />
+                    </div>
+                </ConfigProvider>
                 <div className='flex justify-center gap-2'>
                     <Select
                         value={selectedLanguage}

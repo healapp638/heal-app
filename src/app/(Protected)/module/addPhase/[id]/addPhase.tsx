@@ -1,12 +1,12 @@
 "use client"
 
 import React from "react"
-import { Select, Switch, Table } from "antd";
+import { Breadcrumb, ConfigProvider, Select, Switch, Table } from "antd";
 import { ROUTES } from "@/routerKeys";
 import { ENDPOINTS } from "@/Endpoints";
 import { FaEye } from "react-icons/fa";
 import { AppButton } from "@/components/ui";
-import { useParams } from "next/navigation";
+import { useParams, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { ColumnsType } from "antd/es/table";
 import { MUTATION_KEYS } from "@/tanstack/keys";
@@ -29,9 +29,18 @@ interface PhaseData {
     updatedAt: string;
     __v: number;
 }
+interface subModuleData{
+    _id: string;
+    title: string;
+    status: number;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+}
 
 interface PhaseResult {
     result: PhaseData[];
+    sub_module_details:subModuleData;
     page: number;
     limit: number;
     total: number;
@@ -42,6 +51,12 @@ export default function AddPhase() {
     const params = useParams();
     const subModuleId = params?.id as string;
     const route = useRouter();
+    const searchParams = useSearchParams();
+    const moduleTitle = searchParams.get("moduleTitle")
+    const moduleID = searchParams.get("moduleID")
+    const themeId = searchParams.get("themeId")
+    const themeTitle = searchParams.get("themeTitle")
+
     const [openAddPhaseModal, setOpenAddPhaseModal] = React.useState(false);
     const [openDeletePhaseModal, setOpenDeletePhaseModal] = React.useState(false);
     const [openPhaseUpdateModal, setOpenPhaseUpdateModal] = React.useState(false);
@@ -84,7 +99,7 @@ export default function AddPhase() {
         }
     })
     const PhaseListData = listPhase?.data?.result;
-
+    const SubModuleData=listPhase?.data?.sub_module_details;
 
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
@@ -99,7 +114,7 @@ export default function AddPhase() {
     };
 
     const handleAddLesson = (phaseId: string) => {
-        route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${phaseId}`)
+        route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${phaseId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}&subModuleTitle=${SubModuleData?.title}&subModuleId=${subModuleId}`)
     };
 
     const { mutateAsync: DeletePhase, isPending: isDeleting } = useAppMutate({
@@ -120,7 +135,7 @@ export default function AddPhase() {
                     url: ENDPOINTS.PRIVATE.PHASE_DELETE,
                     method: "DELETE",
                     body: {
-                        status:2,
+                        status: 2,
                         phaseId: selectPhase,
                     },
                 });
@@ -137,7 +152,7 @@ export default function AddPhase() {
         );
     }
 
-     const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+    const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
         mutationKey: [MUTATION_KEYS.PHASE_DELETE],
         invalidateQueryKeys: [MUTATION_KEYS.LIST_PHASE],
         showSuccessToast: false,
@@ -151,7 +166,7 @@ export default function AddPhase() {
                     url: ENDPOINTS.PRIVATE.PHASE_DELETE,
                     method: "DELETE",
                     body: {
-                        status:changeStatus,
+                        status: changeStatus,
                         phaseId: phaseId,
                     },
                 });
@@ -200,7 +215,7 @@ export default function AddPhase() {
         //         </div>
         //     )
         // },
-         {
+        {
             title: "Status",
             key: 'status',
             render: (_: any, record: any) => {
@@ -235,9 +250,39 @@ export default function AddPhase() {
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-black">
+                {/* <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Phase</span>
-                </h1>
+                </h1> */}
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Breadcrumb: {
+                                itemColor: 'black', // Custom color for breadcrumb items
+                                separatorColor: 'black', // Custom color for separator
+                            },
+                        },
+                    }}
+                >
+                    <div className="mb-4">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(ROUTES.PRIVATE.MODULE) }}>{themeTitle || ''}</span>,
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDMODULE}/${themeId}`) }} >{moduleTitle || ''}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleID}?themeTitle=${themeTitle}&themeId=${themeId}`) }} title={SubModuleData?.title}>{SubModuleData?.title}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold">Phase</span>
+                                },
+                            ]}
+                            separator={<span className="text-h2 text-black-200 font-bold">/</span>}
+                        />
+                    </div>
+                </ConfigProvider>
                 <div className='flex justify-center gap-2'>
                     <Select
                         value={selectedLanguage}

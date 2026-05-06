@@ -7,9 +7,9 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, Dropdown, Layout, Menu, Space, MenuProps, Image } from 'antd'
 import type { MenuItemType as AntMenuItem } from 'antd/es/menu/interface';
 import { IoIosArrowDown, IoIosArrowUp, IoIosLogOut } from 'react-icons/io';
-import { FaUser, FaUserCircle } from 'react-icons/fa';
+import { FaUser, FaUserCircle ,FaFileAlt } from 'react-icons/fa';
+import { FaFileExcel } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
-import { FaFileAlt } from "react-icons/fa";
 import { MdPolicy } from "react-icons/md";
 import { FaPhoneAlt } from "react-icons/fa";
 import { RiSoundModuleFill } from "react-icons/ri";
@@ -103,6 +103,17 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             ),
             key: '/module',
             label: 'Module',
+        },
+         {
+            routes: ROUTES.PRIVATE.ADDEXCEL,
+            icon: (
+                <FaFileExcel className='text-maincolor! h-8 w-8!' />
+            ),
+            activeIcon: (
+                <FaFileExcel className='text-white! h-8 w-8!' />
+            ),
+            key: '/addexcel',
+            label: 'Add Excel',
         },
         // {
         //     routes: ROUTES.PRIVATE.FAQ,

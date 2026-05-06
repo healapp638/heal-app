@@ -59,5 +59,8 @@ export const ENDPOINTS = {
         USERS_LIST:"admin/user/list",
         USERS_DETAIL:"admin/user/details",
         USERS_STATUS:"admin/user/status",
+        LIST_EXCEL_IMPORTS:"admin/common/listExcelImports",
+        EXCEL_IMPORT:"admin/common/readExcel"
+
     }
 }

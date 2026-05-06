@@ -1,12 +1,12 @@
 "use client"
 
 import React from "react"
-import { Select, Switch, Table } from "antd";
+import { Breadcrumb, ConfigProvider, Select, Switch, Table } from "antd";
 import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from "@/Endpoints";
 import { AppButton } from "@/components/ui"
 import { ColumnsType } from "antd/es/table";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
@@ -15,6 +15,7 @@ import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddExerciseModal from "@/components/ui/modals/addExerciseModal"
 import IconButton from "@/components/ui/IconButton";
+import { ROUTES } from "@/routerKeys";
 
 interface ExerciseData {
     _id: string;
@@ -31,9 +32,13 @@ interface ExerciseData {
     updatedAt: string;
     __v: number;
 }
+interface LessonDetailData {
+    reading_title:string;
+}
 
 interface ExerciseResult {
     result: ExerciseData[];
+    exerciseDetails:LessonDetailData;
     page: number;
     limit: number;
     total: number;
@@ -42,7 +47,17 @@ interface ExerciseResult {
 export default function AddExercise() {
 
     const params = useParams();
+    const route=useRouter();
+    const searchParams = useSearchParams();
     const lessonId = params?.id as string;
+    const themeTitle = searchParams.get("themeTitle");
+    const themeId = searchParams.get("themeId");
+    const moduleTitle = searchParams.get("moduleTitle");
+    const moduleID = searchParams.get("moduleID");
+    const subModuleTitle = searchParams.get("subModuleTitle");
+    const subModuleId = searchParams.get("subModuleId");
+    const phaseTitle = searchParams.get("phaseTitle");
+    const phaseId = searchParams.get("phaseId");
     const [openModal, setOpenModal] = React.useState(false);
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false);
     const [openDeleteExerciseModal, setOpenDeleteExerciseModal] = React.useState(false);
@@ -85,7 +100,7 @@ export default function AddExercise() {
         }
     })
     const listExercisesData = listExercises?.data?.result;
-
+const exerciseDetailsData = listExercises?.data?.exerciseDetails;
 
     const { mutateAsync: DeleteExercise, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.EXERCISE_DELETE],
@@ -105,7 +120,7 @@ export default function AddExercise() {
                     url: ENDPOINTS.PRIVATE.EXERCISE_DELETE,
                     method: "DELETE",
                     body: {
-                        status:2,
+                        status: 2,
                         exercise_id: exerciseId,
                     },
                 });
@@ -122,7 +137,7 @@ export default function AddExercise() {
         );
     }
 
-        const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
+    const { mutateAsync: StatusChange, isPending: isStatusChangePending } = useAppMutate({
         mutationKey: [MUTATION_KEYS.EXERCISE_DELETE],
         invalidateQueryKeys: [MUTATION_KEYS.EXERCISE_LIST],
         showSuccessToast: false,
@@ -136,7 +151,7 @@ export default function AddExercise() {
                     url: ENDPOINTS.PRIVATE.EXERCISE_DELETE,
                     method: "DELETE",
                     body: {
-                        status:changeStatus,
+                        status: changeStatus,
                         exercise_id: exerciseId,
                     },
                 });
@@ -221,9 +236,45 @@ export default function AddExercise() {
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-black">
+                {/* <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Exercises</span>
-                </h1>
+                </h1> */}
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Breadcrumb: {
+                                itemColor: 'black', // Custom color for breadcrumb items
+                                separatorColor: 'black', // Custom color for separator
+                            },
+                        },
+                    }}
+                >
+                    <div className="mb-4">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(ROUTES.PRIVATE.MODULE) }}>{themeTitle || ''}</span>,
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDMODULE}/${themeId}`) }} >{moduleTitle || ''}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleID}?themeTitle=${themeTitle}&themeId=${themeId}`) }}>{subModuleTitle}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}`) }}>{phaseTitle}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${lessonId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}&subModuleTitle=${subModuleTitle}&subModuleId=${subModuleId}&phaseTitle=${phaseTitle}&phaseId=${phaseId}`) }}>{exerciseDetailsData?.reading_title}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold">Exercise</span>
+                                },
+                            ]}
+                            separator={<span className="text-h2 text-black-200 font-bold">/</span>}
+                        />
+                    </div>
+                </ConfigProvider>
                 <div className='flex justify-center gap-2'>
                     <Select
                         value={selectedLanguage}

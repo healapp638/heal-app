@@ -28,6 +28,7 @@ export const ROUTES = {
         PROFILE:"/profile",
         USERS:"/users",
         USERDETAIL:"/users/userDetail",
+        ADDEXCEL:"/addexcel"
     },
 
     // Common public pages

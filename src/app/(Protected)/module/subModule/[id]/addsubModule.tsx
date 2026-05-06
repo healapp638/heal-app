@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Select, Switch, Table } from "antd"
+import { Breadcrumb, ConfigProvider, Select, Switch, Table } from "antd"
 import { ROUTES } from "@/routerKeys"
 import { ENDPOINTS } from "@/Endpoints"
 import { FaEye } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { MUTATION_KEYS } from "@/tanstack/keys"
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery"
 import { useAppMutate } from "@/tanstack/useAppMutate"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper"
 import DeleteModal from "@/components/ui/modals/DeleteModal"
 import AddSubModuleModal from "@/components/ui/modals/addSubModuleModal"
@@ -28,9 +28,13 @@ interface SubModuleData {
     updatedAt: string;
     __v: number;
 }
+interface ModuleDetail {
+    title: string;
+}
 
 interface SubModuleResult {
     result: SubModuleData[];
+    module_details: ModuleDetail;
     page: number;
     limit: number;
     total: number;
@@ -40,7 +44,10 @@ export default function AddSubModule() {
 
     const route = useRouter()
     const params = useParams();
+    const searchParams = useSearchParams()
     const moduleId = params?.id as string;
+    const themeTitle = searchParams.get("themeTitle")
+    const themeId = searchParams.get("themeId")
     const [openAddSubModuleModal, setOpenAddSubModuleModal] = React.useState(false)
     const [openDeleteModule, setOpenDeleteModule] = React.useState(false)
     const [selectedSubModule, setSelectedSubModule] = React.useState("")
@@ -79,6 +86,7 @@ export default function AddSubModule() {
         }
     })
     const SubModuleListData = listsubModule?.data?.result;
+    const moduleTitle = listsubModule?.data?.module_details;
 
     const { mutateAsync: DeleteSubModule, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.SUBMODULE_DELETE],
@@ -150,7 +158,7 @@ export default function AddSubModule() {
 
 
     const handleAddPhase = (subModuleId: string) => {
-        route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}`)
+        route.push(`${ROUTES.PRIVATE.ADDPHASES}/${subModuleId}?themeId=${themeId}&moduleTitle=${moduleTitle?.title}&themeTitle=${themeTitle}&moduleID=${moduleId}`)
     };
 
     const getSerialNumber = React.useCallback((index: number) => {
@@ -206,9 +214,36 @@ export default function AddSubModule() {
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-3xl font-bold text-black">
+                {/* <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">SubModule</span>
-                </h1>
+                </h1> */}
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Breadcrumb: {
+                                itemColor: 'black', // Custom color for breadcrumb items
+                                separatorColor: 'black', // Custom color for separator
+                            },
+                        },
+                    }}
+                >
+                    <div className="mb-4">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(ROUTES.PRIVATE.MODULE) }}>{themeTitle || ''}</span>,
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(`${ROUTES.PRIVATE.ADDMODULE}/${themeId}`) }} >{moduleTitle?.title || ''}</span>
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold">SubModule</span>
+                                },
+                            ]}
+                            separator={<span className="text-h2 text-black-200 font-bold">/</span>}
+                        />
+                    </div>
+                </ConfigProvider>
                 <div className='flex justify-center gap-2'>
                     <Select
                         value={selectedLanguage}
