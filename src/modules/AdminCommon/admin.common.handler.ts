@@ -246,11 +246,11 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
     },
     listAffirmation: async (page: number, limit: number,language:string): Promise<ApiResponse> => {
         const aggregate = [
-            // {
-                // $match: {
-                //     affirmation: { $regex: search, $options: 'i' },
-                // }
-            // },
+            {
+                $match: {
+                    status: { $ne: 3 },
+                }
+            },
              {
             $project: {
                 affirmation: `$affirmation.${language}`,

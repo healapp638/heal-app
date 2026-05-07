@@ -202,11 +202,11 @@ const AdminCommonHandler = {
     }),
     listAffirmation: (page, limit, language) => __awaiter(void 0, void 0, void 0, function* () {
         const aggregate = [
-            // {
-            // $match: {
-            //     affirmation: { $regex: search, $options: 'i' },
-            // }
-            // },
+            {
+                $match: {
+                    status: { $ne: 3 },
+                }
+            },
             {
                 $project: {
                     affirmation: `$affirmation.${language}`,
