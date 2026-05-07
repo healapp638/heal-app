@@ -87,6 +87,23 @@ let AdminAffirmationController = class AdminAffirmationController extends tsoa_1
             return wrappedFunc(request, this.userId); // Invoking the wrapped function 
         });
     }
+    likeUnlikeAffirmation(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_common_validator_1.validateAffirmation)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.likeUnlikeAffirmation);
+            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+        });
+    }
+    likedAffirmationList(sort_column, sort_direction, page, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const request = { sort_column, sort_direction, page, limit };
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.likedAffirmationList);
+            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -114,6 +131,25 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Number, Number]),
     __metadata("design:returntype", Promise)
 ], AdminAffirmationController.prototype, "getAffirmationListing", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)('/likeUnlikeAffirmation'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminAffirmationController.prototype, "likeUnlikeAffirmation", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/likedAffirmationList"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __param(3, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], AdminAffirmationController.prototype, "likedAffirmationList", null);
 AdminAffirmationController = __decorate([
     (0, tsoa_1.Tags)('User Affirmation'),
     (0, tsoa_1.Route)('/user/affirmation'),

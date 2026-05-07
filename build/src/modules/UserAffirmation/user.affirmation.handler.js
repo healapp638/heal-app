@@ -57,12 +57,13 @@ const db_helpers_1 = require("../../helpers/db.helpers");
 const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
 const common_helper_1 = require("../../helpers/common.helper");
 const commonHelper = __importStar(require("../../helpers/common.helper"));
+const user_affirmationLike_model_1 = __importDefault(require("./user.affirmationLike.model"));
 const affirmationHandler = {
     getAIAffirmation: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
         const userdata = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, {
             _id: (0, common_helper_1.convertToObjectId)(user_id),
-            status: workflow_constant_1.USER_STATUS.ACTIVE
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
         });
         if (!userdata) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
@@ -73,7 +74,7 @@ const affirmationHandler = {
         const aiAffirmation = yield user_affirmation_model_1.default
             .findOne({
             type: "AI",
-            status: workflow_constant_1.USER_STATUS.ACTIVE
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
         })
             .sort({ createdAt: -1 });
         if (!aiAffirmation) {
@@ -85,7 +86,7 @@ const affirmationHandler = {
             affirmation: ((_b = aiAffirmation === null || aiAffirmation === void 0 ? void 0 : aiAffirmation.affirmation) === null || _b === void 0 ? void 0 : _b[language]) ||
                 ((_c = aiAffirmation === null || aiAffirmation === void 0 ? void 0 : aiAffirmation.affirmation) === null || _c === void 0 ? void 0 : _c.en),
             type: aiAffirmation.type,
-            createdAt: aiAffirmation.createdAt
+            createdAt: aiAffirmation.createdAt,
         };
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, responseData, statusCodes_1.default.SUCCESS);
     }),
@@ -110,7 +111,7 @@ const affirmationHandler = {
     getAffirmationListing: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         try {
-            const { sort_column = "createdAt", sort_direction = "desc", page = 1, limit = 10 } = data;
+            const { sort_column = "createdAt", sort_direction = "desc", page = 1, limit = 10, } = data;
             // ================= USER =================
             const userData = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, {
                 _id: (0, common_helper_1.convertToObjectId)(user_id),
@@ -127,7 +128,7 @@ const affirmationHandler = {
                 // hide already viewed affirmations
                 user_id: {
                     $nin: [(0, common_helper_1.convertToObjectId)(user_id)],
-                }
+                },
             };
             // ================= AGGREGATE =================
             const aggregate = [
@@ -136,19 +137,14 @@ const affirmationHandler = {
                 },
                 {
                     $sort: {
-                        [sort_column]: sort_direction === "asc"
-                            ? 1
-                            : -1,
+                        [sort_column]: sort_direction === "asc" ? 1 : -1,
                     },
                 },
                 {
                     $project: {
                         _id: 1,
                         affirmation: {
-                            $ifNull: [
-                                `$affirmation.${language}`,
-                                "$affirmation.en",
-                            ],
+                            $ifNull: [`$affirmation.${language}`, "$affirmation.en"],
                         },
                         type: 1,
                         createdAt: 1,
@@ -156,16 +152,14 @@ const affirmationHandler = {
                 },
             ];
             // ================= PAGINATION =================
-            let { totalCount, aggregation, } = yield commonHelper.getCountAndPagination(user_affirmation_model_1.default, aggregate, page, limit);
+            let { totalCount, aggregation } = yield commonHelper.getCountAndPagination(user_affirmation_model_1.default, aggregate, page, limit);
             let result = yield user_affirmation_model_1.default.aggregate(aggregation);
             // ================= RESET IF ALL USED =================
             if (!result.length) {
                 // remove user from all affirmations
                 yield user_affirmation_model_1.default.updateMany({
                     user_id: {
-                        $in: [
-                            (0, common_helper_1.convertToObjectId)(user_id),
-                        ],
+                        $in: [(0, common_helper_1.convertToObjectId)(user_id)],
                     },
                 }, {
                     $pull: {
@@ -173,15 +167,10 @@ const affirmationHandler = {
                     },
                 });
                 // rerun aggregation
-                ({
-                    totalCount,
-                    aggregation,
-                } = yield commonHelper.getCountAndPagination(user_affirmation_model_1.default, aggregate, page, limit));
-                result =
-                    yield user_affirmation_model_1.default.aggregate(aggregation);
+                ({ totalCount, aggregation } = yield commonHelper.getCountAndPagination(user_affirmation_model_1.default, aggregate, page, limit));
+                result = yield user_affirmation_model_1.default.aggregate(aggregation);
             }
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common
-                .data_retreive_sucess, {
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, {
                 result,
                 totalCount,
             }, statusCodes_1.default.SUCCESS);
@@ -190,6 +179,110 @@ const affirmationHandler = {
             console.log(error, "GET_AFFIRMATION_LISTING_ERROR");
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
         }
-    })
+    }),
+    likeUnlikeAffirmation: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        const { affirmation_id } = data;
+        // check affirmation exists
+        const affirmation = yield (0, db_helpers_1.findOne)(user_affirmation_model_1.default, {
+            _id: (0, common_helper_1.convertToObjectId)(affirmation_id),
+            status: { $ne: 3 },
+        });
+        if (!(affirmation === null || affirmation === void 0 ? void 0 : affirmation.status)) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
+        }
+        // check existing like
+        const existingLike = yield (0, db_helpers_1.findOne)(user_affirmationLike_model_1.default, {
+            user_id: (0, common_helper_1.convertToObjectId)(user_id),
+            affirmation_id: (0, common_helper_1.convertToObjectId)(affirmation_id),
+        });
+        if (!(existingLike === null || existingLike === void 0 ? void 0 : existingLike.status)) {
+            const likeObj = new user_affirmationLike_model_1.default({
+                user_id: (0, common_helper_1.convertToObjectId)(user_id),
+                affirmation_id: (0, common_helper_1.convertToObjectId)(affirmation_id),
+                status: 1,
+            });
+            const createLike = yield (0, db_helpers_1.createOne)(likeObj);
+            return (0, response_util_1.showResponse)(true, "Affirmation liked successfully", createLike === null || createLike === void 0 ? void 0 : createLike.data, statusCodes_1.default.SUCCESS);
+        }
+        // toggle status
+        const updatedLike = yield (0, db_helpers_1.findOneAndUpdate)(user_affirmationLike_model_1.default, {
+            user_id: (0, common_helper_1.convertToObjectId)(user_id),
+            affirmation_id: (0, common_helper_1.convertToObjectId)(affirmation_id),
+        }, {
+            status: existingLike.data.status === 1 ? 0 : 1,
+        });
+        return (0, response_util_1.showResponse)(true, existingLike.data.status === 1
+            ? "Affirmation unliked successfully"
+            : "Affirmation liked successfully", updatedLike === null || updatedLike === void 0 ? void 0 : updatedLike.data, statusCodes_1.default.SUCCESS);
+    }),
+    likedAffirmationList: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        const { sort_column = "createdAt", sort_direction = "desc", page = 1, limit = 10, } = data;
+        // ================= USER =================
+        const userData = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, {
+            _id: (0, common_helper_1.convertToObjectId)(user_id),
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+        });
+        console.log(sort_column, sort_direction, user_id);
+        if (!userData) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+        }
+        // user language
+        const language = ((_a = userData === null || userData === void 0 ? void 0 : userData.data) === null || _a === void 0 ? void 0 : _a.language) || "en";
+        console.log(language, "language");
+        const aggregate = [
+            // user liked affirmations
+            {
+                $match: {
+                    user_id: (0, common_helper_1.convertToObjectId)(user_id),
+                    status: 1,
+                },
+            },
+            {
+                $sort: {
+                    [sort_column]: sort_direction === "asc" ? 1 : -1,
+                },
+            },
+            //   join affirmation data
+            {
+                $lookup: {
+                    from: "affirmations",
+                    localField: "affirmation_id",
+                    foreignField: "_id",
+                    as: "affirmationData",
+                },
+            },
+            {
+                $unwind: "$affirmationData",
+            },
+            //   exclude deleted affirmation
+            {
+                $match: {
+                    "affirmationData.status": { $eq: 1 },
+                },
+            },
+            {
+                $project: {
+                    _id: "$affirmationData._id",
+                    affirmation: `$affirmationData.affirmation.${language}`,
+                    type: "$affirmationData.type",
+                    createdAt: "$affirmationData.createdAt",
+                    updatedAt: "$affirmationData.updatedAt",
+                    is_liked: { $literal: true },
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1
+                }
+            }
+        ];
+        const { totalCount, aggregation } = yield commonHelper.getCountAndPagination(user_affirmationLike_model_1.default, aggregate, page, limit);
+        const result = yield user_affirmationLike_model_1.default.aggregate(aggregation);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, {
+            result,
+            totalCount,
+        }, statusCodes_1.default.SUCCESS);
+    }),
 };
 exports.default = affirmationHandler;

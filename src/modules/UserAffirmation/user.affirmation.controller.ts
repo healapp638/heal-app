@@ -78,4 +78,26 @@ export default class AdminAffirmationController extends Controller {
         return wrappedFunc(request,this.userId); // Invoking the wrapped function 
 
     }
+
+
+    @Security('Bearer')
+    @Post('/likeUnlikeAffirmation')
+    public async likeUnlikeAffirmation(@Body() request: { affirmation_id: string }): Promise<ApiResponse> {
+        const validate = validateAffirmation(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.likeUnlikeAffirmation);
+        return wrappedFunc(request,this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get("/likedAffirmationList")
+    public async likedAffirmationList(@Query() sort_column?: string, @Query() sort_direction?: string, @Query() page?: number, @Query() limit?: number): Promise<ApiResponse> {
+        const request = { sort_column, sort_direction, page, limit }
+        const wrappedFunc = tryCatchWrapper(handler.likedAffirmationList);
+        return wrappedFunc(request,this.userId); // Invoking the wrapped function 
+
+    }
+
 }
