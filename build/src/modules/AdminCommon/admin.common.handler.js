@@ -204,7 +204,7 @@ const AdminCommonHandler = {
         const aggregate = [
             {
                 $match: {
-                    status: { $ne: 3 },
+                    status: { $ne: 2 },
                 }
             },
             {
