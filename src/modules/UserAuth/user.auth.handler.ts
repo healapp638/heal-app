@@ -54,10 +54,10 @@ const UserAuthHandler = {
 
     login: async (data: any): Promise<ApiResponse> => {
         const { email, password, language } = data;
-        console.log(data,'data');
+        console.log(data, 'data');
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
-        console.log(findUser,'findUser');
+        console.log(findUser, 'findUser');
         if (!findUser.status) {
             console.log('user not found')
             return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR)
@@ -445,7 +445,9 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const total_points = Allpahses[0]?.total_points || 0;
+        console.log(Allpahses, 'Allpahses')
+        // const total_points = Allpahses[0]?.total_points || 0;
+        const total_points = 500
         const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
             {
                 $match: {

@@ -410,7 +410,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
     }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
@@ -435,7 +435,9 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const total_points = ((_c = Allpahses[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0;
+        console.log(Allpahses, 'Allpahses');
+        // const total_points = Allpahses[0]?.total_points || 0;
+        const total_points = 500;
         const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
             {
                 $match: {
@@ -461,7 +463,7 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const total_earned_points = ((_d = CompletedPhases[0]) === null || _d === void 0 ? void 0 : _d.total_points) || 0;
+        const total_earned_points = ((_c = CompletedPhases[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0;
         const completedPercentage = total_points > 0
             ? (total_earned_points / total_points) * 100
             : 0;
