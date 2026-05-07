@@ -200,18 +200,86 @@ const AdminCommonHandler = {
         const Affirmation = yield user_affirmation_model_1.default.create({ affirmation: affirmationData });
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.question_added, Affirmation, statusCodes_1.default.SUCCESS);
     }),
-    listAffirmation: (page, limit) => __awaiter(void 0, void 0, void 0, function* () {
+    listAffirmation: (page, limit, language) => __awaiter(void 0, void 0, void 0, function* () {
         const aggregate = [
             // {
             // $match: {
             //     affirmation: { $regex: search, $options: 'i' },
             // }
             // },
+            {
+                $project: {
+                    affirmation: `$affirmation.${language}`,
+                    type: 1,
+                    status: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                },
+            },
             { $sort: { createdAt: -1 } },
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(user_affirmation_model_1.default, aggregate, page, limit);
         const result = yield user_affirmation_model_1.default.aggregate(aggregation);
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+    }),
+    editAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { affirmation_id, affirmation, language } = data;
+        const existingAffirmation = yield (0, db_helpers_1.findOne)(user_affirmation_model_1.default, {
+            _id: (0, common_helper_1.convertToObjectId)(affirmation_id),
+        });
+        if (!existingAffirmation) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
+        }
+        // update only selected language
+        yield (0, db_helpers_1.findOneAndUpdate)(user_affirmation_model_1.default, { _id: (0, common_helper_1.convertToObjectId)(affirmation_id) }, {
+            $set: {
+                [`affirmation.${language}`]: affirmation,
+            },
+        });
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, null, statusCodes_1.default.SUCCESS);
+    }),
+    deleteAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { affirmation_id, status } = data;
+        console.log(affirmation_id, "affirmation_id");
+        const existingAffirmation = yield (0, db_helpers_1.findOne)(user_affirmation_model_1.default, {
+            _id: affirmation_id,
+        });
+        if (!existingAffirmation) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
+        }
+        console.log(affirmation_id, "affirmation_id");
+        yield (0, db_helpers_1.findOneAndUpdate)(user_affirmation_model_1.default, { _id: (0, common_helper_1.convertToObjectId)(affirmation_id) }, {
+            status
+        });
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
+    }),
+    affirmationDetail: (affirmation_id_1, ...args_1) => __awaiter(void 0, [affirmation_id_1, ...args_1], void 0, function* (affirmation_id, language = "en") {
+        // console.log(affirmation_id,"affirmation_id")
+        const result = yield user_affirmation_model_1.default.aggregate([
+            {
+                $match: {
+                    _id: (0, common_helper_1.convertToObjectId)(affirmation_id),
+                },
+            },
+            {
+                $project: {
+                    affirmation: {
+                        $ifNull: [
+                            `$affirmation.${language}`,
+                            "$affirmation.en"
+                        ]
+                    },
+                    type: 1,
+                    status: 1,
+                    createdAt: 1,
+                    updatedAt: 1,
+                },
+            },
+        ]);
+        if (!result.length) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
+        }
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, result[0], statusCodes_1.default.SUCCESS);
     }),
 };
 exports.default = AdminCommonHandler;

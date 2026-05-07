@@ -73,9 +73,27 @@ router.post('/addAffirmation', verifyTokenAdmin, (req, res) => __awaiter(void 0,
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/listAffirmation', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { page, limit } = req.query;
+    const { page, limit, language } = req.query;
     const controller = new admin_common_controller_1.default(req, res);
-    const result = yield controller.listAffirmation(page, limit);
+    const result = yield controller.listAffirmation(page, limit, language);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.put('/editAffirmation', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { affirmation_id, affirmation, language } = req.body;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.editAffirmation({ affirmation_id, affirmation, language });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.put('/deleteAffirmation', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { affirmation_id, status } = req.body;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.deleteAffirmation({ affirmation_id, status });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/affirmationDetail', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { affirmation_id, language } = req.query;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.affirmationDetail(affirmation_id, language);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

@@ -69,9 +69,27 @@ router.post('/addAffirmation', verifyTokenAdmin, async (req: Request | any, res:
     return showOutput(res, result, result.code)
 });
 router.get('/listAffirmation', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { page, limit } = req.query
+    const { page, limit,language } = req.query
     const controller = new AdminCommonController(req, res)
-    const result: ApiResponse = await controller.listAffirmation(page, limit);
+    const result: ApiResponse = await controller.listAffirmation(page, limit,language);
+    return showOutput(res, result, result.code)
+});
+router.put('/editAffirmation', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { affirmation_id,affirmation,language } = req.body;
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.editAffirmation({ affirmation_id,affirmation,language});
+    return showOutput(res, result, result.code)
+});
+router.put('/deleteAffirmation', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { affirmation_id,status } = req.body;
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.deleteAffirmation({ affirmation_id,status});
+    return showOutput(res, result, result.code)
+});
+router.get('/affirmationDetail', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { affirmation_id,language } = req.query;
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.affirmationDetail(affirmation_id,language);
     return showOutput(res, result, result.code)
 });
 

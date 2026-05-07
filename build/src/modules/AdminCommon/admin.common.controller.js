@@ -138,10 +138,36 @@ let AdminCommonController = class AdminCommonController extends tsoa_1.Controlle
             return wrappedFunc(request); // Invoking the wrapped function 
         });
     }
-    listAffirmation(page, limit) {
+    listAffirmation(page, limit, language) {
         return __awaiter(this, void 0, void 0, function* () {
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.listAffirmation);
-            return wrappedFunc(page, limit); // Invoking the wrapped function 
+            return wrappedFunc(page, limit, language); // Invoking the wrapped function 
+        });
+    }
+    editAffirmation(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_common_validator_1.validateEditAffirmation)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.editAffirmation);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    deleteAffirmation(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_common_validator_1.validateDeleteAffirmation)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.deleteAffirmation);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    affirmationDetail(affirmation_id, language) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.affirmationDetail);
+            return wrappedFunc(affirmation_id, language); // Invoking the wrapped function 
         });
     }
 };
@@ -222,10 +248,36 @@ __decorate([
     (0, tsoa_1.Get)('/listAffirmation'),
     __param(0, (0, tsoa_1.Query)()),
     __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:paramtypes", [Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], AdminCommonController.prototype, "listAffirmation", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Put)("/editAffirmation"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "editAffirmation", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Put)("/deleteAffirmation"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "deleteAffirmation", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/affirmationDetail'),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "affirmationDetail", null);
 AdminCommonController = __decorate([
     (0, tsoa_1.Tags)('Admin Common Routes'),
     (0, tsoa_1.Route)('/admin/common'),

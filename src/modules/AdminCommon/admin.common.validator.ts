@@ -41,4 +41,18 @@ export const validateAffirmation = (admin: any) => {
         affirmation_id: joi.string().required()
     }).validate(admin)
 }
+export const validateDeleteAffirmation = (admin: any) => {
+    return joi.object({
+        affirmation_id: joi.string().required(),
+        status:joi.number().required()
+    }).validate(admin)
+}
+
+export const validateEditAffirmation = (admin: any) => {
+    return joi.object({
+        affirmation_id: joi.string().required(),
+        affirmation:joi.string().required(),
+        language:joi.string().required()
+    }).validate(admin)
+}
 

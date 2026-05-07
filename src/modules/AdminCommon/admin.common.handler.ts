@@ -1,6 +1,6 @@
 import { ApiResponse } from "../../utils/interfaces.util";
 import { showResponse } from "../../utils/response.util";
-import { findOne, findByIdAndRemove } from "../../helpers/db.helpers";
+import { findOne, findByIdAndRemove, findOneAndUpdate } from "../../helpers/db.helpers";
 import commonContentModel from "../../modules/AdminCommon/commonContent.model";
 import responseMessage from '../../constants/responseMessages'
 import faqModel from '../../modules/AdminCommon/faq.model';
@@ -16,7 +16,7 @@ import { translateText } from "../../helpers/langauge.translate.helper";
 // import Exercise from '../AdminExercise/admin.excercise.model';
 import { affirmationQueue, excelQueue } from "../../processQueue/queue";
 import adminExelModel from "./admin.exel.model";
-import { getCountAndPagination } from "../../helpers/common.helper";
+import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import userAffirmationModel from "../UserAffirmation/user.affirmation.model";
 
 const AdminCommonHandler = {
@@ -244,19 +244,140 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
 
         return showResponse(true, responseMessage.admin.question_added, Affirmation, statusCodes.SUCCESS);
     },
-        listAffirmation: async (page: number, limit: number): Promise<ApiResponse> => {
+    listAffirmation: async (page: number, limit: number,language:string): Promise<ApiResponse> => {
         const aggregate = [
             // {
                 // $match: {
                 //     affirmation: { $regex: search, $options: 'i' },
                 // }
             // },
+             {
+            $project: {
+                affirmation: `$affirmation.${language}`,
+                type: 1,
+                status:1,
+                createdAt: 1,
+                updatedAt: 1,
+            },
+        },
             { $sort: { createdAt: -1 } },
         ]
         const { totalCount, aggregation } = await getCountAndPagination(userAffirmationModel, aggregate, page, limit)
         const result = await userAffirmationModel.aggregate(aggregation)
         return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
     },
+    editAffirmation: async (data: any): Promise<ApiResponse> => {
+    const { affirmation_id, affirmation, language } = data;
+
+    const existingAffirmation = await findOne(userAffirmationModel, {
+        _id: convertToObjectId(affirmation_id),
+    });
+
+    if (!existingAffirmation) {
+        return showResponse(
+            false,
+            responseMessage.common.data_not_found,
+            null,
+            statusCodes.NOT_FOUND
+        );
+    }
+
+    // update only selected language
+    await findOneAndUpdate(
+        userAffirmationModel,
+        { _id: convertToObjectId(affirmation_id) },
+        {
+            $set: {
+                [`affirmation.${language}`]: affirmation,
+            },
+        }
+    );
+
+    return showResponse(
+        true,
+        responseMessage.common.update_sucess,
+        null,
+        statusCodes.SUCCESS
+    );
+},
+
+deleteAffirmation: async (data:any): Promise<ApiResponse> => {
+        const { affirmation_id, status } = data;
+    console.log(affirmation_id,"affirmation_id")
+
+    const existingAffirmation = await findOne(userAffirmationModel, {
+        _id: affirmation_id,
+    });
+
+    if (!existingAffirmation) {
+        return showResponse(
+            false,
+            responseMessage.common.data_not_found,
+            null,
+            statusCodes.NOT_FOUND
+        );
+    }
+    console.log(affirmation_id,"affirmation_id")
+
+     await findOneAndUpdate(
+        userAffirmationModel,
+        { _id: convertToObjectId(affirmation_id) },
+        {
+        status
+        }
+    );
+
+    return showResponse(
+        true,
+        responseMessage.common.delete_sucess,
+        null,
+        statusCodes.SUCCESS
+    );
+},
+affirmationDetail: async (
+    affirmation_id: any,
+    language: any = "en"
+): Promise<ApiResponse> => {
+    // console.log(affirmation_id,"affirmation_id")
+
+    const result = await userAffirmationModel.aggregate([
+        {
+            $match: {
+                _id: convertToObjectId(affirmation_id),
+            },
+        },
+        {
+            $project: {
+                affirmation: {
+                    $ifNull: [
+                        `$affirmation.${language}`,
+                        "$affirmation.en"
+                    ]
+                },
+                type: 1,
+                status:1,
+                createdAt: 1,
+                updatedAt: 1,
+            },
+        },
+    ]);
+
+    if (!result.length) {
+        return showResponse(
+            false,
+            responseMessage.common.data_not_found,
+            null,
+            statusCodes.NOT_FOUND
+        );
+    }
+
+    return showResponse(
+        true,
+        responseMessage.common.data_retreive_sucess,
+        result[0],
+        statusCodes.SUCCESS
+    );
+},
 }
 
 export default AdminCommonHandler;

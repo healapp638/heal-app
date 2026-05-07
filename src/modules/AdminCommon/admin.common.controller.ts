@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Security, Put, FormField, Delete, UploadedFile, Get, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
-import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent, validateAffirmation } from './admin.common.validator';
+import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent, validateAffirmation, validateEditAffirmation, validateDeleteAffirmation } from './admin.common.validator';
 import handler from '../AdminCommon/admin.common.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
 import { tryCatchWrapper } from '../../utils/config.util';
+
 
 
 @Tags('Admin Common Routes')
@@ -145,10 +146,43 @@ export default class AdminCommonController extends Controller {
 
     @Security('Bearer')
     @Get('/listAffirmation')
-    public async listAffirmation(@Query() page?: number, @Query() limit?: number): Promise<ApiResponse> {
+    public async listAffirmation(@Query() page?: number, @Query() limit?: number,@Query() language?:string): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.listAffirmation);
-        return wrappedFunc(page, limit); // Invoking the wrapped function 
+        return wrappedFunc(page, limit,language); // Invoking the wrapped function 
     }
+
+    @Security('Bearer')
+    @Put("/editAffirmation")
+    public async editAffirmation(@Body() request: { affirmation_id:string,affirmation: string,language:string }): Promise<ApiResponse> {
+
+        const validate = validateEditAffirmation(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+
+        const wrappedFunc = tryCatchWrapper(handler.editAffirmation);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+     @Security('Bearer')
+    @Put("/deleteAffirmation")
+    public async deleteAffirmation(@Body() request: { affirmation_id: string,status:number }): Promise<ApiResponse> {
+
+        const validate = validateDeleteAffirmation(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+
+        const wrappedFunc = tryCatchWrapper(handler.deleteAffirmation);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+    @Security('Bearer')
+    @Get('/affirmationDetail')
+    public async affirmationDetail(@Query() affirmation_id?: string, @Query() language?: string): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.affirmationDetail);
+        return wrappedFunc(affirmation_id,language); // Invoking the wrapped function 
+    }
+
     
 }
 
