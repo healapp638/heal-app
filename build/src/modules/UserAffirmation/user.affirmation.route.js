@@ -39,4 +39,10 @@ router.post('/addView', auth_middleware_1.verifyTokenUser, (req, res) => __await
     const result = yield controller.addView({ affirmation_id });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.get('/getAffirmationListing', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { sort_column, sort_direction, page, limit } = req.query;
+    const controller = new user_affirmation_controller_1.default(req, res);
+    const result = yield controller.getAffirmationListing(sort_column, sort_direction, page, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

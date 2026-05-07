@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Security, Put, FormField, Delete, UploadedFile, Get, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
-import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent, validateAffirmation, validateEditAffirmation, validateDeleteAffirmation } from './admin.common.validator';
+import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent, validateEditAffirmation, validateDeleteAffirmation } from './admin.common.validator';
 import handler from '../AdminCommon/admin.common.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
@@ -135,10 +135,10 @@ export default class AdminCommonController extends Controller {
     @Post("/addAffirmation")
     public async affirmation(@Body() request: { affirmation: string }): Promise<ApiResponse> {
 
-        const validate = validateAffirmation(request);
-        if (validate.error) {
-            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
-        }
+        // const validate = validateAffirmation(request);
+        // if (validate.error) {
+        //     return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        // }
 
         const wrappedFunc = tryCatchWrapper(handler.addAffirmation);
         return wrappedFunc(request); // Invoking the wrapped function 

@@ -130,10 +130,10 @@ let AdminCommonController = class AdminCommonController extends tsoa_1.Controlle
     }
     affirmation(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_common_validator_1.validateAffirmation)(request);
-            if (validate.error) {
-                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
-            }
+            // const validate = validateAffirmation(request);
+            // if (validate.error) {
+            //     return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+            // }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.addAffirmation);
             return wrappedFunc(request); // Invoking the wrapped function 
         });

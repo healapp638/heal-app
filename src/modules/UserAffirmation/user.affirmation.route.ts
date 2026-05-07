@@ -33,5 +33,12 @@ router.post('/addView', verifyTokenUser, async (req: Request | any, res: Respons
     const result: ApiResponse = await controller.addView({ affirmation_id });
     return showOutput(res, result, result.code)
 });
+router.get('/getAffirmationListing', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { sort_column, sort_direction, page, limit } = req.query
+    const controller = new ModuleController(req, res)
+    const result: ApiResponse = await controller.getAffirmationListing(sort_column, sort_direction, page, limit);
+    return showOutput(res, result, result.code)
+
+})
 
 export default router

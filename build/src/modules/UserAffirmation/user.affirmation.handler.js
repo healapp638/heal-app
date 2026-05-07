@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -23,6 +56,7 @@ const user_affirmation_model_1 = __importDefault(require("./user.affirmation.mod
 const db_helpers_1 = require("../../helpers/db.helpers");
 const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
 const common_helper_1 = require("../../helpers/common.helper");
+const commonHelper = __importStar(require("../../helpers/common.helper"));
 const affirmationHandler = {
     getAIAffirmation: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -73,5 +107,89 @@ const affirmationHandler = {
         }
         return (0, response_util_1.showResponse)(true, "User added successfully", updateAffirmation, statusCodes_1.default.SUCCESS);
     }),
+    getAffirmationListing: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        try {
+            const { sort_column = "createdAt", sort_direction = "desc", page = 1, limit = 10 } = data;
+            // ================= USER =================
+            const userData = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, {
+                _id: (0, common_helper_1.convertToObjectId)(user_id),
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+            });
+            if (!userData) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            // user language
+            const language = ((_a = userData === null || userData === void 0 ? void 0 : userData.data) === null || _a === void 0 ? void 0 : _a.language) || "en";
+            // ================= QUERY =================
+            const queryObject = {
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+                // hide already viewed affirmations
+                user_id: {
+                    $nin: [(0, common_helper_1.convertToObjectId)(user_id)],
+                }
+            };
+            // ================= AGGREGATE =================
+            const aggregate = [
+                {
+                    $match: queryObject,
+                },
+                {
+                    $sort: {
+                        [sort_column]: sort_direction === "asc"
+                            ? 1
+                            : -1,
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        affirmation: {
+                            $ifNull: [
+                                `$affirmation.${language}`,
+                                "$affirmation.en",
+                            ],
+                        },
+                        type: 1,
+                        createdAt: 1,
+                    },
+                },
+            ];
+            // ================= PAGINATION =================
+            let { totalCount, aggregation, } = yield commonHelper.getCountAndPagination(user_affirmation_model_1.default, aggregate, page, limit);
+            let result = yield user_affirmation_model_1.default.aggregate(aggregation);
+            // ================= RESET IF ALL USED =================
+            if (!result.length) {
+                // remove user from all affirmations
+                yield user_affirmation_model_1.default.updateMany({
+                    user_id: {
+                        $in: [
+                            (0, common_helper_1.convertToObjectId)(user_id),
+                        ],
+                    },
+                }, {
+                    $pull: {
+                        user_id: (0, common_helper_1.convertToObjectId)(user_id),
+                    },
+                });
+                // rerun aggregation
+                ({
+                    totalCount,
+                    aggregation,
+                } = yield commonHelper.getCountAndPagination(user_affirmation_model_1.default, aggregate, page, limit));
+                result =
+                    yield user_affirmation_model_1.default.aggregate(aggregation);
+            }
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common
+                .data_retreive_sucess, {
+                result,
+                totalCount,
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "GET_AFFIRMATION_LISTING_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
+    })
 };
 exports.default = affirmationHandler;

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Security, Get, Post, Body} from 'tsoa'
+import { Route, Controller, Tags, Security, Get, Post, Body, Query} from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import { tryCatchWrapper } from '../../utils/config.util';
 import handler from './user.affirmation.handler'
@@ -70,14 +70,12 @@ export default class AdminAffirmationController extends Controller {
         return wrappedFunc(request,this.userId); // Invoking the wrapped function 
     }
 
-    // @Security('Bearer')
-    // @Get('/theme_details')
-    // public async themeDetails(@Query() themeId?: string, @Query() lang?: string): Promise<ApiResponse> {
-    //     const validate = validateThemeDetails({ themeId, lang });
-    //     if (validate.error) {
-    //         return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
-    //     }
-    //     const wrappedFunc = tryCatchWrapper(handler.themeDetails);
-    //     return wrappedFunc({ themeId, lang }); // Invoking the wrapped function 
-    // }
+    @Security('Bearer')
+    @Get("/getAffirmationListing")
+    public async getAffirmationListing(@Query() sort_column?: string, @Query() sort_direction?: string, @Query() page?: number, @Query() limit?: number): Promise<ApiResponse> {
+        const request = { sort_column, sort_direction, page, limit }
+        const wrappedFunc = tryCatchWrapper(handler.getAffirmationListing);
+        return wrappedFunc(request,this.userId); // Invoking the wrapped function 
+
+    }
 }
