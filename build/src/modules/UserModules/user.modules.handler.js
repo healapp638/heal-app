@@ -720,7 +720,8 @@ const UserCommonHandler = {
                     total_phase_count: 1,
                     completed_phase_count: 1,
                     createdAt: 1,
-                    _id: 1
+                    _id: 1,
+                    sub_module_id: 1
                 }
             },
             {
