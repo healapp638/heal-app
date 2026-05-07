@@ -268,6 +268,7 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
     },
     editAffirmation: async (data: any): Promise<ApiResponse> => {
     const { affirmation_id, affirmation, language } = data;
+    console.log(affirmation,"affirmation")
 
     const existingAffirmation = await findOne(userAffirmationModel, {
         _id: convertToObjectId(affirmation_id),
@@ -283,20 +284,21 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
     }
 
     // update only selected language
-    await findOneAndUpdate(
+    const update = await findOneAndUpdate(
         userAffirmationModel,
         { _id: convertToObjectId(affirmation_id) },
         {
-            $set: {
+        
                 [`affirmation.${language}`]: affirmation,
-            },
+    
         }
     );
+    console.log(update,"update")
 
     return showResponse(
         true,
         responseMessage.common.update_sucess,
-        null,
+        update,
         statusCodes.SUCCESS
     );
 },

@@ -224,6 +224,7 @@ const AdminCommonHandler = {
     }),
     editAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { affirmation_id, affirmation, language } = data;
+        console.log(affirmation, "affirmation");
         const existingAffirmation = yield (0, db_helpers_1.findOne)(user_affirmation_model_1.default, {
             _id: (0, common_helper_1.convertToObjectId)(affirmation_id),
         });
@@ -231,12 +232,11 @@ const AdminCommonHandler = {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
         }
         // update only selected language
-        yield (0, db_helpers_1.findOneAndUpdate)(user_affirmation_model_1.default, { _id: (0, common_helper_1.convertToObjectId)(affirmation_id) }, {
-            $set: {
-                [`affirmation.${language}`]: affirmation,
-            },
+        const update = yield (0, db_helpers_1.findOneAndUpdate)(user_affirmation_model_1.default, { _id: (0, common_helper_1.convertToObjectId)(affirmation_id) }, {
+            [`affirmation.${language}`]: affirmation,
         });
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, null, statusCodes_1.default.SUCCESS);
+        console.log(update, "update");
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, update, statusCodes_1.default.SUCCESS);
     }),
     deleteAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { affirmation_id, status } = data;
