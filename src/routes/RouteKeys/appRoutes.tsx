@@ -55,6 +55,7 @@ const AppRoutes = {
   HelpAndSupport: 'HelpAndSupport',
   aboutHeal: 'aboutHeal',
   EmergencyResources: 'EmergencyResources',
+  AllModules: 'AllModules',
 };
 
 export default AppRoutes;

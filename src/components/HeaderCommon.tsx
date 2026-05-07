@@ -7,9 +7,14 @@ import {
 } from 'react-native';
 import React from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
-import AppUtils from '../utils/appUtils';
 import AppFonts from '../constants/fonts';
 import SolidText from './SolidText';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false,
+};
 
 interface HeaderCommonProps {
   title?: string;
@@ -32,10 +37,18 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   const navigation = useNavigation();
   const styles = useStyles(colors);
   const handleBack = () => {
+    ReactNativeHapticFeedback.trigger('impactMedium', options);
     if (onBackPress) {
       onBackPress();
     } else {
       navigation.goBack();
+    }
+  };
+
+  const handleRightPress = () => {
+    ReactNativeHapticFeedback.trigger('impactMedium', options);
+    if (onRightPress) {
+      onRightPress();
     }
   };
 
@@ -69,7 +82,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
         {rightComponent ? (
           rightComponent
         ) : rightIcon ? (
-          <TouchableOpacity onPress={onRightPress} activeOpacity={0.7}>
+          <TouchableOpacity onPress={handleRightPress} activeOpacity={0.7}>
             <Image
               source={rightIcon}
               tintColor={colors.brown}

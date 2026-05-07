@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import {
   useNavigation,
@@ -19,6 +20,7 @@ import HomeHeader from '../../../../components/HomeHeader';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import StartedModuleCard from '../../../../components/StartedModuleCard';
 import ModuleThemeCard from '../../../../components/ModuleThemeCard';
+import HorizontalModuleList from '../../../../components/HorizontalModuleList';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import useGetApi from '../../../../hooks/useGetApi';
@@ -32,8 +34,25 @@ const Modules = () => {
   const styles = style(colors);
 
   const [themes, setThemes] = useState<any[]>([]);
+  const [startedModules, setStartedModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const {
+    data: startedModulesData,
+    isLoading: isStartedLoading,
+    refetch: refetchStarted,
+  } = useGetApi(endpoints.start_sub_module_list, ['start_sub_module_list'], {
+    limit: 10,
+  });
+
+  const {
+    data: finishedModulesData,
+    isLoading: isFinishedLoading,
+    refetch: refetchFinished,
+  } = useGetApi(endpoints.end_sub_module_list, ['finished_sub_module_list'], {
+    limit: 10,
+  });
 
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.theme_list,
@@ -46,7 +65,9 @@ const Modules = () => {
       // Optional: refetch on focus if needed
       setCursor(null);
       refetch();
-    }, [refetch]),
+      refetchStarted();
+      refetchFinished();
+    }, [refetch, refetchStarted, refetchFinished]),
   );
 
   useEffect(() => {
@@ -72,10 +93,18 @@ const Modules = () => {
     setIsRefreshing(false);
   }, [data]);
 
+  useEffect(() => {
+    if (startedModulesData?.data?.subModules) {
+      setStartedModules(startedModulesData.data.subModules);
+    }
+  }, [startedModulesData]);
+
   const onRefresh = () => {
     setIsRefreshing(true);
     setCursor(null);
     refetch();
+    refetchStarted();
+    refetchFinished();
     setTimeout(() => {
       setIsRefreshing(false);
     }, 1000);
@@ -106,44 +135,52 @@ const Modules = () => {
       <ProgressTrackerCard
         viewStyle={styles.progressCardMargin}
         title={localization.appkeys?.homeProgressTracker || 'Progress Tracker'}
-        percentage="30%"
-        level={localization.appkeys?.homeLevel2?.split(' ')[1] || 'Level 2'}
-        points="145/500 PTS"
         onPress={() => navigation.navigate(AppRoutes.ProgressTracker as never)}
       />
 
-      {/* Started Modules */}
-      <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
-        {localization.appkeys?.startedModules || 'Started Modules'}
-      </SolidText>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.horizontalListContent}
-        style={styles.horizontalList}
-      >
-        <StartedModuleCard
-          title={localization.appkeys?.moduleRedFlags || 'Red Flags I Ignored'}
-          subtitle={
-            localization.appkeys?.moduleRelationshipBasics ||
-            'RELATIONSHIP BASICS'
-          }
-          progressText="2/7"
-          isFinished={false}
-          onPress={() => navigation.navigate(AppRoutes.StartedModule as never)}
-        />
-        <StartedModuleCard
-          title={
-            localization.appkeys?.moduleFindingYourself || 'Finding Yourself'
-          }
-          subtitle={
-            localization.appkeys?.moduleSelfDiscovery || 'SELF DISCOVERY'
-          }
-          progressText="1/5"
-          isFinished={false}
-          onPress={() => navigation.navigate(AppRoutes.StartedModule as never)}
-        />
-      </ScrollView>
+      {startedModules.length > 0 && (
+        <>
+          <View style={styles.sectionHeader}>
+            <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
+              {localization.appkeys?.startedModules || 'Started Modules'}
+            </SolidText>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(
+                  AppRoutes.AllModules as never,
+                  {
+                    type: 'started',
+                  } as never,
+                )
+              }
+            >
+              <SolidText style={styles.seeAllText}>
+                {localization.appkeys?.seeAll || 'See All'}
+              </SolidText>
+            </TouchableOpacity>
+          </View>
+          <HorizontalModuleList
+            data={startedModules.filter(
+              (item: any) =>
+                item.completed_phase_count < item.total_phase_count,
+            )}
+            isLoading={isStartedLoading}
+            localization={localization}
+            style={styles.horizontalList}
+            contentContainerStyle={styles.horizontalListContent}
+            onPress={item => {
+              navigation.navigate(
+                AppRoutes.StartedModule as never,
+                {
+                  module: item.module,
+                  subModule: { ...item, _id: item.sub_module_id },
+                  source: 'dashboard',
+                } as never,
+              );
+            }}
+          />
+        </>
+      )}
 
       {/* Modules Themes Title */}
       <SolidText
@@ -155,7 +192,7 @@ const Modules = () => {
   );
 
   const renderFooter = () => (
-    <View style={{ paddingBottom: 40 }}>
+    <View style={{ paddingBottom: 40, marginTop: 10 }}>
       {isFetching && cursor !== null && (
         <ActivityIndicator
           size="small"
@@ -165,35 +202,63 @@ const Modules = () => {
       )}
 
       {/* Finished Modules */}
-      <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
-        {localization.appkeys?.finishedModules || 'Finished Modules'}
-      </SolidText>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.horizontalListContent}
-        style={styles.horizontalList}
-      >
-        <StartedModuleCard
-          title={localization.appkeys?.moduleRedFlags || 'Red Flags I Ignored'}
-          subtitle={
-            localization.appkeys?.moduleRelationshipBasics ||
-            'RELATIONSHIP BASICS'
-          }
-          isFinished={true}
-          onPress={() => navigation.navigate(AppRoutes.StartedModule as never)}
-        />
-        <StartedModuleCard
-          title={localization.appkeys?.moduleRedFlags || 'Red Flags I Ignored'}
-          subtitle={
-            localization.appkeys?.moduleRelationshipBasics ||
-            'RELATIONSHIP BASICS'
-          }
-          isFinished={true}
-          onPress={() => navigation.navigate(AppRoutes.StartedModule as never)}
-        />
-      </ScrollView>
+      {(finishedModulesData?.data?.subModules || []).length > 0 && (
+        <>
+          <View style={styles.sectionHeader}>
+            <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
+              {localization.appkeys?.finishedModules || 'Finished Modules'}
+            </SolidText>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate(
+                  AppRoutes.AllModules as never,
+                  {
+                    type: 'finished',
+                  } as never,
+                )
+              }
+            >
+              <SolidText style={styles.seeAllText}>
+                {localization.appkeys?.seeAll || 'See All'}
+              </SolidText>
+            </TouchableOpacity>
+          </View>
+          <HorizontalModuleList
+            data={finishedModulesData?.data?.subModules || []}
+            isLoading={isFinishedLoading}
+            localization={localization}
+            isFinished={true}
+            style={styles.horizontalList}
+            contentContainerStyle={styles.horizontalListContent}
+            onPress={_item => {
+              // Navigation disabled for finished modules
+            }}
+          />
+        </>
+      )}
     </View>
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <ModuleThemeCard
+        item={item}
+        onPress={() =>
+          navigation.navigate(
+            AppRoutes.ModuleThemeDetail as never,
+            {
+              theme: item,
+            } as never,
+          )
+        }
+      />
+    ),
+    [navigation],
+  );
+
+  const keyExtractor = useCallback(
+    (item: any, index: number) => (item.id || index).toString(),
+    [],
   );
 
   return (
@@ -203,20 +268,12 @@ const Modules = () => {
       view={
         <FlatList
           data={themes}
-          keyExtractor={(item, index) => (item.id || index).toString()}
-          renderItem={({ item }) => (
-            <ModuleThemeCard
-              item={item}
-              onPress={() =>
-                navigation.navigate(
-                  AppRoutes.ModuleThemeDetail as never,
-                  {
-                    theme: item,
-                  } as never,
-                )
-              }
-            />
-          )}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          removeClippedSubviews={true}
           ListHeaderComponent={renderHeader}
           ListFooterComponent={renderFooter}
           onEndReached={loadMore}

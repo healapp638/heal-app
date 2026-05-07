@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { BackHandler, Image, TouchableOpacity, View, Platform } from 'react-native';
+import {
+  BackHandler,
+  Image,
+  TouchableOpacity,
+  View,
+  Platform,
+} from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -36,7 +42,7 @@ const SignIn = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   const { mutate: loginUser, isPending } = usePostApi();
-  const { googleLogin, isSocialPending } = useSocialLogin();
+  const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 
   const handleLogin = () => {
     if (!email) {
@@ -247,7 +253,11 @@ const SignIn = () => {
                 </TouchableOpacity>
 
                 {Platform.OS === 'ios' && (
-                  <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                  <TouchableOpacity
+                    style={styles.socialBtn}
+                    onPress={() => {}}
+                    disabled={isSocialPending}
+                  >
                     <Image
                       source={images.apple}
                       style={styles.socialIcon}

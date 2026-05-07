@@ -9,10 +9,11 @@ import {
   useNavigation,
   useTheme,
 } from '@react-navigation/native';
+import { useHaptic } from '../../../../hooks/useHaptic';
+import { useDispatch, useSelector } from 'react-redux';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-import { useDispatch, useSelector } from 'react-redux';
 import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
@@ -21,6 +22,7 @@ import {
 const BringYouHere = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { triggerHaptic } = useHaptic();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
@@ -36,6 +38,7 @@ const BringYouHere = () => {
   );
 
   const handleBackPress = () => {
+    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
@@ -119,6 +122,7 @@ const BringYouHere = () => {
                       isSelected && styles.optionCardSelected,
                     ]}
                     onPress={() => {
+                      triggerHaptic('impactHeavy');
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({

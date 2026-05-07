@@ -21,6 +21,8 @@ import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { store } from '../../../../redux/Store/store';
+import useGetApi from '../../../../hooks/useGetApi';
+import { endpoints } from '../../../../api/Services/endpoints';
 
 const Home = () => {
   const dispatch = useDispatch();
@@ -29,34 +31,33 @@ const Home = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
-  const modulesData = [
-    {
-      id: '1',
-      background: images.moduleBack1,
-      progress: '2/7',
-      title: localization.appkeys?.moduleRedFlags || 'Red Flags I Ignored',
-      category:
-        localization.appkeys?.moduleRelationshipBasics || 'RELATIONSHIP BASICS',
-    },
-    {
-      id: '2',
-      background: images.moduleBack2,
-      progress: '1/5',
-      title:
-        localization.appkeys?.moduleUnfinishedConversations ||
-        'The Unfinished Conversations',
-      category:
-        localization.appkeys?.moduleClosureHealing || 'CLOSURE & HEALING',
-    },
-  ];
+  const { data: startedModulesData, refetch: refetchStarted } = useGetApi(
+    endpoints.start_sub_module_list,
+    ['start_sub_module_list_home'],
+    { limit: 10 },
+  );
+
+  const { data: aiAffirmationData, refetch: refetchAffirmation } = useGetApi(
+    endpoints.ai_affirmation,
+    ['getAIAffirmation'],
+  );
+
+  const startedModules = startedModulesData?.data?.subModules || [];
+  const aiAffirmation =
+    aiAffirmationData?.data?.affirmation ||
+    localization.appkeys?.homeDailyQuote ||
+    '"If you don\'t throw yourself into something, you\'ll never know what you could have had."';
+
   useFocusEffect(
     React.useCallback(() => {
       dispatch(getUserDetail());
+      refetchStarted();
+      refetchAffirmation();
       return () => {
         // Do something when the screen is unfocused
         // Useful for cleanup functions
       };
-    }, []),
+    }, [dispatch, refetchStarted]),
   );
 
   return (
@@ -83,18 +84,12 @@ const Home = () => {
             title={
               localization.appkeys?.homeProgressTracker || 'Progress Tracker'
             }
-            percentage="30%"
-            level={localization.appkeys?.homeLevel2?.split(' ')[1] || 'Level 2'}
-            points="145/500 PTS"
           />
 
           <DailyQuoteCard
             onPress={() => navigation.navigate(AppRoutes.DailyQuote as never)}
             title={localization.appkeys?.homeQuoteDay || 'Quote of the day'}
-            quote={
-              localization.appkeys?.homeDailyQuote ||
-              '"If you don\'t throw yourself into something, you\'ll never know what you could have had."'
-            }
+            quote={aiAffirmation}
             exploreLabel={
               localization.appkeys?.homeExploreMore || 'Tap to explore more'
             }
@@ -121,28 +116,43 @@ const Home = () => {
 
           <SectionHeader
             title={localization.appkeys?.startedModule || 'Started Modules'}
-            actionLabel={localization.appkeys?.continue || 'Continue'}
+            actionLabel={localization.appkeys?.seeAll || 'See All'}
             onActionPress={() => {
-              navigation.navigate(AppRoutes.Modules as never);
+              navigation.navigate(
+                AppRoutes.AllModules as never,
+                { type: 'started' } as never,
+              );
             }}
             containerStyle={{ marginTop: 10 }}
           />
 
           <FlatList
-            data={modulesData}
+            data={startedModules.slice(0, 2)}
             numColumns={2}
             showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item._id}
             style={{ marginTop: 10 }}
-            renderItem={({ item }) => (
+            renderItem={({ item, index }) => (
               <ModuleCard
                 onPress={() =>
-                  navigation.navigate(AppRoutes.StartedModule as never)
+                  navigation.navigate(
+                    AppRoutes.StartedModule as never,
+                    {
+                      module: item.module,
+                      subModule: { ...item, _id: item.sub_module_id },
+                    } as never,
+                  )
                 }
-                background={item.background}
-                progress={item.progress}
+                background={
+                  index === 0 ? images.moduleBack1 : images.moduleBack2
+                }
+                progress={`${item.completed_phase_count}/${item.total_phase_count}`}
                 title={item.title}
-                category={item.category}
+                category={
+                  item.theme_title ||
+                  localization.appkeys?.moduleRelationshipBasics ||
+                  'RELATIONSHIP BASICS'
+                }
               />
             )}
           />

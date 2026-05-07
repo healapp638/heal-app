@@ -7,6 +7,12 @@ import {
 } from 'react-native';
 import React from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const options = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false,
+};
 
 interface HeaderProgressProps {
   progress?: number; // 0 to 1
@@ -28,6 +34,7 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
         <TouchableOpacity
           style={[styles.backButton]}
           onPress={() => {
+            ReactNativeHapticFeedback.trigger('impactMedium', options);
             if (onBackPress) {
               onBackPress();
               return;

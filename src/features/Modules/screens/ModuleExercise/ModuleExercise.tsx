@@ -18,6 +18,8 @@ import { LocalizationContext } from '../../../../localization/localization';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { ToastService } from '../../../../utils/ToastManager';
+import { useDispatch } from 'react-redux';
+import { getUserDetail } from '../../../../redux/Reducers/userData';
 
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
@@ -25,23 +27,34 @@ const ModuleExercise = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const queryClient = useQueryClient();
-
+  const dispatch = useDispatch();
   const route = useRoute();
-  const { lesson, phase, exercises = [] } = (route.params as any) || {};
+  const {
+    lesson,
+    phase,
+    exercises = [],
+    isLastPhase,
+  } = (route.params as any) || {};
 
   const steps = [
-    ...exercises.map((ex: any) => ({
-      type: ex.type || 'number',
-      text: ex.description || ex.text || '',
-      prefixText: ex.prefix_text || '',
-      title:
-        ex.title ||
-        localization.appkeys?.moduleExerciseReflectionTitle ||
-        'Reflection',
-      question: ex.question || '',
-      instruction: ex.instruction || '',
-      placeholder: ex.placeholder || '',
-    })),
+    ...exercises.map((ex: any) => {
+      const cleanText = (ex.description || ex.text || '')
+        .replace('→', '')
+        .trim();
+      const cleanPrefix = (ex.prefix_text || '').replace('→', '').trim();
+      return {
+        type: ex.type || 'number',
+        text: cleanText,
+        prefixText: cleanPrefix,
+        title:
+          ex.title ||
+          localization.appkeys?.moduleExerciseReflectionTitle ||
+          'Reflection',
+        question: ex.question || '',
+        instruction: ex.instruction || '',
+        placeholder: ex.placeholder || '',
+      };
+    }),
     {
       type: 'reflection',
       title:
@@ -106,6 +119,14 @@ const ModuleExercise = () => {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['phase_list'] });
             queryClient.invalidateQueries({ queryKey: ['module_list'] });
+            queryClient.invalidateQueries({
+              queryKey: ['start_sub_module_list'],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['start_sub_module_list_home'],
+            });
+            queryClient.invalidateQueries({ queryKey: ['theme_list'] });
+            dispatch(getUserDetail());
             setShowModal(true);
           },
         },
@@ -190,16 +211,23 @@ const ModuleExercise = () => {
             visible={showModal}
             onClose={() => setShowModal(false)}
             title={localization.appkeys?.wellDone || 'Well done'}
-            subtitle={
-              localization.appkeys?.completedPhase ||
-              `You've completed ${phase?.phase || 'Phase 1'}`
-            }
+            subtitle={`${
+              localization.appkeys?.completedPhase || "You've completed"
+            } ${
+              phase?.phase ||
+              `${localization.appkeys?.phase || 'Phase'} ${
+                phase?.phaseNumber || 1
+              }`
+            }`}
             btnLabel={localization.appkeys?.continue || 'Continue'}
             onPressBtn={() => {
               setShowModal(false);
               navigation.dispatch(state => {
+                const targetRoute = isLastPhase
+                  ? AppRoutes.ModuleThemeDetail
+                  : AppRoutes.StartedModule;
                 const index = state.routes.findIndex(
-                  (r: any) => r.name === AppRoutes.StartedModule,
+                  (r: any) => r.name === targetRoute,
                 );
                 if (index !== -1) {
                   return CommonActions.reset({
@@ -208,8 +236,33 @@ const ModuleExercise = () => {
                     index,
                   });
                 }
-                return CommonActions.navigate({
-                  name: AppRoutes.StartedModule,
+                const source = (route.params as any)?.source;
+                const theme = (route.params as any)?.theme;
+
+                let actualTargetRoute = targetRoute;
+                if (
+                  isLastPhase &&
+                  (source === 'all' || source === 'dashboard')
+                ) {
+                  actualTargetRoute = AppRoutes.AllModules;
+                }
+
+                return CommonActions.reset({
+                  index: 1,
+                  routes: [
+                    {
+                      name: AppRoutes.BottomTab,
+                      params: { screen: AppRoutes.Modules },
+                    },
+                    {
+                      name: actualTargetRoute,
+                      params: {
+                        theme: theme,
+                        subModule: (route.params as any)?.subModule,
+                        type: 'started',
+                      },
+                    },
+                  ],
                 });
               });
             }}

@@ -11,8 +11,9 @@ import {
 } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-import style from './style';
+import { useHaptic } from '../../../../hooks/useHaptic';
 import { useDispatch, useSelector } from 'react-redux';
+import style from './style';
 import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
@@ -22,6 +23,7 @@ const HearAboutUs = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { triggerHaptic } = useHaptic();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedSelection = useSelector(
@@ -119,6 +121,7 @@ const HearAboutUs = () => {
                       isSelected && styles.optionCardSelected,
                     ]}
                     onPress={() => {
+                      triggerHaptic('impactHeavy');
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({

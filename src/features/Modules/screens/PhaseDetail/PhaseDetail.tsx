@@ -23,7 +23,7 @@ const PhaseDetail = () => {
   const styles = style(colors);
   const navigation = useNavigation();
   const route = useRoute();
-  const { phase } = route.params as any;
+  const { phase, isLastPhase } = route.params as any;
 
   const {
     data,
@@ -182,8 +182,12 @@ const PhaseDetail = () => {
                       AppRoutes.ModuleExercise as never,
                       {
                         lesson,
-                        phase: phaseDetail,
+                        phase: { ...phase, ...phaseDetail },
                         exercises,
+                        isLastPhase,
+                        theme: (route.params as any)?.theme,
+                        subModule: (route.params as any)?.subModule,
+                        source: (route.params as any)?.source,
                       } as never,
                     );
                   },

@@ -2155,6 +2155,34 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - react-native-view-shot (5.1.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - react-native-voice (1.0.4):
     - boost
     - DoubleConversion
@@ -2691,6 +2719,8 @@ PODS:
   - ReactNativeLocalization (2.3.2):
     - React-Core
   - RecaptchaInterop (101.0.0)
+  - RNAppleAuthentication (2.4.2):
+    - React-Core
   - RNCAsyncStorage (2.2.0):
     - boost
     - DoubleConversion
@@ -2958,6 +2988,34 @@ PODS:
     - RNNotifee/NotifeeCore (= 9.1.8)
   - RNNotifee/NotifeeCore (9.1.8):
     - React-Core
+  - RNReactNativeHapticFeedback (3.0.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - RNReanimated (4.3.0):
     - boost
     - DoubleConversion
@@ -3101,6 +3159,34 @@ PODS:
     - React-NativeModulesApple
     - React-RCTFabric
     - React-RCTImage
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
+  - RNShare (12.3.1):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
     - React-renderercss
     - React-rendererdebug
     - React-utils
@@ -3260,6 +3346,7 @@ DEPENDENCIES:
   - react-native-render-html (from `../node_modules/react-native-render-html`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
+  - react-native-view-shot (from `../node_modules/react-native-view-shot`)
   - "react-native-voice (from `../node_modules/@dev-amirzubair/react-native-voice`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-oscompat (from `../node_modules/react-native/ReactCommon/oscompat`)
@@ -3292,6 +3379,7 @@ DEPENDENCIES:
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeLocalization (from `../node_modules/react-native-localization`)
+  - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-masked-view/masked-view`)"
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
@@ -3307,8 +3395,10 @@ DEPENDENCIES:
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
+  - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNShare (from `../node_modules/react-native-share`)
   - RNWorklets (from `../node_modules/react-native-worklets`)
   - SocketRocket (~> 0.7.1)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -3448,6 +3538,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-video:
     :path: "../node_modules/react-native-video"
+  react-native-view-shot:
+    :path: "../node_modules/react-native-view-shot"
   react-native-voice:
     :path: "../node_modules/@dev-amirzubair/react-native-voice"
   React-NativeModulesApple:
@@ -3512,6 +3604,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   ReactNativeLocalization:
     :path: "../node_modules/react-native-localization"
+  RNAppleAuthentication:
+    :path: "../node_modules/@invertase/react-native-apple-authentication"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNCMaskedView:
@@ -3542,10 +3636,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-localize"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
+  RNReactNativeHapticFeedback:
+    :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNShare:
+    :path: "../node_modules/react-native-share"
   RNWorklets:
     :path: "../node_modules/react-native-worklets"
   Yoga:
@@ -3629,6 +3727,7 @@ SPEC CHECKSUMS:
   react-native-render-html: 5afc4751f1a98621b3009432ef84c47019dcb2bd
   react-native-safe-area-context: ee1e8e2a7abf737a8d4d9d1a5686a7f2e7466236
   react-native-video: e6d6557fe7d997e7ceeb60c995d1e1da7a4120c2
+  react-native-view-shot: 1a01c96f6fb09b99539142749cd93f685af7fe48
   react-native-voice: 54884c7cfd711f65619344c177a92012266c3977
   React-NativeModulesApple: be767e4e204802b135c68a81024f5b758bc0653e
   React-oscompat: b12c633e9c00f1f99467b1e0e0b8038895dae436
@@ -3662,6 +3761,7 @@ SPEC CHECKSUMS:
   ReactCommon: e5df435ef0892875b7d503fbe3ec73a1a3712049
   ReactNativeLocalization: 79b100588f6d7a68852b982ccbe57e329e8bb5a7
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RNAppleAuthentication: 820bf306af1585c32ce698c82ed26c302e162e51
   RNCAsyncStorage: fd44f4b03e007e642e98df6726737bc66e9ba609
   RNCMaskedView: d707a83784c67099b54b37d056ababb2767ce15e
   RNDateTimePicker: ca1dc7e24d0b4839877f0ab619e7bca5db715289
@@ -3677,8 +3777,10 @@ SPEC CHECKSUMS:
   RNImageCropPicker: 0a63af4b79e514c1edd6c3152f19300c5ed85312
   RNLocalize: d8ccb568b40c72c767714db3808ce66a1ecf444a
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
+  RNReactNativeHapticFeedback: 8f6dc89cf13406a754487d8f8bd6df4d6feb789b
   RNReanimated: 0e779d4d219b01331bf5ad620d30c5b993d18856
   RNScreens: 4f2aed147a2775017923789d8a0a2d377712ec2e
+  RNShare: 61cad1e65b8e3788c97ee7c5cac4bcbb25a8df40
   RNWorklets: 68ab13976d7eba39fb2f0844994a51380e76046d
   SDWebImage: e9fc87c1aab89a8ab1bbd74eba378c6f53be8abf
   SDWebImageAVIFCoder: afe194a084e851f70228e4be35ef651df0fc5c57

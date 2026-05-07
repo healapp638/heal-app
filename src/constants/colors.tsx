@@ -169,6 +169,8 @@ const LightTheme = {
     simpleLock: require('../assets/simpleLock.png'),
     camera: require('../assets/camera.png'),
     gallery: require('../assets/gallery.png'),
+    heartFill: require('../assets/heartFill.png'),
+    fav: require('../assets/fav.png'),
   },
 };
 
@@ -343,6 +345,8 @@ const DarkTheme = {
     simpleLock: require('../assets/simpleLock.png'),
     camera: require('../assets/camera.png'),
     gallery: require('../assets/gallery.png'),
+    heartFill: require('../assets/heartFill.png'),
+    fav: require('../assets/fav.png'),
   },
 };
 export { LightTheme, DarkTheme };

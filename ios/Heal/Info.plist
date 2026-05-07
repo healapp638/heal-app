@@ -54,10 +54,10 @@
 	<string>Need permission to fetch nearby users</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Need mic permission for video call feature &amp; to upload videos</string>
-	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Heal uses speech recognition to transcribe your journal entries</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Need photo library permission to add/update user profile image &amp; gallery</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Heal uses speech recognition to transcribe your journal entries</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>

@@ -9,6 +9,7 @@ import {
 } from '@react-navigation/native';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
+import { useHaptic } from '../../../../hooks/useHaptic';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
@@ -24,6 +25,7 @@ import ResumeModal from '../../../../modals/ResumeModal';
 const Welcome = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { triggerHaptic } = useHaptic();
   const { images, colors } = useTheme() as any;
   const { appLanguage, localization } = useContext(LocalizationContext) as any;
   const onboarding = useSelector((state: any) => state.userData?.onboarding);
@@ -129,9 +131,10 @@ const Welcome = () => {
             />
             <TouchableOpacity
               style={styles.languagePill}
-              onPress={() =>
-                navigation.navigate(AppRoutes.SelectLanguage as never)
-              }
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                navigation.navigate(AppRoutes.SelectLanguage as never);
+              }}
             >
               <Image
                 source={flag}
@@ -155,7 +158,10 @@ const Welcome = () => {
             onPress={() => navigation.navigate(AppRoutes.GetStarted as never)}
           />
           <SolidText
-            onPress={() => navigation.navigate(AppRoutes.AccessScreen as never)}
+            onPress={() => {
+              triggerHaptic('impactHeavy');
+              navigation.navigate(AppRoutes.AccessScreen as never);
+            }}
             style={styles.footerText}
           >
             {localization.appkeys?.alreadyAccount}{' '}

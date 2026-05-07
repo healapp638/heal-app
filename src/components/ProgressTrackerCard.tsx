@@ -4,12 +4,13 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppUtils from '../utils/appUtils';
 import AppFonts from '../constants/fonts';
+import { useSelector } from 'react-redux';
 
 interface ProgressTrackerCardProps {
   title: string;
-  percentage: string;
-  level: string;
-  points: string;
+  percentage?: string;
+  level?: string;
+  points?: string;
   onPress?: () => void;
   viewStyle?: any;
 }
@@ -23,6 +24,25 @@ const ProgressTrackerCard = ({
   viewStyle,
 }: ProgressTrackerCardProps) => {
   const { colors } = useTheme() as any;
+  const userDetails = useSelector((state: any) => state.userData.user);
+  const displayPercentage =
+    percentage ||
+    (userDetails?.completedPercentage !== undefined
+      ? `${Math.round(userDetails.completedPercentage)}%`
+      : '0%');
+  const displayLevel =
+    level ||
+    (userDetails?.currentLevel !== undefined
+      ? `Level ${userDetails.currentLevel}`
+      : 'Level 1');
+  const displayPoints =
+    points ||
+    (userDetails?.total_earned_points !== undefined
+      ? `${userDetails.total_earned_points}/${
+          userDetails.total_points || 0
+        } PTS`
+      : '0/0 PTS');
+  const progressWidth = userDetails?.completedPercentage || 0;
 
   return (
     <Pressable
@@ -34,7 +54,7 @@ const ProgressTrackerCard = ({
           {title}
         </SolidText>
         <SolidText style={[styles.percentage, { color: colors.lightBrown }]}>
-          {percentage}
+          {displayPercentage}
         </SolidText>
       </View>
       <View
@@ -46,16 +66,19 @@ const ProgressTrackerCard = ({
         <View
           style={[
             styles.progressBarFill,
-            { backgroundColor: colors.lightBrown, width: '40%' },
+            {
+              backgroundColor: colors.lightBrown,
+              width: `${progressWidth}%`,
+            },
           ]}
         />
       </View>
       <View style={styles.bottomRow}>
         <SolidText style={[styles.level, { color: colors.brown }]}>
-          {level}
+          {displayLevel}
         </SolidText>
         <SolidText style={[styles.points, { color: colors.brown }]}>
-          {points}
+          {displayPoints}
         </SolidText>
       </View>
     </Pressable>

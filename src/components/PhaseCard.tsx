@@ -116,4 +116,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PhaseCard;
+export default React.memo(PhaseCard);

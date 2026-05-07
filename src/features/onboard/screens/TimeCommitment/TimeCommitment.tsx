@@ -4,7 +4,12 @@ import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderProgress from '../../../../components/HeaderProgress';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import { useHaptic } from '../../../../hooks/useHaptic';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
@@ -18,6 +23,7 @@ const TimeCommitment = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { triggerHaptic } = useHaptic();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedSelection = useSelector(
@@ -36,6 +42,7 @@ const TimeCommitment = () => {
   );
 
   const handleBackPress = () => {
+    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
@@ -89,6 +96,7 @@ const TimeCommitment = () => {
                       isSelected && styles.optionCardSelected,
                     ]}
                     onPress={() => {
+                      triggerHaptic('impactHeavy');
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({

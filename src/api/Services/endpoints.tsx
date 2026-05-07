@@ -23,4 +23,8 @@ export const endpoints = {
   exercise_list: '/user/modules/exercise_list',
   start_lesson: '/user/modules/start_lesson',
   complete_lesson: '/user/modules/complete_lesson',
+  start_sub_module_list: '/user/modules/start_sub_module_list',
+  end_sub_module_list: '/user/modules/end_sub_module_list',
+  ai_affirmation: '/user/affirmation/getAIAffirmation',
+  affirmation_list: '/user/affirmation/getAffirmationListing',
 };

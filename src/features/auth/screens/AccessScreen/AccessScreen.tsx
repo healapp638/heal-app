@@ -17,7 +17,7 @@ const AccessScreen = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-  const { googleLogin, isSocialPending } = useSocialLogin();
+  const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
   return (
     <SolidView
       isScrollEnabled
@@ -57,7 +57,11 @@ const AccessScreen = () => {
               </TouchableOpacity>
 
               {Platform.OS === 'ios' && (
-                <TouchableOpacity style={styles.socialBtn} onPress={() => {}}>
+                <TouchableOpacity
+                  style={styles.socialBtn}
+                  onPress={() => {}}
+                  disabled={isSocialPending}
+                >
                   <Image
                     source={images.apple}
                     style={styles.socialIcon}

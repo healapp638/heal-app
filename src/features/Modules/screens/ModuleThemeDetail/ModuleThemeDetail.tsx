@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   View,
-  ScrollView,
   TouchableOpacity,
   Image,
   FlatList,
@@ -23,13 +22,14 @@ import style from './style';
 import { LocalizationContext } from '../../../../localization/localization';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
+import SubModuleItem from '../../../../components/SubModuleItem';
 
 const ModuleThemeDetail = () => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
   const route = useRoute();
-  const { theme } = route.params as any;
+  const { theme } = (route.params as any) || {};
   const { localization } = useContext(LocalizationContext) as any;
 
   const [modules, setModules] = useState<any[]>([]);
@@ -45,6 +45,7 @@ const ModuleThemeDetail = () => {
 
   useFocusEffect(
     useCallback(() => {
+      setCursor(null);
       refetch();
     }, [refetch]),
   );
@@ -69,6 +70,9 @@ const ModuleThemeDetail = () => {
     setIsRefreshing(true);
     setCursor(null);
     refetch();
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 2000);
   };
 
   const loadMore = () => {
@@ -84,42 +88,98 @@ const ModuleThemeDetail = () => {
     { text: '#F66F76', border: '#F6C1C5' },
   ];
 
-  const renderHeader = () => (
-    <View>
-      <HeaderCommon title={localization.appkeys?.tabModules || 'Modules'} />
+  const renderHeader = useCallback(
+    () => (
+      <View>
+        <HeaderCommon title={localization.appkeys?.tabModules || 'Modules'} />
 
-      <SolidText style={styles.title}>
-        {themeDetail?.title || localization.appkeys?.friendship || 'Friendship'}
-      </SolidText>
-      <SolidText style={styles.subtitle}>
-        {themeDetail?.description ||
-          localization.appkeys?.friendshipSubtitle ||
-          'Understanding, healing and building your friendships'}
-      </SolidText>
+        <SolidText style={styles.title}>
+          {themeDetail?.title ||
+            localization.appkeys?.friendship ||
+            'Friendship'}
+        </SolidText>
+        <SolidText style={styles.subtitle}>
+          {themeDetail?.description ||
+            localization.appkeys?.friendshipSubtitle ||
+            'Understanding, healing and building your friendships'}
+        </SolidText>
 
-      <ProgressTrackerCard
-        viewStyle={styles.progressCardMargin}
-        title={localization.appkeys?.homeProgressTracker || 'Progress Tracker'}
-        percentage="30%"
-        level={localization.appkeys?.level || 'Level 2'}
-        points="145/500 PTS"
-        onPress={() => {
-          navigation.navigate(AppRoutes.ProgressTracker as never);
-        }}
-      />
-    </View>
+        <ProgressTrackerCard
+          viewStyle={styles.progressCardMargin}
+          title={
+            localization.appkeys?.homeProgressTracker || 'Progress Tracker'
+          }
+          onPress={() => {
+            navigation.navigate(AppRoutes.ProgressTracker as never);
+          }}
+        />
+      </View>
+    ),
+    [styles, themeDetail, localization.appkeys, navigation],
   );
 
-  const renderFooter = () => (
-    <View style={{ height: 40 }}>
-      {isFetching && cursor !== null && (
-        <ActivityIndicator
-          size="small"
-          color={colors.brown}
-          style={{ marginVertical: 20 }}
-        />
-      )}
-    </View>
+  const renderFooter = useCallback(
+    () => (
+      <View style={{ height: 40 }}>
+        {isFetching && cursor !== null && (
+          <ActivityIndicator
+            size="small"
+            color={colors.brown}
+            style={{ marginVertical: 20 }}
+          />
+        )}
+      </View>
+    ),
+    [isFetching, cursor, colors.brown],
+  );
+
+  const renderItem = useCallback(
+    ({
+      item: moduleItem,
+      index: moduleIndex,
+    }: {
+      item: any;
+      index: number;
+    }) => {
+      const colorSet = sectionColors[moduleIndex % sectionColors.length];
+      return (
+        <View>
+          <SolidText style={styles.sectionTitle}>{moduleItem.title}</SolidText>
+          {(moduleItem.sub_modules || []).map((sub: any, subIndex: number) => {
+            const isCompleted =
+              sub.totalCompletedPhaseCount === sub.totalPhaseCount &&
+              sub.totalPhaseCount > 0;
+            return (
+              <SubModuleItem
+                key={sub._id || subIndex}
+                sub={sub}
+                colorSet={colorSet}
+                isCompleted={isCompleted}
+                images={images}
+                colors={colors}
+                styles={styles}
+                onPress={() => {
+                  if (!isCompleted) {
+                    navigation.navigate(AppRoutes.StartedModule as never, {
+                      module: moduleItem,
+                      subModule: sub,
+                      theme: themeDetail,
+                      source: 'theme',
+                    } as never);
+                  }
+                }}
+              />
+            );
+          })}
+        </View>
+      );
+    },
+    [styles, navigation, images, colors, sectionColors],
+  );
+
+  const keyExtractor = useCallback(
+    (item: any, index: number) => (item._id || index).toString(),
+    [],
   );
 
   return (
@@ -128,9 +188,14 @@ const ModuleThemeDetail = () => {
       view={
         <FlatList
           data={modules}
-          keyExtractor={(item, index) => (item._id || index).toString()}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
           ListHeaderComponent={renderHeader}
           ListFooterComponent={renderFooter}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={10}
+          removeClippedSubviews={true}
           refreshControl={
             <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
           }
@@ -138,60 +203,6 @@ const ModuleThemeDetail = () => {
           onEndReachedThreshold={0.5}
           showsVerticalScrollIndicator={false}
           style={styles.mainContainer}
-          renderItem={({ item: moduleItem, index: moduleIndex }) => {
-            const colorSet = sectionColors[moduleIndex % sectionColors.length];
-            return (
-              <View>
-                <SolidText style={styles.sectionTitle}>
-                  {moduleItem.title}
-                </SolidText>
-                {(moduleItem.sub_modules || []).map(
-                  (sub: any, subIndex: number) => (
-                    <TouchableOpacity
-                      key={sub._id || subIndex}
-                      onPress={() =>
-                        navigation.navigate(
-                          AppRoutes.StartedModule as never,
-                          {
-                            module: moduleItem,
-                            subModule: sub,
-                          } as never,
-                        )
-                      }
-                      style={styles.itemCard}
-                      activeOpacity={0.8}
-                    >
-                      <View
-                        style={[
-                          styles.itemCircle,
-                          { borderColor: colorSet.border },
-                        ]}
-                      >
-                        <SolidText
-                          style={[styles.circleText, { color: colorSet.text }]}
-                        >
-                          {`${sub.totalCompletedPhaseCount || 0}/${
-                            sub.totalPhaseCount || 0
-                          }`}
-                        </SolidText>
-                      </View>
-
-                      <SolidText style={styles.itemLabel}>
-                        {sub.title}
-                      </SolidText>
-
-                      <Image
-                        source={images.forward2}
-                        style={styles.forwardIcon}
-                        resizeMode="contain"
-                        tintColor={colors.brown || '#333'}
-                      />
-                    </TouchableOpacity>
-                  ),
-                )}
-              </View>
-            );
-          }}
           ListEmptyComponent={
             isLoading && cursor === null ? (
               <ActivityIndicator

@@ -20,6 +20,7 @@ import Exercise from '../../features/Challenges/screens/Exercise/Exercise';
 import StartedModule from '../../features/Modules/screens/StartedModule/StartedModule';
 import PhaseDetail from '../../features/Modules/screens/PhaseDetail/PhaseDetail';
 import ModuleExercise from '../../features/Modules/screens/ModuleExercise/ModuleExercise';
+import AllModules from '../../features/Modules/screens/AllModules/AllModules';
 
 import ThemeDetail from '../../features/Home/screens/ThemeDetail/ThemeDetail';
 import ModuleThemeDetail from '../../features/Modules/screens/ModuleThemeDetail/ModuleThemeDetail';
@@ -71,6 +72,7 @@ export default function NonAuthStack() {
         name={AppRoutes.ModuleThemeDetail}
         component={ModuleThemeDetail}
       />
+      <Stack.Screen name={AppRoutes.AllModules} component={AllModules} />
       <Stack.Screen name={AppRoutes.AddJournal} component={AddJournal} />
       <Stack.Screen name={AppRoutes.Calendar} component={Calendar} />
       <Stack.Screen

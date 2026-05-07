@@ -16,8 +16,11 @@ import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { useHaptic } from '../../../../hooks/useHaptic';
 
 const ThemeMixes = () => {
+  const { triggerHaptic } = useHaptic();
+
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
@@ -57,7 +60,12 @@ const ThemeMixes = () => {
         <View style={styles.mainContainer}>
           {/* Header */}
           <View style={styles.headerRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                navigation.goBack();
+              }}
+            >
               <Image
                 source={images.back}
                 style={styles.backIcon}

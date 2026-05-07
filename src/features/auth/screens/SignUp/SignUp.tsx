@@ -44,7 +44,7 @@ const SignUp = () => {
   // console.log('onboarding answers in sign up', answers);
   const styles = style(colors);
   const { mutate: registerUser, isPending: isRegistering } = usePostApi();
-  const { googleLogin, isSocialPending } = useSocialLogin();
+  const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 
   // Form State
   const [fullName, setFullName] = useState('');

@@ -20,9 +20,7 @@ const ModuleThemeCard = ({ item, onPress }: ModuleThemeCardProps) => {
       onPress={onPress}
     >
       <Image
-        source={
-          typeof item.icon === 'string' ? { uri: item.icon } : item.icon
-        }
+        source={typeof item.icon === 'string' ? { uri: item.icon } : item.icon}
         style={styles.themeIcon}
         resizeMode="contain"
       />
@@ -72,4 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ModuleThemeCard;
+export default React.memo(ModuleThemeCard);

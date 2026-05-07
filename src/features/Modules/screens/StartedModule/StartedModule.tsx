@@ -35,6 +35,7 @@ const StartedModule = () => {
   const [cursor, setCursor] = useState<string | null>(null);
   const [subModuleDetail, setSubModuleDetail] = useState<any>(subModule);
   const [isRefreshing, setIsRefreshing] = useState(false);
+
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.phase_list,
     ['phase_list', subModule?._id, cursor],
@@ -43,6 +44,7 @@ const StartedModule = () => {
 
   useFocusEffect(
     useCallback(() => {
+      setCursor(null);
       refetch();
     }, [refetch]),
   );
@@ -53,9 +55,12 @@ const StartedModule = () => {
       if (responseData.subModule) {
         setSubModuleDetail(responseData.subModule);
       }
-      const fetchedPhases = (responseData.phases || [])?.filter(
-        (p: any) => !p.isCompleted,
-      );
+      const fetchedPhases = (responseData.phases || [])
+        .map((p: any, index: number) => ({
+          ...p,
+          phaseNumber: index + 1,
+        }))
+        .filter((p: any) => !p.isCompleted);
       if (cursor === null) {
         setPhases(fetchedPhases);
       } else {
@@ -71,7 +76,7 @@ const StartedModule = () => {
     refetch();
     setTimeout(() => {
       setIsRefreshing(false);
-    }, 1000);
+    }, 2000);
   };
 
   const loadMore = () => {
@@ -81,36 +86,74 @@ const StartedModule = () => {
     }
   };
 
-  const renderHeader = () => (
-    <>
-      <HeaderCommon title={localization.appkeys?.tabModules || 'Modules'} />
+  const renderHeader = useCallback(
+    () => (
+      <>
+        <HeaderCommon title={localization.appkeys?.tabModules || 'Modules'} />
 
-      <View style={styles.headerTextContainer}>
-        <SolidText style={[styles.title, { color: colors.brown }]}>
-          {subModuleDetail?.title ||
-            localization.appkeys?.trueFriendshipTitle ||
-            'What is a True Friendship?'}
+        <View style={styles.headerTextContainer}>
+          <SolidText style={[styles.title, { color: colors.brown }]}>
+            {subModuleDetail?.title ||
+              localization.appkeys?.trueFriendshipTitle ||
+              'What is a True Friendship?'}
+          </SolidText>
+          <SolidText style={[styles.subtitle, { color: colors.brown }]}>
+            {subModuleDetail?.description ||
+              localization.appkeys?.trueFriendshipDesc ||
+              'We often say we have friends — but what does that really mean?'}
+          </SolidText>
+        </View>
+
+        <ProgressTrackerCard
+          viewStyle={styles.progressCardMargin}
+          title={
+            localization.appkeys?.homeProgressTracker || 'Progress Tracker'
+          }
+          onPress={() =>
+            navigation.navigate(AppRoutes.ProgressTracker as never)
+          }
+        />
+
+        <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
+          {localization.appkeys?.phases || 'Phases'}
         </SolidText>
-        <SolidText style={[styles.subtitle, { color: colors.brown }]}>
-          {subModuleDetail?.description ||
-            localization.appkeys?.trueFriendshipDesc ||
-            'We often say we have friends — but what does that really mean?'}
-        </SolidText>
-      </View>
+      </>
+    ),
+    [styles, subModuleDetail, localization.appkeys, colors.brown, navigation],
+  );
 
-      <ProgressTrackerCard
-        viewStyle={styles.progressCardMargin}
-        title={localization.appkeys?.homeProgressTracker || 'Progress Tracker'}
-        percentage="30%"
-        level={localization.appkeys?.homeLevel2?.split(' ')[1] || 'Level 2'}
-        points="145/500 PTS"
-        onPress={() => navigation.navigate(AppRoutes.ProgressTracker as never)}
-      />
+  const renderItem = useCallback(
+    ({ item, index }: { item: any; index: number }) => {
+      const isLocked = item?.isLocked;
+      return (
+        <PhaseCard
+          phase={
+            item.phase ||
+            `${localization.appkeys?.phase || 'Phase'} ${item.phaseNumber}`
+          }
+          title={item.title}
+          points={`${item.points || 0} Pts`}
+          isLocked={isLocked}
+          onPress={() => {
+            if (!isLocked) {
+              navigation.navigate(AppRoutes.PhaseDetail as never, {
+                phase: item,
+                isLastPhase: phases.length === 1,
+                theme: (route.params as any)?.theme,
+                subModule: subModuleDetail,
+                source: (route.params as any)?.source,
+              } as never);
+            }
+          }}
+        />
+      );
+    },
+    [localization.appkeys, navigation, phases.length],
+  );
 
-      <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
-        {localization.appkeys?.phases || 'Phases'}
-      </SolidText>
-    </>
+  const keyExtractor = useCallback(
+    (item: any, index: number) => (item._id || index).toString(),
+    [],
   );
 
   useEffect(() => {
@@ -122,7 +165,7 @@ const StartedModule = () => {
       },
     );
     return () => backHandler.remove();
-  }, []);
+  }, [navigation]);
 
   return (
     <SolidView
@@ -130,43 +173,20 @@ const StartedModule = () => {
         <View style={styles.mainContainer}>
           <FlatList
             data={phases}
-            keyExtractor={(item, index) => (item._id || index).toString()}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            ListHeaderComponent={renderHeader}
             contentContainerStyle={styles.listContent}
             showsVerticalScrollIndicator={false}
-            ListHeaderComponent={renderHeader}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+            removeClippedSubviews={true}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }
-            renderItem={({ item, index }) => {
-              // Logic for locking: first phase is unlocked, others locked if previous not completed
-              // Note: For a real app, the backend should ideally return the lock status.
-              const isLocked =
-                index === 0 ? false : !phases[index - 1].isCompleted;
-
-              return (
-                <PhaseCard
-                  phase={
-                    item.phase ||
-                    `${localization.appkeys?.phase || 'Phase'} ${index + 1}`
-                  }
-                  title={item.title}
-                  points={`${item.points || 0} Pts`}
-                  isLocked={isLocked}
-                  onPress={() => {
-                    if (!isLocked) {
-                      navigation.navigate(
-                        AppRoutes.PhaseDetail as never,
-                        {
-                          phase: item,
-                        } as never,
-                      );
-                    }
-                  }}
-                />
-              );
-            }}
             ListEmptyComponent={
               isLoading && cursor === null ? (
                 <ActivityIndicator

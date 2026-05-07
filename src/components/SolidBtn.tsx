@@ -14,6 +14,12 @@ import {
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
+import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
+
+const hapticOptions = {
+  enableVibrateFallback: true,
+  ignoreAndroidSystemSettings: false,
+};
 
 interface SolidBtnProps {
   btnStyle?: ViewStyle;
@@ -44,9 +50,10 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
     <TouchableOpacity
       onPress={() => {
         Keyboard.dismiss();
+        ReactNativeHapticFeedback.trigger('impactHeavy', hapticOptions);
         onPress();
       }}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       style={[styles.btn, btnStyle, disabled && styles.disabled]}
     >
       {isLoading && <ActivityIndicator color={colors.primary} />}

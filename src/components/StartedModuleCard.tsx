@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   Platform,
+  Text,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
@@ -17,6 +18,8 @@ interface StartedModuleCardProps {
   progressText?: string;
   isFinished?: boolean;
   onPress?: () => void;
+  containerStyle?: any;
+  disabled?: boolean;
 }
 
 const StartedModuleCard = ({
@@ -25,14 +28,21 @@ const StartedModuleCard = ({
   progressText,
   isFinished,
   onPress,
+  containerStyle,
+  disabled,
 }: StartedModuleCardProps) => {
   const { colors, images } = useTheme() as any;
   const styles = useStyles(colors);
   return (
     <TouchableOpacity
-      activeOpacity={0.8}
+      activeOpacity={disabled ? 1 : 0.8}
       onPress={onPress}
-      style={[styles.moduleCard, { backgroundColor: colors.white }]}
+      disabled={disabled}
+      style={[
+        styles.moduleCard,
+        { backgroundColor: colors.white },
+        containerStyle,
+      ]}
     >
       <View style={styles.moduleCardContent}>
         {isFinished ? (
@@ -66,11 +76,12 @@ const StartedModuleCard = ({
           <SolidText style={[styles.moduleCardTitle, { color: colors.brown }]}>
             {title}
           </SolidText>
-          <SolidText
+          <Text
+            numberOfLines={1}
             style={[styles.moduleCardSubtitle, { color: colors.brown }]}
           >
             {subtitle}
-          </SolidText>
+          </Text>
         </View>
         <Image
           source={images.forward2}
@@ -87,7 +98,8 @@ const useStyles = (colors: any) =>
   StyleSheet.create({
     moduleCard: {
       width: 320,
-      padding: 12,
+      paddingVertical: 16,
+      paddingHorizontal: 12,
       borderRadius: 16,
       marginRight: 12,
       // iOS shadow
@@ -97,6 +109,7 @@ const useStyles = (colors: any) =>
       shadowRadius: 5,
       // Android shadow
       elevation: 2,
+      marginBottom: 5,
     },
     moduleCardContent: {
       flexDirection: 'row',
@@ -120,10 +133,17 @@ const useStyles = (colors: any) =>
       fontSize: AppUtils.fontSize(14),
       includeFontPadding: false,
     },
-    finishedCircle: {},
+    finishedCircle: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     tickIcon: {
-      width: 36,
-      height: 36,
+      width: 38,
+      height: 38,
     },
     moduleCardTextContainer: {
       flex: 1,
@@ -132,7 +152,7 @@ const useStyles = (colors: any) =>
     moduleCardTitle: {
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(14),
-      marginBottom: Platform.OS == 'ios' ? 13 : 7,
+      marginBottom: Platform.OS == 'ios' ? 4 : 2,
     },
     moduleCardSubtitle: {
       fontFamily: AppFonts.medium,
@@ -147,4 +167,4 @@ const useStyles = (colors: any) =>
     },
   });
 
-export default StartedModuleCard;
+export default React.memo(StartedModuleCard);

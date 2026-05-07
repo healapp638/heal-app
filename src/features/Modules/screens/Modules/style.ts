@@ -19,17 +19,26 @@ const style = (colors: any) =>
     sectionTitle: {
       fontSize: AppUtils.fontSize(16),
       fontFamily: AppFonts.semiBold,
-      marginBottom: Platform.OS === 'ios' ? 14 : 12,
       includeFontPadding: false,
     },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: Platform.OS === 'ios' ? 12 : 10,
+    },
+    seeAllText: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.medium,
+      color: colors.brown,
+    },
     horizontalList: {
-      marginHorizontal: -20, // To allow scrolling edge-to-edge
+      marginHorizontal: -20,
       marginBottom: Platform.OS === 'ios' ? 20 : 18,
-      padding: 2,
     },
     horizontalListContent: {
-      paddingHorizontal: 20,
-      paddingRight: 10,
+      paddingLeft: 20,
+      paddingRight: 20,
     },
     themesList: {
       marginBottom: Platform.OS === 'ios' ? 10 : 8,
