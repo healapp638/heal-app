@@ -27,6 +27,7 @@ const mongoose_config_1 = require("../configs/mongoose.config");
 const admin_exel_model_1 = __importDefault(require("../modules/AdminCommon/admin.exel.model"));
 const notification_service_1 = require("../services/notification.service");
 const admin_auth_model_1 = __importDefault(require("../modules/AdminAuth/admin.auth.model"));
+const user_affirmation_model_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.model"));
 console.log("👷 Worker booting...");
 // ✅ Redis connection
 const redisConnection = new ioredis_1.default({
@@ -295,3 +296,78 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 // 🚀 Start
 startWorker();
+// ================= AFFIRMATION WORKER =================
+const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("🔌 Connecting DB...");
+    yield (0, mongoose_config_1.connection)();
+    console.log("✅ DB connected");
+    const worker = new bullmq_1.Worker("affirmation-import", (job) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        console.log(`🚀 Processing Job ${job.id}`);
+        try {
+            // ================= BUFFER =================
+            const rawBuffer = job.data.fileBuffer;
+            const fileBuffer = Buffer.isBuffer(rawBuffer)
+                ? rawBuffer
+                : Buffer.from(rawBuffer.data);
+            // ================= READ EXCEL =================
+            const workbook = xlsx_1.default.read(fileBuffer, {
+                type: "buffer",
+            });
+            const sheetName = workbook.SheetNames[0];
+            const sheetData = xlsx_1.default.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
+            console.log("📊 Total Rows:", sheetData.length);
+            if (!sheetData.length) {
+                console.log("❌ Empty Excel");
+                return;
+            }
+            let rowCount = 1;
+            // ================= LOOP ROWS =================
+            for (const row of sheetData) {
+                try {
+                    console.log(`📦 Processing Row ${rowCount++}`);
+                    const affirmation = (_b = (_a = row === null || row === void 0 ? void 0 : row.affirmation) === null || _a === void 0 ? void 0 : _a.toString()) === null || _b === void 0 ? void 0 : _b.trim();
+                    if (!affirmation) {
+                        console.log("⚠️ Empty affirmation skipped");
+                        continue;
+                    }
+                    // ================= TRANSLATION =================
+                    const translatedAffirmation = yield getTranslatedObj(affirmation);
+                    // ================= SAVE =================
+                    const savedAffirmation = yield safeUpsert(user_affirmation_model_1.default, {
+                        "affirmation.en": {
+                            $regex: `^${affirmation}$`,
+                            $options: "i",
+                        },
+                    }, {
+                        affirmation: translatedAffirmation,
+                        type: "Admin",
+                        user_id: [],
+                    });
+                    console.log("✅ Saved:", savedAffirmation._id);
+                }
+                catch (rowError) {
+                    console.error("❌ Row failed:", rowError);
+                    continue;
+                }
+            }
+            console.log(`🎉 Job ${job.id} completed`);
+        }
+        catch (error) {
+            console.error("❌ Worker Job Error:", error);
+            throw error;
+        }
+    }), {
+        connection: redisConnection,
+        concurrency: 1,
+    });
+    // ================= EVENTS =================
+    worker.on("completed", (job) => {
+        console.log(`🎉 Job ${job.id} completed successfully`);
+    });
+    worker.on("failed", (job, err) => {
+        console.error(`❌ Job ${job === null || job === void 0 ? void 0 : job.id} failed`, err);
+    });
+});
+// ================= START =================
+startAffirmationWorker();

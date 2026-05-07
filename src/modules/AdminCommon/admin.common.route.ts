@@ -51,13 +51,28 @@ router.post('/readExcel', multer.addToMulter.single('file'), async (req: Request
     const result: ApiResponse = await controller.excelRead(req.file as Express.Multer.File);
     return showOutput(res, result, result.code)
 })
+router.post('/readAffirmationExcel', multer.addToMulter.single('file'), async (req: Request | any, res: Response) => {
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.excelAffirmationRead(req.file as Express.Multer.File);
+    return showOutput(res, result, result.code)
+})
 router.get('/listExcelImports', verifyTokenAdmin, async (req: Request | any, res: Response) => {
     const { page, limit, search } = req.query
     const controller = new AdminCommonController(req, res)
     const result: ApiResponse = await controller.listModule(page, limit, search);
     return showOutput(res, result, result.code)
 });
-
-
+router.post('/addAffirmation', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { affirmation } = req.body;
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.affirmation({ affirmation});
+    return showOutput(res, result, result.code)
+});
+router.get('/listAffirmation', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { page, limit } = req.query
+    const controller = new AdminCommonController(req, res)
+    const result: ApiResponse = await controller.listAffirmation(page, limit);
+    return showOutput(res, result, result.code)
+});
 
 export default router

@@ -55,10 +55,27 @@ router.post('/readExcel', multer.addToMulter.single('file'), (req, res) => __awa
     const result = yield controller.excelRead(req.file);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/readAffirmationExcel', multer.addToMulter.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.excelAffirmationRead(req.file);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.get('/listExcelImports', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, search } = req.query;
     const controller = new admin_common_controller_1.default(req, res);
     const result = yield controller.listModule(page, limit, search);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/addAffirmation', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { affirmation } = req.body;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.affirmation({ affirmation });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/listAffirmation', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit } = req.query;
+    const controller = new admin_common_controller_1.default(req, res);
+    const result = yield controller.listAffirmation(page, limit);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

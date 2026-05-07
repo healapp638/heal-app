@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Security, Put, FormField, Delete, UploadedFile, Get, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
-import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent } from './admin.common.validator';
+import { validateUpdateQuestion, validateAddQuestion, validateCommonContent, validateDeleteQuestion, validateResetCommonContent, validateAffirmation } from './admin.common.validator';
 import handler from '../AdminCommon/admin.common.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
@@ -114,12 +114,42 @@ export default class AdminCommonController extends Controller {
     }
     //ends
 
+        /**
+ * Read Affirmation Excel
+ */
+    @Post("/readAffirmationExcel")
+    public async excelAffirmationRead(@UploadedFile() file: Express.Multer.File): Promise<ApiResponse> {
+        return handler.addExcelAffirmation({ file })
+    }
+    //ends
+
     @Security('Bearer')
     @Get('/listExcelImports')
     public async listModule(@Query() page?: number, @Query() limit?: number, @Query() search?: string): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.listExcelImport);
         return wrappedFunc(page, limit, search); // Invoking the wrapped function 
     }
+
+    @Security('Bearer')
+    @Post("/addAffirmation")
+    public async affirmation(@Body() request: { affirmation: string }): Promise<ApiResponse> {
+
+        const validate = validateAffirmation(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+
+        const wrappedFunc = tryCatchWrapper(handler.addAffirmation);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get('/listAffirmation')
+    public async listAffirmation(@Query() page?: number, @Query() limit?: number): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.listAffirmation);
+        return wrappedFunc(page, limit); // Invoking the wrapped function 
+    }
+    
 }
 
 

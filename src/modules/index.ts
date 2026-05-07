@@ -15,13 +15,14 @@ import userModulesRoutes from './UserModules/user.modules.route';
 import userJournelRoutes from './UserJournel/user.journal.route';
 import userChallengesRoutes from './UserChallenges/user.challenges.route';
 
+
 //user and admin all usertype common routes
 import commonRoutes from '../modules/Common/common.route'
 
 //user routes
 import userAuthRoutes from '../modules/UserAuth/user.auth.route'
 import userCommonRoutes from '../modules/UserCommon/user.common.route'
-
+import userAffirmationRoutes from '../modules/UserAffirmation/user.affirmation.route'
 
 
 // *********assign order of routes for swagger in last to show on first **********
@@ -45,6 +46,7 @@ Route.use('/user/common', userCommonRoutes);
 Route.use('/user/modules', userModulesRoutes);
 Route.use('/user/journal', userJournelRoutes);
 Route.use('/user/challenges', userChallengesRoutes);
+Route.use('/user/affirmation',userAffirmationRoutes)
 
 //user and admin all usertype common routes
 Route.use('/common', commonRoutes);

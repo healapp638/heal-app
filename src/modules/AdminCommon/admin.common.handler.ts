@@ -14,9 +14,10 @@ import { translateText } from "../../helpers/langauge.translate.helper";
 // import Phase from '../AdminPhases/admin.phases.model';
 // import ExerciseDetails from '../AdminExercise/admin.exercise.details..model';
 // import Exercise from '../AdminExercise/admin.excercise.model';
-import { excelQueue } from "../../processQueue/queue";
+import { affirmationQueue, excelQueue } from "../../processQueue/queue";
 import adminExelModel from "./admin.exel.model";
 import { getCountAndPagination } from "../../helpers/common.helper";
+import userAffirmationModel from "../UserAffirmation/user.affirmation.model";
 
 const AdminCommonHandler = {
 
@@ -179,6 +180,36 @@ excelRead: async (data: any): Promise<ApiResponse> => {
         return showResponse(false, "Queue error", error, statusCodes.API_ERROR);
     }
 },
+addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
+    try {
+        const { file } = data;
+
+        if (!file || (!file.data && !file.buffer)) {
+            return showResponse(false, "No file data found.", null, statusCodes.VALIDATION_ERROR);
+        }
+
+        const fileBuffer = file.data || file.buffer;
+        console.log(fileBuffer,"fileBuffer")
+
+        // ✅ PUSH TO QUEUE
+        const job = await affirmationQueue.add("process-affirmationexcel", {
+            fileBuffer
+        }, {
+            attempts: 3,
+            backoff: {
+                type: "exponential",
+                delay: 5000
+            }
+        });
+
+        return showResponse(true, "File queued successfully", {
+            jobId: job.id
+        }, statusCodes.SUCCESS);
+
+    } catch (error) {
+        return showResponse(false, "Queue error", error, statusCodes.API_ERROR);
+    }
+},
     listExcelImport: async (page: number, limit: number, search: string = ''): Promise<ApiResponse> => {
         const aggregate = [
             {
@@ -190,6 +221,40 @@ excelRead: async (data: any): Promise<ApiResponse> => {
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminExelModel, aggregate, page, limit)
         const result = await adminExelModel.aggregate(aggregation)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+    },
+
+    addAffirmation: async (data: any): Promise<ApiResponse> => {
+        const { affirmation } = data;
+
+        const affirmationData: any = { en: affirmation };
+
+        // Translate to all other languages in parallel
+        await Promise.all(
+            SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map(async (lang) => {
+                const [translatedQ] = await Promise.all([
+                    translateText(affirmation, lang),
+
+                ]);
+                affirmationData[lang] = translatedQ;
+            })
+        );
+        const Affirmation = await userAffirmationModel.create({ affirmation: affirmationData });
+
+
+        return showResponse(true, responseMessage.admin.question_added, Affirmation, statusCodes.SUCCESS);
+    },
+        listAffirmation: async (page: number, limit: number): Promise<ApiResponse> => {
+        const aggregate = [
+            // {
+                // $match: {
+                //     affirmation: { $regex: search, $options: 'i' },
+                // }
+            // },
+            { $sort: { createdAt: -1 } },
+        ]
+        const { totalCount, aggregation } = await getCountAndPagination(userAffirmationModel, aggregate, page, limit)
+        const result = await userAffirmationModel.aggregate(aggregation)
         return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
     },
 }

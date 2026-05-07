@@ -12,6 +12,9 @@ import { connection } from "./configs/mongoose.config";
 import { handleFileSize } from "./utils/config.util";
 import basicAuth from "express-basic-auth";
 import compression from "compression";
+import cron from "node-cron";
+import { generateAffirmation } from "./helpers/cronjob.func";
+
 
 const app: Application = express();
 
@@ -19,6 +22,17 @@ const init = async () => {
   await initializeAwsCredential()
   await connection()
     .then(() => {
+
+    // Start cronjobs
+  cron.schedule(
+    "0 4 * * *",
+    generateAffirmation,
+    {
+        timezone: "America/New_York",
+        noOverlap: true,
+    }
+);
+
       bootstrapAdmin(() => {
         console.log("Bootstrapping finished!");
       });

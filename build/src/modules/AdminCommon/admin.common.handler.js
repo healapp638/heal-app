@@ -30,6 +30,7 @@ const langauge_translate_helper_1 = require("../../helpers/langauge.translate.he
 const queue_1 = require("../../processQueue/queue");
 const admin_exel_model_1 = __importDefault(require("./admin.exel.model"));
 const common_helper_1 = require("../../helpers/common.helper");
+const user_affirmation_model_1 = __importDefault(require("../UserAffirmation/user.affirmation.model"));
 const AdminCommonHandler = {
     addQuestion: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { question, answer } = data;
@@ -147,6 +148,32 @@ const AdminCommonHandler = {
             return (0, response_util_1.showResponse)(false, "Queue error", error, statusCodes_1.default.API_ERROR);
         }
     }),
+    addExcelAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { file } = data;
+            if (!file || (!file.data && !file.buffer)) {
+                return (0, response_util_1.showResponse)(false, "No file data found.", null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const fileBuffer = file.data || file.buffer;
+            console.log(fileBuffer, "fileBuffer");
+            // ✅ PUSH TO QUEUE
+            const job = yield queue_1.affirmationQueue.add("process-affirmationexcel", {
+                fileBuffer
+            }, {
+                attempts: 3,
+                backoff: {
+                    type: "exponential",
+                    delay: 5000
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "File queued successfully", {
+                jobId: job.id
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            return (0, response_util_1.showResponse)(false, "Queue error", error, statusCodes_1.default.API_ERROR);
+        }
+    }),
     listExcelImport: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '') {
         const aggregate = [
             {
@@ -158,6 +185,32 @@ const AdminCommonHandler = {
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_exel_model_1.default, aggregate, page, limit);
         const result = yield admin_exel_model_1.default.aggregate(aggregation);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+    }),
+    addAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { affirmation } = data;
+        const affirmationData = { en: affirmation };
+        // Translate to all other languages in parallel
+        yield Promise.all(workflow_constant_1.SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            const [translatedQ] = yield Promise.all([
+                (0, langauge_translate_helper_1.translateText)(affirmation, lang),
+            ]);
+            affirmationData[lang] = translatedQ;
+        })));
+        const Affirmation = yield user_affirmation_model_1.default.create({ affirmation: affirmationData });
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.admin.question_added, Affirmation, statusCodes_1.default.SUCCESS);
+    }),
+    listAffirmation: (page, limit) => __awaiter(void 0, void 0, void 0, function* () {
+        const aggregate = [
+            // {
+            // $match: {
+            //     affirmation: { $regex: search, $options: 'i' },
+            // }
+            // },
+            { $sort: { createdAt: -1 } },
+        ];
+        const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(user_affirmation_model_1.default, aggregate, page, limit);
+        const result = yield user_affirmation_model_1.default.aggregate(aggregation);
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
 };

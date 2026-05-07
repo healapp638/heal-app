@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.excelQueue = void 0;
+exports.affirmationQueue = exports.excelQueue = void 0;
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
 const connection = new ioredis_1.default({
@@ -11,5 +11,8 @@ const connection = new ioredis_1.default({
     port: 6379,
 });
 exports.excelQueue = new bullmq_1.Queue("excel-import", {
+    connection,
+});
+exports.affirmationQueue = new bullmq_1.Queue("process-affirmationexcel", {
     connection,
 });

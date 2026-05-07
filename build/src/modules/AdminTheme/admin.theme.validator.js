@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateThemeDetails = exports.validateDeleteTheme = exports.validateUpdateTheme = exports.validateCreateTheme = void 0;
+exports.validateThemeDetails = exports.validateDeleteTheme = exports.validateAffirmation = exports.validateUpdateTheme = exports.validateCreateTheme = void 0;
 const joi_1 = __importDefault(require("joi"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const validateCreateTheme = (common) => {
@@ -24,6 +24,12 @@ const validateUpdateTheme = (common) => {
     }).validate(common);
 };
 exports.validateUpdateTheme = validateUpdateTheme;
+const validateAffirmation = (common) => {
+    return joi_1.default.object({
+        affirmation_id: joi_1.default.string().optional()
+    }).validate(common);
+};
+exports.validateAffirmation = validateAffirmation;
 const validateDeleteTheme = (common) => {
     return joi_1.default.object({
         themeId: joi_1.default.string().trim().required(),

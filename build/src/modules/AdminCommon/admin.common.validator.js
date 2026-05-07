@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateResetCommonContent = exports.validateDeleteQuestion = exports.validateUpdateQuestion = exports.validateAddQuestion = exports.validateCommonContent = void 0;
+exports.validateAffirmation = exports.validateResetCommonContent = exports.validateDeleteQuestion = exports.validateUpdateQuestion = exports.validateAddQuestion = exports.validateCommonContent = void 0;
 const joi_1 = __importDefault(require("joi"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const validateCommonContent = (admin) => {
@@ -42,3 +42,9 @@ const validateResetCommonContent = (admin) => {
     }).validate(admin);
 };
 exports.validateResetCommonContent = validateResetCommonContent;
+const validateAffirmation = (admin) => {
+    return joi_1.default.object({
+        affirmation_id: joi_1.default.string().required()
+    }).validate(admin);
+};
+exports.validateAffirmation = validateAffirmation;

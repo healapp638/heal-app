@@ -23,6 +23,7 @@ const common_route_1 = __importDefault(require("../modules/Common/common.route")
 //user routes
 const user_auth_route_1 = __importDefault(require("../modules/UserAuth/user.auth.route"));
 const user_common_route_1 = __importDefault(require("../modules/UserCommon/user.common.route"));
+const user_affirmation_route_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.route"));
 // *********assign order of routes for swagger in last to show on first **********
 //admin routes
 Route.use('/admin/common', admin_common_route_1.default);
@@ -40,6 +41,7 @@ Route.use('/user/common', user_common_route_1.default);
 Route.use('/user/modules', user_modules_route_1.default);
 Route.use('/user/journal', user_journal_route_1.default);
 Route.use('/user/challenges', user_challenges_route_1.default);
+Route.use('/user/affirmation', user_affirmation_route_1.default);
 //user and admin all usertype common routes
 Route.use('/common', common_route_1.default);
 exports.default = Route;

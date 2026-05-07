@@ -18,6 +18,11 @@ export const validateUpdateTheme = (common: any) => {
         themeId: joi.string().trim().required(),
     }).validate(common)
 }
+export const validateAffirmation = (common: any) => {
+    return joi.object({
+        affirmation_id: joi.string().optional()
+    }).validate(common)
+}
 
 export const validateDeleteTheme = (common: any) => {
     return joi.object({

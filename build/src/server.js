@@ -26,11 +26,18 @@ const mongoose_config_1 = require("./configs/mongoose.config");
 const config_util_1 = require("./utils/config.util");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 const compression_1 = __importDefault(require("compression"));
+const node_cron_1 = __importDefault(require("node-cron"));
+const cronjob_func_1 = require("./helpers/cronjob.func");
 const app = (0, express_1.default)();
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, app_constant_1.initializeAwsCredential)();
     yield (0, mongoose_config_1.connection)()
         .then(() => {
+        // Start cronjobs
+        node_cron_1.default.schedule("0 4 * * *", cronjob_func_1.generateAffirmation, {
+            timezone: "America/New_York",
+            noOverlap: true,
+        });
         (0, bootstrap_util_1.bootstrapAdmin)(() => {
             console.log("Bootstrapping finished!");
         });

@@ -113,10 +113,35 @@ let AdminCommonController = class AdminCommonController extends tsoa_1.Controlle
         });
     }
     //ends
+    /**
+* Read Affirmation Excel
+*/
+    excelAffirmationRead(file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return admin_common_handler_1.default.addExcelAffirmation({ file });
+        });
+    }
+    //ends
     listModule(page, limit, search) {
         return __awaiter(this, void 0, void 0, function* () {
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.listExcelImport);
             return wrappedFunc(page, limit, search); // Invoking the wrapped function 
+        });
+    }
+    affirmation(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_common_validator_1.validateAffirmation)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.addAffirmation);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    listAffirmation(page, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_common_handler_1.default.listAffirmation);
+            return wrappedFunc(page, limit); // Invoking the wrapped function 
         });
     }
 };
@@ -168,6 +193,13 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AdminCommonController.prototype, "excelRead", null);
 __decorate([
+    (0, tsoa_1.Post)("/readAffirmationExcel"),
+    __param(0, (0, tsoa_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "excelAffirmationRead", null);
+__decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)('/listExcelImports'),
     __param(0, (0, tsoa_1.Query)()),
@@ -177,6 +209,23 @@ __decorate([
     __metadata("design:paramtypes", [Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], AdminCommonController.prototype, "listModule", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/addAffirmation"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "affirmation", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/listAffirmation'),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number]),
+    __metadata("design:returntype", Promise)
+], AdminCommonController.prototype, "listAffirmation", null);
 AdminCommonController = __decorate([
     (0, tsoa_1.Tags)('Admin Common Routes'),
     (0, tsoa_1.Route)('/admin/common'),

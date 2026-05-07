@@ -14,6 +14,7 @@ import { connection as connectDB } from "../configs/mongoose.config";
 import adminExelModel from "../modules/AdminCommon/admin.exel.model";
 import { sendTopicNotification } from "../services/notification.service";
 import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
+import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.model";
 
 console.log("👷 Worker booting...");
 
@@ -376,3 +377,148 @@ const startWorker = async () => {
 
 // 🚀 Start
 startWorker();
+
+
+// ================= AFFIRMATION WORKER =================
+
+
+const startAffirmationWorker = async () => {
+
+    console.log("🔌 Connecting DB...");
+
+    await connectDB();
+
+    console.log("✅ DB connected");
+
+    const worker = new Worker(
+        "affirmation-import",
+        async (job) => {
+
+            console.log(`🚀 Processing Job ${job.id}`);
+
+            try {
+
+                // ================= BUFFER =================
+                const rawBuffer = job.data.fileBuffer;
+
+                const fileBuffer = Buffer.isBuffer(rawBuffer)
+                    ? rawBuffer
+                    : Buffer.from(rawBuffer.data);
+
+                // ================= READ EXCEL =================
+                const workbook = xlsx.read(fileBuffer, {
+                    type: "buffer",
+                });
+
+                const sheetName = workbook.SheetNames[0];
+
+                const sheetData: any[] =
+                    xlsx.utils.sheet_to_json(
+                        workbook.Sheets[sheetName],
+                        { defval: "" }
+                    );
+
+                console.log("📊 Total Rows:", sheetData.length);
+
+                if (!sheetData.length) {
+                    console.log("❌ Empty Excel");
+                    return;
+                }
+
+                let rowCount = 1;
+
+                // ================= LOOP ROWS =================
+                for (const row of sheetData) {
+
+                    try {
+
+                        console.log(`📦 Processing Row ${rowCount++}`);
+
+                        const affirmation =
+                            row?.affirmation?.toString()?.trim();
+
+                        if (!affirmation) {
+                            console.log("⚠️ Empty affirmation skipped");
+                            continue;
+                        }
+
+
+                        // ================= TRANSLATION =================
+                        const translatedAffirmation =
+                            await getTranslatedObj(
+                                affirmation
+                            );
+
+                        // ================= SAVE =================
+                        const savedAffirmation =
+                            await safeUpsert(
+                                userAffirmationModel,
+                                {
+                                    "affirmation.en": {
+                                        $regex: `^${affirmation}$`,
+                                        $options: "i",
+                                    },
+                                },
+                                {
+                                    affirmation:
+                                        translatedAffirmation,
+
+                                    type: "Admin",
+
+                                    user_id: [],
+                                }
+                            );
+
+                        console.log(
+                            "✅ Saved:",
+                            savedAffirmation._id
+                        );
+
+                    } catch (rowError) {
+
+                        console.error(
+                            "❌ Row failed:",
+                            rowError
+                        );
+
+                        continue;
+                    }
+                }
+
+                console.log(`🎉 Job ${job.id} completed`);
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Worker Job Error:",
+                    error
+                );
+
+                throw error;
+            }
+        },
+        {
+            connection: redisConnection,
+            concurrency: 1,
+        }
+    );
+
+    // ================= EVENTS =================
+    worker.on("completed", (job) => {
+
+        console.log(
+            `🎉 Job ${job.id} completed successfully`
+        );
+    });
+
+    worker.on("failed", (job, err) => {
+
+        console.error(
+            `❌ Job ${job?.id} failed`,
+            err
+        );
+    });
+};
+
+// ================= START =================
+startAffirmationWorker();

@@ -36,3 +36,9 @@ export const validateResetCommonContent = (admin: any) => {
     }).validate(admin)
 }
 
+export const validateAffirmation = (admin: any) => {
+    return joi.object({
+        affirmation_id: joi.string().required()
+    }).validate(admin)
+}
+
