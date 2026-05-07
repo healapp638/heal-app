@@ -8,6 +8,7 @@ import { Avatar, Dropdown, Layout, Menu, Space, MenuProps, Image } from 'antd'
 import type { MenuItemType as AntMenuItem } from 'antd/es/menu/interface';
 import { IoIosArrowDown, IoIosArrowUp, IoIosLogOut } from 'react-icons/io';
 import { FaUser, FaUserCircle ,FaFileAlt } from 'react-icons/fa';
+import { MdSubtitles } from "react-icons/md";
 import { FaFileExcel } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { MdPolicy } from "react-icons/md";
@@ -114,6 +115,17 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             ),
             key: '/addexcel',
             label: 'Add Excel',
+        },
+         {
+            routes: ROUTES.PRIVATE.AFFIRMATION,
+            icon: (
+                <MdSubtitles className='text-maincolor! h-8 w-8!' />
+            ),
+            activeIcon: (
+                <MdSubtitles className='text-white! h-8 w-8!' />
+            ),
+            key: '/affirmation',
+            label: 'Affirmation',
         },
         // {
         //     routes: ROUTES.PRIVATE.FAQ,

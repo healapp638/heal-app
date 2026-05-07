@@ -17,6 +17,7 @@ import DeleteModal from "@/components/ui/modals/DeleteModal"
 import AddSubModuleModal from "@/components/ui/modals/addSubModuleModal"
 import { FaPlus } from "react-icons/fa";
 import IconButton from "@/components/ui/IconButton"
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface SubModuleData {
     _id: string;
@@ -51,6 +52,7 @@ export default function AddSubModule() {
     const [openAddSubModuleModal, setOpenAddSubModuleModal] = React.useState(false)
     const [openDeleteModule, setOpenDeleteModule] = React.useState(false)
     const [selectedSubModule, setSelectedSubModule] = React.useState("")
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [openUpdateSubModuleModal, setOpenUpdateSubModuleModal] = React.useState(false)
     const [openViewSubModuleModal, setOpenViewSubModuleModal] = React.useState(false)
     const [pagination, setPagination] = React.useState({
@@ -249,7 +251,9 @@ export default function AddSubModule() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
+                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     <AppButton onClick={() => { setOpenAddSubModuleModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add SubModule

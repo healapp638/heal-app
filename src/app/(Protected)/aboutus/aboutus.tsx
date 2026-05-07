@@ -9,6 +9,7 @@ import { useAppQuery } from '@/tanstack/useAppQuery'
 import { useAppMutate } from '@/tanstack/useAppMutate'
 import CustomEditor from '@/components/ui/CustomEditor'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface CommonApiResponse {
     type: string;
@@ -16,7 +17,8 @@ interface CommonApiResponse {
     content: string
 }
 export default function AboutUs() {
-
+    
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [editorContent, setEditorContent] = React.useState<string>('');
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
@@ -109,7 +111,7 @@ export default function AboutUs() {
     }
 
     return (
-         <div className='p-2 md:p-6'>
+        <div className='p-2 md:p-6'>
             <div>
                 <h1 className="text-3xl font-bold text-black">
                     About <span className="text-maincolor">Us</span>
@@ -120,8 +122,9 @@ export default function AboutUs() {
                     value={selectedLanguage}
                     onChange={handleLanguageChange}
                     options={LANGUAGE_OPTIONS}
-                    className='w-32'
-                    placeholder="Select language"
+                    onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                    className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                 />
                 <div className='flex flex-wrap gap-4'>
                     <AppButton

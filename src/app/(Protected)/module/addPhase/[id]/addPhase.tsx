@@ -18,6 +18,7 @@ import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddPhaseModal from "@/components/ui/modals/addPhaseModal";
 import { FaPlus } from "react-icons/fa";
 import IconButton from "@/components/ui/IconButton";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface PhaseData {
     _id: string;
@@ -29,7 +30,7 @@ interface PhaseData {
     updatedAt: string;
     __v: number;
 }
-interface subModuleData{
+interface subModuleData {
     _id: string;
     title: string;
     status: number;
@@ -40,7 +41,7 @@ interface subModuleData{
 
 interface PhaseResult {
     result: PhaseData[];
-    sub_module_details:subModuleData;
+    sub_module_details: subModuleData;
     page: number;
     limit: number;
     total: number;
@@ -56,6 +57,7 @@ export default function AddPhase() {
     const moduleID = searchParams.get("moduleID")
     const themeId = searchParams.get("themeId")
     const themeTitle = searchParams.get("themeTitle")
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
 
     const [openAddPhaseModal, setOpenAddPhaseModal] = React.useState(false);
     const [openDeletePhaseModal, setOpenDeletePhaseModal] = React.useState(false);
@@ -99,7 +101,7 @@ export default function AddPhase() {
         }
     })
     const PhaseListData = listPhase?.data?.result;
-    const SubModuleData=listPhase?.data?.sub_module_details;
+    const SubModuleData = listPhase?.data?.sub_module_details;
 
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
@@ -288,7 +290,9 @@ export default function AddPhase() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
+                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     <AppButton onClick={() => { setOpenAddPhaseModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add Phases

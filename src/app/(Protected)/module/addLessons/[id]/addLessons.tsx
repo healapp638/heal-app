@@ -17,7 +17,7 @@ import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
 import { FaPlus } from "react-icons/fa";
 import IconButton from "@/components/ui/IconButton";
 import { AppButton } from "@/components/ui";
-
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface LessonData {
     _id: string;
@@ -40,7 +40,7 @@ interface PhaseData {
 
 interface LessonResult {
     result: LessonData[];
-    phaseDetails:PhaseData;
+    phaseDetails: PhaseData;
     page: number;
     limit: number;
     total: number;
@@ -65,6 +65,7 @@ export default function AddLessons() {
     const [lessonId, setLessonId] = React.useState<string>("");
     const [openUpdateLessonModal, setOpenUpdateLessonModal] = React.useState(false);
     const [openViewLessonModal, setOpenViewLessonModal] = React.useState(false);
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
@@ -260,7 +261,7 @@ export default function AddLessons() {
                 {/* <h1 className="text-3xl font-bold text-black">
                     Add <span className="text-maincolor">Lessons</span>
                 </h1> */}
-                 <ConfigProvider
+                <ConfigProvider
                     theme={{
                         components: {
                             Breadcrumb: {
@@ -298,7 +299,9 @@ export default function AddLessons() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
+                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     {listLessons?.data && (listLessons?.data?.totalCount ?? 0) < 1 && <AppButton onClick={() => { setOpenAddLessonsModal(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add Lessons

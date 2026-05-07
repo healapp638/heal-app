@@ -17,6 +17,7 @@ import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddModuleModal from "@/components/ui/modals/addModuleModal";
 import { FaPlus } from "react-icons/fa";
 import IconButton from "@/components/ui/IconButton";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface ModuleData {
     _id: string;
@@ -51,7 +52,7 @@ export default function AddModule() {
     const [openAddModal, setOpenAddModal] = React.useState(false);
     const [openDeleteModule, setOpenDeleteModule] = React.useState(false);
     const [selectedModule, setSelectedModule] = React.useState<string>("");
-
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false)
     const [openViewModal, setOpenViewModal] = React.useState(false)
 
@@ -153,7 +154,7 @@ export default function AddModule() {
         }
     })
     const ModuleListData = listModule?.data?.result;
-    const ThemeData=listModule?.data?.them_details;
+    const ThemeData = listModule?.data?.them_details;
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
     }, [pagination]);
@@ -169,6 +170,7 @@ export default function AddModule() {
     const handleAddSubModule = (moduleId: string) => {
         route.push(`${ROUTES.PRIVATE.SUBMODULE}/${moduleId}?themeId=${themeId}&themeTitle=${ThemeData?.title}`)
     };
+    
     const columns: ColumnsType<ModuleData> = [
         {
             title: 'Sr. No.',
@@ -248,7 +250,7 @@ export default function AddModule() {
                         <Breadcrumb
                             items={[
                                 {
-                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={()=>{route.push(ROUTES.PRIVATE.MODULE)}}>{ThemeData?.title || ''}</span>,
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(ROUTES.PRIVATE.MODULE) }}>{ThemeData?.title || ''}</span>,
                                 },
                                 {
                                     title: <span className="text-maincolor text-h2 font-bold">Module</span>
@@ -263,7 +265,9 @@ export default function AddModule() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
+                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     <AppButton onClick={() => { setOpenAddModal(true) }} className="bg-maincolor! w-26! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add Module

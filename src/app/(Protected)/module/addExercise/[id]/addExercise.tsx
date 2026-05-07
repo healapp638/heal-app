@@ -3,12 +3,12 @@
 import React from "react"
 import { Breadcrumb, ConfigProvider, Select, Switch, Table } from "antd";
 import { FaEye } from "react-icons/fa";
+import { FiTrash2, FiEdit } from "react-icons/fi"
 import { ENDPOINTS } from "@/Endpoints";
 import { AppButton } from "@/components/ui"
 import { ColumnsType } from "antd/es/table";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { MUTATION_KEYS } from "@/tanstack/keys";
-import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
@@ -16,6 +16,7 @@ import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddExerciseModal from "@/components/ui/modals/addExerciseModal"
 import IconButton from "@/components/ui/IconButton";
 import { ROUTES } from "@/routerKeys";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface ExerciseData {
     _id: string;
@@ -33,12 +34,12 @@ interface ExerciseData {
     __v: number;
 }
 interface LessonDetailData {
-    reading_title:string;
+    reading_title: string;
 }
 
 interface ExerciseResult {
     result: ExerciseData[];
-    exerciseDetails:LessonDetailData;
+    exerciseDetails: LessonDetailData;
     page: number;
     limit: number;
     total: number;
@@ -47,7 +48,7 @@ interface ExerciseResult {
 export default function AddExercise() {
 
     const params = useParams();
-    const route=useRouter();
+    const route = useRouter();
     const searchParams = useSearchParams();
     const lessonId = params?.id as string;
     const themeTitle = searchParams.get("themeTitle");
@@ -63,6 +64,7 @@ export default function AddExercise() {
     const [openDeleteExerciseModal, setOpenDeleteExerciseModal] = React.useState(false);
     const [openViewModal, setOpenViewModal] = React.useState(false);
     const [exerciseId, setExerciseId] = React.useState("");
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
@@ -100,7 +102,7 @@ export default function AddExercise() {
         }
     })
     const listExercisesData = listExercises?.data?.result;
-const exerciseDetailsData = listExercises?.data?.exerciseDetails;
+    const exerciseDetailsData = listExercises?.data?.exerciseDetails;
 
     const { mutateAsync: DeleteExercise, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.EXERCISE_DELETE],
@@ -280,7 +282,9 @@ const exerciseDetailsData = listExercises?.data?.exerciseDetails;
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
+                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     <AppButton onClick={() => setOpenModal(true)} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add Exercise

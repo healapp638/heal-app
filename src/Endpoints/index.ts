@@ -60,7 +60,12 @@ export const ENDPOINTS = {
         USERS_DETAIL:"admin/user/details",
         USERS_STATUS:"admin/user/status",
         LIST_EXCEL_IMPORTS:"admin/common/listExcelImports",
-        EXCEL_IMPORT:"admin/common/readExcel"
-
+        EXCEL_IMPORT:"admin/common/readExcel",
+        ADD_AFFILIATION:"admin/common/addAffirmation",
+        LIST_AFFILIATION:"admin/common/listAffirmation",
+        EDIT_AFFILIATION:"admin/common/editAffirmation",
+        DELETE_AFFILIATION:"admin/common/deleteAffirmation",
+        DETAIL_AFFILIATION:"admin/common/affirmationDetail",
+        
     }
 }

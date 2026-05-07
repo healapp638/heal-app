@@ -57,6 +57,13 @@ const MUTATION_KEYS = {
     USERS_LIST: "users-list",
     USERS_DETAIL: "users-detail",
     USERS_STATUS: "users-status",
+    LIST_EXCEL_IMPORTS: "list-excel-imports",
+    EXCEL_IMPORT: "excel-import",
+    ADD_AFFILIATION: "add-affirmation",
+    LIST_AFFILIATION: "list-affirmation",
+    EDIT_AFFILIATION: "edit-affirmation",
+    DELETE_AFFILIATION: "delete-affirmation",
+    DETAIL_AFFILIATION: "affirmation-detail",
 
 }
 

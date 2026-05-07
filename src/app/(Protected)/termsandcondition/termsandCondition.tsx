@@ -9,6 +9,7 @@ import { useAppQuery } from '@/tanstack/useAppQuery'
 import { useAppMutate } from '@/tanstack/useAppMutate'
 import CustomEditor from '@/components/ui/CustomEditor'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 interface CommonApiResponse {
     type: string;
@@ -17,7 +18,8 @@ interface CommonApiResponse {
 }
 
 export default function TermsAndCondition() {
-
+    
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [editorContent, setEditorContent] = React.useState<string>('');
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
@@ -128,7 +130,9 @@ export default function TermsAndCondition() {
                     value={selectedLanguage}
                     onChange={handleLanguageChange}
                     options={LANGUAGE_OPTIONS}
+                    onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                     className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                    suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                 />
                 <div className='flex flex-wrap gap-4'>
                     <AppButton

@@ -18,6 +18,7 @@ import AddThemeModal from '@/components/ui/modals/addThemeModal';
 import DeleteModal from '@/components/ui/modals/DeleteModal';
 import { FaPlus } from "react-icons/fa";
 import IconButton from '@/components/ui/IconButton';
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 export interface Theme {
     _id: string;
@@ -41,6 +42,7 @@ export default function Module() {
         pageSize: 10,
     });
     const [openModal, setOpenModal] = React.useState(false);
+    const [isSelectOpen, setIsSelectOpen] = React.useState(false);
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
     const [openUpdateModal, setOpenUpdateModal] = React.useState(false);
     const [openViewModal, setOpenViewModal] = React.useState(false);
@@ -192,7 +194,7 @@ export default function Module() {
             render: (_: any, record: Theme) => {
                 const changeStatus = record.status === 1 ? 3 : 1;
                 return (
-                    <div onClick={(e) => { e.stopPropagation();  }}>
+                    <div onClick={(e) => { e.stopPropagation(); }}>
                         <Switch
                             checked={record.status === 1}
                             loading={isStatusChangePending}
@@ -228,7 +230,9 @@ export default function Module() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
+                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     <AppButton onClick={() => setOpenModal(true)} className="bg-maincolor! w-26! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add Theme

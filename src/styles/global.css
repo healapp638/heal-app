@@ -216,6 +216,16 @@
   stroke: var(--color-white) !important;
 }
 
+/* for select dropdown */
+.ant-select-dropdown{
+  @apply bg-cream! text-maincolor!
+}
+.ant-select-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+@apply bg-secondary-light! text-white!
+}
+.ant-select-dropdown .ant-select-item {
+  @apply text-maincolor!
+}
 }
 .buttonGradient{
   background: linear-gradient(135deg, #F66F76 0%, #f66f7610 100%)!important;

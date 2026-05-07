@@ -9,7 +9,7 @@ import { RxCross2 } from "react-icons/rx";
 interface DeleteModalProps {
     openDeleteModal: boolean;
     setopenDeleteModal: (value: boolean) => void;
-    handleDelete: () => void;
+    handleDelete?: () => void;
     title: string;
     loading?: boolean;
 }
