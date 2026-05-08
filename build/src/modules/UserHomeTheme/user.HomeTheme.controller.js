@@ -26,10 +26,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
 const config_util_1 = require("../../utils/config.util");
-const user_affirmation_handler_1 = __importDefault(require("./user.affirmation.handler"));
+const user_HomeTheme_handler_1 = __importDefault(require("./user.HomeTheme.handler"));
 const response_util_1 = require("../../utils/response.util");
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
-const admin_common_validator_1 = require("../AdminCommon/admin.common.validator");
+const user_HomeTheme_validator_1 = require("./user.HomeTheme.validator");
 // import { validateCreateTheme, validateDeleteTheme, validateThemeDetails, validateUpdateTheme } from './admin.theme.validator';
 let AdminAffirmationController = class AdminAffirmationController extends tsoa_1.Controller {
     constructor(req, res) {
@@ -38,71 +38,57 @@ let AdminAffirmationController = class AdminAffirmationController extends tsoa_1
         this.res = res;
         this.userId = req.body.user ? req.body.user.id : '';
     }
-    getAIAffirmation() {
+    addUserTheme(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.getAIAffirmation);
+            const validate = (0, user_HomeTheme_validator_1.validateAddUserTheme)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_HomeTheme_handler_1.default.addUserTheme);
+            return wrappedFunc(this.userId, request); // Invoking the wrapped function 
+        });
+    }
+    getHomeThemeCategory() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_HomeTheme_handler_1.default.getHomeThemeCategory);
             return wrappedFunc(this.userId); // Invoking the wrapped function 
         });
     }
-    addView(request) {
+    /**
+   * all | new | most_popular | recent ---> filters
+   */
+    getHomeThemeListing(filter, categoryTheme_id, page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_common_validator_1.validateAffirmation)(request);
-            if (validate.error) {
-                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
-            }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.addView);
+            const request = { filter, categoryTheme_id, page, limit };
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_HomeTheme_handler_1.default.getHomeThemeListing);
             return wrappedFunc(request, this.userId); // Invoking the wrapped function 
         });
     }
-    getAffirmationListing(sort_column, sort_direction, page, limit) {
+    getMyTheme() {
         return __awaiter(this, void 0, void 0, function* () {
-            const request = { sort_column, sort_direction, page, limit };
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.getAffirmationListing);
-            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
-        });
-    }
-    likeUnlikeAffirmation(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, admin_common_validator_1.validateAffirmation)(request);
-            if (validate.error) {
-                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
-            }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.likeUnlikeAffirmation);
-            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
-        });
-    }
-    likedAffirmationList(sort_column, sort_direction, page, limit, search_key) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const request = { sort_column, sort_direction, page, limit, search_key };
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.likedAffirmationList);
-            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
-        });
-    }
-    createLink(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.createLink);
-            return wrappedFunc(request); // Invoking the wrapped function
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_HomeTheme_handler_1.default.getMyTheme);
+            return wrappedFunc(this.userId); // Invoking the wrapped function 
         });
     }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Get)('/getAIAffirmation'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], AdminAffirmationController.prototype, "getAIAffirmation", null);
-__decorate([
-    (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)('/addView'),
+    (0, tsoa_1.Post)('/addUserTheme'),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], AdminAffirmationController.prototype, "addView", null);
+], AdminAffirmationController.prototype, "addUserTheme", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Get)("/getAffirmationListing"),
+    (0, tsoa_1.Get)('/getHomeThemeCategory'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminAffirmationController.prototype, "getHomeThemeCategory", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/getHomeThemeListing"),
     __param(0, (0, tsoa_1.Query)()),
     __param(1, (0, tsoa_1.Query)()),
     __param(2, (0, tsoa_1.Query)()),
@@ -110,37 +96,17 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, String, Number, Number]),
     __metadata("design:returntype", Promise)
-], AdminAffirmationController.prototype, "getAffirmationListing", null);
+], AdminAffirmationController.prototype, "getHomeThemeListing", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)('/likeUnlikeAffirmation'),
-    __param(0, (0, tsoa_1.Body)()),
+    (0, tsoa_1.Get)('/getMyTheme'),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], AdminAffirmationController.prototype, "likeUnlikeAffirmation", null);
-__decorate([
-    (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Get)("/likedAffirmationList"),
-    __param(0, (0, tsoa_1.Query)()),
-    __param(1, (0, tsoa_1.Query)()),
-    __param(2, (0, tsoa_1.Query)()),
-    __param(3, (0, tsoa_1.Query)()),
-    __param(4, (0, tsoa_1.Query)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Number, Number, String]),
-    __metadata("design:returntype", Promise)
-], AdminAffirmationController.prototype, "likedAffirmationList", null);
-__decorate([
-    (0, tsoa_1.Post)("/createLink"),
-    __param(0, (0, tsoa_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], AdminAffirmationController.prototype, "createLink", null);
+], AdminAffirmationController.prototype, "getMyTheme", null);
 AdminAffirmationController = __decorate([
-    (0, tsoa_1.Tags)('User Affirmation'),
-    (0, tsoa_1.Route)('/user/affirmation'),
+    (0, tsoa_1.Tags)('User Home Theme'),
+    (0, tsoa_1.Route)('/user/homeTheme'),
     __metadata("design:paramtypes", [Object, Object])
 ], AdminAffirmationController);
 exports.default = AdminAffirmationController;

@@ -22,35 +22,6 @@ export default class AdminAffirmationController extends Controller {
         this.userId = req.body.user ? req.body.user.id : ''
     }
 
-    // @Security('Bearer')
-    // @Post('/create')
-    // public async createAffirmation(): Promise<ApiResponse> {
-    //     const wrappedFunc = tryCatchWrapper(handler.createAffirmation);
-    //     return wrappedFunc(); // Invoking the wrapped function 
-    // }
-
-    // @Security('Bearer')
-    // @Post('/update_theme')
-    // public async updateTheme(@Body() request: { title: string, description: string, imgUrl: string, lang: string, themeId: string }): Promise<ApiResponse> {
-    //     const validate = validateUpdateTheme(request);
-    //     if (validate.error) {
-    //         return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
-    //     }
-    //     const wrappedFunc = tryCatchWrapper(handler.updateTheme);
-    //     return wrappedFunc(request); // Invoking the wrapped function 
-    // }
-
-    // @Security('Bearer')
-    // @Delete('/delete_theme')
-    // public async deleteTheme(@Body() request: { themeId: string, status: string }): Promise<ApiResponse> {
-    //     const validate = validateDeleteTheme(request);
-    //     if (validate.error) {
-    //         return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
-    //     }
-    //     const wrappedFunc = tryCatchWrapper(handler.deleteTheme);
-    //     return wrappedFunc(request); // Invoking the wrapped function 
-    // }
-
     @Security('Bearer')
     @Get('/getAIAffirmation')
     public async getAIAffirmation(): Promise<ApiResponse> {

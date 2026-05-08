@@ -6,20 +6,6 @@ import { verifyTokenUser } from '../../middlewares/auth.middleware'
 
 const router = express.Router()
 
-// router.post('/create', verifyTokenUser, async (req: Request | any, res: Response) => {
-//     const controller = new ModuleController(req, res)
-//     const result: ApiResponse = await controller.createAffirmation();
-//     return showOutput(res, result, result.code)
-// });
-
-
-
-// router.delete('/delete_theme', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-//     const { themeId, status } = req.body
-//     const controller = new ModuleController(req, res)
-//     const result: ApiResponse = await controller.deleteTheme({ themeId, status });
-//     return showOutput(res, result, result.code)
-// });
 
 router.get('/getAIAffirmation', verifyTokenUser, async (req: Request | any, res: Response) => {
     const controller = new ModuleController(req, res)

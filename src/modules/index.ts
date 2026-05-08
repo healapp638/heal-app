@@ -23,6 +23,7 @@ import commonRoutes from '../modules/Common/common.route'
 import userAuthRoutes from '../modules/UserAuth/user.auth.route'
 import userCommonRoutes from '../modules/UserCommon/user.common.route'
 import userAffirmationRoutes from '../modules/UserAffirmation/user.affirmation.route'
+import userHomeThemeRoutes from '../modules/UserHomeTheme/user.HomeTheme.route'
 
 
 
@@ -49,7 +50,7 @@ Route.use('/user/modules', userModulesRoutes);
 Route.use('/user/journal', userJournelRoutes);
 Route.use('/user/challenges', userChallengesRoutes);
 Route.use('/user/affirmation',userAffirmationRoutes)
-
+Route.use('/user/homeTheme',userHomeThemeRoutes)
 //user and admin all usertype common routes
 Route.use('/common', commonRoutes);
 

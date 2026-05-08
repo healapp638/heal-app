@@ -17,17 +17,6 @@ const user_affirmation_controller_1 = __importDefault(require("./user.affirmatio
 const response_util_1 = require("../../utils/response.util");
 const auth_middleware_1 = require("../../middlewares/auth.middleware");
 const router = express_1.default.Router();
-// router.post('/create', verifyTokenUser, async (req: Request | any, res: Response) => {
-//     const controller = new ModuleController(req, res)
-//     const result: ApiResponse = await controller.createAffirmation();
-//     return showOutput(res, result, result.code)
-// });
-// router.delete('/delete_theme', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-//     const { themeId, status } = req.body
-//     const controller = new ModuleController(req, res)
-//     const result: ApiResponse = await controller.deleteTheme({ themeId, status });
-//     return showOutput(res, result, result.code)
-// });
 router.get('/getAIAffirmation', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const controller = new user_affirmation_controller_1.default(req, res);
     const result = yield controller.getAIAffirmation();

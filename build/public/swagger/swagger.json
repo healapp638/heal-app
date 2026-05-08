@@ -863,6 +863,164 @@
 				"parameters": []
 			}
 		},
+		"/user/homeTheme/addUserTheme": {
+			"post": {
+				"operationId": "AddUserTheme",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Home Theme"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"homeTheme_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"homeTheme_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/homeTheme/getHomeThemeCategory": {
+			"get": {
+				"operationId": "GetHomeThemeCategory",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Home Theme"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/user/homeTheme/getHomeThemeListing": {
+			"get": {
+				"operationId": "GetHomeThemeListing",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "all | new | most_popular | recent ---> filters",
+				"tags": [
+					"User Home Theme"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "filter",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "categoryTheme_id",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/user/homeTheme/getMyTheme": {
+			"get": {
+				"operationId": "GetMyTheme",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Home Theme"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/common/contactus/fill": {
 			"post": {
 				"operationId": "ContactUs",
