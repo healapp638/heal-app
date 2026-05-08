@@ -19,6 +19,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_homethemeCategory_model_1 = __importDefault(require("./admin.homethemeCategory.model"));
+const admin_hometheme_model_1 = __importDefault(require("./admin.hometheme.model"));
 const CommonHandler = {
     createCategoryTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, imgUrl } = data;
@@ -93,6 +94,53 @@ const CommonHandler = {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, themeDetails[0], statusCodes_1.default.SUCCESS);
-    })
+    }),
+    createHomeTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { categoryTheme_id, imgUrl } = data;
+        const createTheme = yield admin_hometheme_model_1.default.create({
+            categoryTheme_id: categoryTheme_id,
+            imgUrl
+        });
+        if (!createTheme) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, null, statusCodes_1.default.SUCCESS);
+    }),
+    updateHomeTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { hometheme_id, imgUrl } = data;
+        const obj = Object.assign({}, (imgUrl && { imgUrl }));
+        const updateTheme = yield admin_hometheme_model_1.default.findByIdAndUpdate(hometheme_id, { $set: obj }, { new: true });
+        if (!updateTheme) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
+    }),
+    deleteHomeTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { hometheme_id, status } = data;
+        const deleteTheme = yield admin_hometheme_model_1.default.findOneAndUpdate({ _id: hometheme_id }, { $set: { status: status } }, { new: true });
+        if (!deleteTheme) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
+    }),
+    listHomeTheme: (categoryTheme_id, page, limit) => __awaiter(void 0, void 0, void 0, function* () {
+        const aggregate = [
+            { $match: { categoryTheme_id: (0, common_helper_1.convertToObjectId)(categoryTheme_id), status: { $ne: workflow_constant_1.USER_STATUS.DELETED } } },
+            { $sort: { createdAt: -1 } },
+        ];
+        const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_hometheme_model_1.default, aggregate, page, limit);
+        const result = yield admin_hometheme_model_1.default.aggregate(aggregation);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+    }),
+    homeThemeDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { hometheme_id } = data;
+        const themeDetails = yield admin_hometheme_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(hometheme_id) } },
+        ]);
+        if (!themeDetails) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, themeDetails[0], statusCodes_1.default.SUCCESS);
+    }),
 };
 exports.default = CommonHandler;

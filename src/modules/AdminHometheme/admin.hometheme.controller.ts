@@ -5,7 +5,7 @@ import handler from './admin.hometheme.handler'
 import { showResponse } from '../../utils/response.util';
 import { tryCatchWrapper } from '../../utils/config.util';
 import statusCodes from '../../constants/statusCodes';
-import { validateCreateTheme, validateDeleteTheme, validateThemeDetails, validateUpdateTheme } from './admin.hometheme.validator';
+import { validateCreateHomeTheme, validateCreateTheme, validateDeleteHomeTheme, validateDeleteTheme, validateHomeThemeDetails, validateThemeDetails, validateUpdateHometheme, validateUpdateTheme } from './admin.hometheme.validator';
 
 
 @Tags('Admin Home Theme')
@@ -70,5 +70,56 @@ export default class AdminThemeController extends Controller {
         }
         const wrappedFunc = tryCatchWrapper(handler.themeCategoryDetails);
         return wrappedFunc({ themeCategoryId, lang }); // Invoking the wrapped function 
+    }
+
+        @Security('Bearer')
+    @Post('/createHomeTheme')
+    public async createHomeTheme(@Body() request: { categoryTheme_id:string,imgUrl: string }): Promise<ApiResponse> {
+        const validate = validateCreateHomeTheme(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.createHomeTheme);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Post('/updateHomeTheme')
+    public async updateHomeTheme(@Body() request: { hometheme_id: string, imgUrl: string }): Promise<ApiResponse> {
+        const validate = validateUpdateHometheme(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.updateHomeTheme);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Delete('/deleteHomeTheme')
+    public async deleteHomeTheme(@Body() request: { hometheme_id: string, status: string }): Promise<ApiResponse> {
+        const validate = validateDeleteHomeTheme(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.deleteHomeTheme);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get('/listHomeTheme')
+    public async listHomeTheme(@Query() categoryTheme_id?:string, @Query() page?: number, @Query() limit?: number): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.listHomeTheme);
+        return wrappedFunc(categoryTheme_id,page, limit); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get('/homeThemeDetails')
+    public async homeThemeDetails(@Query() hometheme_id?: string): Promise<ApiResponse> {
+        const validate = validateHomeThemeDetails({ hometheme_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.homeThemeDetails);
+        return wrappedFunc({ hometheme_id, }); // Invoking the wrapped function 
     }
 }

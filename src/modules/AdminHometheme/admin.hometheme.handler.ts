@@ -6,6 +6,7 @@ import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import { translateText } from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import adminHomethemeCategoryModel from "./admin.homethemeCategory.model";
+import adminHomethemeModel from "./admin.hometheme.model";
 
 const CommonHandler = {
 
@@ -103,7 +104,67 @@ const CommonHandler = {
             return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR)
         }
         return showResponse(true, responseMessage.common.data_retreive_sucess, themeDetails[0], statusCodes.SUCCESS)
-    }
+    },
+    createHomeTheme: async (data: any): Promise<ApiResponse> => {
+        const { categoryTheme_id, imgUrl } = data;
+
+        const createTheme = await adminHomethemeModel.create({
+            categoryTheme_id: categoryTheme_id,
+            imgUrl
+        });
+
+        if (!createTheme) {
+            return showResponse(false, responseMessage.common.save_failed, null, statusCodes.API_ERROR);
+        }
+
+        return showResponse(true, responseMessage.common.data_save, null, statusCodes.SUCCESS);
+    },
+
+    updateHomeTheme: async (data: any): Promise<ApiResponse> => {
+        const { hometheme_id, imgUrl } = data
+        const obj: any = {
+            ...(imgUrl && { imgUrl })
+        };
+        const updateTheme = await adminHomethemeModel.findByIdAndUpdate(
+            hometheme_id,
+            { $set: obj },
+            { new: true }
+        );
+        if (!updateTheme) {
+            return showResponse(false, responseMessage.common.update_failed, null, statusCodes.API_ERROR)
+        }
+        return showResponse(true, responseMessage.common.updated_sucessfully, null, statusCodes.SUCCESS)
+    },
+
+    deleteHomeTheme: async (data: any): Promise<ApiResponse> => {
+        const { hometheme_id, status } = data
+        const deleteTheme = await adminHomethemeModel.findOneAndUpdate({ _id: hometheme_id }, { $set: { status: status } }, { new: true })
+        if (!deleteTheme) {
+            return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
+        }
+        return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
+    },
+
+    listHomeTheme: async (categoryTheme_id: string, page: number, limit: number): Promise<ApiResponse> => {
+        const aggregate = [
+            { $match: { categoryTheme_id:convertToObjectId(categoryTheme_id),status: { $ne: USER_STATUS.DELETED } } },
+            { $sort: { createdAt: -1 } },
+        ]
+        const { totalCount, aggregation } = await getCountAndPagination(adminHomethemeModel, aggregate, page, limit)
+        const result = await adminHomethemeModel.aggregate(aggregation)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+    },
+
+    homeThemeDetails: async (data: any): Promise<ApiResponse> => {
+        const { hometheme_id } = data
+        const themeDetails = await adminHomethemeModel.aggregate([
+            { $match: { _id: convertToObjectId(hometheme_id) } },
+        ])
+        if (!themeDetails) {
+            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR)
+        }
+        return showResponse(true, responseMessage.common.data_retreive_sucess, themeDetails[0], statusCodes.SUCCESS)
+    },
 }
 
 export default CommonHandler

@@ -83,6 +83,52 @@ let AdminThemeController = class AdminThemeController extends tsoa_1.Controller 
             return wrappedFunc({ themeCategoryId, lang }); // Invoking the wrapped function 
         });
     }
+    createHomeTheme(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_hometheme_validator_1.validateCreateHomeTheme)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_hometheme_handler_1.default.createHomeTheme);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    updateHomeTheme(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_hometheme_validator_1.validateUpdateHometheme)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_hometheme_handler_1.default.updateHomeTheme);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    deleteHomeTheme(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_hometheme_validator_1.validateDeleteHomeTheme)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_hometheme_handler_1.default.deleteHomeTheme);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    listHomeTheme(categoryTheme_id, page, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_hometheme_handler_1.default.listHomeTheme);
+            return wrappedFunc(categoryTheme_id, page, limit); // Invoking the wrapped function 
+        });
+    }
+    homeThemeDetails(hometheme_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_hometheme_validator_1.validateHomeThemeDetails)({ hometheme_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_hometheme_handler_1.default.homeThemeDetails);
+            return wrappedFunc({ hometheme_id, }); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -128,6 +174,48 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AdminThemeController.prototype, "themeCategoryDetails", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)('/createHomeTheme'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminThemeController.prototype, "createHomeTheme", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)('/updateHomeTheme'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminThemeController.prototype, "updateHomeTheme", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Delete)('/deleteHomeTheme'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminThemeController.prototype, "deleteHomeTheme", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/listHomeTheme'),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Number, Number]),
+    __metadata("design:returntype", Promise)
+], AdminThemeController.prototype, "listHomeTheme", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/homeThemeDetails'),
+    __param(0, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminThemeController.prototype, "homeThemeDetails", null);
 AdminThemeController = __decorate([
     (0, tsoa_1.Tags)('Admin Home Theme'),
     (0, tsoa_1.Route)('/admin/homeTheme'),

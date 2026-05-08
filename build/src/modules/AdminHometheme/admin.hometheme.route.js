@@ -48,4 +48,94 @@ router.get('/themeCategoryDetails', verifyTokenAdmin, (req, res) => __awaiter(vo
     const result = yield controller.themeCategoryDetails(themeCategoryId, lang);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/createCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, imgUrl } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.createCategoryTheme({ title, imgUrl });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/updateCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, imgUrl, lang, themeCategoryId } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.updateCategoryTheme({ title, imgUrl, lang, themeCategoryId });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.delete('/deleteCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { themeCategoryId, status } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.deleteCategoryTheme({ themeCategoryId, status });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/listCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit, search, lang } = req.query;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.listCategoryTheme(page, limit, search, lang);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/themeCategoryDetails', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { themeCategoryId, lang } = req.query;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.themeCategoryDetails(themeCategoryId, lang);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/createCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, imgUrl } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.createCategoryTheme({ title, imgUrl });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/updateCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, imgUrl, lang, themeCategoryId } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.updateCategoryTheme({ title, imgUrl, lang, themeCategoryId });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.delete('/deleteCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { themeCategoryId, status } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.deleteCategoryTheme({ themeCategoryId, status });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/listCategoryTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit, search, lang } = req.query;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.listCategoryTheme(page, limit, search, lang);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/themeCategoryDetails', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { themeCategoryId, lang } = req.query;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.themeCategoryDetails(themeCategoryId, lang);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/createHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { categoryTheme_id, imgUrl } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.createHomeTheme({ categoryTheme_id, imgUrl });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/updateHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { hometheme_id, imgUrl } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.updateHomeTheme({ hometheme_id, imgUrl });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.delete('/deleteHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { hometheme_id, status } = req.body;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.deleteHomeTheme({ hometheme_id, status });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/listHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { categoryTheme_id, page, limit } = req.query;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.listHomeTheme(categoryTheme_id, page, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/homeThemeDetails', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { hometheme_id } = req.query;
+    const controller = new admin_hometheme_controller_1.default(req, res);
+    const result = yield controller.homeThemeDetails(hometheme_id);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;
