@@ -141,6 +141,40 @@ const affirmationHandler = {
                     },
                 },
                 {
+                    $lookup: {
+                        from: "likeaffirmations",
+                        let: {
+                            affirmationId: "$_id"
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            {
+                                                $eq: [
+                                                    "$affirmation_id",
+                                                    "$$affirmationId"
+                                                ]
+                                            },
+                                            {
+                                                $eq: [
+                                                    "$user_id",
+                                                    (0, common_helper_1.convertToObjectId)(user_id)
+                                                ]
+                                            },
+                                            {
+                                                $eq: ["$status", 1]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: "likedData"
+                    }
+                },
+                {
                     $project: {
                         _id: 1,
                         affirmation: {
@@ -148,6 +182,18 @@ const affirmationHandler = {
                         },
                         type: 1,
                         createdAt: 1,
+                        is_liked: {
+                            $cond: [
+                                {
+                                    $gt: [
+                                        { $size: "$likedData" },
+                                        0
+                                    ]
+                                },
+                                true,
+                                false
+                            ]
+                        }
                     },
                 },
             ];

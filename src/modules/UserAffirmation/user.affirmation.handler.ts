@@ -152,6 +152,41 @@ const affirmationHandler = {
             [sort_column]: sort_direction === "asc" ? 1 : -1,
           },
         },
+        {
+          $lookup: {
+            from: "likeaffirmations",
+            let: {
+              affirmationId: "$_id"
+            },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      {
+                        $eq: [
+                          "$affirmation_id",
+                          "$$affirmationId"
+                        ]
+                      },
+                      {
+                        $eq: [
+                          "$user_id",
+                          convertToObjectId(user_id)
+                        ]
+                      },
+                      {
+                        $eq: ["$status", 1]
+                      }
+                    ]
+                  }
+                }
+              }
+            ],
+            as: "likedData"
+          }
+        },
+
 
         {
           $project: {
@@ -163,7 +198,20 @@ const affirmationHandler = {
 
             type: 1,
             createdAt: 1,
+            is_liked: {
+              $cond: [
+                {
+                  $gt: [
+                    { $size: "$likedData" },
+                    0
+                  ]
+                },
+                true,
+                false
+              ]
+            }
           },
+
         },
       ];
 
@@ -292,7 +340,7 @@ const affirmationHandler = {
   },
 
 
-  likedAffirmationList: async (data: any,user_id: string,
+  likedAffirmationList: async (data: any, user_id: string,
   ): Promise<ApiResponse> => {
     const {
       sort_column = "createdAt",
@@ -305,7 +353,7 @@ const affirmationHandler = {
       _id: convertToObjectId(user_id),
       status: USER_STATUS.ACTIVE,
     });
-    console.log(sort_column,sort_direction,user_id)
+    console.log(sort_column, sort_direction, user_id)
 
     if (!userData) {
       return showResponse(
@@ -317,8 +365,8 @@ const affirmationHandler = {
     }
 
     // user language
-    const language = userData?.data?.language||"en";
-    console.log(language,"language")
+    const language = userData?.data?.language || "en";
+    console.log(language, "language")
 
     const aggregate = [
       // user liked affirmations
@@ -335,7 +383,7 @@ const affirmationHandler = {
         },
       },
 
-    //   join affirmation data
+      //   join affirmation data
       {
         $lookup: {
           from: "affirmations",
@@ -349,7 +397,7 @@ const affirmationHandler = {
         $unwind: "$affirmationData",
       },
 
-    //   exclude deleted affirmation
+      //   exclude deleted affirmation
       {
         $match: {
           "affirmationData.status": { $eq: 1 },
@@ -368,9 +416,9 @@ const affirmationHandler = {
       },
 
       {
-          $sort: {
-              createdAt: -1
-          }
+        $sort: {
+          createdAt: -1
+        }
       }
     ];
 
