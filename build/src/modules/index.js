@@ -18,6 +18,7 @@ const admin_exercise_route_1 = __importDefault(require("./AdminExercise/admin.ex
 const user_modules_route_1 = __importDefault(require("./UserModules/user.modules.route"));
 const user_journal_route_1 = __importDefault(require("./UserJournel/user.journal.route"));
 const user_challenges_route_1 = __importDefault(require("./UserChallenges/user.challenges.route"));
+const admin_hometheme_route_1 = __importDefault(require("./AdminHometheme/admin.hometheme.route"));
 //user and admin all usertype common routes
 const common_route_1 = __importDefault(require("../modules/Common/common.route"));
 //user routes
@@ -35,6 +36,7 @@ Route.use('/admin/modules', admin_modules_route_1.default);
 Route.use('/admin/submodules', admin_submodules_route_1.default);
 Route.use('/admin/phases', admin_phases_route_1.default);
 Route.use('/admin/exercise', admin_exercise_route_1.default);
+Route.use('/admin/homeTheme', admin_hometheme_route_1.default);
 //user routes
 Route.use('/user/auth', user_auth_route_1.default);
 Route.use('/user/common', user_common_route_1.default);
