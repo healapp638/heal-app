@@ -2,7 +2,6 @@
 
 import React from 'react'
 import { ROUTES } from '@/routerKeys';
-import { FaEye } from "react-icons/fa";
 import { ENDPOINTS } from '@/Endpoints';
 import { FILE_URL } from '@/utils/helper';
 import { AppButton } from '@/components/ui'
@@ -16,7 +15,7 @@ import { useAppMutate } from '@/tanstack/useAppMutate';
 import { useAppQuery } from '@/tanstack/useAppQuery';
 import AddThemeModal from '@/components/ui/modals/addThemeModal';
 import DeleteModal from '@/components/ui/modals/DeleteModal';
-import { FaPlus } from "react-icons/fa";
+import { FaPlus ,FaEye} from "react-icons/fa";
 import IconButton from '@/components/ui/IconButton';
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 

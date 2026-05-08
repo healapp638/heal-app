@@ -64,7 +64,17 @@ const MUTATION_KEYS = {
     EDIT_AFFILIATION: "edit-affirmation",
     DELETE_AFFILIATION: "delete-affirmation",
     DETAIL_AFFILIATION: "affirmation-detail",
-
+    
+    CATEGORY_CREATE: "create-category",
+    CATEGORY_LIST: "list-category",
+    CATEGORY_DELETE: "delete-category",
+    CATEGORY_DETAIL: "category-detail",
+    CATEGORY_UPDATE: "update-category",
+    HOMETHEME_CREATE: "create-hometheme",
+    HOMETHEME_UPDATE: "update-hometheme",
+    HOMETHEME_DELETE: "delete-hometheme",
+    HOMETHEME_LIST: "list-hometheme",
+    HOMETHEME_DETAIL: "hometheme-detail",
 }
 
 export { QUERY_KEYS, MUTATION_KEYS }

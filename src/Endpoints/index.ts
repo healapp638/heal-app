@@ -66,6 +66,16 @@ export const ENDPOINTS = {
         EDIT_AFFILIATION:"admin/common/editAffirmation",
         DELETE_AFFILIATION:"admin/common/deleteAffirmation",
         DETAIL_AFFILIATION:"admin/common/affirmationDetail",
-        
+
+        CATEGORY_CREATE:"admin/homeTheme/createCategoryTheme",
+        CATEGORY_LIST:"admin/homeTheme/listCategoryTheme",
+        CATEGORY_DELETE:"admin/homeTheme/deleteCategoryTheme",
+        CATEGORY_DETAIL:"admin/homeTheme/themeCategoryDetails",
+        CATEGORY_UPDATE:"admin/homeTheme/updateCategoryTheme",
+        HOMETHEME_CREATE:"admin/homeTheme/createHomeTheme",
+        HOMETHEME_UPDATE:"admin/homeTheme/updateHomeTheme",
+        HOMETHEME_DELETE:"admin/homeTheme/deleteHomeTheme",
+        HOMETHEME_LIST:"admin/homeTheme/listHomeTheme",
+        HOMETHEME_DETAIL:"admin/homeTheme/homeThemeDetails"
     }
 }

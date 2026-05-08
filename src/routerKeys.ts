@@ -29,7 +29,10 @@ export const ROUTES = {
         USERS:"/users",
         USERDETAIL:"/users/userDetail",
         ADDEXCEL:"/addexcel",
-        AFFIRMATION:"/affirmation"
+        AFFIRMATION:"/affirmation",
+        CATEGORY:"/category",
+        HOMETHEME:"/category/theme",
+        
     },
 
     // Common public pages

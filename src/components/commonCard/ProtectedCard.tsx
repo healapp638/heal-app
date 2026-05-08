@@ -7,8 +7,8 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Avatar, Dropdown, Layout, Menu, Space, MenuProps, Image } from 'antd'
 import type { MenuItemType as AntMenuItem } from 'antd/es/menu/interface';
 import { IoIosArrowDown, IoIosArrowUp, IoIosLogOut } from 'react-icons/io';
-import { FaUser, FaUserCircle ,FaFileAlt } from 'react-icons/fa';
-import { MdSubtitles } from "react-icons/md";
+import { FaUser, FaUserCircle, FaFileAlt } from 'react-icons/fa';
+import { MdSubtitles, MdCategory } from "react-icons/md";
 import { FaFileExcel } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { MdPolicy } from "react-icons/md";
@@ -105,7 +105,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             key: '/module',
             label: 'Module',
         },
-         {
+        {
             routes: ROUTES.PRIVATE.ADDEXCEL,
             icon: (
                 <FaFileExcel className='text-maincolor! h-8 w-8!' />
@@ -116,7 +116,7 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             key: '/addexcel',
             label: 'Add Excel',
         },
-         {
+        {
             routes: ROUTES.PRIVATE.AFFIRMATION,
             icon: (
                 <MdSubtitles className='text-maincolor! h-8 w-8!' />
@@ -126,6 +126,17 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
             ),
             key: '/affirmation',
             label: 'Affirmation',
+        },
+        {
+            routes: ROUTES.PRIVATE.CATEGORY,
+            icon: (
+                <MdCategory className='text-maincolor! h-8 w-8!' />
+            ),
+            activeIcon: (
+                <MdCategory className='text-white! h-8 w-8!' />
+            ),
+            key: '/category',
+            label: 'Category',
         },
         // {
         //     routes: ROUTES.PRIVATE.FAQ,
@@ -195,7 +206,10 @@ const ProtectedCard = ({ children }: ProtectedCardProps) => {
         else if (pathWithoutQuery.startsWith('/users')) {
             setActiveIndex(ROUTES.PRIVATE.USERS); // Match /user_detail/:userId
         }
-        
+        else if (pathWithoutQuery.startsWith('/category')) {
+            setActiveIndex(ROUTES.PRIVATE.CATEGORY); // Match /user_detail/:userId
+        }
+
     }, [pathname]);
 
     const handleDropdownVisibleChange = (visible: boolean): void => {
