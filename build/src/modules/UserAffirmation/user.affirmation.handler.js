@@ -58,6 +58,7 @@ const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model")
 const common_helper_1 = require("../../helpers/common.helper");
 const commonHelper = __importStar(require("../../helpers/common.helper"));
 const user_affirmationLike_model_1 = __importDefault(require("./user.affirmationLike.model"));
+const user_deeplink_model_1 = __importDefault(require("./user.deeplink.model"));
 const affirmationHandler = {
     getAIAffirmation: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -263,7 +264,7 @@ const affirmationHandler = {
     }),
     likedAffirmationList: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
-        const { sort_column = "createdAt", sort_direction = "desc", page = 1, limit = 10, } = data;
+        const { sort_column = "createdAt", sort_direction = "desc", page = 1, limit = 10, search_key = "" } = data;
         // ================= USER =================
         const userData = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, {
             _id: (0, common_helper_1.convertToObjectId)(user_id),
@@ -303,9 +304,12 @@ const affirmationHandler = {
             },
             //   exclude deleted affirmation
             {
-                $match: {
-                    "affirmationData.status": { $eq: 1 },
-                },
+                $match: Object.assign({ "affirmationData.status": { $eq: 1 } }, (search_key && {
+                    [`affirmationData.affirmation.${language}`]: {
+                        $regex: search_key,
+                        $options: "i",
+                    },
+                })),
             },
             {
                 $project: {
@@ -330,5 +334,27 @@ const affirmationHandler = {
             totalCount,
         }, statusCodes_1.default.SUCCESS);
     }),
+    createLink: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { affirmation_id } = data;
+            console.log(affirmation_id, "affirmation_id");
+            // Generate random 8-char code
+            const code = commonHelper.generateRandomAlphanumeric(8);
+            // Insert document with code and params
+            const response = yield user_deeplink_model_1.default.insertMany(Object.assign(Object.assign({ code }, (affirmation_id && { affirmation_id })), { createdAt: new Date() }));
+            if (response) {
+                console.log("response", response);
+                return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data, {
+                    link: `https://apidev.heal-app.com/link/${code}/${affirmation_id}`,
+                    code,
+                }, statusCodes_1.default.SUCCESS);
+            }
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+        }
+        catch (err) {
+            console.log(err, "err");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+        }
+    }), //ends-----------------------------------------------------------------------------------------------
 };
 exports.default = affirmationHandler;

@@ -14,6 +14,7 @@ import basicAuth from "express-basic-auth";
 import compression from "compression";
 import cron from "node-cron";
 import { generateAffirmation } from "./helpers/cronjob.func";
+import userDeeplinkModel from "./modules/UserAffirmation/user.deeplink.model";
 
 
 const app: Application = express();
@@ -25,10 +26,10 @@ const init = async () => {
 
     // Start cronjobs
   cron.schedule(
-    "0 4 * * *",
+    // "0 4 * * *",
+      "0 2 * * *",
     generateAffirmation,
     {
-        timezone: "America/New_York",
         noOverlap: true,
     }
 );
@@ -107,6 +108,109 @@ async function setupSwagger(app: any) {
 }
 
 setupSwagger(app)
+
+// ****************************** sharing logic ********************************
+// Serve apple-app-site-association file with correct content-type
+app.get("/apple-app-site-association", (req, res) => {
+   res.type("application/json");
+   res.sendFile(path.join(__dirname, "public", "apple-app-site-association"));
+});
+
+// Explicit route to serve assetlinks.json in .well-known folder
+
+app.get("/.well-known/assetlinks.json", (req, res) => {
+   res.type("application/json");
+   res.sendFile("assetlinks.json", {
+      root: path.join(__dirname, "public", ".well-known"),
+   });
+});
+
+app.get("/link/:code/:affirmation_id", async (req, res) => {
+   const { code, affirmation_id } = req.params;
+   //console.log(req.params, "req.params")
+
+   const doc = await userDeeplinkModel.findOne({ code });
+
+   if (!doc) {
+      return res.redirect("https://myapp.com/notfound");
+   }
+
+   let deepLink = `myapp://open?code=${code}`;
+   const ua = req.headers["user-agent"] || "";
+
+   const iosStore = `https://apps.apple.com/us/app`;
+   const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
+   const fallbackWeb = "https://apidev.heal-app.com/";
+
+   let storeUrl = fallbackWeb;
+   const codeParam = encodeURIComponent(code || "");
+   const idParam = encodeURIComponent(affirmation_id || "");
+
+   if (/iPhone|iPad|iPod/.test(ua)) {
+      // console.log("📱 iOS user detected");
+      storeUrl = iosStore;
+      // deepLink = `myapp://open?code=${code}`;
+      deepLink = `myapp://open?code=${codeParam}&affirmation_id=${idParam}`;
+      // console.log(deepLink, "deepLink ioss")
+   } else if (/Android/.test(ua)) {
+      console.log("🤖 Android user detected");
+      storeUrl = playStore;
+      // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
+      deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=pollture;package=com.heal;end`;
+      // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
+      console.log(deepLink, "deepLink android")
+   }
+
+   // Use a strong random nonce instead of hardcoding in production
+   const nonce = "123456";
+
+   res.setHeader(
+      "Content-Security-Policy",
+      `script-src 'self' 'nonce-${nonce}';`,
+   );
+
+   res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Opening App</title>
+          <script nonce="${nonce}">
+              function attemptDeepLink() {
+                  const deepLink = "${deepLink}";
+                  const storeUrl = "${storeUrl}";
+                  
+                  try {
+                      const iframe = document.createElement('iframe');
+                      iframe.style.display = 'none';
+                      iframe.src = deepLink;
+                      document.body.appendChild(iframe);
+                      
+                      setTimeout(() => {
+                          try {
+                              window.location = deepLink;
+                          } catch (e) {
+                               // console.log('Deep link failed:', e);
+                          }
+                      }, 100);
+                      
+                  } catch (error) {
+                     // console.log('Deep link attempt failed:', error);
+                  }
+                  
+                  setTimeout(() => {
+                      window.location.href = storeUrl;
+                  }, 2000);
+              }
+              
+              attemptDeepLink();
+          </script>
+      </head>
+      <body>
+          <p>Opening application...</p>
+      </body>
+      </html>
+    `);
+});
 
 
 app.use("/api/v1", Routes);

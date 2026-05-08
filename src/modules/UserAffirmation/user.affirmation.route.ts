@@ -47,9 +47,16 @@ router.post('/likeUnlikeAffirmation', verifyTokenUser, async (req: Request | any
 });
 
 router.get('/likedAffirmationList', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { sort_column, sort_direction, page, limit } = req.query
+    const { sort_column, sort_direction, page, limit,search_key } = req.query
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.likedAffirmationList(sort_column, sort_direction, page, limit);
+    const result: ApiResponse = await controller.likedAffirmationList(sort_column, sort_direction, page, limit,search_key);
+    return showOutput(res, result, result.code)
+})
+
+router.post('/createLink', async (req, res) => {
+    const { affirmation_id } = req.body;
+    const controller = new ModuleController(req, res)
+    const result: ApiResponse = await controller.createLink({ affirmation_id});
     return showOutput(res, result, result.code)
 })
 

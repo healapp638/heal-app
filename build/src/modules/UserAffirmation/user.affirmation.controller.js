@@ -97,11 +97,17 @@ let AdminAffirmationController = class AdminAffirmationController extends tsoa_1
             return wrappedFunc(request, this.userId); // Invoking the wrapped function 
         });
     }
-    likedAffirmationList(sort_column, sort_direction, page, limit) {
+    likedAffirmationList(sort_column, sort_direction, page, limit, search_key) {
         return __awaiter(this, void 0, void 0, function* () {
-            const request = { sort_column, sort_direction, page, limit };
+            const request = { sort_column, sort_direction, page, limit, search_key };
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.likedAffirmationList);
             return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+        });
+    }
+    createLink(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_affirmation_handler_1.default.createLink);
+            return wrappedFunc(request); // Invoking the wrapped function
         });
     }
 };
@@ -146,10 +152,18 @@ __decorate([
     __param(1, (0, tsoa_1.Query)()),
     __param(2, (0, tsoa_1.Query)()),
     __param(3, (0, tsoa_1.Query)()),
+    __param(4, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, Number, Number]),
+    __metadata("design:paramtypes", [String, String, Number, Number, String]),
     __metadata("design:returntype", Promise)
 ], AdminAffirmationController.prototype, "likedAffirmationList", null);
+__decorate([
+    (0, tsoa_1.Post)("/createLink"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminAffirmationController.prototype, "createLink", null);
 AdminAffirmationController = __decorate([
     (0, tsoa_1.Tags)('User Affirmation'),
     (0, tsoa_1.Route)('/user/affirmation'),

@@ -12,6 +12,7 @@ import userAuthModel from "../UserAuth/user.auth.model";
 import { convertToObjectId } from "../../helpers/common.helper";
 import * as commonHelper from "../../helpers/common.helper";
 import userAffirmationLikeModel from "./user.affirmationLike.model";
+import userDeeplinkModel from "./user.deeplink.model";
 
 const affirmationHandler = {
   getAIAffirmation: async (user_id: any): Promise<ApiResponse> => {
@@ -340,13 +341,13 @@ const affirmationHandler = {
   },
 
 
-  likedAffirmationList: async (data: any, user_id: string,
-  ): Promise<ApiResponse> => {
+  likedAffirmationList: async (data: any, user_id: string): Promise<ApiResponse> => {
     const {
       sort_column = "createdAt",
       sort_direction = "desc",
       page = 1,
       limit = 10,
+      search_key = ""
     } = data;
     // ================= USER =================
     const userData = await findOne(userAuthModel, {
@@ -401,6 +402,12 @@ const affirmationHandler = {
       {
         $match: {
           "affirmationData.status": { $eq: 1 },
+              ...(search_key && {
+      [`affirmationData.affirmation.${language}`]: {
+        $regex: search_key,
+        $options: "i",
+      },
+    }),
         },
       },
 
@@ -442,6 +449,43 @@ const affirmationHandler = {
       statusCodes.SUCCESS,
     );
   },
+
+  createLink: async (data: any): Promise<ApiResponse> => {
+        try {
+            const { affirmation_id } = data;
+            console.log(affirmation_id,"affirmation_id")
+            // Generate random 8-char code
+            const code = commonHelper.generateRandomAlphanumeric(8);
+
+            // Insert document with code and params
+            const response: any = await userDeeplinkModel.insertMany({
+                code,
+                ...(affirmation_id && { affirmation_id }),
+                createdAt: new Date(),
+            });
+
+            if (response) {
+                console.log("response",response)
+                return showResponse(
+                    true,
+                    responseMessage.common.data,
+                    {
+                        link:
+                            `https://apidev.heal-app.com/link/${code}/${affirmation_id}`,
+                        code,
+                    },
+                    statusCodes.SUCCESS
+                );
+            }
+
+
+            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR);
+        } catch (err) {
+          console.log(err,"err")
+            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR);
+        }
+    },//ends-----------------------------------------------------------------------------------------------
+
 };
 
 export default affirmationHandler;

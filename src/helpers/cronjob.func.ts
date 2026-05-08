@@ -76,6 +76,7 @@ const generateAffirmation = async () => {
           });
   
           const content: any = response.choices?.[0]?.message?.content || "{}";
+          console.log(content,"content")
   
           const parsed = JSON.parse(content);
   

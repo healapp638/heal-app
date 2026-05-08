@@ -93,11 +93,16 @@ export default class AdminAffirmationController extends Controller {
 
     @Security('Bearer')
     @Get("/likedAffirmationList")
-    public async likedAffirmationList(@Query() sort_column?: string, @Query() sort_direction?: string, @Query() page?: number, @Query() limit?: number): Promise<ApiResponse> {
-        const request = { sort_column, sort_direction, page, limit }
+    public async likedAffirmationList(@Query() sort_column?: string, @Query() sort_direction?: string, @Query() page?: number, @Query() limit?: number,@Query() search_key?:string): Promise<ApiResponse> {
+        const request = { sort_column, sort_direction, page, limit,search_key }
         const wrappedFunc = tryCatchWrapper(handler.likedAffirmationList);
         return wrappedFunc(request,this.userId); // Invoking the wrapped function 
 
+    }
+    @Post("/createLink")
+    public async createLink(@Body() request: { affirmation_id?: string }): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.createLink);
+        return wrappedFunc(request); // Invoking the wrapped function
     }
 
 }

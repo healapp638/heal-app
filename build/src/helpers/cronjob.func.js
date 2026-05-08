@@ -86,6 +86,7 @@ const generateAffirmation = () => __awaiter(void 0, void 0, void 0, function* ()
                 ],
             });
             const content = ((_c = (_b = (_a = response.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) || "{}";
+            console.log(content, "content");
             const parsed = JSON.parse(content);
             generatedQuote = (_d = parsed === null || parsed === void 0 ? void 0 : parsed.quote) === null || _d === void 0 ? void 0 : _d.trim();
             if (!generatedQuote) {
