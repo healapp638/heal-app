@@ -13,6 +13,7 @@ import DailyQuote from '../../features/Home/screens/DailyQuote/DailyQuote';
 import ProgressTracker from '../../features/Home/screens/ProgressTracker/ProgressTracker';
 import ThemeMixes from '../../features/Home/screens/ThemeMixes/ThemeMixes';
 import ThemeSeeAll from '../../features/Home/screens/ThemeSeeAll/ThemeSeeAll';
+import SavedDailyQuote from '../../features/Home/screens/SavedDailyQuote/SavedDailyQuote';
 
 import HealyChat from '../../features/Home/screens/HealyChat/HealyChat';
 import ChallengeDetail from '../../features/Challenges/screens/ChallengeDetail/ChallengeDetail';
@@ -56,6 +57,7 @@ export default function NonAuthStack() {
       <Stack.Screen name={AppRoutes.ThemeMixes} component={ThemeMixes} />
       <Stack.Screen name={AppRoutes.ThemeSeeAll} component={ThemeSeeAll} />
       <Stack.Screen name={AppRoutes.ThemeDetail} component={ThemeDetail} />
+      <Stack.Screen name={AppRoutes.SavedDailyQuote} component={SavedDailyQuote} />
       <Stack.Screen name={AppRoutes.HealyChat} component={HealyChat} />
       <Stack.Screen
         name={AppRoutes.ChallengeDetail}

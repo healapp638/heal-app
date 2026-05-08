@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import React, { memo, useContext, useState, useRef } from 'react';
 import {
   Modal,
   StyleSheet,
@@ -10,12 +10,21 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
-import { useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme } from '@react-navigation/native';
+import AppRoutes from '../routes/RouteKeys/appRoutes';
 import SolidText from '../components/SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import { LocalizationContext } from '../localization/localization';
+import useInfiniteGetApi from '../hooks/useInfiniteGetApi';
+import { endpoints } from '../api/Services/endpoints';
+import usePostApi from '../hooks/usePostApi';
+import { useQueryClient } from '@tanstack/react-query';
+import Share from 'react-native-share';
+import { useHaptic } from '../hooks/useHaptic';
+import ViewShot from 'react-native-view-shot';
 
 import SolidBtn from '../components/SolidBtn';
 
@@ -27,53 +36,138 @@ interface FavoritesModalProps {
 }
 
 const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
+  const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = useStyles(colors);
+  const [searchText, setSearchText] = useState('');
+  const queryClient = useQueryClient();
+  const { triggerHaptic } = useHaptic();
+  const { mutate: postApi } = usePostApi();
+  const captureRef = useRef<ViewShot>(null);
+  const [sharingItem, setSharingItem] = useState<any>(null);
 
-  const favQuotes = [
+  const {
+    data: affirmationData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = useInfiniteGetApi(
+    endpoints.liked_affirmation_list,
+    ['getLikedAffirmationListing', { search_key: searchText }],
     {
-      id: 1,
-      text: 'My life is a constant blessing.',
-      date: 'Wed, May 6, 2026',
+      search_key: searchText,
+      limit: 10,
     },
-    {
-      id: 2,
-      text: 'I let go of what was and welcome what is.',
-      date: 'Wed, May 6, 2026',
-    },
-    {
-      id: 3,
-      text: 'I am capable of creating a life that honors my values and well-being.',
-      date: 'Wed, May 6, 2026',
-    },
-    {
-      id: 4,
-      text: "I am so proud of my strength to walk away from what doesn't deserve me.",
-      date: 'Wed, May 6, 2026',
-    },
-    { id: 5, text: 'My story has power.', date: 'Wed, May 6, 2026' },
-    {
-      id: 6,
-      text: 'I am enough. I did enough. I can let go.',
-      date: 'Wed, May 6, 2026',
-    },
-  ];
+  );
+
+  const favQuotes =
+    affirmationData?.pages?.flatMap(page => page?.data?.result || []) || [];
+
+  const handleUnlike = (item: any) => {
+    triggerHaptic('impactHeavy');
+
+    // Optimistic Update: Remove from favorites list locally
+    queryClient.setQueryData(
+      ['getLikedAffirmationListing', { search_key: searchText }],
+      (oldData: any) => {
+        if (!oldData) return oldData;
+        const newPages = oldData.pages.map((page: any) => ({
+          ...page,
+          data: {
+            ...page.data,
+            result: page.data.result.filter(
+              (quote: any) => quote._id !== item._id,
+            ),
+          },
+        }));
+        return { ...oldData, pages: newPages };
+      },
+    );
+
+    // Also update the main feed if it's cached
+    queryClient.setQueryData(
+      ['getAffirmationListing', { is_liked: undefined }],
+      (oldData: any) => {
+        if (!oldData) return oldData;
+        const newPages = oldData.pages.map((page: any) => ({
+          ...page,
+          data: {
+            ...page.data,
+            result: page.data.result.map((quote: any) =>
+              quote._id === item._id ? { ...quote, is_liked: false } : quote,
+            ),
+          },
+        }));
+        return { ...oldData, pages: newPages };
+      },
+    );
+
+    postApi(
+      {
+        endpoint: endpoints.like_unlike_affirmation,
+        data: { affirmation_id: item._id },
+      },
+      {
+        onSuccess: () => {
+          refetch(); // Refetch list after unlike
+        },
+      },
+    );
+  };
+
+  const handleShare = async (item: any) => {
+    setSharingItem(item);
+    // Wait for the hidden view to render with the new item
+    setTimeout(async () => {
+      try {
+        triggerHaptic('impactMedium');
+        const uri = await captureRef.current?.capture();
+        const shareMessage = `${item.affirmation}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
+        if (uri) {
+          await Share.open({
+            url: uri,
+            message: shareMessage,
+            type: 'image/png',
+          });
+        }
+      } catch (error) {
+        console.log('Share error:', error);
+      } finally {
+        setSharingItem(null);
+      }
+    }, 200);
+  };
 
   const renderFavItem = ({ item }: any) => (
     <View style={styles.card}>
-      <SolidText style={styles.quoteText}>{item.text}</SolidText>
+      <SolidText style={styles.quoteText}>{item.affirmation}</SolidText>
       <View style={styles.cardFooter}>
-        <SolidText style={styles.dateText}>{item.date}</SolidText>
+        <SolidText style={styles.dateText}>
+          {new Date(item.createdAt).toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })}
+        </SolidText>
         <View style={styles.actionRow}>
-          <TouchableOpacity style={styles.iconBtn}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={() => handleUnlike(item)}
+          >
             <Image
               source={images.heartFill}
               style={styles.icon}
               resizeMode="contain"
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconBtn}>
+          <TouchableOpacity
+            style={styles.iconBtn}
+            onPress={() => handleShare(item)}
+          >
             <Image
               source={images.share}
               style={styles.icon}
@@ -122,24 +216,106 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
               placeholder="Search"
               placeholderTextColor="#A08E83"
               style={styles.searchInput}
+              value={searchText}
+              onChangeText={setSearchText}
             />
           </View>
 
           <SolidBtn
             titleTxt="Show all in feed"
-            onPress={() => {}}
+            onPress={() => {
+              onClose();
+              navigation.navigate(AppRoutes.SavedDailyQuote as never);
+            }}
             btnStyle={styles.feedBtn}
             txtStyle={styles.feedBtnTxt}
           />
 
-          <FlatList
-            data={favQuotes}
-            renderItem={renderFavItem}
-            keyExtractor={item => item.id.toString()}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-          />
+          {isLoading ? (
+            <ActivityIndicator
+              size="large"
+              color="#3A2110"
+              style={{ marginTop: 20 }}
+            />
+          ) : (
+            <FlatList
+              data={favQuotes}
+              renderItem={renderFavItem}
+              keyExtractor={item => item._id}
+              contentContainerStyle={styles.listContent}
+              showsVerticalScrollIndicator={false}
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              ListEmptyComponent={() => (
+                <View style={{ alignItems: 'center', marginTop: 60 }}>
+                  <Image
+                    source={images.heartFill}
+                    style={{
+                      width: 50,
+                      height: 50,
+                      marginBottom: 15,
+                    }}
+                    resizeMode="contain"
+                  />
+                  <SolidText style={{ color: '#A08E83' }}>
+                    No favorites found
+                  </SolidText>
+                </View>
+              )}
+            />
+          )}
         </View>
+
+        {/* Hidden ViewShot for sharing with DailyQuote background */}
+        {sharingItem && (
+          <View
+            style={{
+              position: 'absolute',
+              left: -AppUtils.screenWidth * 2,
+              top: 0,
+              width: AppUtils.screenWidth,
+              height: AppUtils.screenHeight,
+            }}
+          >
+            <ViewShot
+              ref={captureRef}
+              options={{ format: 'png', quality: 0.9 }}
+              style={{
+                width: AppUtils.screenWidth,
+                height: SCREEN_HEIGHT,
+                backgroundColor: colors.background,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 40,
+                  backgroundColor: colors.background,
+                }}
+              >
+                <SolidText
+                  style={{
+                    fontSize: AppUtils.fontSize(24),
+                    fontFamily: AppFonts.reco,
+                    color: '#3A2110',
+                    textAlign: 'center',
+                    lineHeight: 36,
+                  }}
+                >
+                  {sharingItem.affirmation.startsWith('"')
+                    ? sharingItem.affirmation
+                    : `"${sharingItem.affirmation}"`}
+                </SolidText>
+              </View>
+            </ViewShot>
+          </View>
+        )}
       </View>
     </Modal>
   );

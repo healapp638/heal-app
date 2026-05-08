@@ -56,6 +56,7 @@ const AppRoutes = {
   aboutHeal: 'aboutHeal',
   EmergencyResources: 'EmergencyResources',
   AllModules: 'AllModules',
+  SavedDailyQuote: 'SavedDailyQuote',
 };
 
 export default AppRoutes;

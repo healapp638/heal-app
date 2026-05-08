@@ -15,12 +15,10 @@ import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
-import FavoritesModal from '../../../../modals/FavoritesModal';
-import style from './style';
+import style from '../DailyQuote/style'; // Reuse style
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 
 import { useHaptic } from '../../../../hooks/useHaptic';
-import useGetApi from '../../../../hooks/useGetApi';
 import useInfiniteGetApi from '../../../../hooks/useInfiniteGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import ViewShot from 'react-native-view-shot';
@@ -30,24 +28,21 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const DailyQuote = () => {
+const SavedDailyQuote = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { triggerHaptic } = useHaptic();
-  const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const queryClient = useQueryClient();
   const { mutate: postApi } = usePostApi();
 
   const [showCreditsModal, setShowCreditsModal] = useState(false);
-  const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const viewShotRefs = useRef<{ [key: string]: ViewShot }>({});
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const visibleItem = viewableItems[0].item;
-      console.log('Current Item on Screen:', visibleItem);
       setCurrentIndex(viewableItems[0].index);
 
       // Hit addView API
@@ -70,10 +65,12 @@ const DailyQuote = () => {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    refetch,
   } = useInfiniteGetApi(
-    endpoints.affirmation_list,
-    ['getAffirmationListing', { is_liked: undefined }], // Passing is_liked here as per request
+    endpoints.liked_affirmation_list,
+    ['getLikedAffirmationListing', { search_key: '' }],
     {
+      search_key: '',
       limit: 10,
     },
   );
@@ -82,10 +79,7 @@ const DailyQuote = () => {
     try {
       triggerHaptic('impactMedium');
       const uri = await viewShotRefs.current[index]?.capture();
-      const quoteContent =
-        typeof quotes[index] === 'string'
-          ? quotes[index]
-          : quotes[index].affirmation;
+      const quoteContent = quotes[index].affirmation;
       const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
 
       if (uri) {
@@ -104,17 +98,31 @@ const DailyQuote = () => {
     affirmationData?.pages?.flatMap(page => page?.data?.result || []) || [];
   const quotes = apiQuotes;
 
-  // Animation value for the big center heart
-  const heartScale = useRef(new Animated.Value(0)).current;
-  const heartOpacity = useRef(new Animated.Value(0)).current;
-
-  const handleLike = (index: number) => {
+  const handleUnlike = (index: number) => {
     const item = quotes[index];
-    if (!item || typeof item === 'string') return;
+    if (!item) return;
 
-    const isLiked = !!item.is_liked;
+    triggerHaptic('impactHeavy');
 
-    // Optimistic Update
+    // Optimistic Update: Remove from list locally
+    queryClient.setQueryData(
+      ['getLikedAffirmationListing', { search_key: '' }],
+      (oldData: any) => {
+        if (!oldData) return oldData;
+        const newPages = oldData.pages.map((page: any) => ({
+          ...page,
+          data: {
+            ...page.data,
+            result: page.data.result.filter(
+              (quote: any) => quote._id !== item._id,
+            ),
+          },
+        }));
+        return { ...oldData, pages: newPages };
+      },
+    );
+
+    // Also update the main feed if it's cached
     queryClient.setQueryData(
       ['getAffirmationListing', { is_liked: undefined }],
       (oldData: any) => {
@@ -124,50 +132,13 @@ const DailyQuote = () => {
           data: {
             ...page.data,
             result: page.data.result.map((quote: any) =>
-              quote._id === item._id ? { ...quote, is_liked: !isLiked } : quote,
+              quote._id === item._id ? { ...quote, is_liked: false } : quote,
             ),
           },
         }));
         return { ...oldData, pages: newPages };
       },
     );
-
-    if (!isLiked) {
-      triggerHaptic('impactMedium');
-      // Trigger center heart animation
-      heartScale.setValue(0);
-      heartOpacity.setValue(0);
-
-      Animated.parallel([
-        Animated.sequence([
-          Animated.timing(heartScale, {
-            toValue: 1.2,
-            duration: 400,
-            useNativeDriver: true,
-          }),
-          Animated.timing(heartScale, {
-            toValue: 1,
-            duration: 100,
-            useNativeDriver: true,
-          }),
-        ]),
-        Animated.sequence([
-          Animated.timing(heartOpacity, {
-            toValue: 1,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(heartOpacity, {
-            toValue: 0,
-            duration: 500,
-            delay: 400,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start();
-    } else {
-      triggerHaptic('impactHeavy');
-    }
 
     // Hit API in background
     postApi(
@@ -177,17 +148,13 @@ const DailyQuote = () => {
       },
       {
         onSuccess: () => {
-          // Invalidate favorites list to keep it in sync
-          queryClient.invalidateQueries({
-            queryKey: ['getLikedAffirmationListing'],
-          });
+          refetch(); // Refetch to ensure sync
         },
       },
     );
   };
 
   const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const isLiked = !!item.is_liked;
     const quoteContent = item.affirmation;
 
     return (
@@ -222,10 +189,10 @@ const DailyQuote = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconBtn}
-              onPress={() => handleLike(index)}
+              onPress={() => handleUnlike(index)}
             >
               <Image
-                source={isLiked ? images.heartFill : images.like}
+                source={images.heartFill}
                 style={styles.bottomIcon}
                 resizeMode="contain"
               />
@@ -242,6 +209,8 @@ const DailyQuote = () => {
         <View style={styles.container}>
           <View style={styles.headerWrapper}>
             <HeaderCommon
+              title="Favourite Quotes"
+              showBack={true}
               rightIcon={images.crown}
               onRightPress={() => setShowCreditsModal(true)}
             />
@@ -282,59 +251,31 @@ const DailyQuote = () => {
               onEndReachedThreshold={0.5}
               onViewableItemsChanged={onViewableItemsChanged}
               viewabilityConfig={viewabilityConfig}
+              ListEmptyComponent={() => (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: SCREEN_HEIGHT * 0.7,
+                  }}
+                >
+                  <Image
+                    source={images.heartFill}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      marginBottom: 20,
+                    }}
+                    resizeMode="contain"
+                  />
+                  <SolidText style={{ color: '#A08E83' }}>
+                    No favourites quotes found
+                  </SolidText>
+                </View>
+              )}
             />
           )}
-
-          {/* Center Heart Animation */}
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              styles.centerHeartContainer,
-              {
-                opacity: heartOpacity,
-                transform: [{ scale: heartScale }],
-              },
-            ]}
-          >
-            <Image
-              source={images.heartFill}
-              style={styles.centerHeart}
-              resizeMode="contain"
-            />
-          </Animated.View>
-
-          <TouchableOpacity
-            onPress={() => {
-              triggerHaptic('impactHeavy');
-              setShowFavoritesModal(true);
-            }}
-            style={styles.themeBtn2}
-          >
-            <Image
-              source={images.fav}
-              style={styles.themeIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={() => {
-              triggerHaptic('impactHeavy');
-              navigation.navigate(AppRoutes.ThemeMixes as never);
-            }}
-            style={styles.themeBtn}
-          >
-            <Image
-              source={images.theme}
-              style={styles.themeIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
-
-          <FavoritesModal
-            visible={showFavoritesModal}
-            onClose={() => setShowFavoritesModal(false)}
-          />
 
           <GetCreditsModal
             visible={showCreditsModal}
@@ -346,4 +287,4 @@ const DailyQuote = () => {
   );
 };
 
-export default DailyQuote;
+export default SavedDailyQuote;

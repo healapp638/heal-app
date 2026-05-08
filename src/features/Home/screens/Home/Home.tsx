@@ -37,10 +37,11 @@ const Home = () => {
     { limit: 10 },
   );
 
-  const { data: aiAffirmationData, refetch: refetchAffirmation } = useGetApi(
-    endpoints.ai_affirmation,
-    ['getAIAffirmation'],
-  );
+  const {
+    data: aiAffirmationData,
+    refetch: refetchAffirmation,
+    isLoading: isAILoading,
+  } = useGetApi(endpoints.ai_affirmation, ['getAIAffirmation']);
 
   const startedModules = startedModulesData?.data?.subModules || [];
   const aiAffirmation =
@@ -93,6 +94,7 @@ const Home = () => {
             exploreLabel={
               localization.appkeys?.homeExploreMore || 'Tap to explore more'
             }
+            isLoading={isAILoading}
           />
 
           <SectionHeader

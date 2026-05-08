@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Platform,
   Pressable,
+  ActivityIndicator,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +18,7 @@ interface DailyQuoteCardProps {
   quote: string;
   exploreLabel: string;
   onPress?: () => void;
+  isLoading?: boolean;
 }
 
 const DailyQuoteCard = ({
@@ -24,6 +26,7 @@ const DailyQuoteCard = ({
   quote,
   exploreLabel,
   onPress,
+  isLoading,
 }: DailyQuoteCardProps) => {
   const { colors } = useTheme() as any;
   const styles = useStyle(colors);
@@ -50,18 +53,24 @@ const DailyQuoteCard = ({
           end={{ x: 1, y: 1 }}
           style={styles.card}
         >
-          <SolidText
-            maxFontScale={1}
-            style={[styles.quoteText, { color: colors.brown }]}
-          >
-            "{quote}"
-          </SolidText>
-          <SolidText
-            maxFontScale={1}
-            style={[styles.exploreMore, { color: colors.brown }]}
-          >
-            {exploreLabel}
-          </SolidText>
+          {isLoading ? (
+            <ActivityIndicator color={colors.brown} />
+          ) : (
+            <>
+              <SolidText
+                maxFontScale={1}
+                style={[styles.quoteText, { color: colors.brown }]}
+              >
+                "{quote}"
+              </SolidText>
+              <SolidText
+                maxFontScale={1}
+                style={[styles.exploreMore, { color: colors.brown }]}
+              >
+                {exploreLabel}
+              </SolidText>
+            </>
+          )}
         </LinearGradient>
       </TouchableOpacity>
     </Pressable>

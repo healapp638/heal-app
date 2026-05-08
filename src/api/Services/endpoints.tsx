@@ -27,4 +27,7 @@ export const endpoints = {
   end_sub_module_list: '/user/modules/end_sub_module_list',
   ai_affirmation: '/user/affirmation/getAIAffirmation',
   affirmation_list: '/user/affirmation/getAffirmationListing',
+  like_unlike_affirmation: '/user/affirmation/likeUnlikeAffirmation',
+  liked_affirmation_list: '/user/affirmation/likedAffirmationList',
+  add_view_affirmation: '/user/affirmation/addView',
 };
