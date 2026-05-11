@@ -10,6 +10,12 @@ router.post('/add', verifyTokenUser, async (req: Request | any, res: Response) =
     const controller = new UserChallengesController(req, res)
     const result: ApiResponse = await controller.add();
     return showOutput(res, result, result.code)
+});
+
+router.get('/list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const controller = new UserChallengesController(req, res)
+    const result: ApiResponse = await controller.list();
+    return showOutput(res, result, result.code)
 })
 
 export default router

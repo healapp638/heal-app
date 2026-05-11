@@ -14,7 +14,7 @@ const langSchema = {
     ro: { type: String, default: '' },
 };
 
-const userChallengesSchema = new mongoose.Schema({
+const daily_challenges = new mongoose.Schema({
     user_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserAuth',
@@ -56,6 +56,6 @@ const userChallengesSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-const userChallengesModel = mongoose.model('challenges', userChallengesSchema);
+const userDailyChallengesModel = mongoose.model('daily_challenges', daily_challenges, 'daily_challenges');
 
-export default userChallengesModel;
+export default userDailyChallengesModel;

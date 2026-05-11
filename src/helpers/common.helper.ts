@@ -6,6 +6,8 @@ import mongoose from 'mongoose'
 // import Queue from 'bull'
 import crypto from 'crypto'
 import { IRecordOfAny } from '../utils/interfaces.util';
+import userWeeklyChallengesModel from '../modules/UserChallenges/user.weekly.challenges.model';
+import userDailyChallengesModel from '../modules/UserChallenges/user.daily.challenges.model';
 
 const bycrptPasswordHash = (stringValue: string): Promise<string> => {
     console.log(stringValue, "stringValue")
@@ -401,10 +403,42 @@ function keysDeleteFromObject(userData: IRecordOfAny, keys: string[] = ['passwor
     });
 }
 
+const challengsFn = async (userData: any) => {
+    try {
+        const startOfDay = moment().startOf('day').toDate();
+        const endOfDay = moment().endOf('day').toDate();
+        const isOnBoardingComplete = !!(userData?.bringsYouHere && userData?.howFellingLately && userData?.likeToFellMore && userData?.timeYouCommit && userData?.startShowingOfYourSelf);
+        const totalWeeklyChallanges = await userWeeklyChallengesModel.countDocuments({
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const totalDailyChallanges = await userDailyChallengesModel.countDocuments({
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const isWeeklyChallengeExist = !!(totalWeeklyChallanges)
+        const isDailyChallengeExist = !!(totalDailyChallanges)
+        return {
+            isOnBoardingComplete,
+            isWeeklyChallengeExist,
+            isDailyChallengeExist,
+            payload: {
+                bringsYouHere: userData?.bringsYouHere,
+                howFellingLately: userData?.howFellingLately,
+                likeToFellMore: userData?.likeToFellMore,
+                timeYouCommit: userData?.timeYouCommit,
+                startShowingOfYourSelf: userData?.startShowingOfYourSelf
+            }
+        }
+    } catch (err: any) {
+        console.log(err);
+    }
+}
+
+
 
 
 export {
     // generateQueue,
+    challengsFn,
     bycrptPasswordHash,
     verifyBycryptHash,
     generateRandomOtp,

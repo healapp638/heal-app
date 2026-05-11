@@ -12,6 +12,10 @@ import statusCodes from '../../constants/statusCodes'
 import { getMessage } from "../../helpers/messages";
 import adminPhasesModel from "../AdminPhases/admin.phases.model";
 import userModulesCompletePhaseModel from "../UserModules/user.modules.complete.phase.model";
+import { generateUserChallengesDaily, generateUserChallengesWeekly } from "../../helpers/openai.helper";
+import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
+import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.model";
+import { object } from "joi";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -54,16 +58,32 @@ const UserAuthHandler = {
 
     login: async (data: any): Promise<ApiResponse> => {
         const { email, password, language } = data;
-        console.log(data, 'data');
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
-        console.log(findUser, 'findUser');
         if (!findUser.status) {
-            console.log('user not found')
             return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR)
         }
-
         const userData = findUser?.data
+
+        //challenges logic start
+        const challengesDetails = await commonHelper.challengsFn(userData);
+        const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+        const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+        const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+        const payload: any = challengesDetails?.payload;
+        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+            const res = await generateUserChallengesDaily(payload, userData?._id);
+            console.log(res, 'res')
+            await userDailyChallengesModel.insertMany(res.data)
+        }
+        if (isOnBoardingComplete && !isDailyChallengeExist) {
+            const res = await generateUserChallengesWeekly(payload, userData?._id)
+            await userWeeklyChallengesModel.insertMany(res.data)
+        }
+        //end
+
+
+
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
@@ -577,6 +597,42 @@ const UserAuthHandler = {
             return showResponse(false, getMessage(language || 'en', "user_not_found"), null, statusCodes.API_ERROR)
         }
         return showResponse(true, getMessage(language || 'en', "user_detail"), result.data, statusCodes.SUCCESS)
+    },
+
+    completeOnboarding: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = data;
+        const userDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId), status: USER_STATUS.ACTIVE })
+        if (!userDetails) {
+            return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
+        }
+        const user_language = userDetails?.language || 'en';
+        const updateObj: any = {
+            ...(language && { language }),
+            ...(hearAboutUs && { hearAboutUs }),
+            ...(bringsYouHere && { bringsYouHere }),
+            ...(howFellingLately && { howFellingLately }),
+            ...(likeToFellMore && { likeToFellMore }),
+            ...(timeYouCommit && { timeYouCommit }),
+            ...(startShowingOfYourSelf && { startShowingOfYourSelf }),
+        }
+        await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj)
+        //challenges logic start
+        const challengesDetails = await commonHelper.challengsFn(userDetails);
+        const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+        const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+        const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+        const payload: any = challengesDetails?.payload;
+        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+            const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
+            console.log(res, 'res')
+            await userDailyChallengesModel.insertMany(res.data)
+        }
+        if (isOnBoardingComplete && !isDailyChallengeExist) {
+            const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
+            await userWeeklyChallengesModel.insertMany(res.data)
+        }
+        //end
+        return showResponse(true, getMessage(user_language || 'en', "user_onboarding_complete"), null, statusCodes.SUCCESS)
     },
 }
 

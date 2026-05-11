@@ -106,4 +106,10 @@ router.get('/details_user', verifyTokenUser, (req, res) => __awaiter(void 0, voi
     const result = yield controller.getUserDetailsUser();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.put('/complete_onboarding', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = req.body;
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.completeOnboarding({ language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

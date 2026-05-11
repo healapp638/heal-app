@@ -248,6 +248,17 @@ export default class UserAuthController extends Controller {
         return wrappedFunc(this.userId); // Invoking the wrapped function 
     }
     //ends
+
+    /**
+* Complete onboarding
+*/
+    @Security('Bearer')
+    @Post("/complete_onboarding")
+    public async completeOnboarding(@Body() request: { language?: string, hearAboutUs?: string, bringsYouHere?: string, howFellingLately?: string, likeToFellMore?: string, timeYouCommit?: string, startShowingOfYourSelf?: string }): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.completeOnboarding);
+        return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+    }
+    //ends
 }
 
 

@@ -22,4 +22,9 @@ router.post('/add', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(v
     const result = yield controller.add();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.get('/list', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new user_challenges_controller_1.default(req, res);
+    const result = yield controller.list();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

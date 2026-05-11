@@ -47,6 +47,7 @@ const UserSchema = new mongoose_1.Schema({
         default: 'email',
         Comment: "email for normal created google with google apple with apple "
     },
+    timezone: { type: String, default: "" },
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

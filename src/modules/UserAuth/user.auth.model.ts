@@ -23,7 +23,7 @@ const UserSchema = new Schema(
         status: { type: Number, default: USER_STATUS.ACTIVE },
         language: { type: String, default: "en" },
         first_name: { type: String, default: "" },
-        
+
 
         //******Use When Social Login Used******/
         social_account: [{
@@ -50,6 +50,7 @@ const UserSchema = new Schema(
             default: 'email',
             Comment: "email for normal created google with google apple with apple "
         },
+        timezone: { type: String, default: "" },
 
     },
     {

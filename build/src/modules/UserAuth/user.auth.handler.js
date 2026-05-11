@@ -59,6 +59,9 @@ const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const messages_1 = require("../../helpers/messages");
 const admin_phases_model_1 = __importDefault(require("../AdminPhases/admin.phases.model"));
 const user_modules_complete_phase_model_1 = __importDefault(require("../UserModules/user.modules.complete.phase.model"));
+const openai_helper_1 = require("../../helpers/openai.helper");
+const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
+const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -96,15 +99,28 @@ const UserAuthHandler = {
     }), //ends
     login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password, language } = data;
-        console.log(data, 'data');
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
-        console.log(findUser, 'findUser');
         if (!findUser.status) {
-            console.log('user not found');
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
+        //challenges logic start
+        const challengesDetails = yield commonHelper.challengsFn(userData);
+        const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
+        const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
+        const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
+        const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
+        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+            const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
+            console.log(res, 'res');
+            yield user_daily_challenges_model_1.default.insertMany(res.data);
+        }
+        if (isOnBoardingComplete && !isDailyChallengeExist) {
+            const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
+            yield user_weekly_challenges_model_1.default.insertMany(res.data);
+        }
+        //end
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
@@ -558,6 +574,33 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), result.data, statusCodes_1.default.SUCCESS);
+    }),
+    completeOnboarding: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = data;
+        const userDetails = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId), status: workflow_constant_1.USER_STATUS.ACTIVE });
+        if (!userDetails) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
+        }
+        const user_language = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en';
+        const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (bringsYouHere && { bringsYouHere })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (startShowingOfYourSelf && { startShowingOfYourSelf }));
+        yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj);
+        //challenges logic start
+        const challengesDetails = yield commonHelper.challengsFn(userDetails);
+        const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
+        const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
+        const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
+        const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
+        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+            const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
+            console.log(res, 'res');
+            yield user_daily_challenges_model_1.default.insertMany(res.data);
+        }
+        if (isOnBoardingComplete && !isDailyChallengeExist) {
+            const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
+            yield user_weekly_challenges_model_1.default.insertMany(res.data);
+        }
+        //end
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "user_onboarding_complete"), null, statusCodes_1.default.SUCCESS);
     }),
 };
 exports.default = UserAuthHandler;

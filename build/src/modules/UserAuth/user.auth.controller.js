@@ -236,6 +236,16 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
             return wrappedFunc(this.userId); // Invoking the wrapped function 
         });
     }
+    //ends
+    /**
+* Complete onboarding
+*/
+    completeOnboarding(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.completeOnboarding);
+            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/login"),
@@ -349,6 +359,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "getUserDetailsUser", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/complete_onboarding"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "completeOnboarding", null);
 UserAuthController = __decorate([
     (0, tsoa_1.Tags)('User Auth Routes'),
     (0, tsoa_1.Route)('/user/auth'),

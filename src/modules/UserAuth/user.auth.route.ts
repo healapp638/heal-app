@@ -112,6 +112,13 @@ router.get('/details_user', verifyTokenUser, async (req: Request | any, res: Res
     const controller = new UserAuthController(req, res)
     const result: ApiResponse = await controller.getUserDetailsUser();
     return showOutput(res, result, result.code)
+});
+
+router.put('/complete_onboarding', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = req.body;
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.completeOnboarding({ language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf });
+    return showOutput(res, result, result.code)
 })
 
 export default router

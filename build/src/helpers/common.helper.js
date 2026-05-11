@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.formatDateTOMonthDayYear = exports.generateTenDigitNumber = exports.checkRequiredFields = exports.generateOtp = exports.validateMongoIdsInArrayForJoi = exports.formatDuration = exports.convertToObjectId = exports.findClosestKey = exports.generateUsernames = exports.generateCsrfToken = exports.getCurrentDate = exports.getCountAndPagination = exports.Comma_seprator = exports.getDistanceFromLatLonInKm = exports.capitalize = exports.arraySort = exports.dynamicSort = exports.getFilterMonthDateYear = exports.camelize = exports.generateRandomOtp = exports.verifyBycryptHash = exports.bycrptPasswordHash = void 0;
+exports.formatDateTOMonthDayYear = exports.generateTenDigitNumber = exports.checkRequiredFields = exports.generateOtp = exports.validateMongoIdsInArrayForJoi = exports.formatDuration = exports.convertToObjectId = exports.findClosestKey = exports.generateUsernames = exports.generateCsrfToken = exports.getCurrentDate = exports.getCountAndPagination = exports.Comma_seprator = exports.getDistanceFromLatLonInKm = exports.capitalize = exports.arraySort = exports.dynamicSort = exports.getFilterMonthDateYear = exports.camelize = exports.generateRandomOtp = exports.verifyBycryptHash = exports.bycrptPasswordHash = exports.challengsFn = void 0;
 exports.generateUniqueCustomerId = generateUniqueCustomerId;
 exports.generateSlotsForDay = generateSlotsForDay;
 exports.generateUniquePassword = generateUniquePassword;
@@ -26,6 +26,8 @@ const mongoose_1 = __importDefault(require("mongoose"));
 // import { REDIS_CREDENTIAL } from '../constants/app.constant'
 // import Queue from 'bull'
 const crypto_1 = __importDefault(require("crypto"));
+const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
+const user_daily_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.daily.challenges.model"));
 const bycrptPasswordHash = (stringValue) => {
     console.log(stringValue, "stringValue");
     return new Promise((resolve, reject) => {
@@ -360,3 +362,34 @@ function keysDeleteFromObject(userData, keys = ['password', 'otp', 'social_accou
         }
     });
 }
+const challengsFn = (userData) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const startOfDay = (0, moment_1.default)().startOf('day').toDate();
+        const endOfDay = (0, moment_1.default)().endOf('day').toDate();
+        const isOnBoardingComplete = !!((userData === null || userData === void 0 ? void 0 : userData.bringsYouHere) && (userData === null || userData === void 0 ? void 0 : userData.howFellingLately) && (userData === null || userData === void 0 ? void 0 : userData.likeToFellMore) && (userData === null || userData === void 0 ? void 0 : userData.timeYouCommit) && (userData === null || userData === void 0 ? void 0 : userData.startShowingOfYourSelf));
+        const totalWeeklyChallanges = yield user_weekly_challenges_model_1.default.countDocuments({
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const totalDailyChallanges = yield user_daily_challenges_model_1.default.countDocuments({
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const isWeeklyChallengeExist = !!(totalWeeklyChallanges);
+        const isDailyChallengeExist = !!(totalDailyChallanges);
+        return {
+            isOnBoardingComplete,
+            isWeeklyChallengeExist,
+            isDailyChallengeExist,
+            payload: {
+                bringsYouHere: userData === null || userData === void 0 ? void 0 : userData.bringsYouHere,
+                howFellingLately: userData === null || userData === void 0 ? void 0 : userData.howFellingLately,
+                likeToFellMore: userData === null || userData === void 0 ? void 0 : userData.likeToFellMore,
+                timeYouCommit: userData === null || userData === void 0 ? void 0 : userData.timeYouCommit,
+                startShowingOfYourSelf: userData === null || userData === void 0 ? void 0 : userData.startShowingOfYourSelf
+            }
+        };
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
+exports.challengsFn = challengsFn;

@@ -47,7 +47,7 @@ const messages: any = {
         password_incorrect: "Incorrect password",
         invalid_credentials: "Invalid credentials",
         please_complete_your_onboarding: "Please complete your onboarding",
-
+        user_onboarding_complete: "User onboarding complete",
 
 
     },
@@ -99,6 +99,7 @@ const messages: any = {
         password_incorrect: "Contraseña incorrecta",
         invalid_credentials: "Credenciales invalidas",
         please_complete_your_onboarding: "Por favor complete su incorporación",
+        user_onboarding_complete: "Onboarding del usuario completado exitosamente",
     },
     fr: {
         USER_NOT_FOUND: "Utilisateur non trouvé",
@@ -148,6 +149,7 @@ const messages: any = {
         password_incorrect: "Mot de passe incorrect",
         invalid_credentials: "Identifiants invalides",
         please_complete_your_onboarding: "Veuillez compléter votre onboarding",
+        user_onboarding_complete: "Onboarding utilisateur terminé avec succès",
 
     },
     zh: {
@@ -198,6 +200,7 @@ const messages: any = {
         password_incorrect: "密码错误",
         invalid_credentials: "凭据无效",
         please_complete_your_onboarding: "请完成您的入职培训",
+        user_onboarding_complete: "用户入职培训完成成功",
 
 
 
@@ -251,6 +254,7 @@ const messages: any = {
         password_incorrect: "गलत पासवर्ड",
         invalid_credentials: "अमान्य क्रेडेंशियल्स",
         please_complete_your_onboarding: "कृपया अपना ऑनबोर्डिंग पूरा करें",
+        user_onboarding_complete: "उपयोगकर्ता ऑनबोर्डिंग सफलतापूर्वक पूरा हुआ",
 
     },
     de: {
@@ -301,6 +305,7 @@ const messages: any = {
         password_incorrect: "Falsches Passwort",
         invalid_credentials: "Ungültige Anmeldeinformationen",
         please_complete_your_onboarding: "Bitte vervollständigen Sie Ihr Onboarding",
+        user_onboarding_complete: "Onboarding des Benutzers erfolgreich abgeschlossen",
 
     },
     ru: {
@@ -351,6 +356,7 @@ const messages: any = {
         password_incorrect: "Неверный пароль",
         invalid_credentials: "Неверные учетные данные",
         please_complete_your_onboarding: "Пожалуйста, завершите ваше обучение",
+        user_onboarding_complete: "Онбординг пользователя успешно завершен",
 
     },
     pt: {
@@ -401,6 +407,7 @@ const messages: any = {
         password_incorrect: "Senha incorreta",
         invalid_credentials: "Credenciais inválidas",
         please_complete_your_onboarding: "Por favor, complete seu onboarding",
+        user_onboarding_complete: "Onboarding do usuário concluído com sucesso",
 
 
     },
@@ -452,6 +459,7 @@ const messages: any = {
         password_incorrect: "Password errata",
         invalid_credentials: "Credenziali inválidas",
         please_complete_your_onboarding: "Per favore, completa il tuo onboarding",
+        user_onboarding_complete: "Onboarding dell'utente completato con successo",
 
     },
     ro: {
@@ -502,6 +510,7 @@ const messages: any = {
         password_incorrect: "Parola incorectă",
         invalid_credentials: "Credenciais inválidas",
         please_complete_your_onboarding: "Vă rugăm să completați onboarding-ul",
+        user_onboarding_complete: "Onboarding-ul utilizatorului a fost finalizat cu succes",
 
     },
 };
