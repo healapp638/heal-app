@@ -72,8 +72,8 @@ const Category = () => {
             pageSize: newPagination.pageSize,
         });
     };
-    const handleAddHomeTheme = (categoryId: string) => {
-        route.push(`${ROUTES.PRIVATE.HOMETHEME}/${categoryId}`)
+    const handleAddHomeTheme = (categoryId: string, categoryName: string) => {
+        route.push(`${ROUTES.PRIVATE.HOMETHEME}/${categoryId}?categoryName=${categoryName}`)
     }
 
     const { data: listCategory } = useAppQuery<CategoryListResponse>({
@@ -204,7 +204,7 @@ const Category = () => {
             align: "center",
             render: (_: any, record: any) => (
                 <div className="flex gap-2  justify-center">
-                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddHomeTheme(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddHomeTheme(record?._id,record?.title) }} className="text-maincolor! hover:text-maincolor!" />
                     <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenViewModal(true); setSelectedCategory(record?._id) }} className="" />
                     <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenUpdateModal(true); setSelectedCategory(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
                     <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeleteModal(true); setSelectedCategory(record?._id) }} className="" />
@@ -214,12 +214,11 @@ const Category = () => {
         }
     ];
 
-
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4" >
                 <h1 className="text-3xl font-bold text-black m-0!">
-                    Add <span className="text-maincolor">Category</span>
+                    <span className="text-maincolor">Category</span>
                 </h1>
                 <div className='flex justify-center gap-2'>
                     <Select
@@ -239,7 +238,7 @@ const Category = () => {
                 dataSource={CategoryList}
                 columns={columns}
                 onRow={(record) => ({
-                    onClick: () => handleAddHomeTheme(record?._id)
+                    onClick: () => handleAddHomeTheme(record?._id,record?.title)
                 })}
                 pagination={{
                     current: pagination.current,

@@ -12,7 +12,7 @@ import { FiPlus } from "react-icons/fi";
 import { RxCross2 } from "react-icons/rx";
 import { FiDownload } from "react-icons/fi";
 
-const AddExcelModal = ({ openModal, setOpenModal }: { openModal: boolean, setOpenModal: (value: boolean) => void }) => {
+const AddExcelModal = ({ openModal, setOpenModal, excelSampleLink }: { openModal: boolean, setOpenModal: (value: boolean) => void, excelSampleLink?: string }) => {
 
     const [form] = Form.useForm();
     const [fileList, setFileList] = React.useState<any[]>([]);
@@ -134,14 +134,18 @@ const AddExcelModal = ({ openModal, setOpenModal }: { openModal: boolean, setOpe
                             {isPending ? 'Processing...' : 'Upload and Import Data'}
                         </AppButton>
                     </div>
-                     <AppButton
-                            onClick={()=>{}}
-                            icon={<FiDownload />}
-                            className="bg-maincolor! h-14 text-lg font-bold text-white! hover:opacity-90 rounded-xl border-none! shadow-lg shadow-maincolor/20 transition-all active:scale-[0.98]"
-                            block
-                        >
-                            Download Sample Excel
-                        </AppButton>
+                    <AppButton
+                        onClick={() => {
+                            if (excelSampleLink) {
+                                window.open(`${excelSampleLink}`, "_blank");
+                            }
+                        }}
+                        icon={<FiDownload />}
+                        className="bg-maincolor! h-14 text-lg font-bold text-white! hover:opacity-90 rounded-xl border-none! shadow-lg shadow-maincolor/20 transition-all active:scale-[0.98]"
+                        block
+                    >
+                        Download Sample Excel
+                    </AppButton>
                 </Form>
             </div>
         </Modal>

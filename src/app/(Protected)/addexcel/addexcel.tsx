@@ -18,6 +18,7 @@ interface ExcelDataType {
 }
 
 interface ResponseType {
+    excel_format: string,
     result: ExcelDataType[]
 }
 
@@ -33,13 +34,13 @@ const AddExcel = () => {
     const { data: excelData } = useAppQuery<ResponseType>({
         queryKey: [MUTATION_KEYS.LIST_EXCEL_IMPORTS],
         url: ENDPOINTS.PRIVATE.LIST_EXCEL_IMPORTS,
-        options: { 
+        options: {
             staleTime: 0,
             refetchInterval: 5000, // Refetch every 5 seconds
         },
     });
+    const ExcelsampleLink = excelData?.data?.excel_format
     const ExcelListData = excelData?.data?.result
-
 
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
@@ -115,7 +116,7 @@ const AddExcel = () => {
                 bordered
                 className="cursor-pointer"
             />
-            <AddExcelModal openModal={openModal} setOpenModal={setOpenModal} />
+            <AddExcelModal openModal={openModal} setOpenModal={setOpenModal} excelSampleLink={ExcelsampleLink} />
 
         </div>
     )

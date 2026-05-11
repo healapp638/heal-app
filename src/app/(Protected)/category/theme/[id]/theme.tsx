@@ -2,10 +2,10 @@
 
 import React from "react"
 import { AppButton } from "@/components/ui"
-import { Image, Switch, Table } from "antd"
-import { useParams} from "next/navigation"
+import { Breadcrumb, ConfigProvider, Image, Switch, Table } from "antd"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { FiTrash2, FiEdit } from "react-icons/fi"
-import {  FaEye } from "react-icons/fa";
+import { FaEye } from "react-icons/fa";
 import { ColumnsType } from "antd/es/table";
 import IconButton from "@/components/ui/IconButton";
 import { useAppQuery } from "@/tanstack/useAppQuery";
@@ -16,6 +16,7 @@ import DeleteModal from "@/components/ui/modals/DeleteModal";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import AddHomeThemeModal from "@/components/ui/modals/addHomeThemeModal";
+import { ROUTES } from "@/routerKeys"
 
 interface HomeThemeList {
     _id: string;
@@ -27,9 +28,11 @@ interface HomeThemeListResponse {
 }
 
 const HomeTheme = () => {
-
+    const route = useRouter()
     const params = useParams();
+    const searchParams = useSearchParams()
     const categoryId = params?.id as string;
+    const categoryName = searchParams.get("categoryName")
     const [pagination, setPagination] = React.useState({
         current: 1,
         pageSize: 10,
@@ -53,12 +56,9 @@ const HomeTheme = () => {
         });
     };
 
-    const { data: listHomeTheme} = useAppQuery<HomeThemeListResponse>({
-        queryKey: [MUTATION_KEYS.HOMETHEME_LIST, pagination],
+    const { data: listHomeTheme } = useAppQuery<HomeThemeListResponse>({
+        queryKey: [MUTATION_KEYS.HOMETHEME_LIST, categoryId, pagination],
         url: ENDPOINTS.PRIVATE.HOMETHEME_LIST,
-        options: {
-            staleTime: Infinity,
-        },
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
@@ -188,9 +188,33 @@ const HomeTheme = () => {
     return (
         <div className='p-2 md:p-6'>
             <div className="flex justify-between items-center mb-4" >
-                <h1 className="text-3xl font-bold text-black m-0!">
+                {/* <h1 className="text-3xl font-bold text-black m-0!">
                     Add <span className="text-maincolor">Home Theme</span>
-                </h1>
+                </h1> */}
+                <ConfigProvider
+                    theme={{
+                        components: {
+                            Breadcrumb: {
+                                itemColor: 'black', // Custom color for breadcrumb items
+                                separatorColor: 'black', // Custom color for separator
+                            },
+                        },
+                    }}
+                >
+                    <div className="mb-4">
+                        <Breadcrumb
+                            items={[
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold cursor-pointer truncate max-w-[150px] inline-block align-bottom" onClick={() => { route.push(ROUTES.PRIVATE.CATEGORY) }}>{categoryName}</span>,
+                                },
+                                {
+                                    title: <span className="text-maincolor text-h2 font-bold">Home Theme</span>
+                                },
+                            ]}
+                            separator={<span className="text-h2 text-black-200 font-bold">/</span>}
+                        />
+                    </div>
+                </ConfigProvider>
                 <div className='flex justify-center gap-2'>
                     <AppButton onClick={() => { setOpenAddModal(true) }} className="bg-maincolor! w-36! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
                         Add Home Theme
