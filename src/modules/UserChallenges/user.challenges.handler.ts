@@ -6,7 +6,6 @@ import userAuthModel from "../UserAuth/user.auth.model";
 import userDailyChallengesModel from "./user.daily.challenges.model";
 import userWeeklyChallengesModel from "./user.weekly.challenges.model";
 import { USER_STATUS } from "../../constants/workflow.constant";
-import moment from "moment";
 
 
 const UserChallengesHandler = {

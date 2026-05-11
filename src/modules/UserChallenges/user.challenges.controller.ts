@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Security, Get, Query } from 'tsoa'
+import { Route, Controller, Tags, Post, Security, Get } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserChallenges/user.challenges.handler'
 import { tryCatchWrapper } from '../../utils/config.util';

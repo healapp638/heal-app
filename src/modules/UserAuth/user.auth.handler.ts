@@ -15,7 +15,7 @@ import userModulesCompletePhaseModel from "../UserModules/user.modules.complete.
 import { generateUserChallengesDaily, generateUserChallengesWeekly } from "../../helpers/openai.helper";
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.model";
-import { object } from "joi";
+
 import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.model";
 
 const UserAuthHandler = {
