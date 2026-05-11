@@ -30,4 +30,7 @@ export const endpoints = {
   like_unlike_affirmation: '/user/affirmation/likeUnlikeAffirmation',
   liked_affirmation_list: '/user/affirmation/likedAffirmationList',
   add_view_affirmation: '/user/affirmation/addView',
+  get_home_theme_listing: '/user/homeTheme/getHomeThemeListing',
+  get_home_theme_category: '/user/homeTheme/getHomeThemeCategory',
+  add_user_theme: '/user/homeTheme/addUserTheme',
 };

@@ -1,6 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
+import { hp, wp } from '../../../../utils/dimension';
 
 const style = (colors: any) =>
   StyleSheet.create({
@@ -174,14 +175,34 @@ const style = (colors: any) =>
     // Footer
     footer: {
       alignItems: 'center',
-      marginTop: 10,
-      marginBottom: 140,
+      marginTop: 20,
+      marginBottom: Platform.OS === 'ios' ? 120 : 100,
     },
     footerText: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(14),
       color: colors.brown,
       marginTop: 20,
+    },
+    footerLinks: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: hp(2),
+      alignSelf: 'center',
+    },
+    footerLink: {
+      fontFamily: AppFonts.regular,
+      fontSize: wp(3),
+      color: '#666',
+      includeFontPadding: false,
+    },
+    footerDot: {
+      marginHorizontal: 8,
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: '#999',
     },
   });
 

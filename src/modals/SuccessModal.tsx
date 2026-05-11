@@ -1,5 +1,12 @@
 import React from 'react';
-import { Modal, StyleSheet, TouchableOpacity, View, Image } from 'react-native';
+import {
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Image,
+  Text,
+} from 'react-native';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -49,10 +56,15 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
             resizeMode="contain"
           />
 
-          <SolidText style={styles.modalTitle}>{title}</SolidText>
-          <SolidText style={[styles.modalSubtitle, subStyle]}>
+          <Text maxFontSizeMultiplier={1.4} style={styles.modalTitle}>
+            {title}
+          </Text>
+          <Text
+            maxFontSizeMultiplier={1.4}
+            style={[styles.modalSubtitle, subStyle]}
+          >
             {subtitle}
-          </SolidText>
+          </Text>
 
           <SolidBtn
             titleTxt={btnLabel}

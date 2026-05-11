@@ -11,7 +11,9 @@ import {
   Dimensions,
   TextInput,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
 import SolidText from '../components/SolidText';
@@ -25,10 +27,11 @@ import { useQueryClient } from '@tanstack/react-query';
 import Share from 'react-native-share';
 import { useHaptic } from '../hooks/useHaptic';
 import ViewShot from 'react-native-view-shot';
+import getEnvVars from '../../env';
 
 import SolidBtn from '../components/SolidBtn';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface FavoritesModalProps {
   visible: boolean;
@@ -46,6 +49,12 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const { mutate: postApi } = usePostApi();
   const captureRef = useRef<ViewShot>(null);
   const [sharingItem, setSharingItem] = useState<any>(null);
+
+  const user = useSelector((state: any) => state.userData?.user);
+  const homeThemeUrl = user?.homeTheme?.imgUrl
+    ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
+    : null;
+  const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
 
   const {
     data: affirmationData,
@@ -270,50 +279,74 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           )}
         </View>
 
-        {/* Hidden ViewShot for sharing with DailyQuote background */}
+        {/* Visible Full-screen Preview for sharing */}
         {sharingItem && (
           <View
             style={{
-              position: 'absolute',
-              left: -AppUtils.screenWidth * 2,
-              top: 0,
-              width: AppUtils.screenWidth,
-              height: AppUtils.screenHeight,
+              ...StyleSheet.absoluteFillObject,
+              backgroundColor: colors.background,
+              zIndex: 1000,
             }}
           >
             <ViewShot
               ref={captureRef}
               options={{ format: 'png', quality: 0.9 }}
-              style={{
-                width: AppUtils.screenWidth,
-                height: SCREEN_HEIGHT,
-                backgroundColor: colors.background,
-              }}
+              style={{ flex: 1 }}
             >
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingHorizontal: 40,
-                  backgroundColor: colors.background,
-                }}
-              >
-                <SolidText
+              {homeThemeUrl ? (
+                <ImageBackground
+                  source={{ uri: homeThemeUrl }}
                   style={{
-                    fontSize: AppUtils.fontSize(24),
-                    fontFamily: AppFonts.reco,
-                    color: '#3A2110',
-                    textAlign: 'center',
-                    lineHeight: 36,
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 40,
+                  }}
+                  resizeMode="cover"
+                >
+                  <SolidText
+                    style={{
+                      fontSize: AppUtils.fontSize(24),
+                      fontFamily: AppFonts.reco,
+                      color: activeColor,
+                      textAlign: 'center',
+                      lineHeight: 36,
+                      width: SCREEN_WIDTH - 80,
+                    }}
+                  >
+                    {sharingItem.affirmation.startsWith('"')
+                      ? sharingItem.affirmation
+                      : `"${sharingItem.affirmation}"`}
+                  </SolidText>
+                </ImageBackground>
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 40,
+                    backgroundColor: colors.background,
                   }}
                 >
-                  {sharingItem.affirmation.startsWith('"')
-                    ? sharingItem.affirmation
-                    : `"${sharingItem.affirmation}"`}
-                </SolidText>
-              </View>
+                  <SolidText
+                    style={{
+                      fontSize: AppUtils.fontSize(24),
+                      fontFamily: AppFonts.reco,
+                      color: activeColor,
+                      textAlign: 'center',
+                      lineHeight: 36,
+                      width: SCREEN_WIDTH - 80,
+                    }}
+                  >
+                    {sharingItem.affirmation.startsWith('"')
+                      ? sharingItem.affirmation
+                      : `"${sharingItem.affirmation}"`}
+                  </SolidText>
+                </View>
+              )}
             </ViewShot>
+
           </View>
         )}
       </View>
@@ -324,9 +357,11 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
 const useStyles = (colors: any) =>
   StyleSheet.create({
     overlay: {
-      flex: 1,
+      ...StyleSheet.absoluteFillObject,
       backgroundColor: 'rgba(0,0,0,0.5)',
       justifyContent: 'flex-end',
+      alignItems: 'center',
+      overflow: 'hidden',
     },
     sheetContainer: {
       backgroundColor: '#F4EEE2', // Light cream background from Welcome screen
@@ -334,6 +369,7 @@ const useStyles = (colors: any) =>
       borderTopRightRadius: 32,
       paddingTop: 12,
       height: SCREEN_HEIGHT * 0.9,
+      width: SCREEN_WIDTH,
     },
     header: {
       flexDirection: 'row',

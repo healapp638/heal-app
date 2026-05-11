@@ -8,8 +8,12 @@ import {
   Platform,
   Animated,
   ActivityIndicator,
+  ImageBackground,
+  StyleSheet,
 } from 'react-native';
+
 import { useNavigation, useTheme } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -27,18 +31,22 @@ import ViewShot from 'react-native-view-shot';
 import Share from 'react-native-share';
 import usePostApi from '../../../../hooks/usePostApi';
 import { useQueryClient } from '@tanstack/react-query';
+import { useSelector } from 'react-redux';
+import getEnvVars from '../../../../../env';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 const DailyQuote = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const { colors, images } = useTheme() as any;
   const { triggerHaptic } = useHaptic();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const queryClient = useQueryClient();
   const { mutate: postApi } = usePostApi();
-
+  const user = useSelector((state: any) => state.userData?.user);
+  // console.log('user', user);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const viewShotRefs = useRef<{ [key: string]: ViewShot }>({});
@@ -103,6 +111,12 @@ const DailyQuote = () => {
   const apiQuotes =
     affirmationData?.pages?.flatMap(page => page?.data?.result || []) || [];
   const quotes = apiQuotes;
+
+  const homeThemeUrl = user?.homeTheme?.imgUrl
+    ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
+    : null;
+
+  const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
 
   // Animation value for the big center heart
   const heartScale = useRef(new Animated.Value(0)).current;
@@ -199,8 +213,37 @@ const DailyQuote = () => {
           options={{ format: 'png', quality: 0.9 }}
           style={[styles.captureContainer, { height: SCREEN_HEIGHT }]}
         >
-          <View style={[styles.quoteContainer, { backgroundColor: colors.background, width: '100%' }]}>
-            <SolidText style={styles.quoteText}>
+          {homeThemeUrl ? (
+            <>
+              <ImageBackground
+                source={{ uri: homeThemeUrl }}
+                style={StyleSheet.absoluteFillObject}
+                resizeMode="cover"
+              />
+              <View
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  { backgroundColor: 'rgba(0,0,0,0.25)' },
+                ]}
+              />
+            </>
+          ) : null}
+
+          <View style={[styles.quoteContainer, { width: '100%' }]}>
+            <SolidText
+              style={[
+                styles.quoteText,
+                {
+                  color: activeColor,
+                  textShadowColor:
+                    activeColor === '#FFFFFF'
+                      ? 'rgba(0, 0, 0, 0.4)'
+                      : 'transparent',
+                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowRadius: 10,
+                },
+              ]}
+            >
               {quoteContent.startsWith('"')
                 ? quoteContent
                 : `"${quoteContent}"`}
@@ -216,7 +259,7 @@ const DailyQuote = () => {
             >
               <Image
                 source={images.share}
-                style={styles.bottomIcon}
+                style={[styles.bottomIcon, { tintColor: activeColor }]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -226,7 +269,7 @@ const DailyQuote = () => {
             >
               <Image
                 source={isLiked ? images.heartFill : images.like}
-                style={styles.bottomIcon}
+                style={[styles.bottomIcon, { tintColor: activeColor }]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -238,12 +281,27 @@ const DailyQuote = () => {
 
   return (
     <SolidView
+      edges={[]}
+      containerStyle={{ backgroundColor: 'transparent' }}
       view={
-        <View style={styles.container}>
-          <View style={styles.headerWrapper}>
+        <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+          <View
+            style={[
+              styles.headerWrapper,
+              {
+                paddingTop:
+                  Platform.OS == 'android'
+                    ? -10
+                    : insets.top > 0
+                    ? insets.top
+                    : 20,
+              },
+            ]}
+          >
             <HeaderCommon
               rightIcon={images.crown}
               onRightPress={() => setShowCreditsModal(true)}
+              tintColor={activeColor}
             />
           </View>
           {isLoading ? (
@@ -298,7 +356,7 @@ const DailyQuote = () => {
           >
             <Image
               source={images.heartFill}
-              style={styles.centerHeart}
+              style={[styles.centerHeart, { tintColor: activeColor }]}
               resizeMode="contain"
             />
           </Animated.View>
@@ -312,7 +370,7 @@ const DailyQuote = () => {
           >
             <Image
               source={images.fav}
-              style={styles.themeIcon}
+              style={[styles.themeIcon]}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -326,7 +384,7 @@ const DailyQuote = () => {
           >
             <Image
               source={images.theme}
-              style={styles.themeIcon}
+              style={[styles.themeIcon]}
               resizeMode="contain"
             />
           </TouchableOpacity>

@@ -6,12 +6,16 @@ import {
   Platform,
   Pressable,
   ActivityIndicator,
+  ImageBackground,
 } from 'react-native';
+import { useSelector } from 'react-redux';
+
 import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
+import getEnvVars from '../../env';
 
 interface DailyQuoteCardProps {
   title: string;
@@ -29,7 +33,14 @@ const DailyQuoteCard = ({
   isLoading,
 }: DailyQuoteCardProps) => {
   const { colors } = useTheme() as any;
+  const user = useSelector((state: any) => state.userData?.user);
   const styles = useStyle(colors);
+
+  const homeThemeUrl = user?.homeTheme?.imgUrl
+    ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
+    : null;
+
+  const activeColor = homeThemeUrl ? '#FFFFFF' : colors.brown;
   return (
     <Pressable onPress={onPress} style={styles.container}>
       <SolidText style={[styles.title, { color: colors.brown }]}>
@@ -48,24 +59,53 @@ const DailyQuoteCard = ({
         onPress={onPress}
       >
         <LinearGradient
-          colors={['#FFFFFF4D', '#FBE6D5', '#FBE6D5']}
+          colors={
+            homeThemeUrl
+              ? ['transparent', 'transparent']
+              : ['#FFFFFF4D', '#FBE6D5', '#FBE6D5']
+          }
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.card}
         >
+          {homeThemeUrl && (
+            <>
+              <ImageBackground
+                source={{ uri: homeThemeUrl }}
+                style={StyleSheet.absoluteFillObject}
+                resizeMode="cover"
+              />
+              <View
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  { backgroundColor: 'rgba(0,0,0,0.25)' },
+                ]}
+              />
+            </>
+          )}
           {isLoading ? (
-            <ActivityIndicator color={colors.brown} />
+            <ActivityIndicator color={activeColor} />
           ) : (
             <>
               <SolidText
                 maxFontScale={1}
-                style={[styles.quoteText, { color: colors.brown }]}
+                style={[
+                  styles.quoteText,
+                  {
+                    color: activeColor,
+                    textShadowColor: homeThemeUrl
+                      ? 'rgba(0, 0, 0, 0.4)'
+                      : 'transparent',
+                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowRadius: 4,
+                  },
+                ]}
               >
                 "{quote}"
               </SolidText>
               <SolidText
                 maxFontScale={1}
-                style={[styles.exploreMore, { color: colors.brown }]}
+                style={[styles.exploreMore, { color: activeColor }]}
               >
                 {exploreLabel}
               </SolidText>

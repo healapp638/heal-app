@@ -8,6 +8,7 @@ interface PremiumFooterProps {
   styles: any;
   navigation: any;
   appLanguage: any;
+  hideRestore?: boolean;
 }
 
 const PremiumFooter: React.FC<PremiumFooterProps> = ({
@@ -15,15 +16,20 @@ const PremiumFooter: React.FC<PremiumFooterProps> = ({
   styles,
   navigation,
   appLanguage,
+  hideRestore = false,
 }) => {
   return (
     <View style={styles.footerLinks}>
-      <TouchableOpacity>
-        <SolidText maxFontScale={1} style={styles.footerLink}>
-          {localization.appkeys?.restore}
-        </SolidText>
-      </TouchableOpacity>
-      <View style={styles.footerDot} />
+      {!hideRestore && (
+        <>
+          <TouchableOpacity>
+            <SolidText maxFontScale={1} style={styles.footerLink}>
+              {localization.appkeys?.restore}
+            </SolidText>
+          </TouchableOpacity>
+          <View style={styles.footerDot} />
+        </>
+      )}
       <TouchableOpacity
         onPress={() => navigation.navigate(AppRoutes.PrivacyPolicy as never)}
       >

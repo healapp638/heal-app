@@ -29,6 +29,8 @@ interface SolidViewProps {
   refreshControl?: React.ReactElement<RefreshControlProps>;
   showChat?: boolean;
   keyboardVerticalOffset?: any;
+  containerStyle?: ViewStyle;
+  edges?: any;
 }
 
 const SolidView: React.FC<SolidViewProps> = ({
@@ -42,13 +44,15 @@ const SolidView: React.FC<SolidViewProps> = ({
   refreshControl,
   showChat = false,
   keyboardVerticalOffset,
+  containerStyle,
+  edges = ['top'],
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const styles = style(colors);
 
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top']}>
+    <SafeAreaView style={[styles.safeArea, containerStyle]} edges={edges}>
       {isScrollEnabled ? (
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}

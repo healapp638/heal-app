@@ -33,7 +33,7 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
   return (
     <FlatList
       data={filteredChallenges}
-      keyExtractor={(item: any) => item.id}
+      keyExtractor={(item, index) => index?.toString()}
       scrollEnabled={false}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.listContent}

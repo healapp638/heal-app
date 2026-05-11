@@ -90,9 +90,7 @@ const ModuleThemeDetail = () => {
 
   const renderHeader = useCallback(
     () => (
-      <View>
-        <HeaderCommon title={localization.appkeys?.tabModules || 'Modules'} />
-
+      <View style={{ paddingTop: 10 }}>
         <SolidText style={styles.title}>
           {themeDetail?.title ||
             localization.appkeys?.friendship ||
@@ -160,12 +158,15 @@ const ModuleThemeDetail = () => {
                 styles={styles}
                 onPress={() => {
                   if (!isCompleted) {
-                    navigation.navigate(AppRoutes.StartedModule as never, {
-                      module: moduleItem,
-                      subModule: sub,
-                      theme: themeDetail,
-                      source: 'theme',
-                    } as never);
+                    navigation.navigate(
+                      AppRoutes.StartedModule as never,
+                      {
+                        module: moduleItem,
+                        subModule: sub,
+                        theme: themeDetail,
+                        source: 'theme',
+                      } as never,
+                    );
                   }
                 }}
               />
@@ -186,33 +187,41 @@ const ModuleThemeDetail = () => {
     <SolidView
       isScrollEnabled={false}
       view={
-        <FlatList
-          data={modules}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          ListHeaderComponent={renderHeader}
-          ListFooterComponent={renderFooter}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={10}
-          removeClippedSubviews={true}
-          refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-          }
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          showsVerticalScrollIndicator={false}
-          style={styles.mainContainer}
-          ListEmptyComponent={
-            isLoading && cursor === null ? (
-              <ActivityIndicator
-                size="large"
-                color={colors.brown}
-                style={{ marginTop: 50 }}
-              />
-            ) : null
-          }
-        />
+        <View style={{ flex: 1 }}>
+          <View style={{ paddingHorizontal: 20 }}>
+            <HeaderCommon
+              title={themeDetail?.title || 'Modules'}
+              viewStyle={{ marginBottom: -2 }}
+            />
+          </View>
+          <FlatList
+            data={modules}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={renderFooter}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+            removeClippedSubviews={true}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            showsVerticalScrollIndicator={false}
+            style={styles.mainContainer}
+            ListEmptyComponent={
+              isLoading && cursor === null ? (
+                <ActivityIndicator
+                  size="large"
+                  color={colors.brown}
+                  style={{ marginTop: 50 }}
+                />
+              ) : null
+            }
+          />
+        </View>
       }
     />
   );

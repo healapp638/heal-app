@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingTop: 10,
-    paddingBottom: Platform.OS === 'ios' ? -10 : 6,
+    paddingBottom: Platform.OS === 'ios' ? -20 : 4,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -132,22 +132,22 @@ const styles = StyleSheet.create({
   iconContainer: {
     borderRadius: 16,
     marginBottom: 6,
-    paddingVertical: 12,
+    paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'transparent', // Explicit default background
     overflow: 'hidden', // Ensure clipping on Android
   },
   icon: {
-    width: 22,
-    height: 22,
+    width: 20,
+    height: 20,
   },
   label: {
     fontSize: AppUtils.fontSize(11),
     fontFamily: AppFonts.regular,
     textAlign: 'center',
     includeFontPadding: false,
-    marginTop: 6,
+    marginTop: 4,
   },
 });
 

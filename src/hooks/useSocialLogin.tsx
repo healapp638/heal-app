@@ -10,6 +10,7 @@ import {
   setToken,
   setRefreshToken,
   setUser,
+  getUserDetail,
 } from '../redux/Reducers/userData';
 import { useNavigation } from '@react-navigation/native';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
@@ -60,6 +61,7 @@ const useSocialLogin = () => {
             dispatch(setToken(response?.data?.access_token));
             dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
+            dispatch(getUserDetail() as any);
             navigation.reset({
               index: 0,
               routes: [

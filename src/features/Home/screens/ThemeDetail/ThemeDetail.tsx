@@ -2,11 +2,11 @@ import React, { useContext, useState } from 'react';
 import {
   View,
   FlatList,
-  ImageBackground,
-  Image,
+  ActivityIndicator,
   TouchableOpacity,
-  Pressable,
+  StyleSheet,
 } from 'react-native';
+import Toast from '../../../../components/Toast';
 import { useTheme, useNavigation, useRoute } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -14,6 +14,14 @@ import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
+import useInfiniteGetApi from '../../../../hooks/useInfiniteGetApi';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+
+import GridThemeCard from '../../../../components/GridThemeCard';
+import getEnvVars from '../../../../../env';
+import { useDispatch } from 'react-redux';
+import { getUserDetail } from '../../../../redux/Reducers/userData';
 
 const ThemeDetail = () => {
   const { colors, images } = useTheme() as any;
@@ -22,69 +30,129 @@ const ThemeDetail = () => {
   const route = useRoute() as any;
   const styles = style(colors);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
+  const { mutate: postApi, isLoading: isAddingTheme } = usePostApi();
+  const dispatch = useDispatch();
+  // Title and category ID passed from navigation params
+  const { title, categoryTheme_id } = route.params || { title: 'Abstract' };
 
-  // Title passed from navigation params, fallback to 'Abstract' if missing
-  const { title } = route.params || { title: 'Abstract' };
+  const {
+    data: themeDataApi,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteGetApi(
+    endpoints.get_home_theme_listing,
+    ['getHomeThemeListingByCategory', categoryTheme_id],
+    {
+      categoryTheme_id: categoryTheme_id,
+      limit: 15,
+    },
+  );
 
-  // Theme items data based on hl1-hl6 assets
-  const themeItemsData = [
-    { id: '1', image: images.hl1 },
-    { id: '2', image: images.hl2 },
-    { id: '3', image: images.hl3 },
-    { id: '4', image: images.hl2 },
-    { id: '5', image: images.hl5 },
-    { id: '6', image: images.hl6 },
-    { id: '7', image: images.hl1 }, // Repeating for grid filling
-    { id: '8', image: images.hl2 },
-    { id: '9', image: images.hl3 },
-  ];
+  const themeItems =
+    themeDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
 
   const renderItem = ({ item }: { item: any }) => (
-    <Pressable
+    <GridThemeCard
+      image={{ uri: `${getEnvVars().fileUrl}${item.imgUrl}` }}
       onPress={() => {
-        setShowCreditsModal(true);
+        postApi(
+          {
+            endpoint: endpoints.add_user_theme,
+            data: { homeTheme_id: item._id },
+          },
+          {
+            onSuccess: () => {
+              dispatch(getUserDetail());
+              setToastMsg('Theme selected successfully!');
+            },
+            onError: (error: any) => {
+              setToastMsg(error.message);
+            },
+          },
+        );
+        // setShowCreditsModal(true);
       }}
-    >
-      <ImageBackground
-        source={item.image}
-        style={styles.card}
-        imageStyle={styles.imageStyle}
-        resizeMode="cover"
-      >
-        {/* <View style={styles.lockWrapper}>
-        <Image
-          source={images.simpleLock}
-          style={styles.lockIcon}
-          resizeMode="contain"
-        />
-      </View> */}
-        {/* <SolidText style={styles.healText}>Heal</SolidText> */}
-      </ImageBackground>
-    </Pressable>
+    />
   );
 
   return (
     <SolidView
-      isScrollEnabled
       view={
         <View style={styles.container}>
           <View style={{ paddingHorizontal: 18 }}>
             <HeaderCommon title={title} />
           </View>
 
-          <FlatList
-            data={themeItemsData}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            numColumns={3}
-            style={{ width: '100%', marginLeft: -8, marginTop: -10 }}
-            contentContainerStyle={styles.gridContainer}
-            showsVerticalScrollIndicator={false}
-          />
+          {isLoading ? (
+            <ActivityIndicator
+              size="large"
+              color={colors.primary}
+              style={{ flex: 1 }}
+            />
+          ) : (
+            <FlatList
+              data={themeItems}
+              renderItem={renderItem}
+              keyExtractor={item => item._id}
+              numColumns={3}
+              style={{ width: '100%', paddingHorizontal: 8, marginTop: -10 }}
+              contentContainerStyle={[
+                styles.gridContainer,
+                { paddingBottom: 40 },
+              ]}
+              showsVerticalScrollIndicator={false}
+              ListEmptyComponent={() =>
+                !isLoading ? (
+                  <View style={{ alignItems: 'center', marginTop: 60 }}>
+                    <SolidText style={{ color: colors.brown, opacity: 0.5 }}>
+                      No themes found
+                    </SolidText>
+                  </View>
+                ) : null
+              }
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={() =>
+                isFetchingNextPage ? (
+                  <ActivityIndicator
+                    color={colors.primary}
+                    style={{ marginVertical: 20 }}
+                  />
+                ) : null
+              }
+            />
+          )}
           <GetCreditsModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />
+
+          {isAddingTheme && (
+            <View
+              style={[
+                StyleSheet.absoluteFillObject,
+                {
+                  backgroundColor: 'rgba(0,0,0,0.3)',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 1000,
+                },
+              ]}
+            >
+              <ActivityIndicator size="large" color={colors.primary} />
+            </View>
+          )}
+
+          {toastMsg !== '' && (
+            <Toast message={toastMsg} onClose={() => setToastMsg('')} />
+          )}
         </View>
       }
     />

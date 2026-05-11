@@ -26,6 +26,7 @@ import {
   setToken,
   setRefreshToken,
   setUser,
+  getUserDetail,
 } from '../../../../redux/Reducers/userData';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
 
@@ -92,6 +93,7 @@ const SignIn = () => {
             dispatch(setToken(response?.data?.access_token));
             dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
+            dispatch(getUserDetail() as any);
             if (rememberMe) {
               await localStore.storeData(storeKeys.rememberMe, {
                 email,

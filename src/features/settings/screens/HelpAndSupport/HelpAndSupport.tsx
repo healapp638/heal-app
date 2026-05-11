@@ -6,6 +6,7 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  TextInput,
 } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -16,6 +17,7 @@ import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import HomeHeader from '../../../../components/HomeHeader';
+import SolidInput from '../../../../components/SolidInput';
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -30,47 +32,8 @@ const HelpAndSupport = () => {
   const styles = style(colors);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
 
-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
-
-  const toggleAccordion = (index: number) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
-
-  const faqs = [
-    {
-      question:
-        localization.appkeys?.faqQ1 || 'How does progress tracking work?',
-      answer:
-        localization.appkeys?.faqA1 ||
-        'Your evolution is tracked automatically through your activities: journal writing, completed challenges, and finished healing modules. You can see your progress in the "Evolution" section.',
-    },
-    {
-      question: localization.appkeys?.faqQ2 || 'Are my data secure?',
-      answer: localization.appkeys?.faqA2 || 'Yes, your data is secure.',
-    },
-    {
-      question:
-        localization.appkeys?.faqQ3 || 'How to use Mel, the virtual assistant?',
-      answer:
-        localization.appkeys?.faqA3 ||
-        'You can chat with Mel anytime by pressing the AI button.',
-    },
-    {
-      question:
-        localization.appkeys?.faqQ4 || 'What to do if I feel distressed?',
-      answer:
-        localization.appkeys?.faqA4 ||
-        'Please navigate to emergency resources in Settings or contact a professional.',
-    },
-    {
-      question:
-        localization.appkeys?.faqQ5 || 'How to cancel my Premium subscription?',
-      answer:
-        localization.appkeys?.faqA5 ||
-        'You can manage your subscription from the settings page under Subscription.',
-    },
-  ];
+  const [subject, setSubject] = useState('');
+  const [message, setMessage] = useState('');
 
   return (
     <SolidView
@@ -78,7 +41,7 @@ const HelpAndSupport = () => {
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
-            title={localization.appkeys?.faqsHeader || "FAQ's"}
+            title={localization.appkeys?.contactUs || 'Contact Us'}
             onBackPress={() => navigation.goBack()}
             rightIcon={images.crown}
             onRightPress={() => {
@@ -94,61 +57,55 @@ const HelpAndSupport = () => {
             showCrown={false}
             showStreak={false}
             onCrownPress={() => {}}
-            userName={
-              localization.appkeys?.faqTitle || 'Frequently asked questions'
-            }
+            userName={localization.appkeys?.contactUsTitle || 'Contact Us'}
             safeSpaceLabel={
               localization.appkeys?.faqSubtitle || 'We are here for you'
             }
             subStyle={{ marginTop: 5 }}
           />
 
-          {faqs.map((faq, index) => {
-            const isExpanded = expandedIndex === index;
-            return (
-              <TouchableOpacity
-                key={index.toString()}
-                activeOpacity={0.8}
-                onPress={() => toggleAccordion(index)}
-                style={styles.accordionCard}
-              >
-                <View style={styles.accordionHeader}>
-                  <SolidText style={styles.accordionTitle}>
-                    {faq.question}
-                  </SolidText>
-                  <Image
-                    source={isExpanded ? images.downArr : images.forward2}
-                    style={[
-                      styles.accordionIcon,
-                      isExpanded && {
-                        tintColor: colors.brown,
-                        transform: [{ rotate: '0deg' }],
-                      },
-                    ]}
-                    resizeMode="contain"
-                  />
-                </View>
-                {isExpanded && (
-                  <SolidText style={styles.accordionBody}>
-                    {faq.answer}
-                  </SolidText>
-                )}
-              </TouchableOpacity>
-            );
-          })}
 
-          <View style={styles.feedbackCard}>
-            <SolidText style={styles.feedbackTitle}>
-              {localization.appkeys?.feedbackTitle || 'Your feedback matters'}
+
+          <View style={{ marginTop: 10 }}>
+            <SolidText style={[styles.feedbackTitle, { fontSize: 20 }]}>
+              {localization.appkeys?.getInTouch || 'Get in touch'}
             </SolidText>
-            <SolidText style={styles.feedbackSubtitle}>
-              {localization.appkeys?.feedbackSubtitle ||
-                'Help us improve Mel by sharing your suggestions and experience feedback.'}
+            <SolidText style={[styles.feedbackSubtitle, { marginBottom: 20 }]}>
+              {localization.appkeys?.contactUsDesc ||
+                'Have a question or feedback? We would love to hear from you and help you with anything you need.'}
             </SolidText>
+
+            <SolidInput
+              label={localization.appkeys?.subject || 'Subject'}
+              placeholder={localization.appkeys?.enterSubject || 'Enter subject...'}
+              value={subject}
+              onChangeText={setSubject}
+              viewStyle={{ borderColor: '#EAE0D5' }}
+            />
+
+            <SolidText style={styles.inputLabel}>
+              {localization.appkeys?.message || 'Message'}
+            </SolidText>
+            <View style={styles.messageContainer}>
+              <TextInput
+                style={styles.messageInput}
+                placeholderTextColor="#999"
+                placeholder={localization.appkeys?.enterMessage || 'Type your message here...'}
+                multiline
+                value={message}
+                onChangeText={setMessage}
+                maxFontSizeMultiplier={1.4}
+              />
+            </View>
+
             <SolidBtn
-              titleTxt={localization.appkeys?.sendFeedback || 'Send feedback'}
-              btnStyle={styles.sendFeedbackBtn}
-              onPress={() => {}}
+              titleTxt={localization.appkeys?.sendMessage || 'Send message'}
+              btnStyle={[styles.sendFeedbackBtn, { marginTop: 10, width: '100%' }]}
+              onPress={() => {
+                // Handle form submission
+                setSubject('');
+                setMessage('');
+              }}
             />
           </View>
           <GetCreditsModal

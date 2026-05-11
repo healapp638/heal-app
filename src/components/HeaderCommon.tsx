@@ -23,6 +23,8 @@ interface HeaderCommonProps {
   rightComponent?: React.ReactNode;
   rightIcon?: any;
   onRightPress?: () => void;
+  tintColor?: string;
+  viewStyle?: any;
 }
 
 const HeaderCommon: React.FC<HeaderCommonProps> = ({
@@ -32,10 +34,15 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   rightComponent,
   rightIcon,
   onRightPress,
+  tintColor,
+  viewStyle,
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const styles = useStyles(colors);
+
+  const activeTintColor = tintColor || colors.brown;
+
   const handleBack = () => {
     ReactNativeHapticFeedback.trigger('impactMedium', options);
     if (onBackPress) {
@@ -53,7 +60,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View style={{ ...styles.container, ...viewStyle }}>
       <View style={styles.sideContainer}>
         {showBack && (
           <TouchableOpacity
@@ -63,7 +70,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
           >
             <Image
               source={images.back}
-              style={styles.backIcon}
+              style={[styles.backIcon, { tintColor: activeTintColor }]}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -72,7 +79,10 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
 
       <View style={styles.centerContainer}>
         {title && (
-          <SolidText style={styles.title} numberOfLines={1}>
+          <SolidText
+            style={[styles.title, { color: activeTintColor }]}
+            numberOfLines={1}
+          >
             {title}
           </SolidText>
         )}
@@ -85,7 +95,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
           <TouchableOpacity onPress={handleRightPress} activeOpacity={0.7}>
             <Image
               source={rightIcon}
-              tintColor={colors.brown}
+              tintColor={activeTintColor}
               style={{ height: 16, width: 16 }} // Reusing same icon size constraints
               resizeMode="contain"
             />

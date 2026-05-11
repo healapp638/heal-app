@@ -14,7 +14,7 @@ const style = (colors: any) =>
       color: colors.brown,
       marginBottom: 6,
       includeFontPadding: false,
-      marginTop: Platform.OS === 'ios' ? -20 : -10,
+      marginTop: 0,
     },
     subtitle: {
       fontFamily: AppFonts.regular,
@@ -26,7 +26,7 @@ const style = (colors: any) =>
     progressCardMargin: {
       marginBottom: Platform.OS == 'ios' ? 20 : 18,
       width: '100%',
-      marginTop: Platform.OS == 'ios' ? -6 : -8,
+      marginTop: 0,
     },
     sectionTitle: {
       fontFamily: AppFonts.semiBold,

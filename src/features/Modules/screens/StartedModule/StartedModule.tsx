@@ -59,8 +59,7 @@ const StartedModule = () => {
         .map((p: any, index: number) => ({
           ...p,
           phaseNumber: index + 1,
-        }))
-        .filter((p: any) => !p.isCompleted);
+        }));
       if (cursor === null) {
         setPhases(fetchedPhases);
       } else {
@@ -134,8 +133,9 @@ const StartedModule = () => {
           title={item.title}
           points={`${item.points || 0} Pts`}
           isLocked={isLocked}
+          isCompleted={item.isCompleted}
           onPress={() => {
-            if (!isLocked) {
+            if (!isLocked && !item.isCompleted) {
               navigation.navigate(AppRoutes.PhaseDetail as never, {
                 phase: item,
                 isLastPhase: phases.length === 1,

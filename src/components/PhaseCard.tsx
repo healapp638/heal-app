@@ -10,6 +10,7 @@ interface PhaseCardProps {
   title: string;
   points: string;
   isLocked?: boolean;
+  isCompleted?: boolean;
   onPress?: () => void;
 }
 
@@ -18,6 +19,7 @@ const PhaseCard = ({
   title,
   points,
   isLocked = false,
+  isCompleted = false,
   onPress,
 }: PhaseCardProps) => {
   const { colors, images } = useTheme() as any;
@@ -43,6 +45,12 @@ const PhaseCard = ({
           <Image
             source={images.lock3}
             style={styles.lockIcon}
+            resizeMode="contain"
+          />
+        ) : isCompleted ? (
+          <Image
+            source={images.tick2}
+            style={styles.tickIcon}
             resizeMode="contain"
           />
         ) : (
@@ -113,6 +121,10 @@ const styles = StyleSheet.create({
   forwardIcon: {
     width: 14,
     height: 14,
+  },
+  tickIcon: {
+    width: 34,
+    height: 34,
   },
 });
 

@@ -22,7 +22,7 @@ const Premium = () => {
 
   const styles = style(colors, appLanguage);
 
-  const [reminderEnabled, setReminderEnabled] = useState(true);
+  const [reminderEnabled, setReminderEnabled] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>(
     'yearly',
   );

@@ -17,9 +17,10 @@ interface HomeHeaderProps {
   safeSpaceLabel: string;
   streakCount: number;
   onStreakPress: () => void;
-  showStreak: boolean;
-  showCrown: boolean;
-  onCrownPress: () => void;
+  onCalendarPress?: () => void;
+  showStreak?: boolean;
+  showCrown?: boolean;
+  onCrownPress?: () => void;
   viewStyle?: ViewStyle;
   subStyle?: ViewStyle;
 }
@@ -29,6 +30,7 @@ const HomeHeader = ({
   safeSpaceLabel,
   streakCount,
   onStreakPress,
+  onCalendarPress,
   showStreak = true,
   showCrown,
   onCrownPress,
@@ -61,7 +63,7 @@ const HomeHeader = ({
               {streakCount}
             </SolidText>
             <View style={styles.divider} />
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onCalendarPress}>
               <Image
                 source={images.calendar}
                 style={styles.icon}

@@ -61,6 +61,30 @@ const Challenges = () => {
       category: 'weekly',
       badge: '3 day',
     },
+    {
+      id: '4',
+      title:
+        localization.appkeys?.challenge4Title || 'Weekly Mindfulness session',
+      description:
+        localization.appkeys?.challenge4Desc ||
+        'Deep dive into your emotional well-being',
+      points: '75 Pts',
+      isCompleted: false,
+      category: 'weekly',
+      badge: '3 day',
+    },
+    {
+      id: '4',
+      title:
+        localization.appkeys?.challenge4Title || 'Weekly Mindfulness session',
+      description:
+        localization.appkeys?.challenge4Desc ||
+        'Deep dive into your emotional well-being',
+      points: '75 Pts',
+      isCompleted: false,
+      category: 'weekly',
+      badge: '3 day',
+    },
   ];
 
   return (

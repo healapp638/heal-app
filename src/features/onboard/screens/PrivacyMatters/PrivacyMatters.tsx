@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, Text, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
@@ -90,7 +90,9 @@ const PrivacyMatters = () => {
                   resizeMode="contain"
                 />
 
-                <SolidText style={styles.cardText}>{item.text}</SolidText>
+                <Text maxFontSizeMultiplier={1} style={styles.cardText}>
+                  {item.text}
+                </Text>
               </View>
             ))}
 

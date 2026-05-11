@@ -1,12 +1,12 @@
 import { View, StyleSheet, Alert } from 'react-native';
 import React, { useEffect } from 'react';
 import Video from 'react-native-video';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import SolidView from '../../../../components/SolidView';
-import { useSelector } from 'react-redux';
 
 const Splash = () => {
   const navigation = useNavigation();
@@ -14,6 +14,13 @@ const Splash = () => {
   const styles = style(colors);
   const auth = useSelector((state: any) => state.userData?.auth);
   const user = useSelector((state: any) => state.userData?.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (auth) {
+      dispatch(getUserDetail() as any);
+    }
+  }, [auth]);
 
   const handleNavigation = () => {
     const intervalId = setInterval(() => {

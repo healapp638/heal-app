@@ -46,6 +46,8 @@ const AddJournal = () => {
   const [selectedEmotion, setSelectedEmotion] = useState<string>('hope');
   const [titleText, setTitleText] = useState('');
   const [bodyText, setBodyText] = useState('');
+  const [isTitleFocused, setIsTitleFocused] = useState(false);
+  const [isBodyFocused, setIsBodyFocused] = useState(false);
   const { mutate: createJournal, isPending: loading } = usePostApi();
   const navigation = useNavigation();
 
@@ -322,12 +324,16 @@ const AddJournal = () => {
             style={styles.titleInput}
             maxFontSizeMultiplier={1.4}
             placeholder={
-              localization.appkeys?.entryTitlePlaceholder ||
-              'Title of your entry...'
+              isTitleFocused
+                ? ''
+                : localization.appkeys?.entryTitlePlaceholder ||
+                  'Title of your entry...'
             }
             placeholderTextColor="black"
             value={titleText}
             onChangeText={setTitleText}
+            onFocus={() => setIsTitleFocused(true)}
+            onBlur={() => setIsTitleFocused(false)}
           />
 
           {/* Body Input */}
@@ -336,14 +342,18 @@ const AddJournal = () => {
               style={styles.bodyInput}
               maxFontSizeMultiplier={1.4}
               placeholder={
-                localization.appkeys?.entryBodyPlaceholder ||
-                'Express what you feel... This space is yours, without judgment. 🤍'
+                isBodyFocused
+                  ? ''
+                  : localization.appkeys?.entryBodyPlaceholder ||
+                    'Express what you feel... This space is yours, without judgment. 🤍'
               }
               placeholderTextColor="black"
               multiline
               value={bodyText}
               onChangeText={setBodyText}
               textAlignVertical="top"
+              onFocus={() => setIsBodyFocused(true)}
+              onBlur={() => setIsBodyFocused(false)}
             />
             {/* Mic Button with pulse animation */}
             <Animated.View

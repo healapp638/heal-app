@@ -15,7 +15,7 @@ const style = (colors: any) =>
       textAlign: 'center',
       fontFamily: AppFonts.recoMedium,
       color: colors.brown,
-      marginTop: Platform.OS == 'ios' ? 20 : 30,
+      marginTop: Platform.OS == 'ios' ? 50 : 50,
       paddingHorizontal: 10,
       includeFontPadding: false,
     },
@@ -30,7 +30,7 @@ const style = (colors: any) =>
     image: {
       width: 350,
       height: 320,
-      marginTop: hp(11),
+      marginTop: hp(10),
       alignSelf: 'center',
     },
     btn: {

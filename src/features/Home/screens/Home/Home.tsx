@@ -18,7 +18,7 @@ import ModuleCard from '../../../../components/ModuleCard';
 import style from './style';
 import JournalCard from '../../../../components/JournalCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { store } from '../../../../redux/Store/store';
 import useGetApi from '../../../../hooks/useGetApi';
@@ -30,6 +30,9 @@ const Home = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+  const user = useSelector((state: any) => state.userData.user);
+
+  const userName = user?.fullName || 'User';
 
   const { data: startedModulesData, refetch: refetchStarted } = useGetApi(
     endpoints.start_sub_module_list,
@@ -68,11 +71,14 @@ const Home = () => {
       view={
         <View style={styles.mainContainer}>
           <HomeHeader
-            userName="John Doe"
+            userName={userName}
             safeSpaceLabel={localization.appkeys?.homeSafeSpace || 'Safe Space'}
             streakCount={3}
             onStreakPress={() =>
               navigation.navigate(AppRoutes.DailyStreak as never)
+            }
+            onCalendarPress={() =>
+              navigation.navigate(AppRoutes.Calendar as never)
             }
           />
 

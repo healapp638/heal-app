@@ -25,7 +25,7 @@ const HorizontalMixCard = ({
       imageStyle={styles.imageStyle}
       resizeMode="cover"
     >
-      {/* <SolidText style={styles.title}>{title}</SolidText> */}
+        <SolidText style={styles.title}>{title}</SolidText>
       </ImageBackground>
     </TouchableOpacity>
   );

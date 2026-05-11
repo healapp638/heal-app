@@ -12,6 +12,7 @@ import {
   useFocusEffect,
 } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
+import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import StartedModuleCard from '../../../../components/StartedModuleCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
@@ -151,6 +152,23 @@ const AllModules = () => {
                   color={colors.brown}
                   style={{ marginTop: 50 }}
                 />
+              ) : !isLoading && modules.length === 0 ? (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginTop: 100,
+                  }}
+                >
+                  <SolidText style={{ color: colors.brown, textAlign: 'center' }}>
+                    {type === 'started'
+                      ? localization.appkeys?.noStartedModulesFound ||
+                        'No started modules found'
+                      : localization.appkeys?.noFinishedModulesFound ||
+                        'No finished modules found'}
+                  </SolidText>
+                </View>
               ) : null
             }
             ListFooterComponent={

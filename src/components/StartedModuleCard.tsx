@@ -33,6 +33,11 @@ const StartedModuleCard = ({
 }: StartedModuleCardProps) => {
   const { colors, images } = useTheme() as any;
   const styles = useStyles(colors);
+  const [completed, total] = progressText
+    ? progressText.split('/')?.map(Number)
+    : [0, 0];
+  const percentage = total > 0 ? (completed / total) * 100 : 0;
+
   return (
     <TouchableOpacity
       activeOpacity={disabled ? 1 : 0.8}
@@ -59,8 +64,13 @@ const StartedModuleCard = ({
               styles.progressCircleContainer,
               {
                 borderColor: '#EBE0D0',
-                borderTopColor: colors.lightBrown,
-                borderRightColor: colors.lightBrown,
+                borderTopColor: percentage > 0 ? colors.lightBrown : '#EBE0D0',
+                borderRightColor:
+                  percentage >= 50 ? colors.lightBrown : '#EBE0D0',
+                borderBottomColor:
+                  percentage >= 75 ? colors.lightBrown : '#EBE0D0',
+                borderLeftColor:
+                  percentage >= 100 ? colors.lightBrown : '#EBE0D0',
               },
             ]}
           >

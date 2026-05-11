@@ -4,6 +4,7 @@ import {
   FlatList,
   ImageBackground,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useTheme, useNavigation } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -12,42 +13,38 @@ import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
+import useGetApi from '../../../../hooks/useGetApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+
+import CategoryGridCard from '../../../../components/CategoryGridCard';
+
 const ThemeSeeAll = () => {
-  const { colors, images } = useTheme() as any;
+  const { colors } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
 
-  const themeMixesData = [
-    { id: '1', title: 'Colorful', image: images.t1 },
-    { id: '2', title: 'Texture', image: images.t2 },
-    { id: '3', title: 'Abstract', image: images.t3 },
-    { id: '4', title: 'Animal', image: images.t4 },
-    { id: '5', title: 'Food', image: images.t5 },
-    { id: '6', title: 'Space', image: images.t6 },
-    { id: '7', title: 'Nature', image: images.t7 },
-    { id: '8', title: 'Plants', image: images.t8 },
-  ];
+  const { data: themeCategoryData, isLoading } = useGetApi(
+    endpoints.get_home_theme_category,
+    ['getHomeThemeCategory'],
+  );
+
+  const themeCategories = (themeCategoryData as any)?.data || [];
 
   const renderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity
-      style={{ width: '47.5%', height: 100, margin: 5 }}
+    <CategoryGridCard
+      image={{ uri: `${getEnvVars().fileUrl}${item.imgUrl}` }}
+      title={item.title}
       onPress={() =>
         navigation.navigate(
           AppRoutes.ThemeDetail as never,
           {
             title: item.title,
+            categoryTheme_id: item._id,
           } as never,
         )
       }
-    >
-      <ImageBackground
-        source={item.image}
-        style={StyleSheet.absoluteFill}
-        imageStyle={styles.imageStyle}
-        resizeMode="cover"
-      ></ImageBackground>
-    </TouchableOpacity>
+    />
   );
 
   return (
@@ -58,19 +55,27 @@ const ThemeSeeAll = () => {
             <HeaderCommon title={localization.appkeys.themeMixes} />
           </View>
 
-          <FlatList
-            style={{
-              alignSelf: 'center',
-              marginTop: -10,
-              paddingHorizontal: 10,
-            }}
-            data={themeMixesData}
-            renderItem={renderItem}
-            keyExtractor={item => item.id}
-            numColumns={2}
-            contentContainerStyle={styles.gridContainer}
-            showsVerticalScrollIndicator={false}
-          />
+          {isLoading ? (
+            <ActivityIndicator
+              size="large"
+              color={colors.primary}
+              style={{ flex: 1 }}
+            />
+          ) : (
+            <FlatList
+              style={{
+                alignSelf: 'center',
+                marginTop: -10,
+                paddingHorizontal: 10,
+              }}
+              data={themeCategories}
+              renderItem={renderItem}
+              keyExtractor={item => item._id}
+              numColumns={2}
+              contentContainerStyle={styles.gridContainer}
+              showsVerticalScrollIndicator={false}
+            />
+          )}
         </View>
       }
     />
@@ -79,5 +84,6 @@ const ThemeSeeAll = () => {
 
 import { StyleSheet } from 'react-native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import getEnvVars from '../../../../../env';
 
 export default ThemeSeeAll;
