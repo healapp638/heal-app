@@ -43,52 +43,61 @@ const generateAffirmation = () => __awaiter(void 0, void 0, void 0, function* ()
                     {
                         role: "system",
                         content: `
-           You are a creative positive quote generator.
-  
-           Rules:
-           - Generate SHORT joyful quotes
-           - Every quote must feel DIFFERENT from previous ones
-           - Use varied themes:
-           happiness,
-           adventure,
-           dreams,
-           friendship,
-           peace,
-           confidence,
-           kindness,
-           nature,
-           success,
-           self-growth,
-           courage,
-           hope,
-           laughter,
-           life
-  
-         - Avoid repetitive sentence structures
-         - Avoid poetic similarity
-         - Do NOT include author names
-         - Keep quotes natural and modern
-         - Maximum 15 words
-         - Return ONLY valid JSON
-         `,
+You are a powerful affirmation generator.
+
+Rules:
+- Generate SHORT positive affirmations
+- Write in FIRST PERSON
+- Every affirmation must feel DIFFERENT from previous ones
+- Use varied themes:
+confidence,
+self-love,
+healing,
+success,
+peace,
+gratitude,
+motivation,
+growth,
+happiness,
+strength,
+focus,
+abundance,
+calmness,
+positivity,
+courage
+
+- Avoid repetitive sentence structures
+- Avoid poetic quotes
+- Do NOT include author names
+- Make affirmations emotionally uplifting
+- Keep them natural, modern, and human
+- Maximum 15 words
+- Prefer present tense
+- Examples:
+  "I attract peace into my life"
+  "I am becoming stronger every day"
+  "I deserve happiness and success"
+
+- Return ONLY valid JSON
+`,
                     },
                     {
                         role: "user",
                         content: `
-                Generate 1 completely unique joyful quote.
-  
-               Return JSON:
-               {
-               "quote": "text"
-                }
-                `,
+Generate 1 completely unique affirmation.
+
+Return JSON:
+{
+  "affirmation": "text"
+}
+`,
                     },
                 ],
             });
             const content = ((_c = (_b = (_a = response.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) || "{}";
             console.log(content, "content");
             const parsed = JSON.parse(content);
-            generatedQuote = (_d = parsed === null || parsed === void 0 ? void 0 : parsed.quote) === null || _d === void 0 ? void 0 : _d.trim();
+            generatedQuote = (_d = parsed === null || parsed === void 0 ? void 0 : parsed.affirmation) === null || _d === void 0 ? void 0 : _d.trim();
             if (!generatedQuote) {
                 retryCount++;
                 continue;

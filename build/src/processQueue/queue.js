@@ -13,6 +13,6 @@ const connection = new ioredis_1.default({
 exports.excelQueue = new bullmq_1.Queue("excel-import", {
     connection,
 });
-exports.affirmationQueue = new bullmq_1.Queue("process-affirmationexcel", {
+exports.affirmationQueue = new bullmq_1.Queue("affirmation-import", {
     connection,
 });

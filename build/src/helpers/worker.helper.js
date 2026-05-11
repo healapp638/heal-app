@@ -334,12 +334,42 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
                     // ================= TRANSLATION =================
                     const translatedAffirmation = yield getTranslatedObj(affirmation);
                     // ================= SAVE =================
-                    const savedAffirmation = yield safeUpsert(user_affirmation_model_1.default, {
+                    // const savedAffirmation =
+                    //     await safeUpsert(
+                    //         userAffirmationModel,
+                    //         {
+                    //             "affirmation.en": {
+                    //                 $regex: `^${affirmation}$`,
+                    //                 $options: "i",
+                    //             },
+                    //         },
+                    //         {
+                    //             affirmation:
+                    //                 translatedAffirmation,
+                    //             type: "Admin",
+                    //             user_id: [],
+                    //         }
+                    //     );
+                    // console.log(
+                    //     "✅ Saved:",
+                    //     savedAffirmation._id
+                    // );
+                    // ================= CHECK DUPLICATE =================
+                    const existingAffirmation = yield user_affirmation_model_1.default.findOne({
                         "affirmation.en": {
                             $regex: `^${affirmation}$`,
                             $options: "i",
                         },
-                    }, {
+                        status: {
+                            $ne: workflow_constant_1.USER_STATUS.DELETED,
+                        },
+                    });
+                    if (existingAffirmation) {
+                        console.log("⚠️ Duplicate affirmation skipped:", affirmation);
+                        continue;
+                    }
+                    // ================= SAVE =================
+                    const savedAffirmation = yield user_affirmation_model_1.default.create({
                         affirmation: translatedAffirmation,
                         type: "Admin",
                         user_id: [],
@@ -359,7 +389,7 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
         }
     }), {
         connection: redisConnection,
-        concurrency: 1,
+        concurrency: 5,
     });
     // ================= EVENTS =================
     worker.on("completed", (job) => {

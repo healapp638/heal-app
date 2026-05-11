@@ -10,6 +10,6 @@ export const excelQueue = new Queue("excel-import", {
   connection,
 });
 
-export const affirmationQueue = new Queue("process-affirmationexcel",{
+export const affirmationQueue = new Queue("affirmation-import",{
    connection, 
 })

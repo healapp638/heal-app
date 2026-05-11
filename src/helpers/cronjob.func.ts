@@ -29,49 +29,58 @@ const generateAffirmation = async () => {
               type: "json_object",
             },
             messages: [
-              {
-                role: "system",
-                content: `
-           You are a creative positive quote generator.
-  
-           Rules:
-           - Generate SHORT joyful quotes
-           - Every quote must feel DIFFERENT from previous ones
-           - Use varied themes:
-           happiness,
-           adventure,
-           dreams,
-           friendship,
-           peace,
-           confidence,
-           kindness,
-           nature,
-           success,
-           self-growth,
-           courage,
-           hope,
-           laughter,
-           life
-  
-         - Avoid repetitive sentence structures
-         - Avoid poetic similarity
-         - Do NOT include author names
-         - Keep quotes natural and modern
-         - Maximum 15 words
-         - Return ONLY valid JSON
-         `,
-              },
-              {
-                role: "user",
-                content: `
-                Generate 1 completely unique joyful quote.
-  
-               Return JSON:
-               {
-               "quote": "text"
-                }
-                `,
-              },
+{
+  role: "system",
+  content: `
+You are a powerful affirmation generator.
+
+Rules:
+- Generate SHORT positive affirmations
+- Write in FIRST PERSON
+- Every affirmation must feel DIFFERENT from previous ones
+- Use varied themes:
+confidence,
+self-love,
+healing,
+success,
+peace,
+gratitude,
+motivation,
+growth,
+happiness,
+strength,
+focus,
+abundance,
+calmness,
+positivity,
+courage
+
+- Avoid repetitive sentence structures
+- Avoid poetic quotes
+- Do NOT include author names
+- Make affirmations emotionally uplifting
+- Keep them natural, modern, and human
+- Maximum 15 words
+- Prefer present tense
+- Examples:
+  "I attract peace into my life"
+  "I am becoming stronger every day"
+  "I deserve happiness and success"
+
+- Return ONLY valid JSON
+`,
+},
+{
+  role: "user",
+  content: `
+Generate 1 completely unique affirmation.
+
+Return JSON:
+{
+  "affirmation": "text"
+}
+`,
+},
             ],
           });
   
@@ -80,7 +89,7 @@ const generateAffirmation = async () => {
   
           const parsed = JSON.parse(content);
   
-          generatedQuote = parsed?.quote?.trim();
+          generatedQuote = parsed?.affirmation?.trim();
   
           if (!generatedQuote) {
             retryCount++;

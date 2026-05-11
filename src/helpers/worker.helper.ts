@@ -1,7 +1,7 @@
 import { Worker } from "bullmq";
 import IORedis from "ioredis";
 import xlsx from "xlsx";
-import { languages } from "../constants/workflow.constant";
+import { languages, USER_STATUS } from "../constants/workflow.constant";
 import { translateText } from "./langauge.translate.helper";
 import adminThemeModel from "../modules/AdminTheme/admin.theme.model";
 import adminModulesModel from "../modules/AdminModules/admin.modules.model";
@@ -450,29 +450,69 @@ const startAffirmationWorker = async () => {
                             );
 
                         // ================= SAVE =================
-                        const savedAffirmation =
-                            await safeUpsert(
-                                userAffirmationModel,
-                                {
-                                    "affirmation.en": {
-                                        $regex: `^${affirmation}$`,
-                                        $options: "i",
-                                    },
-                                },
-                                {
-                                    affirmation:
-                                        translatedAffirmation,
+                        // const savedAffirmation =
+                        //     await safeUpsert(
+                        //         userAffirmationModel,
+                        //         {
+                        //             "affirmation.en": {
+                        //                 $regex: `^${affirmation}$`,
+                        //                 $options: "i",
+                        //             },
+                        //         },
+                        //         {
+                        //             affirmation:
+                        //                 translatedAffirmation,
 
-                                    type: "Admin",
+                        //             type: "Admin",
 
-                                    user_id: [],
-                                }
-                            );
+                        //             user_id: [],
+                        //         }
+                        //     );
+
+                        // console.log(
+                        //     "✅ Saved:",
+                        //     savedAffirmation._id
+                        // );
+
+                        // ================= CHECK DUPLICATE =================
+
+                        const existingAffirmation =
+                        await userAffirmationModel.findOne({
+
+                       "affirmation.en": {
+                        $regex: `^${affirmation}$`,
+                        $options: "i",
+                        },
+
+                        status: {
+                        $ne: USER_STATUS.DELETED,
+                        },
+                        });
+
+                        if (existingAffirmation) {
 
                         console.log(
-                            "✅ Saved:",
-                            savedAffirmation._id
+                        "⚠️ Duplicate affirmation skipped:",
+                        affirmation
                         );
+
+                        continue;
+                        }
+
+                       // ================= SAVE =================
+
+                       const savedAffirmation =
+                       await userAffirmationModel.create({
+
+                        affirmation:
+                       translatedAffirmation,
+
+                       type: "Admin",
+
+                       user_id: [],
+                       });
+
+                      console.log("✅ Saved:",savedAffirmation._id);
 
                     } catch (rowError) {
 
@@ -499,7 +539,7 @@ const startAffirmationWorker = async () => {
         },
         {
             connection: redisConnection,
-            concurrency: 1,
+            concurrency: 5,
         }
     );
 

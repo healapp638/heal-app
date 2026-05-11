@@ -90,7 +90,8 @@ const CommonHandler = {
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminThemeModel, aggregate, page, limit)
         const result = await adminThemeModel.aggregate(aggregation)
-        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount,excel_format:
+                "https://d2aanhz0ffna0r.cloudfront.net/Heal%20Love%20Excel%203.xlsx" }, statusCodes.SUCCESS)
     },
 
     themeDetails: async (data: any): Promise<ApiResponse> => {

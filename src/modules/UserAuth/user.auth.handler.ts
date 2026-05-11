@@ -16,6 +16,7 @@ import { generateUserChallengesDaily, generateUserChallengesWeekly } from "../..
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.model";
 import { object } from "joi";
+import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.model";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -506,7 +507,62 @@ const UserAuthHandler = {
         // Edge case fix
         if (currentLevel === 0) currentLevel = 1;
         if (currentLevel > totalLevels) currentLevel = totalLevels;
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel }, statusCodes.SUCCESS)
+
+        const homeThemeAggregate: any = [
+
+    {
+        $match: {
+            user_id: commonHelper.convertToObjectId(userId),
+            status: USER_STATUS.ACTIVE,
+        },
+    },
+
+    {
+        $sort: {
+            createdAt: -1,
+        },
+    },
+
+    {
+        $limit: 1,
+    },
+
+    {
+        $lookup: {
+            from: "homethemeschemas",
+            localField: "homeTheme_id",
+            foreignField: "_id",
+            as: "themeData",
+        },
+    },
+
+    {
+        $unwind: {
+            path: "$themeData",
+            preserveNullAndEmptyArrays: true,
+        },
+    },
+
+    {
+        $project: {
+            _id: "$themeData._id",
+            imgUrl: "$themeData.imgUrl",
+            categoryTheme_id:
+                "$themeData.categoryTheme_id",
+            createdAt: "$themeData.createdAt",
+            updatedAt: "$themeData.updatedAt",
+        },
+    },
+];
+
+const homeThemeResult =
+    await userRecentHomeThemeModel.aggregate(
+        homeThemeAggregate
+    );
+
+const homeTheme =
+    homeThemeResult?.[0] || null;
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel,homeTheme }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {

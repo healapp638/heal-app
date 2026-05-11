@@ -62,6 +62,7 @@ const user_modules_complete_phase_model_1 = __importDefault(require("../UserModu
 const openai_helper_1 = require("../../helpers/openai.helper");
 const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
 const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
+const user_recentHomeTheme_model_1 = __importDefault(require("../UserHomeTheme/user.recentHomeTheme.model"));
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -491,7 +492,48 @@ const UserAuthHandler = {
             currentLevel = 1;
         if (currentLevel > totalLevels)
             currentLevel = totalLevels;
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel }), statusCodes_1.default.SUCCESS);
+        const homeThemeAggregate = [
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                },
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
+            {
+                $limit: 1,
+            },
+            {
+                $lookup: {
+                    from: "homethemeschemas",
+                    localField: "homeTheme_id",
+                    foreignField: "_id",
+                    as: "themeData",
+                },
+            },
+            {
+                $unwind: {
+                    path: "$themeData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
+            {
+                $project: {
+                    _id: "$themeData._id",
+                    imgUrl: "$themeData.imgUrl",
+                    categoryTheme_id: "$themeData.categoryTheme_id",
+                    createdAt: "$themeData.createdAt",
+                    updatedAt: "$themeData.updatedAt",
+                },
+            },
+        ];
+        const homeThemeResult = yield user_recentHomeTheme_model_1.default.aggregate(homeThemeAggregate);
+        const homeTheme = (homeThemeResult === null || homeThemeResult === void 0 ? void 0 : homeThemeResult[0]) || null;
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme }), statusCodes_1.default.SUCCESS);
     }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;
