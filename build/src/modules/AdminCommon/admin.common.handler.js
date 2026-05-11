@@ -185,7 +185,7 @@ const AdminCommonHandler = {
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_exel_model_1.default, aggregate, page, limit);
         const result = yield admin_exel_model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount, excel_format: "https://d2aanhz0ffna0r.cloudfront.net/Heal%20Love%20Excel%203.xlsx" }, statusCodes_1.default.SUCCESS);
     }),
     addAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { affirmation } = data;

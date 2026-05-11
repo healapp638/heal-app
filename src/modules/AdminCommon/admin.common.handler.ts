@@ -221,7 +221,8 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminExelModel, aggregate, page, limit)
         const result = await adminExelModel.aggregate(aggregation)
-        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount }, statusCodes.SUCCESS)
+        return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount,excel_format:
+                "https://d2aanhz0ffna0r.cloudfront.net/Heal%20Love%20Excel%203.xlsx" }, statusCodes.SUCCESS)
     },
 
     addAffirmation: async (data: any): Promise<ApiResponse> => {
