@@ -120,14 +120,28 @@ const homeThemeHandler = {
     console.log(themeCategory,"themeCategory")
 
     // return only user's language
-    const responseData = {
-      _id: themeCategory[0]._id,
-      title:
-        themeCategory[0]?.title?.[language] ||
-        themeCategory?.title?.en,
-      imgUrl: themeCategory[0].imgUrl,
-      createdAt: themeCategory[0].createdAt,
-    };
+    // const responseData = {
+    //   _id: themeCategory[0]._id,
+    //   title:
+    //     themeCategory[0]?.title?.[language] ||
+    //     themeCategory?.title?.en,
+    //   imgUrl: themeCategory[0].imgUrl,
+    //   createdAt: themeCategory[0].createdAt,
+    // };
+
+    const responseData =
+        themeCategory.map((item: any) => ({
+
+            _id: item._id,
+
+            title:
+                item?.title?.[language] ||
+                item?.title?.en,
+
+            imgUrl: item.imgUrl,
+
+            createdAt: item.createdAt,
+        }));
     console.log(responseData,"responseData")
 
     return showResponse(

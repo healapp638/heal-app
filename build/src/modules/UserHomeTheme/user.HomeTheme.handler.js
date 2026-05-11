@@ -91,7 +91,7 @@ const homeThemeHandler = {
         }
     }),
     getHomeThemeCategory: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
+        var _a;
         const userdata = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, {
             _id: (0, common_helper_1.convertToObjectId)(user_id),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
@@ -112,13 +112,24 @@ const homeThemeHandler = {
         }
         console.log(themeCategory, "themeCategory");
         // return only user's language
-        const responseData = {
-            _id: themeCategory[0]._id,
-            title: ((_c = (_b = themeCategory[0]) === null || _b === void 0 ? void 0 : _b.title) === null || _c === void 0 ? void 0 : _c[language]) ||
-                ((_d = themeCategory === null || themeCategory === void 0 ? void 0 : themeCategory.title) === null || _d === void 0 ? void 0 : _d.en),
-            imgUrl: themeCategory[0].imgUrl,
-            createdAt: themeCategory[0].createdAt,
-        };
+        // const responseData = {
+        //   _id: themeCategory[0]._id,
+        //   title:
+        //     themeCategory[0]?.title?.[language] ||
+        //     themeCategory?.title?.en,
+        //   imgUrl: themeCategory[0].imgUrl,
+        //   createdAt: themeCategory[0].createdAt,
+        // };
+        const responseData = themeCategory.map((item) => {
+            var _a, _b;
+            return ({
+                _id: item._id,
+                title: ((_a = item === null || item === void 0 ? void 0 : item.title) === null || _a === void 0 ? void 0 : _a[language]) ||
+                    ((_b = item === null || item === void 0 ? void 0 : item.title) === null || _b === void 0 ? void 0 : _b.en),
+                imgUrl: item.imgUrl,
+                createdAt: item.createdAt,
+            });
+        });
         console.log(responseData, "responseData");
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, responseData, statusCodes_1.default.SUCCESS);
     }),
