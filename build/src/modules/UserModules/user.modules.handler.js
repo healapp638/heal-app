@@ -32,6 +32,7 @@ const UserCommonHandler = {
         const { cursor, limit = 10 } = data;
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const userLang = user === null || user === void 0 ? void 0 : user.language;
+        console.log(userLang, "userLang");
         const match = {
             status: workflow_constant_1.USER_STATUS.ACTIVE
         };
@@ -65,6 +66,7 @@ const UserCommonHandler = {
         ]);
         const last = themeList[themeList.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        console.log(themeList, "themeList");
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { data: themeList, nextCursor }, statusCodes_1.default.SUCCESS);
     }),
     moduleList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {

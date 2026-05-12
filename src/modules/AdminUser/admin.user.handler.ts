@@ -19,7 +19,7 @@ const AdminUserHandler = {
             status: { $ne: USER_STATUS.DELETED },
             $or: [
                 { email: { $regex: search_key, $options: 'i' } },
-                { first_name: { $regex: search_key, $options: 'i' } },
+                { fullName: { $regex: search_key, $options: 'i' } },
             ],
             isVerified: true
         }

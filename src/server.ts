@@ -49,7 +49,7 @@ init();
 app.use(helmet());
 
 
-//  CORS CONFIG (FIXED)
+//  CORS CONFIG 
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com"];
 app.use(
   cors({

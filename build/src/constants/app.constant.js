@@ -34,7 +34,7 @@ let STRIPE_CREDENTIAL;
 const APP = {
     ACCESS_EXPIRY: "30m",
     REFRESH_EXPIRY: "7d",
-    PORT: process.env.PORT || 8000,
+    PORT: process.env.PORT || 3001,
     API_PREFIX: process.env.API_PREFIX || "/api/v1",
     FRONTEND_URL: process.env.FRONTEND_URL || '',
     BITBUCKET_URL: process.env.BITBUCKET_URL || '',

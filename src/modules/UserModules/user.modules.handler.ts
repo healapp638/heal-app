@@ -21,6 +21,7 @@ const UserCommonHandler = {
         const { cursor, limit = 10 } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const userLang = user?.language;
+        console.log(userLang,"userLang")
 
         const match: any = {
             status: USER_STATUS.ACTIVE
@@ -62,6 +63,7 @@ const UserCommonHandler = {
         const last = themeList[themeList.length - 1];
 
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        console.log(themeList,"themeList")
 
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { data: themeList, nextCursor }, statusCodes.SUCCESS);
     },
