@@ -11,7 +11,6 @@ import {
   ImageBackground,
   StyleSheet,
 } from 'react-native';
-
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SolidView from '../../../../components/SolidView';
@@ -22,7 +21,6 @@ import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import FavoritesModal from '../../../../modals/FavoritesModal';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-
 import { useHaptic } from '../../../../hooks/useHaptic';
 import useGetApi from '../../../../hooks/useGetApi';
 import useInfiniteGetApi from '../../../../hooks/useInfiniteGetApi';
@@ -33,9 +31,8 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import getEnvVars from '../../../../../env';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
 const DailyQuote = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -49,9 +46,10 @@ const DailyQuote = () => {
   // console.log('user', user);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
-  const viewShotRefs = useRef<{ [key: string]: ViewShot }>({});
+  const viewShotRefs = useRef<{
+    [key: string]: ViewShot;
+  }>({});
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const visibleItem = viewableItems[0].item;
@@ -62,16 +60,16 @@ const DailyQuote = () => {
       if (visibleItem?._id) {
         postApi({
           endpoint: endpoints.add_view_affirmation,
-          data: { affirmation_id: visibleItem._id },
+          data: {
+            affirmation_id: visibleItem._id,
+          },
         });
       }
     }
   }).current;
-
   const viewabilityConfig = useRef({
     itemVisiblePercentThreshold: 50,
   }).current;
-
   const {
     data: affirmationData,
     fetchNextPage,
@@ -80,12 +78,17 @@ const DailyQuote = () => {
     isLoading,
   } = useInfiniteGetApi(
     endpoints.affirmation_list,
-    ['getAffirmationListing', { is_liked: undefined }], // Passing is_liked here as per request
+    [
+      'getAffirmationListing',
+      {
+        is_liked: undefined,
+      },
+    ],
+    // Passing is_liked here as per request
     {
       limit: 10,
     },
   );
-
   const handleShare = async (index: number) => {
     try {
       triggerHaptic('impactMedium');
@@ -95,7 +98,6 @@ const DailyQuote = () => {
           ? quotes[index]
           : quotes[index].affirmation;
       const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
-
       if (uri) {
         await Share.open({
           url: uri,
@@ -107,30 +109,30 @@ const DailyQuote = () => {
       console.log('Share error:', error);
     }
   };
-
   const apiQuotes =
     affirmationData?.pages?.flatMap(page => page?.data?.result || []) || [];
   const quotes = apiQuotes;
-
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
-
   const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
 
   // Animation value for the big center heart
   const heartScale = useRef(new Animated.Value(0)).current;
   const heartOpacity = useRef(new Animated.Value(0)).current;
-
   const handleLike = (index: number) => {
     const item = quotes[index];
     if (!item || typeof item === 'string') return;
-
     const isLiked = !!item.is_liked;
 
     // Optimistic Update
     queryClient.setQueryData(
-      ['getAffirmationListing', { is_liked: undefined }],
+      [
+        'getAffirmationListing',
+        {
+          is_liked: undefined,
+        },
+      ],
       (oldData: any) => {
         if (!oldData) return oldData;
         const newPages = oldData.pages.map((page: any) => ({
@@ -138,20 +140,26 @@ const DailyQuote = () => {
           data: {
             ...page.data,
             result: page.data.result.map((quote: any) =>
-              quote._id === item._id ? { ...quote, is_liked: !isLiked } : quote,
+              quote._id === item._id
+                ? {
+                    ...quote,
+                    is_liked: !isLiked,
+                  }
+                : quote,
             ),
           },
         }));
-        return { ...oldData, pages: newPages };
+        return {
+          ...oldData,
+          pages: newPages,
+        };
       },
     );
-
     if (!isLiked) {
       triggerHaptic('impactMedium');
       // Trigger center heart animation
       heartScale.setValue(0);
       heartOpacity.setValue(0);
-
       Animated.parallel([
         Animated.sequence([
           Animated.timing(heartScale, {
@@ -180,14 +188,15 @@ const DailyQuote = () => {
         ]),
       ]).start();
     } else {
-      triggerHaptic('impactHeavy');
     }
 
     // Hit API in background
     postApi(
       {
         endpoint: endpoints.like_unlike_affirmation,
-        data: { affirmation_id: item._id },
+        data: {
+          affirmation_id: item._id,
+        },
       },
       {
         onSuccess: () => {
@@ -199,37 +208,54 @@ const DailyQuote = () => {
       },
     );
   };
-
   const renderItem = ({ item, index }: { item: any; index: number }) => {
     const isLiked = !!item.is_liked;
     const quoteContent = item.affirmation;
-
     return (
       <View style={styles.slideContainer}>
         <ViewShot
           ref={ref => {
             if (ref) viewShotRefs.current[index] = ref;
           }}
-          options={{ format: 'png', quality: 0.9 }}
-          style={[styles.captureContainer, { height: SCREEN_HEIGHT }]}
+          options={{
+            format: 'png',
+            quality: 0.9,
+          }}
+          style={[
+            styles.captureContainer,
+            {
+              height: SCREEN_HEIGHT,
+            },
+          ]}
         >
           {homeThemeUrl ? (
             <>
               <ImageBackground
-                source={{ uri: homeThemeUrl }}
+                source={{
+                  uri: homeThemeUrl,
+                }}
                 style={StyleSheet.absoluteFillObject}
                 resizeMode="cover"
               />
               <View
                 style={[
                   StyleSheet.absoluteFillObject,
-                  { backgroundColor: 'rgba(0,0,0,0.25)' },
+                  {
+                    backgroundColor: 'rgba(0,0,0,0.25)',
+                  },
                 ]}
               />
             </>
           ) : null}
 
-          <View style={[styles.quoteContainer, { width: '100%' }]}>
+          <View
+            style={[
+              styles.quoteContainer,
+              {
+                width: '100%',
+              },
+            ]}
+          >
             <SolidText
               style={[
                 styles.quoteText,
@@ -239,7 +265,10 @@ const DailyQuote = () => {
                     activeColor === '#FFFFFF'
                       ? 'rgba(0, 0, 0, 0.4)'
                       : 'transparent',
-                  textShadowOffset: { width: 0, height: 1 },
+                  textShadowOffset: {
+                    width: 0,
+                    height: 1,
+                  },
                   textShadowRadius: 10,
                 },
               ]}
@@ -255,21 +284,37 @@ const DailyQuote = () => {
           <View style={styles.actionRow}>
             <TouchableOpacity
               style={styles.iconBtn}
-              onPress={() => handleShare(index)}
+              onPress={() => {
+                // triggerHaptic('impactHeavy');
+                return handleShare(index);
+              }}
             >
               <Image
                 source={images.share}
-                style={[styles.bottomIcon, { tintColor: activeColor }]}
+                style={[
+                  styles.bottomIcon,
+                  {
+                    tintColor: activeColor,
+                  },
+                ]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.iconBtn}
-              onPress={() => handleLike(index)}
+              onPress={() => {
+                // triggerHaptic('impactHeavy');
+                return handleLike(index);
+              }}
             >
               <Image
                 source={isLiked ? images.heartFill : images.like}
-                style={[styles.bottomIcon, { tintColor: activeColor }]}
+                style={[
+                  styles.bottomIcon,
+                  {
+                    tintColor: activeColor,
+                  },
+                ]}
                 resizeMode="contain"
               />
             </TouchableOpacity>
@@ -278,13 +323,21 @@ const DailyQuote = () => {
       </View>
     );
   };
-
   return (
     <SolidView
       edges={[]}
-      containerStyle={{ backgroundColor: 'transparent' }}
+      containerStyle={{
+        backgroundColor: 'transparent',
+      }}
       view={
-        <View style={[styles.container, { backgroundColor: 'transparent' }]}>
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: 'transparent',
+            },
+          ]}
+        >
           <View
             style={[
               styles.headerWrapper,
@@ -350,13 +403,22 @@ const DailyQuote = () => {
               styles.centerHeartContainer,
               {
                 opacity: heartOpacity,
-                transform: [{ scale: heartScale }],
+                transform: [
+                  {
+                    scale: heartScale,
+                  },
+                ],
               },
             ]}
           >
             <Image
               source={images.heartFill}
-              style={[styles.centerHeart, { tintColor: activeColor }]}
+              style={[
+                styles.centerHeart,
+                {
+                  tintColor: activeColor,
+                },
+              ]}
               resizeMode="contain"
             />
           </Animated.View>
@@ -378,6 +440,7 @@ const DailyQuote = () => {
           <TouchableOpacity
             onPress={() => {
               triggerHaptic('impactHeavy');
+
               navigation.navigate(AppRoutes.ThemeMixes as never);
             }}
             style={styles.themeBtn}
@@ -403,5 +466,4 @@ const DailyQuote = () => {
     />
   );
 };
-
 export default DailyQuote;

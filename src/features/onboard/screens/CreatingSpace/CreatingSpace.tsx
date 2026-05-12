@@ -11,7 +11,11 @@ import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
@@ -20,33 +24,31 @@ import {
   setOnboardingCompleted,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const CHAR_INTERVAL_MS = 28;
 const SENTENCE_PAUSE_MS = 700;
-
 const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const sentences = useMemo(
     () => [
       localization.appkeys?.welcomeSentence1 || '',
       localization.appkeys?.welcomeSentence2 || '',
     ],
-    [localization.appkeys?.welcomeSentence1, localization.appkeys?.welcomeSentence2],
+    [
+      localization.appkeys?.welcomeSentence1,
+      localization.appkeys?.welcomeSentence2,
+    ],
   );
-
   const [displayedTexts, setDisplayedTexts] = useState<string[]>(['', '']);
   const [activeSentence, setActiveSentence] = useState(0);
   const [activeChar, setActiveChar] = useState(0);
   const [allDone, setAllDone] = useState(false);
-
   const buttonOpacity = useRef(new Animated.Value(0)).current;
   const cursorOpacity = useRef(new Animated.Value(1)).current;
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.CreatingSpace));
@@ -76,7 +78,6 @@ const CreatingSpace = () => {
   // Typewriter logic
   useEffect(() => {
     if (allDone) return;
-
     if (activeSentence >= sentences.length) {
       setAllDone(true);
       Animated.timing(buttonOpacity, {
@@ -86,9 +87,7 @@ const CreatingSpace = () => {
       }).start();
       return;
     }
-
     const sentence = sentences[activeSentence];
-
     if (activeChar < sentence.length) {
       const timer = setTimeout(() => {
         setDisplayedTexts(prev => {
@@ -107,19 +106,27 @@ const CreatingSpace = () => {
       return () => clearTimeout(timer);
     }
   }, [activeSentence, activeChar, allDone, buttonOpacity, sentences]);
-
   const handleContinue = () => {
     dispatch(setOnboardingCompleted(true));
     navigation.navigate(AppRoutes.AccessScreen as never);
   };
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
-          <View style={{ paddingHorizontal: 20 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              paddingHorizontal: 20,
+            }}
+          >
             <HeaderCommon title={localization.appkeys?.creatingSpaceHeader} />
           </View>
 
@@ -150,7 +157,12 @@ const CreatingSpace = () => {
                       {displayedTexts[i]}
                       {activeSentence === i && activeChar < sentence.length && (
                         <Animated.Text
-                          style={[styles.cursor, { opacity: cursorOpacity }]}
+                          style={[
+                            styles.cursor,
+                            {
+                              opacity: cursorOpacity,
+                            },
+                          ]}
                         >
                           {'|'}
                         </Animated.Text>
@@ -162,14 +174,25 @@ const CreatingSpace = () => {
             </View>
           </View>
 
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
 
           <Animated.View
-            style={[styles.btnContainer, { opacity: buttonOpacity }]}
+            style={[
+              styles.btnContainer,
+              {
+                opacity: buttonOpacity,
+              },
+            ]}
           >
             <SolidBtn
               titleTxt={localization.appkeys?.startHealing}
-              onPress={handleContinue}
+              onPress={(...args: any) => {
+                return (handleContinue as any)(...args);
+              }}
             />
           </Animated.View>
         </View>
@@ -177,5 +200,4 @@ const CreatingSpace = () => {
     />
   );
 };
-
 export default CreatingSpace;

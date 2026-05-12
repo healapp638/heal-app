@@ -29,7 +29,7 @@ import {
   getUserDetail,
 } from '../../../../redux/Reducers/userData';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const SignIn = () => {
   const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
@@ -41,10 +41,8 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-
   const { mutate: loginUser, isPending } = usePostApi();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
-
   const handleLogin = () => {
     if (!email) {
       AppUtils.showToast(
@@ -65,7 +63,6 @@ const SignIn = () => {
       );
       return;
     }
-
     loginUser(
       {
         endpoint: endpoints.login,
@@ -108,7 +105,9 @@ const SignIn = () => {
               routes: [
                 {
                   name: AppRoutes.NonAuthStack,
-                  params: { screen: AppRoutes.Offer },
+                  params: {
+                    screen: AppRoutes.Offer,
+                  },
                 } as never,
               ],
             });
@@ -120,7 +119,6 @@ const SignIn = () => {
       },
     );
   };
-
   useEffect(() => {
     checkRememberMe();
     const backHandler = BackHandler.addEventListener(
@@ -128,14 +126,17 @@ const SignIn = () => {
       () => {
         navigation.reset({
           index: 0,
-          routes: [{ name: AppRoutes.AccessScreen as never }],
+          routes: [
+            {
+              name: AppRoutes.AccessScreen as never,
+            },
+          ],
         });
         return true;
       },
     );
     return () => backHandler.remove();
   }, []);
-
   const checkRememberMe = async () => {
     const res = await localStore.getData(storeKeys.rememberMe);
     if (res?.status && res?.value) {
@@ -147,7 +148,9 @@ const SignIn = () => {
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
@@ -155,12 +158,20 @@ const SignIn = () => {
             onBackPress={() => {
               navigation.reset({
                 index: 0,
-                routes: [{ name: AppRoutes.AccessScreen as never }],
+                routes: [
+                  {
+                    name: AppRoutes.AccessScreen as never,
+                  },
+                ],
               });
             }}
           />
 
-          <View style={{ flex: 1 }}>
+          <View
+            style={{
+              flex: 1,
+            }}
+          >
             <SolidText style={styles.welcomeTitle}>
               {localization.appkeys?.welcomeBack}
             </SolidText>
@@ -196,7 +207,9 @@ const SignIn = () => {
             <View style={styles.optionsContainer}>
               <TouchableOpacity
                 style={styles.checkboxContainer}
-                onPress={() => setRememberMe(!rememberMe)}
+                onPress={() => {
+                  return setRememberMe(!rememberMe);
+                }}
                 activeOpacity={0.8}
               >
                 <Image
@@ -210,20 +223,26 @@ const SignIn = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(AppRoutes.ForgotPassword as never)
-                }
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.ForgotPassword as never);
+                }}
               >
                 <SolidText style={styles.forgotPasswordText}>
                   {localization.appkeys?.forgotPassword}
                 </SolidText>
               </TouchableOpacity>
             </View>
-            <View style={{ paddingHorizontal: 20 }}>
+            <View
+              style={{
+                paddingHorizontal: 20,
+              }}
+            >
               <SolidBtn
                 titleTxt={localization.appkeys?.logInBtn}
                 btnStyle={styles.loginBtn}
-                onPress={handleLogin}
+                onPress={(...args: any) => {
+                  return (handleLogin as any)(...args);
+                }}
                 isLoading={isPending}
                 disabled={isPending}
               />
@@ -241,7 +260,9 @@ const SignIn = () => {
               <View style={styles.socialContainer}>
                 <TouchableOpacity
                   style={styles.socialBtn}
-                  onPress={googleLogin}
+                  onPress={(...args: any) => {
+                    return (googleLogin as any)(...args);
+                  }}
                   disabled={isSocialPending}
                 >
                   <Image
@@ -273,11 +294,17 @@ const SignIn = () => {
               </View>
             </View>
           </View>
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
 
           {/* Footer */}
           <TouchableOpacity
-            onPress={() => navigation.navigate(AppRoutes.SignUp as never)}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.SignUp as never);
+            }}
             style={styles.footer}
           >
             <SolidText style={styles.footerText}>
@@ -293,5 +320,4 @@ const SignIn = () => {
     />
   );
 };
-
 export default SignIn;

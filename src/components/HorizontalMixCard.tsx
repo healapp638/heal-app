@@ -1,16 +1,20 @@
 import React from 'react';
-import { ImageBackground, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
+import {
+  ImageBackground,
+  StyleSheet,
+  ViewStyle,
+  TouchableOpacity,
+} from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface HorizontalMixCardProps {
   image: any;
   title: string;
   style?: ViewStyle;
   onPress?: () => void;
 }
-
 const HorizontalMixCard = ({
   image,
   title,
@@ -18,19 +22,23 @@ const HorizontalMixCard = ({
   onPress,
 }: HorizontalMixCardProps) => {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
-      <ImageBackground
-      source={image}
-      style={[styles.card, style]}
-      imageStyle={styles.imageStyle}
-      resizeMode="cover"
+    <TouchableOpacity
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
+      activeOpacity={0.8}
     >
+      <ImageBackground
+        source={image}
+        style={[styles.card, style]}
+        imageStyle={styles.imageStyle}
+        resizeMode="cover"
+      >
         <SolidText style={styles.title}>{title}</SolidText>
       </ImageBackground>
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   card: {
     width: 160,
@@ -51,5 +59,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
 export default HorizontalMixCard;

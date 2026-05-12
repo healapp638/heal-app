@@ -4,7 +4,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface PhaseCardProps {
   phase: string;
   title: string;
@@ -13,7 +13,6 @@ interface PhaseCardProps {
   isCompleted?: boolean;
   onPress?: () => void;
 }
-
 const PhaseCard = ({
   phase,
   title,
@@ -23,19 +22,39 @@ const PhaseCard = ({
   onPress,
 }: PhaseCardProps) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       disabled={isLocked}
-      style={[styles.card, { backgroundColor: colors.white }]}
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.white,
+        },
+      ]}
     >
       <View style={styles.leftContainer}>
-        <SolidText style={[styles.phaseText, { color: colors.brown }]}>
+        <SolidText
+          style={[
+            styles.phaseText,
+            {
+              color: colors.brown,
+            },
+          ]}
+        >
           {phase}
         </SolidText>
-        <SolidText style={[styles.titleText, { color: colors.brown }]}>
+        <SolidText
+          style={[
+            styles.titleText,
+            {
+              color: colors.brown,
+            },
+          ]}
+        >
           {title}
         </SolidText>
         <SolidText style={styles.pointsText}>{points}</SolidText>
@@ -65,7 +84,6 @@ const PhaseCard = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   card: {
     width: '100%',
@@ -77,7 +95,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     // iOS shadow
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.04,
     shadowRadius: 5,
     // Android shadow
@@ -110,7 +131,8 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#EBE0D0', // Match the gray/beige background seen in the design
+    backgroundColor: '#EBE0D0',
+    // Match the gray/beige background seen in the design
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -127,5 +149,4 @@ const styles = StyleSheet.create({
     height: 34,
   },
 });
-
 export default React.memo(PhaseCard);

@@ -17,12 +17,11 @@ import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import useInfiniteGetApi from '../../../../hooks/useInfiniteGetApi';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
-
 import GridThemeCard from '../../../../components/GridThemeCard';
 import getEnvVars from '../../../../../env';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ThemeDetail = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -34,8 +33,9 @@ const ThemeDetail = () => {
   const { mutate: postApi, isLoading: isAddingTheme } = usePostApi();
   const dispatch = useDispatch();
   // Title and category ID passed from navigation params
-  const { title, categoryTheme_id } = route.params || { title: 'Abstract' };
-
+  const { title, categoryTheme_id } = route.params || {
+    title: 'Abstract',
+  };
   const {
     data: themeDataApi,
     fetchNextPage,
@@ -50,18 +50,21 @@ const ThemeDetail = () => {
       limit: 15,
     },
   );
-
   const themeItems =
     themeDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
-
   const renderItem = ({ item }: { item: any }) => (
     <GridThemeCard
-      image={{ uri: `${getEnvVars().fileUrl}${item.imgUrl}` }}
+      image={{
+        uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+      }}
       onPress={() => {
+        triggerHaptic('impactHeavy');
         postApi(
           {
             endpoint: endpoints.add_user_theme,
-            data: { homeTheme_id: item._id },
+            data: {
+              homeTheme_id: item._id,
+            },
           },
           {
             onSuccess: () => {
@@ -77,12 +80,15 @@ const ThemeDetail = () => {
       }}
     />
   );
-
   return (
     <SolidView
       view={
         <View style={styles.container}>
-          <View style={{ paddingHorizontal: 18 }}>
+          <View
+            style={{
+              paddingHorizontal: 18,
+            }}
+          >
             <HeaderCommon title={title} />
           </View>
 
@@ -90,7 +96,9 @@ const ThemeDetail = () => {
             <ActivityIndicator
               size="large"
               color={colors.primary}
-              style={{ flex: 1 }}
+              style={{
+                flex: 1,
+              }}
             />
           ) : (
             <FlatList
@@ -98,16 +106,32 @@ const ThemeDetail = () => {
               renderItem={renderItem}
               keyExtractor={item => item._id}
               numColumns={3}
-              style={{ width: '100%', paddingHorizontal: 8, marginTop: -10 }}
+              style={{
+                width: '100%',
+                paddingHorizontal: 8,
+                marginTop: -10,
+              }}
               contentContainerStyle={[
                 styles.gridContainer,
-                { paddingBottom: 40 },
+                {
+                  paddingBottom: 40,
+                },
               ]}
               showsVerticalScrollIndicator={false}
               ListEmptyComponent={() =>
                 !isLoading ? (
-                  <View style={{ alignItems: 'center', marginTop: 60 }}>
-                    <SolidText style={{ color: colors.brown, opacity: 0.5 }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      marginTop: 60,
+                    }}
+                  >
+                    <SolidText
+                      style={{
+                        color: colors.brown,
+                        opacity: 0.5,
+                      }}
+                    >
                       No themes found
                     </SolidText>
                   </View>
@@ -123,7 +147,9 @@ const ThemeDetail = () => {
                 isFetchingNextPage ? (
                   <ActivityIndicator
                     color={colors.primary}
-                    style={{ marginVertical: 20 }}
+                    style={{
+                      marginVertical: 20,
+                    }}
                   />
                 ) : null
               }
@@ -158,5 +184,4 @@ const ThemeDetail = () => {
     />
   );
 };
-
 export default ThemeDetail;

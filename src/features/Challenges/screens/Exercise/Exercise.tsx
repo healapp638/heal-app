@@ -8,14 +8,13 @@ import SolidBtn from '../../../../components/SolidBtn';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Exercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const [currentStep, setCurrentStep] = useState(0);
-
   const steps = [
     {
       text:
@@ -43,7 +42,6 @@ const Exercise = () => {
         'For each one, write why it is important to you.',
     },
   ];
-
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -53,13 +51,14 @@ const Exercise = () => {
         routes: [
           {
             name: AppRoutes.BottomTab as never,
-            params: { screen: AppRoutes.Challenges } as any,
+            params: {
+              screen: AppRoutes.Challenges,
+            } as any,
           },
         ],
       });
     }
   };
-
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
@@ -67,7 +66,6 @@ const Exercise = () => {
       navigation.goBack();
     }
   };
-
   return (
     <SolidView
       view={
@@ -90,7 +88,9 @@ const Exercise = () => {
                 ? localization.appkeys?.markAsComplete || 'Mark as Complete'
                 : localization.appkeys?.next || 'Next'
             }
-            onPress={handleNext}
+            onPress={(...args: any) => {
+              return (handleNext as any)(...args);
+            }}
             btnStyle={styles.nextButton}
           />
         </View>
@@ -98,5 +98,4 @@ const Exercise = () => {
     />
   );
 };
-
 export default Exercise;

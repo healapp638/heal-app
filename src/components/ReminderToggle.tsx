@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Image, TouchableOpacity } from 'react-native';
 import SolidText from './SolidText';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ReminderToggleProps {
   localization: any;
   styles: any;
@@ -9,7 +9,6 @@ interface ReminderToggleProps {
   reminderEnabled: boolean;
   onToggle: () => void;
 }
-
 const ReminderToggle: React.FC<ReminderToggleProps> = ({
   localization,
   styles,
@@ -22,7 +21,11 @@ const ReminderToggle: React.FC<ReminderToggleProps> = ({
       <SolidText maxFontScale={1} style={styles.reminderText}>
         {localization.appkeys?.reminderBeforeEnds}
       </SolidText>
-      <TouchableOpacity onPress={onToggle}>
+      <TouchableOpacity
+        onPress={(...args: any) => {
+          return (onToggle as any)(...args);
+        }}
+      >
         <Image
           source={reminderEnabled ? images.toggleOn : images.toggleOff}
           style={styles.toggleIcon}
@@ -32,5 +35,4 @@ const ReminderToggle: React.FC<ReminderToggleProps> = ({
     </View>
   );
 };
-
 export default ReminderToggle;

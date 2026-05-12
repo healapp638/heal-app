@@ -4,33 +4,45 @@ import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import { useDispatch } from 'react-redux';
 import { setOnboardingCurrentScreen } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Warning = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.Warning));
     }, [dispatch]),
   );
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
-          <View style={{ paddingHorizontal: 20 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              paddingHorizontal: 20,
+            }}
+          >
             <HeaderCommon title={localization.appkeys?.warningHeader} />
           </View>
 
@@ -50,9 +62,9 @@ const Warning = () => {
             <SolidBtn
               titleTxt={localization.appkeys?.understandContinue}
               btnStyle={styles.btn}
-              onPress={() =>
-                navigation.navigate(AppRoutes.CreatingSpace as never)
-              }
+              onPress={() => {
+                return navigation.navigate(AppRoutes.CreatingSpace as never);
+              }}
             />
           </View>
         </View>
@@ -60,5 +72,4 @@ const Warning = () => {
     />
   );
 };
-
 export default Warning;

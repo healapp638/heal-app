@@ -16,6 +16,7 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import { useRoute, useFocusEffect } from '@react-navigation/native';
 import AppUtils from '../../../../utils/appUtils';
 import { useCallback } from 'react';
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 
 const ConnectedEntries = () => {
   const navigation = useNavigation();
@@ -92,7 +93,10 @@ const ConnectedEntries = () => {
               localization.appkeys?.connectedEntriesTitle || 'Connected Entries'
             }
             rightIcon={images.crown}
-            onRightPress={() => setShowCreditsModal(true)}
+            onRightPress={() => {
+              triggerHaptic('impactHeavy');
+              setShowCreditsModal(true);
+            }}
           />
 
           <HomeHeader
@@ -126,7 +130,10 @@ const ConnectedEntries = () => {
                   tag={item.tag}
                   title={item.title}
                   body={item.body}
-                  onPress={() => setSelectedEntry(item)}
+                  onPress={() => {
+                    triggerHaptic('impactHeavy');
+                    setSelectedEntry(item);
+                  }}
                 />
               )}
             />

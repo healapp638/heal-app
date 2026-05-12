@@ -7,13 +7,12 @@ import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import HomeHeader from '../../../../components/HomeHeader';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const EmergencyResources = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const ResourceCard = ({
     title,
     status,
@@ -50,7 +49,6 @@ const EmergencyResources = () => {
       </TouchableOpacity>
     </View>
   );
-
   const LinkCard = ({ label }: { label: string }) => (
     <TouchableOpacity style={styles.linkCard} activeOpacity={0.7}>
       <SolidText style={styles.linkText}>{label}</SolidText>
@@ -61,7 +59,6 @@ const EmergencyResources = () => {
       />
     </TouchableOpacity>
   );
-
   return (
     <SolidView
       isScrollEnabled
@@ -88,7 +85,9 @@ const EmergencyResources = () => {
             safeSpaceLabel={
               localization.appkeys?.hereForYou || 'We are here for you'
             }
-            subStyle={{ marginTop: 5 }}
+            subStyle={{
+              marginTop: 5,
+            }}
           />
 
           <View style={styles.heroCard}>
@@ -136,7 +135,11 @@ const EmergencyResources = () => {
             status={localization.appkeys?.available247 || 'Available 24/7'}
             number="Text SHOUT to 85258"
           />
-          <View style={{ height: 20 }} />
+          <View
+            style={{
+              height: 20,
+            }}
+          />
           {/* <View style={styles.additionalSection}>
             <SolidText style={styles.countryTitle}>
               {localization.appkeys?.additionalSupport || 'Additional Support'}
@@ -159,11 +162,10 @@ const EmergencyResources = () => {
                 'Mental Health First Aid'
               }
             />
-          </View> */}
+           </View> */}
         </View>
       }
     />
   );
 };
-
 export default EmergencyResources;

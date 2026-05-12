@@ -12,24 +12,20 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { isPasswordValid } from '../../../auth/utils/SignUp/signUpValidation';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ChangePassword = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const [oldPassword, setOldPassword] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
   const [oldVisible, setOldVisible] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
-
   const { mutate: changePassword, isPending } = usePostApi();
-
   const handleConfirm = () => {
     if (!oldPassword) {
       AppUtils.showToast(
@@ -38,7 +34,6 @@ const ChangePassword = () => {
       );
       return;
     }
-
     if (!password) {
       AppUtils.showToast(
         localization.appkeys?.toastEnterNewPassword ||
@@ -46,7 +41,6 @@ const ChangePassword = () => {
       );
       return;
     }
-
     if (oldPassword === password) {
       AppUtils.showToast(
         localization.appkeys?.toastOldNewPasswordSame ||
@@ -54,7 +48,6 @@ const ChangePassword = () => {
       );
       return;
     }
-
     if (!isPasswordValid(password)) {
       AppUtils.showToast(
         localization.appkeys?.toastPasswordRequirementsDetailed ||
@@ -63,7 +56,6 @@ const ChangePassword = () => {
       );
       return;
     }
-
     if (!confirmPassword) {
       AppUtils.showToast(
         localization.appkeys?.toastEnterConfirmPassword ||
@@ -71,7 +63,6 @@ const ChangePassword = () => {
       );
       return;
     }
-
     if (password !== confirmPassword) {
       AppUtils.showToast(
         localization.appkeys?.toastPasswordMismatch ||
@@ -79,7 +70,6 @@ const ChangePassword = () => {
       );
       return;
     }
-
     changePassword(
       {
         endpoint: endpoints.change_password,
@@ -98,16 +88,16 @@ const ChangePassword = () => {
       },
     );
   };
-
   const navigateToSettings = () => {
     setSuccessVisible(false);
     navigation.goBack();
   };
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
@@ -116,7 +106,9 @@ const ChangePassword = () => {
           />
 
           <SolidInput
-            mainStyle={{ marginTop: -10 }}
+            mainStyle={{
+              marginTop: -10,
+            }}
             label={localization.appkeys?.oldPassword || 'Old Password'}
             placeholder="********"
             value={oldPassword}
@@ -149,18 +141,26 @@ const ChangePassword = () => {
             rightImgTintColor={colors.primary}
           />
 
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
 
           <SolidBtn
             titleTxt={localization.appkeys?.confirm || 'Confirm'}
             btnStyle={styles.confirmBtn}
-            onPress={handleConfirm}
+            onPress={(...args: any) => {
+              return (handleConfirm as any)(...args);
+            }}
             isLoading={isPending}
             disabled={isPending}
           />
 
           <SuccessModal
-            btnStyle={{ marginTop: -10 }}
+            btnStyle={{
+              marginTop: -10,
+            }}
             visible={successVisible}
             onClose={() => setSuccessVisible(false)}
             title={
@@ -179,5 +179,4 @@ const ChangePassword = () => {
     />
   );
 };
-
 export default ChangePassword;

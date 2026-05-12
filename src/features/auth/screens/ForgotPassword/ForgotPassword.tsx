@@ -12,16 +12,14 @@ import { useContext, useState } from 'react';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ForgotPassword = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const [email, setEmail] = useState('');
   const { mutate: forgotPassword, isPending } = usePostApi();
-
   const handleVerify = () => {
     if (!email) {
       AppUtils.showToast(
@@ -29,7 +27,6 @@ const ForgotPassword = () => {
       );
       return;
     }
-
     if (!AppUtils.validateEmail(email)) {
       AppUtils.showToast(
         localization.appkeys?.toastInvalidEmail ||
@@ -37,11 +34,12 @@ const ForgotPassword = () => {
       );
       return;
     }
-
     forgotPassword(
       {
         endpoint: endpoints.forgot_password,
-        data: { email: email?.trim()?.toLowerCase() },
+        data: {
+          email: email?.trim()?.toLowerCase(),
+        },
       },
       {
         onSuccess: () => {
@@ -59,11 +57,12 @@ const ForgotPassword = () => {
       },
     );
   };
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon title={localization.appkeys?.forgotPassHeader} />
@@ -85,11 +84,17 @@ const ForgotPassword = () => {
             rightImgTintColor={colors.primary}
             autoCapitalize="none"
           />
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
           <SolidBtn
             titleTxt={localization.appkeys?.verifyAndContinue}
             btnStyle={styles.verifyBtn}
-            onPress={handleVerify}
+            onPress={(...args: any) => {
+              return (handleVerify as any)(...args);
+            }}
             isLoading={isPending}
             disabled={isPending}
           />
@@ -98,5 +103,4 @@ const ForgotPassword = () => {
     />
   );
 };
-
 export default ForgotPassword;

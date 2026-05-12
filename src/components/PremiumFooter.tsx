@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TouchableOpacity } from 'react-native';
 import SolidText from './SolidText';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface PremiumFooterProps {
   localization: any;
   styles: any;
@@ -10,7 +10,6 @@ interface PremiumFooterProps {
   appLanguage: any;
   hideRestore?: boolean;
 }
-
 const PremiumFooter: React.FC<PremiumFooterProps> = ({
   localization,
   styles,
@@ -27,11 +26,13 @@ const PremiumFooter: React.FC<PremiumFooterProps> = ({
               {localization.appkeys?.restore}
             </SolidText>
           </TouchableOpacity>
-          <View style={styles.footerDot} />
         </>
       )}
+      <View style={styles.footerDot} />
       <TouchableOpacity
-        onPress={() => navigation.navigate(AppRoutes.PrivacyPolicy as never)}
+        onPress={() => {
+          return navigation.navigate(AppRoutes.PrivacyPolicy as never);
+        }}
       >
         <SolidText maxFontScale={1} style={styles.footerLink}>
           {localization.appkeys?.privacyPolicy}
@@ -39,7 +40,9 @@ const PremiumFooter: React.FC<PremiumFooterProps> = ({
       </TouchableOpacity>
       <View style={styles.footerDot} />
       <TouchableOpacity
-        onPress={() => navigation.navigate(AppRoutes.Terms as never)}
+        onPress={() => {
+          return navigation.navigate(AppRoutes.Terms as never);
+        }}
       >
         <SolidText maxFontScale={1} style={styles.footerLink}>
           {localization.appkeys?.termsOfService}
@@ -48,5 +51,4 @@ const PremiumFooter: React.FC<PremiumFooterProps> = ({
     </View>
   );
 };
-
 export default PremiumFooter;

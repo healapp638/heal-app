@@ -8,7 +8,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from '../components/SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface InfoModalProps {
   visible: boolean;
   onClose: () => void;
@@ -17,7 +17,6 @@ interface InfoModalProps {
   requirements?: string[];
   buttonLabel?: string;
 }
-
 const InfoModal: React.FC<InfoModalProps> = ({
   visible,
   onClose,
@@ -28,7 +27,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
 }) => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
-
   return (
     <Modal
       visible={visible}
@@ -39,7 +37,9 @@ const InfoModal: React.FC<InfoModalProps> = ({
       <TouchableOpacity
         style={styles.modalOverlay}
         activeOpacity={1}
-        onPress={onClose}
+        onPress={(...args: any) => {
+          return (onClose as any)(...args);
+        }}
       >
         <View style={styles.modalCard}>
           <SolidText style={styles.modalTitle}>{title}</SolidText>
@@ -53,7 +53,12 @@ const InfoModal: React.FC<InfoModalProps> = ({
               {requirements.map((req, index) => (
                 <View key={index} style={styles.requirementRow}>
                   <View
-                    style={[styles.bullet, { backgroundColor: colors.brown }]}
+                    style={[
+                      styles.bullet,
+                      {
+                        backgroundColor: colors.brown,
+                      },
+                    ]}
                   />
                   <SolidText style={styles.requirementText}>{req}</SolidText>
                 </View>
@@ -62,8 +67,15 @@ const InfoModal: React.FC<InfoModalProps> = ({
           )}
 
           <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: colors.brown }]}
-            onPress={onClose}
+            style={[
+              styles.modalButton,
+              {
+                backgroundColor: colors.brown,
+              },
+            ]}
+            onPress={(...args: any) => {
+              return (onClose as any)(...args);
+            }}
           >
             <SolidText style={styles.modalButtonText}>{buttonLabel}</SolidText>
           </TouchableOpacity>
@@ -72,7 +84,6 @@ const InfoModal: React.FC<InfoModalProps> = ({
     </Modal>
   );
 };
-
 const style = (colors: any) =>
   StyleSheet.create({
     modalOverlay: {
@@ -140,5 +151,4 @@ const style = (colors: any) =>
       color: colors.white,
     },
   });
-
 export default InfoModal;

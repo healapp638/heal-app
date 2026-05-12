@@ -15,12 +15,11 @@ import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 const hapticOptions = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
 };
-
 interface SolidBtnProps {
   btnStyle?: ViewStyle;
   txtStyle?: TextStyle;
@@ -32,7 +31,6 @@ interface SolidBtnProps {
   imgTintColor?: any;
   maxFontScale?: any;
 }
-
 const SolidBtn: React.FC<SolidBtnProps> = ({
   btnStyle,
   txtStyle,
@@ -49,6 +47,7 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
   return (
     <TouchableOpacity
       onPress={() => {
+        //
         Keyboard.dismiss();
         ReactNativeHapticFeedback.trigger('impactHeavy', hapticOptions);
         onPress();
@@ -62,7 +61,11 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
           resizeMode="contain"
           tintColor={imgTintColor}
           source={img}
-          style={{ width: 24, height: 24, marginHorizontal: 8 }}
+          style={{
+            width: 24,
+            height: 24,
+            marginHorizontal: 8,
+          }}
         />
       )}
       {!isLoading && (
@@ -76,7 +79,6 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
     </TouchableOpacity>
   );
 };
-
 const style = (colors: any) =>
   StyleSheet.create({
     btn: {
@@ -101,5 +103,4 @@ const style = (colors: any) =>
       backgroundColor: '#B0B0B0',
     },
   });
-
 export default SolidBtn;

@@ -10,12 +10,11 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import AppFonts from '../constants/fonts';
 import SolidText from './SolidText';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 const options = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
 };
-
 interface HeaderCommonProps {
   title?: string;
   showBack?: boolean;
@@ -26,7 +25,6 @@ interface HeaderCommonProps {
   tintColor?: string;
   viewStyle?: any;
 }
-
 const HeaderCommon: React.FC<HeaderCommonProps> = ({
   title,
   showBack = true,
@@ -40,9 +38,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const styles = useStyles(colors);
-
   const activeTintColor = tintColor || colors.brown;
-
   const handleBack = () => {
     ReactNativeHapticFeedback.trigger('impactMedium', options);
     if (onBackPress) {
@@ -51,26 +47,35 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
       navigation.goBack();
     }
   };
-
   const handleRightPress = () => {
-    ReactNativeHapticFeedback.trigger('impactMedium', options);
     if (onRightPress) {
       onRightPress();
     }
   };
-
   return (
-    <View style={{ ...styles.container, ...viewStyle }}>
+    <View
+      style={{
+        ...styles.container,
+        ...viewStyle,
+      }}
+    >
       <View style={styles.sideContainer}>
         {showBack && (
           <TouchableOpacity
             hitSlop={10}
-            onPress={handleBack}
+            onPress={(...args: any) => {
+              return (handleBack as any)(...args);
+            }}
             activeOpacity={0.7}
           >
             <Image
               source={images.back}
-              style={[styles.backIcon, { tintColor: activeTintColor }]}
+              style={[
+                styles.backIcon,
+                {
+                  tintColor: activeTintColor,
+                },
+              ]}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -80,7 +85,12 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
       <View style={styles.centerContainer}>
         {title && (
           <SolidText
-            style={[styles.title, { color: activeTintColor }]}
+            style={[
+              styles.title,
+              {
+                color: activeTintColor,
+              },
+            ]}
             numberOfLines={1}
           >
             {title}
@@ -88,15 +98,29 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
         )}
       </View>
 
-      <View style={{ ...styles.sideContainer, alignItems: 'flex-end' }}>
+      <View
+        style={{
+          ...styles.sideContainer,
+          alignItems: 'flex-end',
+        }}
+      >
         {rightComponent ? (
           rightComponent
         ) : rightIcon ? (
-          <TouchableOpacity onPress={handleRightPress} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={(...args: any) => {
+              triggerHaptic('impactHeavy');
+              return (handleRightPress as any)(...args);
+            }}
+            activeOpacity={0.7}
+          >
             <Image
               source={rightIcon}
               tintColor={activeTintColor}
-              style={{ height: 16, width: 16 }} // Reusing same icon size constraints
+              style={{
+                height: 16,
+                width: 16,
+              }} // Reusing same icon size constraints
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -107,16 +131,13 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
     </View>
   );
 };
-
 export default HeaderCommon;
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-
       marginTop: Platform.OS === 'ios' ? 0 : 8,
       height: 50,
       marginBottom: 20,

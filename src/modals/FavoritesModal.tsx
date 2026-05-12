@@ -28,16 +28,13 @@ import Share from 'react-native-share';
 import { useHaptic } from '../hooks/useHaptic';
 import ViewShot from 'react-native-view-shot';
 import getEnvVars from '../../env';
-
 import SolidBtn from '../components/SolidBtn';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
-
 interface FavoritesModalProps {
   visible: boolean;
   onClose: () => void;
 }
-
 const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
@@ -49,13 +46,11 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const { mutate: postApi } = usePostApi();
   const captureRef = useRef<ViewShot>(null);
   const [sharingItem, setSharingItem] = useState<any>(null);
-
   const user = useSelector((state: any) => state.userData?.user);
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
   const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
-
   const {
     data: affirmationData,
     fetchNextPage,
@@ -65,22 +60,28 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
     refetch,
   } = useInfiniteGetApi(
     endpoints.liked_affirmation_list,
-    ['getLikedAffirmationListing', { search_key: searchText }],
+    [
+      'getLikedAffirmationListing',
+      {
+        search_key: searchText,
+      },
+    ],
     {
       search_key: searchText,
       limit: 10,
     },
   );
-
   const favQuotes =
     affirmationData?.pages?.flatMap(page => page?.data?.result || []) || [];
-
   const handleUnlike = (item: any) => {
-    triggerHaptic('impactHeavy');
-
     // Optimistic Update: Remove from favorites list locally
     queryClient.setQueryData(
-      ['getLikedAffirmationListing', { search_key: searchText }],
+      [
+        'getLikedAffirmationListing',
+        {
+          search_key: searchText,
+        },
+      ],
       (oldData: any) => {
         if (!oldData) return oldData;
         const newPages = oldData.pages.map((page: any) => ({
@@ -92,13 +93,21 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
             ),
           },
         }));
-        return { ...oldData, pages: newPages };
+        return {
+          ...oldData,
+          pages: newPages,
+        };
       },
     );
 
     // Also update the main feed if it's cached
     queryClient.setQueryData(
-      ['getAffirmationListing', { is_liked: undefined }],
+      [
+        'getAffirmationListing',
+        {
+          is_liked: undefined,
+        },
+      ],
       (oldData: any) => {
         if (!oldData) return oldData;
         const newPages = oldData.pages.map((page: any) => ({
@@ -106,18 +115,27 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           data: {
             ...page.data,
             result: page.data.result.map((quote: any) =>
-              quote._id === item._id ? { ...quote, is_liked: false } : quote,
+              quote._id === item._id
+                ? {
+                    ...quote,
+                    is_liked: false,
+                  }
+                : quote,
             ),
           },
         }));
-        return { ...oldData, pages: newPages };
+        return {
+          ...oldData,
+          pages: newPages,
+        };
       },
     );
-
     postApi(
       {
         endpoint: endpoints.like_unlike_affirmation,
-        data: { affirmation_id: item._id },
+        data: {
+          affirmation_id: item._id,
+        },
       },
       {
         onSuccess: () => {
@@ -126,13 +144,12 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       },
     );
   };
-
   const handleShare = async (item: any) => {
     setSharingItem(item);
     // Wait for the hidden view to render with the new item
     setTimeout(async () => {
       try {
-        triggerHaptic('impactMedium');
+        // triggerHaptic('impactMedium');
         const uri = await captureRef.current?.capture();
         const shareMessage = `${item.affirmation}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
         if (uri) {
@@ -149,7 +166,6 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       }
     }, 200);
   };
-
   const renderFavItem = ({ item }: any) => (
     <View style={styles.card}>
       <SolidText style={styles.quoteText}>{item.affirmation}</SolidText>
@@ -165,7 +181,10 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
         <View style={styles.actionRow}>
           <TouchableOpacity
             style={styles.iconBtn}
-            onPress={() => handleUnlike(item)}
+            onPress={() => {
+              // triggerHaptic('impactHeavy');
+              return handleUnlike(item);
+            }}
           >
             <Image
               source={images.heartFill}
@@ -175,7 +194,10 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.iconBtn}
-            onPress={() => handleShare(item)}
+            onPress={() => {
+              triggerHaptic('impactHeavy');
+              return handleShare(item);
+            }}
           >
             <Image
               source={images.share}
@@ -187,7 +209,6 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       </View>
     </View>
   );
-
   return (
     <Modal
       visible={visible}
@@ -197,13 +218,24 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       statusBarTranslucent
     >
       <View style={styles.overlay}>
-        <TouchableWithoutFeedback onPress={onClose}>
+        <TouchableWithoutFeedback
+          onPress={(...args: any) => {
+            triggerHaptic('impactHeavy');
+            return (onClose as any)(...args);
+          }}
+        >
           <View style={StyleSheet.absoluteFill} />
         </TouchableWithoutFeedback>
 
         <View style={styles.sheetContainer}>
           <View style={styles.header}>
-            <TouchableOpacity onPress={onClose} style={styles.backBtn}>
+            <TouchableOpacity
+              onPress={(...args: any) => {
+                triggerHaptic('impactHeavy');
+                return (onClose as any)(...args);
+              }}
+              style={styles.backBtn}
+            >
               <Image
                 source={images.back}
                 style={styles.backIcon}
@@ -233,6 +265,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <SolidBtn
             titleTxt="Show all in feed"
             onPress={() => {
+              // triggerHaptic('impactHeavy');
               onClose();
               navigation.navigate(AppRoutes.SavedDailyQuote as never);
             }}
@@ -244,7 +277,9 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
             <ActivityIndicator
               size="large"
               color="#3A2110"
-              style={{ marginTop: 20 }}
+              style={{
+                marginTop: 20,
+              }}
             />
           ) : (
             <FlatList
@@ -260,7 +295,12 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
               }}
               onEndReachedThreshold={0.5}
               ListEmptyComponent={() => (
-                <View style={{ alignItems: 'center', marginTop: 60 }}>
+                <View
+                  style={{
+                    alignItems: 'center',
+                    marginTop: 60,
+                  }}
+                >
                   <Image
                     source={images.heartFill}
                     style={{
@@ -270,7 +310,11 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                     }}
                     resizeMode="contain"
                   />
-                  <SolidText style={{ color: '#A08E83' }}>
+                  <SolidText
+                    style={{
+                      color: '#A08E83',
+                    }}
+                  >
                     No favorites found
                   </SolidText>
                 </View>
@@ -290,12 +334,19 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           >
             <ViewShot
               ref={captureRef}
-              options={{ format: 'png', quality: 0.9 }}
-              style={{ flex: 1 }}
+              options={{
+                format: 'png',
+                quality: 0.9,
+              }}
+              style={{
+                flex: 1,
+              }}
             >
               {homeThemeUrl ? (
                 <ImageBackground
-                  source={{ uri: homeThemeUrl }}
+                  source={{
+                    uri: homeThemeUrl,
+                  }}
                   style={{
                     flex: 1,
                     justifyContent: 'center',
@@ -346,14 +397,12 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                 </View>
               )}
             </ViewShot>
-
           </View>
         )}
       </View>
     </Modal>
   );
 };
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     overlay: {
@@ -364,7 +413,8 @@ const useStyles = (colors: any) =>
       overflow: 'hidden',
     },
     sheetContainer: {
-      backgroundColor: '#F4EEE2', // Light cream background from Welcome screen
+      backgroundColor: '#F4EEE2',
+      // Light cream background from Welcome screen
       borderTopLeftRadius: 32,
       borderTopRightRadius: 32,
       paddingTop: 12,
@@ -385,7 +435,8 @@ const useStyles = (colors: any) =>
     backIcon: {
       width: 14,
       height: 14,
-      tintColor: '#3A2110', // Dark brown icons
+      tintColor: '#3A2110',
+      // Dark brown icons
       marginRight: 5,
     },
     backTxt: {
@@ -402,7 +453,8 @@ const useStyles = (colors: any) =>
       width: 50, // Balance the header
     },
     searchContainer: {
-      backgroundColor: '#EAE3D5', // Slightly darker cream for search
+      backgroundColor: '#EAE3D5',
+      // Slightly darker cream for search
       borderRadius: 100,
       marginHorizontal: 20,
       paddingHorizontal: 15,
@@ -425,7 +477,8 @@ const useStyles = (colors: any) =>
       padding: 0,
     },
     feedBtn: {
-      backgroundColor: '#3A2110', // Dark brown button
+      backgroundColor: '#3A2110',
+      // Dark brown button
       height: 56,
       borderRadius: 28,
       marginHorizontal: 20,
@@ -444,13 +497,17 @@ const useStyles = (colors: any) =>
       paddingBottom: 40,
     },
     card: {
-      backgroundColor: '#FFFFFF', // Clean white cards
+      backgroundColor: '#FFFFFF',
+      // Clean white cards
       borderRadius: 20,
       padding: 20,
       marginBottom: 15,
       // Subtle shadow for depth
       shadowColor: '#3A2110',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
       shadowOpacity: 0.05,
       shadowRadius: 10,
       elevation: 2,
@@ -485,5 +542,4 @@ const useStyles = (colors: any) =>
       tintColor: '#3A2110',
     },
   });
-
 export default memo(FavoritesModal);

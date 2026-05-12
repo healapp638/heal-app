@@ -15,23 +15,20 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { isPasswordValid } from '../../utils/SignUp/signUpValidation';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ResetPassword = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const route = useRoute() as any;
   const { email, otp } = route.params || {};
   const { mutate: resetPassword, isPending } = usePostApi();
-
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
-
   const handleConfirm = () => {
     if (!password) {
       AppUtils.showToast(
@@ -40,7 +37,6 @@ const ResetPassword = () => {
       );
       return;
     }
-
     if (!isPasswordValid(password)) {
       AppUtils.showToast(
         localization.appkeys?.toastPasswordRequirementsDetailed ||
@@ -49,7 +45,6 @@ const ResetPassword = () => {
       );
       return;
     }
-
     if (!confirmPassword) {
       AppUtils.showToast(
         localization.appkeys?.toastEnterConfirmPassword ||
@@ -57,7 +52,6 @@ const ResetPassword = () => {
       );
       return;
     }
-
     if (password !== confirmPassword) {
       AppUtils.showToast(
         localization.appkeys?.toastPasswordMismatch ||
@@ -84,19 +78,23 @@ const ResetPassword = () => {
       },
     );
   };
-
   const navigateToLogin = () => {
     setSuccessVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: AppRoutes.SignIn as never }],
+      routes: [
+        {
+          name: AppRoutes.SignIn as never,
+        },
+      ],
     });
   };
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
@@ -132,11 +130,17 @@ const ResetPassword = () => {
             onRightPress={() => setConfirmVisible(!confirmVisible)}
             rightImgTintColor={colors.primary}
           />
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
           <SolidBtn
             titleTxt={localization.appkeys?.confirm}
             btnStyle={styles.confirmBtn}
-            onPress={handleConfirm}
+            onPress={(...args: any) => {
+              return (handleConfirm as any)(...args);
+            }}
             isLoading={isPending}
             disabled={isPending}
           />
@@ -148,12 +152,13 @@ const ResetPassword = () => {
             subtitle={localization.appkeys?.passChangedSubtitle}
             btnLabel={localization.appkeys?.logInBtn}
             onPressBtn={navigateToLogin}
-            btnStyle={{ marginTop: -4 }}
+            btnStyle={{
+              marginTop: -4,
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default ResetPassword;

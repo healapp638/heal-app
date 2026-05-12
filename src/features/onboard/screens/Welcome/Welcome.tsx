@@ -1,7 +1,6 @@
 import { Alert, Image, View, TouchableOpacity } from 'react-native';
 import React, { useCallback, useContext, useRef } from 'react';
 import SolidView from '../../../../components/SolidView';
-
 import {
   useFocusEffect,
   useNavigation,
@@ -19,9 +18,8 @@ import {
   getResumeStackRoutes,
   RESUMABLE_ONBOARDING_ROUTES,
 } from '../../utils/onboardingProgress';
-
 import ResumeModal from '../../../../modals/ResumeModal';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Welcome = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -31,37 +29,32 @@ const Welcome = () => {
   const onboarding = useSelector((state: any) => state.userData?.onboarding);
   const hasPromptedOnFocus = useRef(false);
   const [resumeModalVisible, setResumeModalVisible] = React.useState(false);
-
   const handleResumeFlow = useCallback(() => {
     const currentScreen = onboarding?.currentScreen;
     if (!currentScreen) return;
-
     const stackRoutes = getResumeStackRoutes(currentScreen);
     if (!stackRoutes.length) return;
-
     setResumeModalVisible(false);
     (navigation as any).reset({
       index: stackRoutes.length - 1,
-      routes: stackRoutes.map(name => ({ name })),
+      routes: stackRoutes.map(name => ({
+        name,
+      })),
     });
   }, [navigation, onboarding?.currentScreen]);
-
   const handleStartOver = useCallback(() => {
     dispatch(clearOnboardingProgress());
     setResumeModalVisible(false);
   }, [dispatch]);
-
   useFocusEffect(
     useCallback(() => {
       hasPromptedOnFocus.current = false;
-
       if (onboarding?.isCompleted) {
         dispatch(clearOnboardingProgress());
         return () => {
           hasPromptedOnFocus.current = false;
         };
       }
-
       if (
         onboarding?.currentScreen === AppRoutes.GetStarted ||
         onboarding?.currentScreen === AppRoutes.HearAboutUs
@@ -70,21 +63,17 @@ const Welcome = () => {
           hasPromptedOnFocus.current = false;
         };
       }
-
       const canResume =
         onboarding?.hasStarted &&
         !onboarding?.isCompleted &&
         RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
-
       if (!canResume || hasPromptedOnFocus.current) {
         return () => {
           hasPromptedOnFocus.current = false;
         };
       }
-
       hasPromptedOnFocus.current = true;
       setResumeModalVisible(true);
-
       return () => {
         hasPromptedOnFocus.current = false;
       };
@@ -95,29 +84,47 @@ const Welcome = () => {
       onboarding?.hasStarted,
     ]),
   );
-
   const getLangData = () => {
     switch (appLanguage) {
       case 'Spanish':
-        return { flag: images.spain, code: 'ESP' };
+        return {
+          flag: images.spain,
+          code: 'ESP',
+        };
       case 'French':
-        return { flag: images.france, code: 'FRA' };
+        return {
+          flag: images.france,
+          code: 'FRA',
+        };
       case 'German':
-        return { flag: images.germany, code: 'DEU' };
+        return {
+          flag: images.germany,
+          code: 'DEU',
+        };
       case 'Russian':
-        return { flag: images.russia, code: 'RUS' };
+        return {
+          flag: images.russia,
+          code: 'RUS',
+        };
       case 'Portuguese':
-        return { flag: images.portugal, code: 'POR' };
+        return {
+          flag: images.portugal,
+          code: 'POR',
+        };
       case 'Italian':
-        return { flag: images.italy, code: 'ITA' };
+        return {
+          flag: images.italy,
+          code: 'ITA',
+        };
       default:
-        return { flag: images.eng, code: 'ENG' };
+        return {
+          flag: images.eng,
+          code: 'ENG',
+        };
     }
   };
-
   const { flag, code } = getLangData();
   const styles = style(colors);
-
   return (
     <SolidView
       isScrollEnabled
@@ -155,11 +162,12 @@ const Welcome = () => {
           <SolidBtn
             titleTxt={localization.appkeys?.welcome}
             btnStyle={styles.btn}
-            onPress={() => navigation.navigate(AppRoutes.GetStarted as never)}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.GetStarted as never);
+            }}
           />
           <SolidText
             onPress={() => {
-              triggerHaptic('impactHeavy');
               navigation.navigate(AppRoutes.AccessScreen as never);
             }}
             style={styles.footerText}
@@ -181,5 +189,4 @@ const Welcome = () => {
     />
   );
 };
-
 export default Welcome;

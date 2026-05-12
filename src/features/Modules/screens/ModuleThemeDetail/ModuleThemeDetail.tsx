@@ -23,7 +23,7 @@ import { LocalizationContext } from '../../../../localization/localization';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import SubModuleItem from '../../../../components/SubModuleItem';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ModuleThemeDetail = () => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
@@ -31,25 +31,25 @@ const ModuleThemeDetail = () => {
   const route = useRoute();
   const { theme } = (route.params as any) || {};
   const { localization } = useContext(LocalizationContext) as any;
-
   const [modules, setModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [themeDetail, setThemeDetail] = useState<any>(theme);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.module_list,
     ['module_list', theme?._id, cursor],
-    { theme_id: theme?._id, cursor, limit: 10 },
+    {
+      theme_id: theme?._id,
+      cursor,
+      limit: 10,
+    },
   );
-
   useFocusEffect(
     useCallback(() => {
       setCursor(null);
       refetch();
     }, [refetch]),
   );
-
   useEffect(() => {
     if (data?.data) {
       const responseData = data.data;
@@ -65,7 +65,6 @@ const ModuleThemeDetail = () => {
     }
     setIsRefreshing(false);
   }, [data]);
-
   const onRefresh = () => {
     setIsRefreshing(true);
     setCursor(null);
@@ -74,23 +73,33 @@ const ModuleThemeDetail = () => {
       setIsRefreshing(false);
     }, 2000);
   };
-
   const loadMore = () => {
     const nextCursor = data?.data?.nextCursor || data?.data?.next_cursor;
     if (nextCursor && !isFetching) {
       setCursor(nextCursor);
     }
   };
-
   const sectionColors = [
-    { text: '#986455', border: '#E2D2CA' },
-    { text: '#776151', border: '#C8BDB2' },
-    { text: '#F66F76', border: '#F6C1C5' },
+    {
+      text: '#986455',
+      border: '#E2D2CA',
+    },
+    {
+      text: '#776151',
+      border: '#C8BDB2',
+    },
+    {
+      text: '#F66F76',
+      border: '#F6C1C5',
+    },
   ];
-
   const renderHeader = useCallback(
     () => (
-      <View style={{ paddingTop: 10 }}>
+      <View
+        style={{
+          paddingTop: 10,
+        }}
+      >
         <SolidText style={styles.title}>
           {themeDetail?.title ||
             localization.appkeys?.friendship ||
@@ -108,6 +117,7 @@ const ModuleThemeDetail = () => {
             localization.appkeys?.homeProgressTracker || 'Progress Tracker'
           }
           onPress={() => {
+            //
             navigation.navigate(AppRoutes.ProgressTracker as never);
           }}
         />
@@ -115,22 +125,26 @@ const ModuleThemeDetail = () => {
     ),
     [styles, themeDetail, localization.appkeys, navigation],
   );
-
   const renderFooter = useCallback(
     () => (
-      <View style={{ height: 40 }}>
+      <View
+        style={{
+          height: 40,
+        }}
+      >
         {isFetching && cursor !== null && (
           <ActivityIndicator
             size="small"
             color={colors.brown}
-            style={{ marginVertical: 20 }}
+            style={{
+              marginVertical: 20,
+            }}
           />
         )}
       </View>
     ),
     [isFetching, cursor, colors.brown],
   );
-
   const renderItem = useCallback(
     ({
       item: moduleItem,
@@ -157,6 +171,7 @@ const ModuleThemeDetail = () => {
                 colors={colors}
                 styles={styles}
                 onPress={() => {
+                  triggerHaptic('impactHeavy');
                   if (!isCompleted) {
                     navigation.navigate(
                       AppRoutes.StartedModule as never,
@@ -177,21 +192,29 @@ const ModuleThemeDetail = () => {
     },
     [styles, navigation, images, colors, sectionColors],
   );
-
   const keyExtractor = useCallback(
     (item: any, index: number) => (item._id || index).toString(),
     [],
   );
-
   return (
     <SolidView
       isScrollEnabled={false}
       view={
-        <View style={{ flex: 1 }}>
-          <View style={{ paddingHorizontal: 20 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              paddingHorizontal: 20,
+            }}
+          >
             <HeaderCommon
               title={themeDetail?.title || 'Modules'}
-              viewStyle={{ marginBottom: -2 }}
+              viewStyle={{
+                marginBottom: -2,
+              }}
             />
           </View>
           <FlatList
@@ -216,7 +239,9 @@ const ModuleThemeDetail = () => {
                 <ActivityIndicator
                   size="large"
                   color={colors.brown}
-                  style={{ marginTop: 50 }}
+                  style={{
+                    marginTop: 50,
+                  }}
                 />
               ) : null
             }
@@ -226,5 +251,4 @@ const ModuleThemeDetail = () => {
     />
   );
 };
-
 export default ModuleThemeDetail;

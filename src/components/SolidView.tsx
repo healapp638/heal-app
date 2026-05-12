@@ -17,7 +17,7 @@ import {
   KeyboardAwareScrollView,
 } from 'react-native-keyboard-controller';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface SolidViewProps {
   viewStyle?: ViewStyle;
   mainContStyle?: ViewStyle;
@@ -32,7 +32,6 @@ interface SolidViewProps {
   containerStyle?: ViewStyle;
   edges?: any;
 }
-
 const SolidView: React.FC<SolidViewProps> = ({
   viewStyle,
   mainContStyle,
@@ -50,7 +49,6 @@ const SolidView: React.FC<SolidViewProps> = ({
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const styles = style(colors);
-
   return (
     <SafeAreaView style={[styles.safeArea, containerStyle]} edges={edges}>
       {isScrollEnabled ? (
@@ -58,7 +56,12 @@ const SolidView: React.FC<SolidViewProps> = ({
           showsVerticalScrollIndicator={false}
           bounces={false}
           overScrollMode="never"
-          style={[{ flex: 1 }, mainContStyle]}
+          style={[
+            {
+              flex: 1,
+            },
+            mainContStyle,
+          ]}
           contentContainerStyle={[styles.scrollContainer, scrollContStyle]}
           keyboardShouldPersistTaps="handled"
           refreshControl={refreshControl}
@@ -68,7 +71,9 @@ const SolidView: React.FC<SolidViewProps> = ({
         </KeyboardAwareScrollView>
       ) : (
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
+          style={{
+            flex: 1,
+          }}
           behavior={isChatScreen ? 'translate-with-padding' : 'padding'}
           keyboardVerticalOffset={
             keyboardVerticalOffset ?? Platform.OS === 'ios' ? 40 : 0
@@ -82,7 +87,10 @@ const SolidView: React.FC<SolidViewProps> = ({
       {showChat && (
         <TouchableOpacity
           style={styles.healContainer}
-          onPress={() => navigation.navigate(AppRoutes.HealyChat as never)}
+          onPress={() => {
+            triggerHaptic('impactHeavy');
+            return navigation.navigate(AppRoutes.HealyChat as never);
+          }}
         >
           <Image
             source={images.heal}
@@ -94,7 +102,6 @@ const SolidView: React.FC<SolidViewProps> = ({
     </SafeAreaView>
   );
 };
-
 const style = (colors: any) =>
   StyleSheet.create({
     parent: {
@@ -105,7 +112,6 @@ const style = (colors: any) =>
       flex: 1,
       backgroundColor: colors.background,
     },
-
     scrollContainer: {
       flexGrow: 1,
     },
@@ -120,5 +126,4 @@ const style = (colors: any) =>
       right: 10,
     },
   });
-
 export default SolidView;

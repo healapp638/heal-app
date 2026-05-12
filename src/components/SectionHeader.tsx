@@ -4,14 +4,13 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface SectionHeaderProps {
   title: string;
   actionLabel?: string;
   onActionPress?: () => void;
   containerStyle?: object;
 }
-
 const SectionHeader = ({
   title,
   actionLabel,
@@ -19,15 +18,33 @@ const SectionHeader = ({
   containerStyle,
 }: SectionHeaderProps) => {
   const { colors } = useTheme() as any;
-
   return (
     <View style={[styles.container, containerStyle]}>
-      <SolidText style={[styles.title, { color: colors.brown }]}>
+      <SolidText
+        style={[
+          styles.title,
+          {
+            color: colors.brown,
+          },
+        ]}
+      >
         {title}
       </SolidText>
       {actionLabel && (
-        <TouchableOpacity activeOpacity={0.7} onPress={onActionPress}>
-          <SolidText style={[styles.actionLabel, { color: colors.primary }]}>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={(...args: any) => {
+            return (onActionPress as any)(...args);
+          }}
+        >
+          <SolidText
+            style={[
+              styles.actionLabel,
+              {
+                color: colors.primary,
+              },
+            ]}
+          >
             {actionLabel}
           </SolidText>
         </TouchableOpacity>
@@ -35,7 +52,6 @@ const SectionHeader = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -46,15 +62,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: AppUtils.fontSize(16),
     fontFamily: AppFonts.semiBold,
-
     includeFontPadding: false,
   },
   actionLabel: {
     fontSize: AppUtils.fontSize(15),
     fontFamily: AppFonts.medium,
-
     includeFontPadding: false,
   },
 });
-
 export default SectionHeader;

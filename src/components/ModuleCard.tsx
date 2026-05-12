@@ -9,7 +9,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ModuleCardProps {
   background: any;
   progress: string;
@@ -17,7 +17,6 @@ interface ModuleCardProps {
   category: string;
   onPress?: () => void;
 }
-
 const ModuleCard = ({
   background,
   progress,
@@ -26,17 +25,20 @@ const ModuleCard = ({
   onPress,
 }: ModuleCardProps) => {
   const { colors } = useTheme() as any;
-
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       style={styles.container}
     >
       <ImageBackground
         source={background}
         style={styles.backgroundImage}
-        imageStyle={{ borderRadius: 18 }}
+        imageStyle={{
+          borderRadius: 18,
+        }}
       >
         <View style={styles.overlay}>
           {/* Progress Pill */}
@@ -54,7 +56,6 @@ const ModuleCard = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: '48%',
@@ -106,5 +107,4 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
 });
-
 export default ModuleCard;

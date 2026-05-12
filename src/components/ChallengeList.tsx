@@ -7,7 +7,7 @@ import { LocalizationContext } from '../localization/localization';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ChallengeData {
   id: string;
   title: string;
@@ -17,19 +17,16 @@ interface ChallengeData {
   isCompleted: boolean;
   category: 'daily' | 'weekly';
 }
-
 interface ChallengeListProps {
   activeTab: 'daily' | 'weekly';
   data: ChallengeData[];
 }
-
 const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = useStyles(colors);
   const filteredChallenges = data.filter(item => item.category === activeTab);
-
   return (
     <FlatList
       data={filteredChallenges}
@@ -37,7 +34,10 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
       scrollEnabled={false}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.listContent}
-      style={{ marginTop: 10, paddingHorizontal: 2 }}
+      style={{
+        marginTop: 10,
+        paddingHorizontal: 2,
+      }}
       ListHeaderComponent={() => {
         return (
           <SolidText style={styles.headerText}>
@@ -53,16 +53,16 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
             points={item.points}
             badge={item.badge}
             isCompleted={item.isCompleted}
-            onPress={() =>
-              navigation.navigate(AppRoutes.ChallengeDetail as never)
-            }
+            onPress={() => {
+              triggerHaptic('impactHeavy');
+              return navigation.navigate(AppRoutes.ChallengeDetail as never);
+            }}
           />
         );
       }}
     />
   );
 };
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     listContent: {
@@ -76,5 +76,4 @@ const useStyles = (colors: any) =>
       color: colors.brown,
     },
   });
-
 export default ChallengeList;

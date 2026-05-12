@@ -171,6 +171,7 @@ const LightTheme = {
     gallery: require('../assets/gallery.png'),
     heartFill: require('../assets/heartFill.png'),
     fav: require('../assets/fav.png'),
+    whiteHeart: require('../assets/whiteHeart.png'),
   },
 };
 
@@ -347,6 +348,7 @@ const DarkTheme = {
     gallery: require('../assets/gallery.png'),
     heartFill: require('../assets/heartFill.png'),
     fav: require('../assets/fav.png'),
+    whiteHeart: require('../assets/whiteHeart.png'),
   },
 };
 export { LightTheme, DarkTheme };

@@ -18,7 +18,7 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const BringYouHere = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -30,31 +30,24 @@ const BringYouHere = () => {
     (state: any) => state.userData?.onboarding?.answers?.bringYouHere ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.BringYouHere));
     }, [dispatch]),
   );
-
   const handleBackPress = () => {
-    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-
     if (previousRouteName === AppRoutes.HearAboutUs) {
       navigation.goBack();
       return;
     }
-
     navigation.navigate(AppRoutes.HearAboutUs as never);
   };
-
   useEffect(() => {
     setSelected(savedSelection);
   }, [savedSelection]);
-
   const options = [
     {
       id: 'romantic',
@@ -87,13 +80,18 @@ const BringYouHere = () => {
       icon: images.needtotalk,
     },
   ];
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <HeaderProgress progress={0.4} onBackPress={handleBackPress} />
 
           <Image
@@ -113,7 +111,6 @@ const BringYouHere = () => {
               {options.map(option => {
                 const isSelected =
                   selected === option.id || selected === option.label;
-
                 return (
                   <TouchableOpacity
                     key={option.id}
@@ -142,7 +139,9 @@ const BringYouHere = () => {
                       style={[
                         styles.optionText,
                         isSelected && styles.optionTextSelected,
-                        { width: '70%' },
+                        {
+                          width: '70%',
+                        },
                       ]}
                       maxFontScale={1.2}
                     >
@@ -152,14 +151,18 @@ const BringYouHere = () => {
                 );
               })}
             </View>
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
-              onPress={() =>
-                navigation.navigate(AppRoutes.FeelingsLately as never)
-              }
+              onPress={() => {
+                return navigation.navigate(AppRoutes.FeelingsLately as never);
+              }}
             />
           </View>
         </View>
@@ -167,5 +170,4 @@ const BringYouHere = () => {
     />
   );
 };
-
 export default BringYouHere;

@@ -17,13 +17,12 @@ import AppFonts from '../constants/fonts';
 import SolidText from '../components/SolidText';
 import { LocalizationContext } from '../localization/localization';
 import FastImage from '@d11/react-native-fast-image';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface CustomImagePickerModalProps {
   visible: boolean;
   attachments: (image: PickerImage) => void;
   pressHandler: () => void;
 }
-
 const CustomImagePickerModal: React.FC<CustomImagePickerModalProps> = ({
   visible,
   attachments,
@@ -31,7 +30,6 @@ const CustomImagePickerModal: React.FC<CustomImagePickerModalProps> = ({
 }) => {
   const { colors, images }: any = useTheme();
   const { localization }: any = useContext(LocalizationContext);
-
   const openGallery = () => {
     try {
       ImagePicker.openPicker({
@@ -47,7 +45,6 @@ const CustomImagePickerModal: React.FC<CustomImagePickerModalProps> = ({
       AppUtils.showToast(error?.message ?? 'Error');
     }
   };
-
   const openCamera = () => {
     try {
       ImagePicker.openCamera({
@@ -62,27 +59,52 @@ const CustomImagePickerModal: React.FC<CustomImagePickerModalProps> = ({
       AppUtils.showToast(error?.message ?? 'Error');
     }
   };
-
   return (
     <Modal visible={visible} animationType="fade" transparent={true}>
-      <Pressable onPress={pressHandler} style={styles.modalScreen}>
+      <Pressable
+        onPress={(...args: any) => {
+          return (pressHandler as any)(...args);
+        }}
+        style={styles.modalScreen}
+      >
         <Pressable
           onPress={() => {}}
           style={[
             styles.modalContainer,
             styles.shadow,
-            { backgroundColor: colors.background },
+            {
+              backgroundColor: colors.background,
+            },
           ]}
         >
           <View style={styles.headerRow}>
-            <View style={{ height: 26, width: 26 }}></View>
-            <SolidText style={[styles.title, { color: colors.text }]}>
+            <View
+              style={{
+                height: 26,
+                width: 26,
+              }}
+            ></View>
+            <SolidText
+              style={[
+                styles.title,
+                {
+                  color: colors.text,
+                },
+              ]}
+            >
               {localization.appkeys?.UploadPicture}
             </SolidText>
-            <Pressable onPress={pressHandler}>
+            <Pressable
+              onPress={(...args: any) => {
+                return (pressHandler as any)(...args);
+              }}
+            >
               <FastImage
                 source={images.cross}
-                style={{ height: 26, width: 26 }}
+                style={{
+                  height: 26,
+                  width: 26,
+                }}
                 tintColor={'black'}
               />
             </Pressable>
@@ -90,23 +112,41 @@ const CustomImagePickerModal: React.FC<CustomImagePickerModalProps> = ({
 
           <View style={styles.cardsRow}>
             <TouchableOpacity
-              onPress={openCamera}
+              onPress={(...args: any) => {
+                return (openCamera as any)(...args);
+              }}
               activeOpacity={0.8}
               style={styles.cardWrap}
             >
               <Image source={images.camera} style={[styles.cardIcon, {}]} />
-              <SolidText style={[styles.cardLabel, { color: colors.text }]}>
+              <SolidText
+                style={[
+                  styles.cardLabel,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+              >
                 {localization.appkeys?.Camera}
               </SolidText>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={openGallery}
+              onPress={(...args: any) => {
+                return (openGallery as any)(...args);
+              }}
               activeOpacity={0.8}
               style={styles.cardWrap}
             >
               <Image source={images.gallery} style={styles.cardIcon as any} />
-              <SolidText style={[styles.cardLabel, { color: colors.text }]}>
+              <SolidText
+                style={[
+                  styles.cardLabel,
+                  {
+                    color: colors.text,
+                  },
+                ]}
+              >
                 {localization.appkeys?.Gallary}
               </SolidText>
             </TouchableOpacity>
@@ -116,7 +156,6 @@ const CustomImagePickerModal: React.FC<CustomImagePickerModalProps> = ({
     </Modal>
   );
 };
-
 const styles = StyleSheet.create({
   modalScreen: {
     backgroundColor: 'rgba(55, 54, 54, 0.5)',
@@ -166,11 +205,13 @@ const styles = StyleSheet.create({
   },
   shadow: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: {
+      width: 0,
+      height: 6,
+    },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
   },
 });
-
 export default CustomImagePickerModal;

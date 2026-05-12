@@ -59,7 +59,7 @@ const style = (colors: any) =>
     },
     logoutBtn: {},
     logoutIcon: {
-      width: 70,
+      width: 65,
       height: Platform.OS == 'ios' ? 30 : 28,
     },
     // Setting Item

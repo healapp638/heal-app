@@ -6,6 +6,12 @@ const options = {
   ignoreAndroidSystemSettings: false,
 };
 
+export const triggerHaptic = (
+  type: 'impactLight' | 'impactMedium' | 'impactHeavy' | 'selection' = 'impactMedium'
+) => {
+  ReactNativeHapticFeedback.trigger(type, options);
+};
+
 export const useHaptic = () => {
   const triggerHaptic = useCallback(
     (

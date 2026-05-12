@@ -12,10 +12,9 @@ import SolidText from '../../components/SolidText';
 import AppFonts from '../../constants/fonts';
 import AppUtils from '../../utils/appUtils';
 import AppRoutes from '../RouteKeys/appRoutes';
-
+import { triggerHaptic } from '../../hooks/useHaptic';
 const CustomTabBar = ({ state, descriptors, navigation }: any) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <View style={styles.container}>
       <SafeAreaView edges={['bottom']} style={styles.tabBar}>
@@ -27,21 +26,17 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
               : options.title !== undefined
               ? options.title
               : route.name;
-
           const isFocused = state.index === index;
-
           const onPress = () => {
             const event = navigation.emit({
               type: 'tabPress',
               target: route.key,
               canPreventDefault: true,
             });
-
             if (!isFocused && !event.defaultPrevented) {
               navigation.navigate(route.name);
             }
           };
-
           const getIcon = (name: string) => {
             switch (name) {
               case AppRoutes.Home:
@@ -58,28 +53,39 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
                 return images.home;
             }
           };
-
           return (
             <TouchableOpacity
               key={route.key}
-              onPress={onPress}
+              onPress={(...args: any) => {
+                triggerHaptic('impactHeavy');
+                return (onPress as any)(...args);
+              }}
               style={styles.tabItem}
               activeOpacity={0.7}
             >
               <View
                 style={[
                   styles.iconContainer,
-                  isFocused && { backgroundColor: `${colors.primary}1A` }, // Light pink background
+                  isFocused && {
+                    backgroundColor: `${colors.primary}1A`,
+                  },
+                  // Light pink background
                   route.name === AppRoutes.Challenges
-                    ? { width: 74 }
-                    : { width: 62 },
+                    ? {
+                        width: 74,
+                      }
+                    : {
+                        width: 62,
+                      },
                 ]}
               >
                 <Image
                   source={getIcon(route.name)}
                   style={[
                     styles.icon,
-                    { tintColor: isFocused ? colors.primary : '#A19489' },
+                    {
+                      tintColor: isFocused ? colors.primary : '#A19489',
+                    },
                   ]}
                   resizeMode="contain"
                 />
@@ -88,7 +94,9 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
                   numberOfLines={1}
                   style={[
                     styles.label,
-                    { color: isFocused ? colors.primary : '#A19489' },
+                    {
+                      color: isFocused ? colors.primary : '#A19489',
+                    },
                   ]}
                 >
                   {label}
@@ -101,7 +109,6 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'transparent',
@@ -117,7 +124,10 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingBottom: Platform.OS === 'ios' ? -20 : 4,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 20,
@@ -135,7 +145,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent', // Explicit default background
+    backgroundColor: 'transparent',
+    // Explicit default background
     overflow: 'hidden', // Ensure clipping on Android
   },
   icon: {
@@ -150,5 +161,4 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 });
-
 export default CustomTabBar;

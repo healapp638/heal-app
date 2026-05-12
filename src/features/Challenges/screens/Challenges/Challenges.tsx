@@ -9,7 +9,7 @@ import ProgressTrackerCard from '../../../../components/ProgressTrackerCard';
 import DailyWeeklyToggle from '../../../../components/DailyWeeklyToggle';
 import ChallengeList from '../../../../components/ChallengeList';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Challenges = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
@@ -86,7 +86,6 @@ const Challenges = () => {
       badge: '3 day',
     },
   ];
-
   return (
     <SolidView
       isScrollEnabled={true}
@@ -114,10 +113,12 @@ const Challenges = () => {
           />
 
           <ProgressTrackerCard
-            viewStyle={{ marginTop: 20 }}
-            onPress={() =>
-              navigation.navigate(AppRoutes.ProgressTracker as never)
-            }
+            viewStyle={{
+              marginTop: 20,
+            }}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.ProgressTracker as never);
+            }}
             title={
               localization.appkeys?.homeProgressTracker || 'Progress Tracker'
             }
@@ -143,5 +144,4 @@ const Challenges = () => {
     />
   );
 };
-
 export default Challenges;

@@ -11,14 +11,13 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from '../components/SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface JournalDetailsModalProps {
   visible: boolean;
   onClose: () => void;
   entry: any;
   localization: any;
 }
-
 const JournalDetailsModal = ({
   visible,
   onClose,
@@ -28,7 +27,6 @@ const JournalDetailsModal = ({
   const { colors, images } = useTheme() as any;
   const styles = useStyle(colors);
   if (!entry) return null;
-
   return (
     <Modal
       visible={visible}
@@ -43,16 +41,35 @@ const JournalDetailsModal = ({
       >
         <TouchableWithoutFeedback>
           <View
-            style={[styles.modalContent, { backgroundColor: colors.white }]}
+            style={[
+              styles.modalContent,
+              {
+                backgroundColor: colors.white,
+              },
+            ]}
           >
             {/* Header */}
             <View style={styles.header}>
-              <SolidText style={[styles.modalTitle, { color: colors.brown }]}>
+              <SolidText
+                style={[
+                  styles.modalTitle,
+                  {
+                    color: colors.brown,
+                  },
+                ]}
+              >
                 {localization.appkeys?.journalDetails || 'Details'}
               </SolidText>
               <TouchableOpacity
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                onPress={onClose}
+                hitSlop={{
+                  top: 10,
+                  bottom: 10,
+                  left: 10,
+                  right: 10,
+                }}
+                onPress={(...args: any) => {
+                  return (onClose as any)(...args);
+                }}
                 style={styles.closeBtn}
               >
                 <Image
@@ -68,7 +85,12 @@ const JournalDetailsModal = ({
               <View style={styles.infoRow}>
                 <SolidText style={styles.dateText}>{entry.date}</SolidText>
                 <View
-                  style={[styles.tagPill, { backgroundColor: colors.brown }]}
+                  style={[
+                    styles.tagPill,
+                    {
+                      backgroundColor: colors.brown,
+                    },
+                  ]}
                 >
                   <SolidText style={styles.tagText}>{entry.tag}</SolidText>
                 </View>
@@ -77,7 +99,14 @@ const JournalDetailsModal = ({
             </View>
 
             {/* Title */}
-            <SolidText style={[styles.entryTitle, { color: colors.brown }]}>
+            <SolidText
+              style={[
+                styles.entryTitle,
+                {
+                  color: colors.brown,
+                },
+              ]}
+            >
               {entry.title}
             </SolidText>
 
@@ -91,7 +120,6 @@ const JournalDetailsModal = ({
     </Modal>
   );
 };
-
 const useStyle = (colors: any) =>
   StyleSheet.create({
     modalOverlay: {
@@ -120,7 +148,6 @@ const useStyle = (colors: any) =>
     closeBtn: {
       position: 'absolute',
       right: -4,
-
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -181,5 +208,4 @@ const useStyle = (colors: any) =>
       lineHeight: 22,
     },
   });
-
 export default JournalDetailsModal;

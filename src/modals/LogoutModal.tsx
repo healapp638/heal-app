@@ -13,7 +13,7 @@ import SolidBtn from '../components/SolidBtn';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import { LocalizationContext } from '../localization/localization';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface LogoutModalProps {
   visible: boolean;
   onClose: () => void;
@@ -24,7 +24,6 @@ interface LogoutModalProps {
   cancelLabel?: string;
   footerLabel?: string;
 }
-
 const LogoutModal = ({
   visible,
   onClose,
@@ -38,7 +37,6 @@ const LogoutModal = ({
   const { colors, images } = useTheme() as any;
   const styles = useStyles(colors);
   const { localization } = useContext(LocalizationContext) as any;
-
   const handleConfirm = useCallback(() => {
     if (onConfirm) {
       onConfirm();
@@ -46,7 +44,6 @@ const LogoutModal = ({
     }
     onClose();
   }, [onClose, onConfirm]);
-
   return (
     <Modal
       visible={visible}
@@ -56,7 +53,11 @@ const LogoutModal = ({
       statusBarTranslucent
     >
       <View style={styles.overlay}>
-        <TouchableWithoutFeedback onPress={onClose}>
+        <TouchableWithoutFeedback
+          onPress={(...args: any) => {
+            return (onClose as any)(...args);
+          }}
+        >
           <View style={StyleSheet.absoluteFill} />
         </TouchableWithoutFeedback>
 
@@ -82,7 +83,9 @@ const LogoutModal = ({
               localization.appkeys?.logoutConfirm ||
               'Yes, Log Out'
             }
-            onPress={handleConfirm}
+            onPress={(...args: any) => {
+              return (handleConfirm as any)(...args);
+            }}
             btnStyle={styles.primaryBtn}
           />
           <SolidBtn
@@ -91,7 +94,9 @@ const LogoutModal = ({
               localization.appkeys?.logoutCancel ||
               'Stay Connected'
             }
-            onPress={onClose}
+            onPress={(...args: any) => {
+              return (onClose as any)(...args);
+            }}
             btnStyle={styles.secondaryBtn}
             txtStyle={styles.secondaryBtnText}
           />
@@ -109,9 +114,13 @@ const LogoutModal = ({
                 "We'll miss you, but take care"}
             </SolidText>
             <Image
-              source={images.heart}
+              source={images.whiteHeart}
               resizeMode="contain"
-              style={{ width: 12, height: 12, marginLeft: 2 }}
+              style={{
+                width: 16,
+                height: 16,
+                marginLeft: 4,
+              }}
             />
           </View>
         </View>
@@ -119,7 +128,6 @@ const LogoutModal = ({
     </Modal>
   );
 };
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     overlay: {
@@ -135,7 +143,10 @@ const useStyles = (colors: any) =>
       paddingTop: 14,
       paddingBottom: 14,
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 10 },
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
       shadowOpacity: 0.2,
       shadowRadius: 16,
       elevation: 10,
@@ -149,7 +160,6 @@ const useStyles = (colors: any) =>
     title: {
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(24),
-
       color: '#1E1D21',
       includeFontPadding: false,
       textAlign: 'center',
@@ -169,12 +179,10 @@ const useStyles = (colors: any) =>
       marginTop: 0,
       marginBottom: 12,
     },
-
     secondaryBtn: {
       width: '100%',
       marginTop: 0,
       marginBottom: 0,
-
       backgroundColor: '#D1CDCA',
     },
     secondaryBtnText: {
@@ -184,11 +192,9 @@ const useStyles = (colors: any) =>
     footerText: {
       fontFamily: AppFonts.medium,
       fontSize: AppUtils.fontSize(12),
-
       color: '#7B5849',
       includeFontPadding: false,
       textAlign: 'center',
     },
   });
-
 export default memo(LogoutModal);

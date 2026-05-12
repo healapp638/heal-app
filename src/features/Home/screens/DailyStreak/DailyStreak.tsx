@@ -8,13 +8,12 @@ import SolidText from '../../../../components/SolidText';
 import StreakCard from '../../../../components/StreakCard';
 import SolidBtn from '../../../../components/SolidBtn';
 import style from './style';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const DailyStreak = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const { images, colors } = useTheme() as any;
   const styles = style(colors);
-
   return (
     <SolidView
       isScrollEnabled
@@ -39,12 +38,13 @@ const DailyStreak = () => {
           <SolidBtn
             btnStyle={styles.continueBtn}
             titleTxt={localization.appkeys.continue}
-            onPress={() => navigation.goBack()}
+            onPress={() => {
+              return navigation.goBack();
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default DailyStreak;

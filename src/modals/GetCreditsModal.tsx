@@ -14,12 +14,11 @@ import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import { LocalizationContext } from '../localization/localization';
 import SolidBtn from '../components/SolidBtn';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface GetCreditsModalProps {
   visible: boolean;
   onClose: () => void;
 }
-
 const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -50,7 +49,6 @@ const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
       type: localization.appkeys.oneTime,
     },
   ];
-
   return (
     <Modal
       visible={visible}
@@ -61,7 +59,12 @@ const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
       <View style={styles.overlay}>
         <View style={styles.container}>
           {/* Close Button */}
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
+          <TouchableOpacity
+            style={styles.closeBtn}
+            onPress={(...args: any) => {
+              return (onClose as any)(...args);
+            }}
+          >
             <Image
               source={images.cross2}
               style={styles.closeIcon}
@@ -147,7 +150,9 @@ const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
               btnStyle={styles.secondaryBtn}
               txtStyle={styles.secondaryBtnText}
               titleTxt={localization.appkeys.maybeLater}
-              onPress={onClose}
+              onPress={(...args: any) => {
+                return (onClose as any)(...args);
+              }}
             />
 
             {/* Footer Text */}
@@ -164,7 +169,6 @@ const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
     </Modal>
   );
 };
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     overlay: {
@@ -176,7 +180,6 @@ const useStyles = (colors: any) =>
       backgroundColor: 'white',
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-
       paddingHorizontal: 24,
       maxHeight: '90%',
     },
@@ -194,7 +197,6 @@ const useStyles = (colors: any) =>
       alignItems: 'center',
       paddingBottom: 40,
     },
-
     bigCrown: {
       width: 90,
       height: 90,
@@ -325,5 +327,4 @@ const useStyles = (colors: any) =>
       textDecorationLine: 'underline',
     },
   });
-
 export default GetCreditsModal;

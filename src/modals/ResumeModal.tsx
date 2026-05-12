@@ -13,14 +13,13 @@ import SolidBtn from '../components/SolidBtn';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import { LocalizationContext } from '../localization/localization';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ResumeModalProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: () => void;
   onStartOver: () => void;
 }
-
 const ResumeModal = ({
   visible,
   onClose,
@@ -30,7 +29,6 @@ const ResumeModal = ({
   const { colors, images } = useTheme() as any;
   const styles = useStyles(colors);
   const { localization } = useContext(LocalizationContext) as any;
-
   return (
     <Modal
       visible={visible}
@@ -40,7 +38,11 @@ const ResumeModal = ({
       statusBarTranslucent
     >
       <View style={styles.overlay}>
-        <TouchableWithoutFeedback onPress={onClose}>
+        <TouchableWithoutFeedback
+          onPress={(...args: any) => {
+            return (onClose as any)(...args);
+          }}
+        >
           <View style={StyleSheet.absoluteFill} />
         </TouchableWithoutFeedback>
 
@@ -61,12 +63,16 @@ const ResumeModal = ({
 
           <SolidBtn
             titleTxt={localization.appkeys?.continue || 'Continue'}
-            onPress={onConfirm}
+            onPress={(...args: any) => {
+              return (onConfirm as any)(...args);
+            }}
             btnStyle={styles.primaryBtn}
           />
           <SolidBtn
             titleTxt={localization.appkeys?.startOver || 'Start Over'}
-            onPress={onStartOver}
+            onPress={(...args: any) => {
+              return (onStartOver as any)(...args);
+            }}
             btnStyle={styles.secondaryBtn}
             txtStyle={styles.secondaryBtnText}
           />
@@ -75,7 +81,6 @@ const ResumeModal = ({
     </Modal>
   );
 };
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     overlay: {
@@ -92,7 +97,10 @@ const useStyles = (colors: any) =>
       paddingBottom: 24,
       alignItems: 'center',
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 10 },
+      shadowOffset: {
+        width: 0,
+        height: 10,
+      },
       shadowOpacity: 0.25,
       shadowRadius: 20,
       elevation: 10,
@@ -106,7 +114,6 @@ const useStyles = (colors: any) =>
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(22),
       color: colors.brown,
-
       textAlign: 'center',
       marginBottom: Platform.OS == 'ios' ? 12 : 4,
     },
@@ -133,5 +140,4 @@ const useStyles = (colors: any) =>
       color: colors.brown,
     },
   });
-
 export default memo(ResumeModal);

@@ -20,7 +20,9 @@ import {
   setUser,
 } from '../../../../redux/Reducers/userData';
 import getEnvVars from '../../../../../env';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
+import AppUtils from '../../../../utils/appUtils';
+import AppFonts from '../../../../constants/fonts';
 const Settings = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -41,6 +43,7 @@ const Settings = () => {
     // localization.appkeys?.termsOfService || 'Terms of Service',
     // localization.appkeys?.privacyPolicy || 'Privacy Policy',
     localization.appkeys?.contactUs || 'Contact Us',
+    localization.appkeys?.logout || 'Logout',
     // localization.appkeys?.aboutHeal || 'About HEAL',
   ];
 
@@ -49,7 +52,11 @@ const Settings = () => {
       isScrollEnabled
       view={
         <View style={styles.mainContainer}>
-          <View style={{ flex: 1 }}>
+          <View
+            style={{
+              flex: 1,
+            }}
+          >
             <HomeHeader
               showCrown
               showStreak={false}
@@ -61,14 +68,10 @@ const Settings = () => {
                 localization.appkeys?.manageAccount ||
                 'Manage your account and preferences'
               }
-              viewStyle={{ marginBottom: 20, marginTop: 10 }}
-            />
-
-            <SettingsProfileCard
-              source={{ uri: getEnvVars()?.fileUrl + user?.profilePic }}
-              userName={user?.fullName || user?.first_name || ''}
-              userEmail={user?.email || ''}
-              onLogoutPress={() => setvisible(true)}
+              viewStyle={{
+                marginBottom: 20,
+                marginTop: 10,
+              }}
             />
 
             {settingItems.map(item => {
@@ -79,7 +82,6 @@ const Settings = () => {
                 (localization.appkeys?.personalInfo || 'Personal Information');
               const isLanguage =
                 item === (localization.appkeys?.language || 'Language');
-
               const isPrivacy =
                 item ===
                 (localization.appkeys?.privacySecurity || 'Privacy & Security');
@@ -93,19 +95,27 @@ const Settings = () => {
               const isPolicy =
                 item ===
                 (localization.appkeys?.privacyPolicy || 'Privacy Policy');
+              const isLogout =
+                item === (localization.appkeys?.logout || 'Logout');
+              let rightIcon = undefined;
+              let rightIconStyle = undefined;
+              if (isNotification) {
+                rightIcon = isNotificationEnabled
+                  ? images.toggleOn
+                  : images.toggleOff;
+              } else if (isLogout) {
+                rightIcon = images.logout;
+                rightIconStyle = styles.logoutIcon;
+              }
 
               return (
                 <SettingItem
                   key={item}
                   label={item}
-                  rightIcon={
-                    isNotification
-                      ? isNotificationEnabled
-                        ? images.toggleOn
-                        : images.toggleOff
-                      : undefined
-                  }
+                  rightIcon={rightIcon}
+                  rightIconStyle={rightIconStyle}
                   onPress={() => {
+                    // triggerHaptic('impactHeavy');
                     if (isNotification) {
                       setIsNotificationEnabled(!isNotificationEnabled);
                     } else if (isPersonalInfo) {
@@ -129,6 +139,8 @@ const Settings = () => {
                       navigation.navigate(AppRoutes.Terms as never);
                     } else if (isPolicy) {
                       navigation.navigate(AppRoutes.PrivacyPolicy as never);
+                    } else if (isLogout) {
+                      setvisible(true);
                     }
                   }}
                 />
@@ -136,29 +148,60 @@ const Settings = () => {
             })}
 
             {/* <SettingItem
-            label={
+             label={
               localization.appkeys?.emergencyResources || 'Emergency Resources'
-            }
-            isPink
-            onPress={() =>
+             }
+             isPink
+             onPress={() =>
               navigation.navigate(AppRoutes.EmergencyResources as never)
-            }
-          /> */}
+             }
+             /> */}
 
             {/* <SettingsPremiumCard
-            description={
+             description={
               localization.appkeys?.unlockPremium ||
               'Unlock all premium features to support your healing journey'
-            }
-            priceLabel="€6.99/month"
-            discoverLabel={
+             }
+             priceLabel="€6.99/month"
+             discoverLabel={
               localization.appkeys?.discoverPremium || 'Discover Premium'
-            }
-            onDiscoverPress={() =>
+             }
+             onDiscoverPress={() =>
               // navigation.navigate(AppRoutes.Premium as never)
               setShowCreditsModal(true)
-            }
-          /> */}
+             }
+             /> */}
+            <SolidText
+              style={[
+                styles.subtitle,
+                {
+                  fontSize: AppUtils.fontSize(12),
+                  fontFamily: AppFonts.bold,
+                  marginBottom: 10,
+                  marginTop: 10,
+                },
+              ]}
+            >
+              {localization.appkeys?.followUs || 'FOLLOW US'}
+            </SolidText>
+            <SettingItem
+              label="Instagram"
+              leftIcon={images.insta}
+              rightIcon={images.arrowRight}
+              onPress={() => {
+                // triggerHaptic('impactHeavy');
+                // add instagram link later
+              }}
+            />
+            <SettingItem
+              label="TikTok"
+              leftIcon={images.tiktok}
+              rightIcon={images.arrowRight}
+              onPress={() => {
+                // triggerHaptic('impactHeavy');
+                // add tiktok link later
+              }}
+            />
           </View>
 
           <View style={styles.footer}>
@@ -179,13 +222,14 @@ const Settings = () => {
               dispatch(setAuth(false));
               dispatch(setUser(null));
               dispatch(setToken(null));
-
               navigation.reset({
                 index: 0,
                 routes: [
                   {
                     name: AppRoutes.AuthStack as never,
-                    params: { screen: AppRoutes.AccessScreen },
+                    params: {
+                      screen: AppRoutes.AccessScreen,
+                    },
                   },
                 ],
               });
@@ -202,5 +246,4 @@ const Settings = () => {
     />
   );
 };
-
 export default Settings;

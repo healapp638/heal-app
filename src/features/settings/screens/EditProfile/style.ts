@@ -82,6 +82,32 @@ const style = (colors: any) =>
       marginTop: hp('4%'),
       marginBottom: hp('4%'),
     },
+    changePassCard: {
+      backgroundColor: 'rgba(234,172,144,0.17)', // cardBeige
+      borderRadius: 22,
+      padding: 10,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 8,
+      marginTop: 10,
+      paddingVertical: Platform.OS == 'ios' ? 13 : 12,
+    },
+    changePassLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    changePassTitle: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.medium,
+      color: colors.brown,
+      includeFontPadding: false,
+    },
+    arrowIcon: {
+      width: 16,
+      height: 16,
+      tintColor: colors.brown,
+    },
   });
 
 export default style;

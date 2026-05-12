@@ -10,7 +10,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ChallengeItemProps {
   title: string;
   description?: string;
@@ -19,7 +19,6 @@ interface ChallengeItemProps {
   isCompleted: boolean;
   onPress?: () => void;
 }
-
 const ChallengeItem = ({
   title,
   description,
@@ -29,15 +28,20 @@ const ChallengeItem = ({
   onPress,
 }: ChallengeItemProps) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       style={styles.container}
     >
       <View style={styles.contentRow}>
-        <View style={{ width: '80%' }}>
+        <View
+          style={{
+            width: '80%',
+          }}
+        >
           {/* Top Left Badge Tag */}
           {badge && (
             <View style={styles.badgeContainer}>
@@ -66,7 +70,9 @@ const ChallengeItem = ({
           <View
             style={[
               styles.statusContainer,
-              { backgroundColor: isCompleted ? '#E5E1DA' : 'transparent' },
+              {
+                backgroundColor: isCompleted ? '#E5E1DA' : 'transparent',
+              },
               !isCompleted && styles.pendingBorder,
             ]}
           >
@@ -85,7 +91,6 @@ const ChallengeItem = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
@@ -94,7 +99,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     // Immersive soft shadow
     shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
     shadowOpacity: 0.04,
     shadowRadius: 15,
     elevation: 3,
@@ -103,8 +111,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#604033', // Deep brown tag
-    borderRadius: 14, // Pill shape
+    backgroundColor: '#604033',
+    // Deep brown tag
+    borderRadius: 14,
+    // Pill shape
     paddingHorizontal: 8,
     paddingVertical: 3,
     marginBottom: Platform.OS == 'ios' ? 10 : 8,
@@ -117,7 +127,8 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: AppUtils.fontSize(12),
     fontFamily: AppFonts.regular,
-    color: '#F4EEE2', // Match screen background color for text
+    color: '#F4EEE2',
+    // Match screen background color for text
     includeFontPadding: false,
   },
   contentRow: {
@@ -152,7 +163,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pendingBorder: {
-    borderWidth: 4, // Thicker border as in screenshot
+    borderWidth: 4,
+    // Thicker border as in screenshot
     borderColor: '#D4CDC2', // Muted greyish border
   },
   tickIcon: {
@@ -165,5 +177,4 @@ const styles = StyleSheet.create({
     color: '#3A2110',
   },
 });
-
 export default ChallengeItem;

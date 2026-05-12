@@ -12,46 +12,46 @@ import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
-
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
-
 import CategoryGridCard from '../../../../components/CategoryGridCard';
-
 const ThemeSeeAll = () => {
   const { colors } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
-
   const { data: themeCategoryData, isLoading } = useGetApi(
     endpoints.get_home_theme_category,
     ['getHomeThemeCategory'],
   );
-
   const themeCategories = (themeCategoryData as any)?.data || [];
-
   const renderItem = ({ item }: { item: any }) => (
     <CategoryGridCard
-      image={{ uri: `${getEnvVars().fileUrl}${item.imgUrl}` }}
+      image={{
+        uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+      }}
       title={item.title}
-      onPress={() =>
-        navigation.navigate(
+      onPress={() => {
+        triggerHaptic('impactHeavy');
+        return navigation.navigate(
           AppRoutes.ThemeDetail as never,
           {
             title: item.title,
             categoryTheme_id: item._id,
           } as never,
-        )
-      }
+        );
+      }}
     />
   );
-
   return (
     <SolidView
       view={
         <View style={styles.container}>
-          <View style={{ paddingHorizontal: 18 }}>
+          <View
+            style={{
+              paddingHorizontal: 18,
+            }}
+          >
             <HeaderCommon title={localization.appkeys.themeMixes} />
           </View>
 
@@ -59,7 +59,9 @@ const ThemeSeeAll = () => {
             <ActivityIndicator
               size="large"
               color={colors.primary}
-              style={{ flex: 1 }}
+              style={{
+                flex: 1,
+              }}
             />
           ) : (
             <FlatList
@@ -81,9 +83,8 @@ const ThemeSeeAll = () => {
     />
   );
 };
-
 import { StyleSheet } from 'react-native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import getEnvVars from '../../../../../env';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 export default ThemeSeeAll;

@@ -18,7 +18,7 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const FeelMore = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -30,46 +30,62 @@ const FeelMore = () => {
     (state: any) => state.userData?.onboarding?.answers?.feelMore ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
-
   useEffect(() => {
     setSelected(savedSelection);
   }, [savedSelection]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.FeelMore));
     }, [dispatch]),
   );
-
   const handleBackPress = () => {
-    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-
     if (previousRouteName === AppRoutes.FeelingsLately) {
       navigation.goBack();
       return;
     }
-
     navigation.navigate(AppRoutes.FeelingsLately as never);
   };
-
   const options = [
-    { id: '1', label: localization.appkeys?.optionPeaceOfMind },
-    { id: '2', label: localization.appkeys?.optionConfidence },
-    { id: '3', label: localization.appkeys?.optionEmotionalStrength },
-    { id: '4', label: localization.appkeys?.optionLifeClarity },
-    { id: '5', label: localization.appkeys?.optionBalance },
-    { id: '6', label: localization.appkeys?.optionMotivation },
+    {
+      id: '1',
+      label: localization.appkeys?.optionPeaceOfMind,
+    },
+    {
+      id: '2',
+      label: localization.appkeys?.optionConfidence,
+    },
+    {
+      id: '3',
+      label: localization.appkeys?.optionEmotionalStrength,
+    },
+    {
+      id: '4',
+      label: localization.appkeys?.optionLifeClarity,
+    },
+    {
+      id: '5',
+      label: localization.appkeys?.optionBalance,
+    },
+    {
+      id: '6',
+      label: localization.appkeys?.optionMotivation,
+    },
   ];
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <HeaderProgress progress={0.65} onBackPress={handleBackPress} />
 
           <Image
@@ -89,7 +105,6 @@ const FeelMore = () => {
               {options.map(option => {
                 const isSelected =
                   selected === option.id || selected === option.label;
-
                 return (
                   <TouchableOpacity
                     key={option.id}
@@ -122,14 +137,18 @@ const FeelMore = () => {
               })}
             </View>
 
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
-              onPress={() =>
-                navigation.navigate(AppRoutes.TimeCommitment as never)
-              }
+              onPress={() => {
+                return navigation.navigate(AppRoutes.TimeCommitment as never);
+              }}
             />
           </View>
         </View>
@@ -137,5 +156,4 @@ const FeelMore = () => {
     />
   );
 };
-
 export default FeelMore;

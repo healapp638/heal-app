@@ -10,15 +10,13 @@ import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import HomeHeader from '../../../../components/HomeHeader';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const AboutHeal = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const [creditsVisible, setCreditsVisible] = useState(false);
-
   const ValueCard = ({
     icon,
     title,
@@ -35,13 +33,11 @@ const AboutHeal = () => {
       <SolidText style={styles.valueDesc}>{desc}</SolidText>
     </View>
   );
-
   const BulletPoint = ({ text }: { text: string }) => (
     <View style={styles.bulletItem}>
       <SolidText style={styles.bulletText}>• {text}</SolidText>
     </View>
   );
-
   const LinkItem = ({
     label,
     icon,
@@ -54,13 +50,14 @@ const AboutHeal = () => {
     <TouchableOpacity
       style={styles.linkCard}
       activeOpacity={0.7}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
     >
       <SolidText style={styles.linkText}>{label}</SolidText>
       <Image source={icon} style={styles.linkIcon} resizeMode="contain" />
     </TouchableOpacity>
   );
-
   return (
     <SolidView
       isScrollEnabled
@@ -85,7 +82,9 @@ const AboutHeal = () => {
             safeSpaceLabel={
               localization.appkeys?.ourMissionValues || 'Our mission and values'
             }
-            subStyle={{ marginTop: 5 }}
+            subStyle={{
+              marginTop: 5,
+            }}
           />
 
           <View style={styles.heroCard}>
@@ -198,19 +197,23 @@ const AboutHeal = () => {
           <LinkItem
             label={localization.appkeys?.website || 'Website'}
             icon={images.open}
-            onPress={() => Linking.openURL('https://www.heal-app.com/')}
+            onPress={() => {
+              return Linking.openURL('https://www.heal-app.com/');
+            }}
           />
           <LinkItem
             label={localization.appkeys?.termsOfService || 'Terms of Service'}
             icon={images.open}
-            onPress={() => navigation.navigate(AppRoutes.Terms as never)}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.Terms as never);
+            }}
           />
           <LinkItem
             label={localization.appkeys?.privacyPolicy || 'Privacy Policy'}
             icon={images.open}
-            onPress={() =>
-              navigation.navigate(AppRoutes.PrivacyPolicy as never)
-            }
+            onPress={() => {
+              return navigation.navigate(AppRoutes.PrivacyPolicy as never);
+            }}
           />
 
           <View style={styles.footerContainer}>
@@ -236,5 +239,4 @@ const AboutHeal = () => {
     />
   );
 };
-
 export default AboutHeal;

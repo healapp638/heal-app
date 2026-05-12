@@ -11,7 +11,7 @@ import { LocalizationContext } from '../../../../localization/localization';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const AccessScreen = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -21,12 +21,19 @@ const AccessScreen = () => {
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
         <View style={styles.mainContainer}>
           {/* <HeaderCommon title="Welcome!" /> */}
 
-          <View style={{ flex: 1, alignItems: 'center' }}>
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+            }}
+          >
             <Image
               source={images.logo}
               style={styles.logo}
@@ -43,7 +50,10 @@ const AccessScreen = () => {
             <View style={styles.socialButtonsContainer}>
               <TouchableOpacity
                 style={styles.socialBtn}
-                onPress={googleLogin}
+                onPress={(...args: any) => {
+                  triggerHaptic('impactHeavy');
+                  return (googleLogin as any)(...args);
+                }}
                 disabled={isSocialPending}
               >
                 <Image
@@ -59,7 +69,9 @@ const AccessScreen = () => {
               {Platform.OS === 'ios' && (
                 <TouchableOpacity
                   style={styles.socialBtn}
-                  onPress={() => {}}
+                  onPress={() => {
+                    triggerHaptic('impactHeavy');
+                  }}
                   disabled={isSocialPending}
                 >
                   <Image
@@ -76,6 +88,7 @@ const AccessScreen = () => {
               <TouchableOpacity
                 style={styles.socialBtn}
                 onPress={() => {
+                  triggerHaptic('impactHeavy');
                   navigation.navigate(AppRoutes.SignIn as never);
                 }}
               >
@@ -90,7 +103,11 @@ const AccessScreen = () => {
               </TouchableOpacity>
             </View>
 
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
 
             <View style={styles.bottomButtonsContainer}>
               <SolidBtn
@@ -103,15 +120,17 @@ const AccessScreen = () => {
               <SolidBtn
                 titleTxt={localization.appkeys?.createAccountBtn}
                 btnStyle={styles.createAccountBtn}
-                onPress={() => navigation.navigate(AppRoutes.SignUp as never)}
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.SignUp as never);
+                }}
               />
             </View>
 
             <View style={styles.footer}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(AppRoutes.PrivacyPolicy as never)
-                }
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.PrivacyPolicy as never);
+                }}
               >
                 <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.privacyPolicy}
@@ -119,7 +138,9 @@ const AccessScreen = () => {
               </TouchableOpacity>
               <View style={styles.dot} />
               <TouchableOpacity
-                onPress={() => navigation.navigate(AppRoutes.Terms as never)}
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.Terms as never);
+                }}
               >
                 <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.termsOfService}
@@ -132,5 +153,4 @@ const AccessScreen = () => {
     />
   );
 };
-
 export default AccessScreen;

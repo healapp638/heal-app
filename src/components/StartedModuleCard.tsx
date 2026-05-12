@@ -11,7 +11,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface StartedModuleCardProps {
   title: string;
   subtitle: string;
@@ -21,7 +21,6 @@ interface StartedModuleCardProps {
   containerStyle?: any;
   disabled?: boolean;
 }
-
 const StartedModuleCard = ({
   title,
   subtitle,
@@ -37,15 +36,18 @@ const StartedModuleCard = ({
     ? progressText.split('/')?.map(Number)
     : [0, 0];
   const percentage = total > 0 ? (completed / total) * 100 : 0;
-
   return (
     <TouchableOpacity
       activeOpacity={disabled ? 1 : 0.8}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       disabled={disabled}
       style={[
         styles.moduleCard,
-        { backgroundColor: colors.white },
+        {
+          backgroundColor: colors.white,
+        },
         containerStyle,
       ]}
     >
@@ -75,7 +77,14 @@ const StartedModuleCard = ({
             ]}
           >
             <View style={styles.progressCircleInner}>
-              <SolidText style={[styles.progressText, { color: colors.brown }]}>
+              <SolidText
+                style={[
+                  styles.progressText,
+                  {
+                    color: colors.brown,
+                  },
+                ]}
+              >
                 {progressText}
               </SolidText>
             </View>
@@ -83,12 +92,24 @@ const StartedModuleCard = ({
         )}
 
         <View style={styles.moduleCardTextContainer}>
-          <SolidText style={[styles.moduleCardTitle, { color: colors.brown }]}>
+          <SolidText
+            style={[
+              styles.moduleCardTitle,
+              {
+                color: colors.brown,
+              },
+            ]}
+          >
             {title}
           </SolidText>
           <Text
             numberOfLines={1}
-            style={[styles.moduleCardSubtitle, { color: colors.brown }]}
+            style={[
+              styles.moduleCardSubtitle,
+              {
+                color: colors.brown,
+              },
+            ]}
           >
             {subtitle}
           </Text>
@@ -103,7 +124,6 @@ const StartedModuleCard = ({
     </TouchableOpacity>
   );
 };
-
 const useStyles = (colors: any) =>
   StyleSheet.create({
     moduleCard: {
@@ -114,7 +134,10 @@ const useStyles = (colors: any) =>
       marginRight: 12,
       // iOS shadow
       shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
       shadowOpacity: 0.04,
       shadowRadius: 5,
       // Android shadow
@@ -133,10 +156,18 @@ const useStyles = (colors: any) =>
       borderWidth: 6,
       justifyContent: 'center',
       alignItems: 'center',
-      transform: [{ rotate: '45deg' }],
+      transform: [
+        {
+          rotate: '45deg',
+        },
+      ],
     },
     progressCircleInner: {
-      transform: [{ rotate: '-45deg' }],
+      transform: [
+        {
+          rotate: '-45deg',
+        },
+      ],
     },
     progressText: {
       fontFamily: AppFonts.medium,
@@ -147,7 +178,6 @@ const useStyles = (colors: any) =>
       width: 56,
       height: 56,
       borderRadius: 28,
-
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -176,5 +206,4 @@ const useStyles = (colors: any) =>
       height: 12,
     },
   });
-
 export default React.memo(StartedModuleCard);

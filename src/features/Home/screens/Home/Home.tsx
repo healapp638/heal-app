@@ -23,7 +23,7 @@ import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { store } from '../../../../redux/Store/store';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Home = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -33,25 +33,23 @@ const Home = () => {
   const user = useSelector((state: any) => state.userData.user);
 
   const userName = user?.fullName || 'User';
-
   const { data: startedModulesData, refetch: refetchStarted } = useGetApi(
     endpoints.start_sub_module_list,
     ['start_sub_module_list_home'],
-    { limit: 10 },
+    {
+      limit: 10,
+    },
   );
-
   const {
     data: aiAffirmationData,
     refetch: refetchAffirmation,
     isLoading: isAILoading,
   } = useGetApi(endpoints.ai_affirmation, ['getAIAffirmation']);
-
   const startedModules = startedModulesData?.data?.subModules || [];
   const aiAffirmation =
     aiAffirmationData?.data?.affirmation ||
     localization.appkeys?.homeDailyQuote ||
     '"If you don\'t throw yourself into something, you\'ll never know what you could have had."';
-
   useFocusEffect(
     React.useCallback(() => {
       dispatch(getUserDetail());
@@ -63,7 +61,6 @@ const Home = () => {
       };
     }, [dispatch, refetchStarted]),
   );
-
   return (
     <SolidView
       isScrollEnabled
@@ -85,16 +82,20 @@ const Home = () => {
           <WeeklyStreak />
 
           <ProgressTrackerCard
-            onPress={() =>
-              navigation.navigate(AppRoutes.ProgressTracker as never)
-            }
+            onPress={() => {
+              triggerHaptic('impactHeavy');
+              return navigation.navigate(AppRoutes.ProgressTracker as never);
+            }}
             title={
               localization.appkeys?.homeProgressTracker || 'Progress Tracker'
             }
           />
 
           <DailyQuoteCard
-            onPress={() => navigation.navigate(AppRoutes.DailyQuote as never)}
+            onPress={() => {
+              triggerHaptic('impactHeavy');
+              return navigation.navigate(AppRoutes.DailyQuote as never);
+            }}
             title={localization.appkeys?.homeQuoteDay || 'Quote of the day'}
             quote={aiAffirmation}
             exploreLabel={
@@ -113,6 +114,7 @@ const Home = () => {
 
           <ChallengeCard
             onPress={() => {
+              triggerHaptic('impactHeavy');
               navigation.navigate(AppRoutes.ChallengeDetail as never);
             }}
             title={
@@ -128,10 +130,14 @@ const Home = () => {
             onActionPress={() => {
               navigation.navigate(
                 AppRoutes.AllModules as never,
-                { type: 'started' } as never,
+                {
+                  type: 'started',
+                } as never,
               );
             }}
-            containerStyle={{ marginTop: 10 }}
+            containerStyle={{
+              marginTop: 10,
+            }}
           />
 
           <FlatList
@@ -139,18 +145,24 @@ const Home = () => {
             numColumns={2}
             showsHorizontalScrollIndicator={false}
             keyExtractor={item => item._id}
-            style={{ marginTop: 10 }}
+            style={{
+              marginTop: 10,
+            }}
             renderItem={({ item, index }) => (
               <ModuleCard
-                onPress={() =>
-                  navigation.navigate(
+                onPress={() => {
+                  triggerHaptic('impactHeavy');
+                  return navigation.navigate(
                     AppRoutes.StartedModule as never,
                     {
                       module: item.module,
-                      subModule: { ...item, _id: item.sub_module_id },
+                      subModule: {
+                        ...item,
+                        _id: item.sub_module_id,
+                      },
                     } as never,
-                  )
-                }
+                  );
+                }}
                 background={
                   index === 0 ? images.moduleBack1 : images.moduleBack2
                 }
@@ -168,7 +180,9 @@ const Home = () => {
           <SectionHeader
             title={localization.appkeys?.todayJournal || 'Today Journal'}
             onActionPress={() => {}}
-            containerStyle={{ marginTop: 20 }}
+            containerStyle={{
+              marginTop: 20,
+            }}
           />
           <JournalCard
             title={
@@ -176,6 +190,7 @@ const Home = () => {
             }
             duration={localization.appkeys?.journalTitle || 'JOURNAL'}
             onPress={() => {
+              triggerHaptic('impactHeavy');
               navigation.navigate(AppRoutes.Journal as never);
             }}
           />
@@ -184,5 +199,4 @@ const Home = () => {
     />
   );
 };
-
 export default Home;

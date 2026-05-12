@@ -5,7 +5,7 @@ import SolidText from './SolidText';
 import AppUtils from '../utils/appUtils';
 import AppFonts from '../constants/fonts';
 import { useSelector } from 'react-redux';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ProgressTrackerCardProps {
   title: string;
   percentage?: string;
@@ -14,7 +14,6 @@ interface ProgressTrackerCardProps {
   onPress?: () => void;
   viewStyle?: any;
 }
-
 const ProgressTrackerCard = ({
   title,
   percentage,
@@ -43,24 +42,47 @@ const ProgressTrackerCard = ({
         } PTS`
       : '0/0 PTS');
   const progressWidth = userDetails?.completedPercentage || 0;
-
   return (
     <Pressable
-      onPress={onPress}
-      style={[styles.card, { backgroundColor: colors.cardBeige }, viewStyle]}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
+      style={[
+        styles.card,
+        {
+          backgroundColor: colors.cardBeige,
+        },
+        viewStyle,
+      ]}
     >
       <View style={styles.topRow}>
-        <SolidText style={[styles.title, { color: colors.brown }]}>
+        <SolidText
+          style={[
+            styles.title,
+            {
+              color: colors.brown,
+            },
+          ]}
+        >
           {title}
         </SolidText>
-        <SolidText style={[styles.percentage, { color: colors.lightBrown }]}>
+        <SolidText
+          style={[
+            styles.percentage,
+            {
+              color: colors.lightBrown,
+            },
+          ]}
+        >
           {displayPercentage}
         </SolidText>
       </View>
       <View
         style={[
           styles.progressBarBg,
-          { backgroundColor: colors.progressTrack },
+          {
+            backgroundColor: colors.progressTrack,
+          },
         ]}
       >
         <View
@@ -74,17 +96,30 @@ const ProgressTrackerCard = ({
         />
       </View>
       <View style={styles.bottomRow}>
-        <SolidText style={[styles.level, { color: colors.brown }]}>
+        <SolidText
+          style={[
+            styles.level,
+            {
+              color: colors.brown,
+            },
+          ]}
+        >
           {displayLevel}
         </SolidText>
-        <SolidText style={[styles.points, { color: colors.brown }]}>
+        <SolidText
+          style={[
+            styles.points,
+            {
+              color: colors.brown,
+            },
+          ]}
+        >
           {displayPoints}
         </SolidText>
       </View>
     </Pressable>
   );
 };
-
 const styles = StyleSheet.create({
   card: {
     borderRadius: 16,
@@ -136,5 +171,4 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
 });
-
 export default ProgressTrackerCard;

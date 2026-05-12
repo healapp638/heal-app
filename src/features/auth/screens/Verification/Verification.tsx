@@ -20,7 +20,7 @@ import {
   setRefreshToken,
   setUser,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Verification = () => {
   const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
@@ -28,17 +28,13 @@ const Verification = () => {
   const route = useRoute() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const { email, password, from } = route.params || {};
-
   const styles = style(colors);
-
   const { mutate: verifyMutate, isPending: isVerifying } = usePostApi();
   const { mutate: resendMutate, isPending: isResending } = usePostApi();
-
   const [otpCode, setOtpCode] = useState('');
   const [timer, setTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const [successVisible, setSuccessVisible] = useState(false);
-
   useEffect(() => {
     let interval: any;
     if (timer > 0) {
@@ -51,14 +47,15 @@ const Verification = () => {
     }
     return () => clearInterval(interval);
   }, [timer]);
-
   const handleResend = () => {
     setOtpCode('');
     if (canResend) {
       resendMutate(
         {
           endpoint: endpoints.resendOtp,
-          data: { email: email?.trim()?.toLowerCase() },
+          data: {
+            email: email?.trim()?.toLowerCase(),
+          },
         },
         {
           onSuccess: () => {
@@ -75,7 +72,6 @@ const Verification = () => {
       );
     }
   };
-
   const handleVerify = () => {
     if (otpCode.length < 6) {
       AppUtils.showToast(
@@ -89,7 +85,9 @@ const Verification = () => {
         data: {
           email: email?.trim()?.toLowerCase(),
           ...(from !== 'ForgotPassword' &&
-            from !== 'SocialLogin' && { password }),
+            from !== 'SocialLogin' && {
+              password,
+            }),
           otp: String(otpCode),
         },
       },
@@ -112,14 +110,15 @@ const Verification = () => {
             dispatch(setToken(response?.data?.access_token));
             dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
-
             if (response?.data?.is_profile_completed === false) {
               navigation.reset({
                 index: 0,
                 routes: [
                   {
                     name: AppRoutes.CompleteProfile,
-                    params: { userData: response?.data },
+                    params: {
+                      userData: response?.data,
+                    },
                   } as never,
                 ],
               });
@@ -129,7 +128,9 @@ const Verification = () => {
                 routes: [
                   {
                     name: AppRoutes.NonAuthStack,
-                    params: { screen: AppRoutes.Offer },
+                    params: {
+                      screen: AppRoutes.Offer,
+                    },
                   } as never,
                 ],
               });
@@ -145,19 +146,23 @@ const Verification = () => {
       },
     );
   };
-
   const navigateToSignIn = () => {
     setSuccessVisible(false);
     navigation.reset({
       index: 0,
-      routes: [{ name: AppRoutes.SignIn as never }],
+      routes: [
+        {
+          name: AppRoutes.SignIn as never,
+        },
+      ],
     });
   };
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon title={localization.appkeys?.verificationHeader} />
@@ -189,20 +194,36 @@ const Verification = () => {
                 {timer} {localization.appkeys?.sec}
               </SolidText>
             ) : (
-              <TouchableOpacity onPress={handleResend} disabled={isResending}>
+              <TouchableOpacity
+                onPress={(...args: any) => {
+                  return (handleResend as any)(...args);
+                }}
+                disabled={isResending}
+              >
                 <SolidText
-                  style={[styles.resendText, isResending && { opacity: 0.5 }]}
+                  style={[
+                    styles.resendText,
+                    isResending && {
+                      opacity: 0.5,
+                    },
+                  ]}
                 >
                   {localization.appkeys?.resendCode}
                 </SolidText>
               </TouchableOpacity>
             )}
           </View>
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
           <SolidBtn
             titleTxt={localization.appkeys?.verifyAndContinue}
             btnStyle={styles.verifyBtn}
-            onPress={handleVerify}
+            onPress={(...args: any) => {
+              return (handleVerify as any)(...args);
+            }}
             isLoading={isVerifying}
             disabled={isVerifying}
           />
@@ -214,12 +235,13 @@ const Verification = () => {
             subtitle={localization.appkeys?.confirmationEmailSent}
             btnLabel={localization.appkeys?.logInBtn}
             onPressBtn={navigateToSignIn}
-            btnStyle={{ marginTop: -6 }}
+            btnStyle={{
+              marginTop: -6,
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default Verification;

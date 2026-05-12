@@ -7,7 +7,7 @@ import SolidText from '../../../../components/SolidText';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Offer = () => {
   const navigation = useNavigation();
   const { colors } = useTheme() as any;
@@ -25,12 +25,13 @@ const Offer = () => {
           <SolidBtn
             btnStyle={styles.btn}
             titleTxt={localization.appkeys?.tryFreeBtn}
-            onPress={() => navigation.navigate(AppRoutes.Reminder as never)}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.Reminder as never);
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default Offer;

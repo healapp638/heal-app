@@ -11,7 +11,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppUtils from '../utils/appUtils';
 import AppFonts from '../constants/fonts';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface HomeHeaderProps {
   userName: string;
   safeSpaceLabel: string;
@@ -24,7 +24,6 @@ interface HomeHeaderProps {
   viewStyle?: ViewStyle;
   subStyle?: ViewStyle;
 }
-
 const HomeHeader = ({
   userName,
   safeSpaceLabel,
@@ -38,32 +37,60 @@ const HomeHeader = ({
   subStyle,
 }: HomeHeaderProps) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <View style={[styles.header, viewStyle]}>
       <View>
-        <SolidText style={[styles.userName, { color: colors.brown }]}>
+        <SolidText
+          style={[
+            styles.userName,
+            {
+              color: colors.brown,
+            },
+          ]}
+        >
           {userName}
         </SolidText>
         <SolidText
-          style={[styles.safeSpace, { color: colors.brown }, subStyle]}
+          style={[
+            styles.safeSpace,
+            {
+              color: colors.brown,
+            },
+            subStyle,
+          ]}
         >
           {safeSpaceLabel}
         </SolidText>
       </View>
       {showStreak && (
-        <Pressable onPress={onStreakPress} style={styles.headerRight}>
+        <Pressable
+          onPress={(...args: any) => {
+            return (onStreakPress as any)(...args);
+          }}
+          style={styles.headerRight}
+        >
           <View style={styles.streakBox}>
             <Image
               source={images.streak}
               style={styles.icon}
               resizeMode="contain"
             />
-            <SolidText style={[styles.streakText, { color: colors.brown }]}>
+            <SolidText
+              style={[
+                styles.streakText,
+                {
+                  color: colors.brown,
+                },
+              ]}
+            >
               {streakCount}
             </SolidText>
             <View style={styles.divider} />
-            <TouchableOpacity onPress={onCalendarPress}>
+            <TouchableOpacity
+              onPress={(...args: any) => {
+                return (onCalendarPress as any)(...args);
+              }}
+            >
               <Image
                 source={images.calendar}
                 style={styles.icon}
@@ -74,11 +101,18 @@ const HomeHeader = ({
         </Pressable>
       )}
       {showCrown && (
-        <Pressable onPress={onCrownPress}>
+        <Pressable
+          onPress={(...args: any) => {
+            return (onCrownPress as any)(...args);
+          }}
+        >
           <Image
             source={images.crown}
             tintColor={colors.brown}
-            style={{ height: 18, width: 18 }} // Reusing same icon size constraints
+            style={{
+              height: 18,
+              width: 18,
+            }} // Reusing same icon size constraints
             resizeMode="contain"
           />
         </Pressable>
@@ -86,7 +120,6 @@ const HomeHeader = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -135,5 +168,4 @@ const styles = StyleSheet.create({
     marginRight: 11,
   },
 });
-
 export default HomeHeader;

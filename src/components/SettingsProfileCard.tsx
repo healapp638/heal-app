@@ -3,14 +3,13 @@ import { View, Image, TouchableOpacity } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import style from '../features/settings/screens/Settings/style';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 type SettingsProfileCardProps = {
   userName: string;
   userEmail: string;
   onLogoutPress?: () => void;
   source?: any;
 };
-
 const SettingsProfileCard = ({
   userName,
   userEmail,
@@ -19,7 +18,6 @@ const SettingsProfileCard = ({
 }: SettingsProfileCardProps) => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
-
   return (
     <View style={styles.profileCard}>
       <Image source={source} style={styles.avatar} />
@@ -27,7 +25,12 @@ const SettingsProfileCard = ({
         <SolidText style={styles.userName}>{userName}</SolidText>
         <SolidText style={styles.userEmail}>{userEmail}</SolidText>
       </View>
-      <TouchableOpacity activeOpacity={0.7} onPress={onLogoutPress}>
+      <TouchableOpacity
+        activeOpacity={0.7}
+        onPress={(...args: any) => {
+          return (onLogoutPress as any)(...args);
+        }}
+      >
         <Image
           source={images.logout}
           style={styles.logoutIcon}
@@ -37,5 +40,4 @@ const SettingsProfileCard = ({
     </View>
   );
 };
-
 export default memo(SettingsProfileCard);

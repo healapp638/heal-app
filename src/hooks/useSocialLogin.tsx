@@ -37,7 +37,7 @@ const useSocialLogin = () => {
       os_type: Platform.OS,
       language: AppUtils.getLanguageCode(appLanguage),
     };
-
+    console.log('payload', payload);
     socialLoginMutate(
       { endpoint: endpoints.social_login, data: payload },
       {

@@ -32,7 +32,7 @@ import { useSelector } from 'react-redux';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const SignUp = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -71,16 +71,13 @@ const SignUp = () => {
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [countryInfoVisible, setCountryInfoVisible] = useState(false);
   const [ageModalVisible, setAgeModalVisible] = useState(false);
-
   const localizedMonths = getLocalizedMonths(localization);
-
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
         selectedDate.month,
         localization,
       )} - ${selectedDate.year}`
     : localization.appkeys?.selectBirthDate;
-
   const handleSignUp = () => {
     const validation = validateSignUpForm({
       fullName,
@@ -93,7 +90,6 @@ const SignUp = () => {
       localizedMonths,
       appkeys: localization.appkeys,
     });
-
     if (!validation.isValid) {
       if (
         validation.message ===
@@ -106,11 +102,9 @@ const SignUp = () => {
       }
       return;
     }
-
     const formattedDob = `${selectedDate.year}-${
       monthToNumber[selectedDate.month]
     }-${selectedDate.day}`;
-
     const registrationData = {
       fullName,
       email: email?.trim()?.toLowerCase(),
@@ -125,14 +119,19 @@ const SignUp = () => {
       timeYouCommit: answers?.timeCommitment || '',
       language: AppUtils.getLanguageCode(appLanguage),
     };
-
     registerUser(
-      { endpoint: endpoints.register, data: registrationData },
+      {
+        endpoint: endpoints.register,
+        data: registrationData,
+      },
       {
         onSuccess: (response: any) => {
           navigation.navigate(
             AppRoutes.Verification as never,
-            { email: email, password: password } as never,
+            {
+              email: email,
+              password: password,
+            } as never,
           );
         },
         onError: error => {
@@ -142,7 +141,6 @@ const SignUp = () => {
       },
     );
   };
-
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -153,7 +151,6 @@ const SignUp = () => {
     );
     return () => backHandler.remove();
   }, [navigation]);
-
   return (
     <SolidView
       isScrollEnabled={true}
@@ -197,10 +194,14 @@ const SignUp = () => {
 
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => setDobModalVisible(true)}
+              onPress={() => {
+                return setDobModalVisible(true);
+              }}
             >
               <SolidInput
-                mainStyle={{ marginBottom: -1 }}
+                mainStyle={{
+                  marginBottom: -1,
+                }}
                 label={localization.appkeys?.whenBorn}
                 value={dobDisplay}
                 placeholder={localization.appkeys?.selectBirthDate}
@@ -215,7 +216,9 @@ const SignUp = () => {
             </TouchableOpacity>
 
             <SolidInput
-              mainStyle={{ marginTop: 21 }}
+              mainStyle={{
+                marginTop: 21,
+              }}
               label={localization.appkeys?.password}
               placeholder="********"
               value={password}
@@ -245,7 +248,9 @@ const SignUp = () => {
             <SolidBtn
               titleTxt={localization.appkeys?.signUpHeader}
               btnStyle={styles.signUpBtn}
-              onPress={handleSignUp}
+              onPress={(...args: any) => {
+                return (handleSignUp as any)(...args);
+              }}
               isLoading={isRegistering}
               disabled={isRegistering || isSocialPending}
             />
@@ -261,7 +266,9 @@ const SignUp = () => {
             <View style={styles.socialContainer}>
               <TouchableOpacity
                 style={styles.socialBtn}
-                onPress={googleLogin}
+                onPress={(...args: any) => {
+                  return (googleLogin as any)(...args);
+                }}
                 disabled={isSocialPending || isRegistering}
               >
                 <Image
@@ -297,7 +304,9 @@ const SignUp = () => {
                 {localization.appkeys?.alreadyAccount}
               </SolidText>
               <TouchableOpacity
-                onPress={() => navigation.navigate(AppRoutes.SignIn as never)}
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.SignIn as never);
+                }}
               >
                 <SolidText style={styles.signInText}>
                   {localization.appkeys?.signIn}
@@ -348,5 +357,4 @@ const SignUp = () => {
     />
   );
 };
-
 export default SignUp;

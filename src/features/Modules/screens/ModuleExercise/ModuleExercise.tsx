@@ -20,7 +20,7 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import { ToastService } from '../../../../utils/ToastManager';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
@@ -35,7 +35,6 @@ const ModuleExercise = () => {
     exercises = [],
     isLastPhase,
   } = (route.params as any) || {};
-
   const steps = [
     ...exercises.map((ex: any) => {
       const cleanText = (ex.description || ex.text || '')
@@ -75,11 +74,9 @@ const ModuleExercise = () => {
         'Express what you feel. This space is yours, without judgment.',
     },
   ];
-
   const [currentStep, setCurrentStep] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
-
   const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -101,10 +98,8 @@ const ModuleExercise = () => {
         );
         return;
       }
-
       const lastExerciseId =
         exercises.length > 0 ? exercises[exercises.length - 1]._id : '';
-
       completeLesson(
         {
           endpoint: endpoints.complete_lesson,
@@ -117,15 +112,21 @@ const ModuleExercise = () => {
         },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['phase_list'] });
-            queryClient.invalidateQueries({ queryKey: ['module_list'] });
+            queryClient.invalidateQueries({
+              queryKey: ['phase_list'],
+            });
+            queryClient.invalidateQueries({
+              queryKey: ['module_list'],
+            });
             queryClient.invalidateQueries({
               queryKey: ['start_sub_module_list'],
             });
             queryClient.invalidateQueries({
               queryKey: ['start_sub_module_list_home'],
             });
-            queryClient.invalidateQueries({ queryKey: ['theme_list'] });
+            queryClient.invalidateQueries({
+              queryKey: ['theme_list'],
+            });
             dispatch(getUserDetail());
             setShowModal(true);
           },
@@ -133,7 +134,6 @@ const ModuleExercise = () => {
       );
     }
   };
-
   const handleBack = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
@@ -141,9 +141,7 @@ const ModuleExercise = () => {
       navigation.goBack();
     }
   };
-
   const currentStepData = steps[currentStep];
-
   return (
     <SolidView
       isScrollEnabled
@@ -202,7 +200,10 @@ const ModuleExercise = () => {
                 ? localization.appkeys?.completed || 'Completed'
                 : localization.appkeys?.next || 'Next'
             }
-            onPress={handleNext}
+            onPress={(...args: any) => {
+              //
+              return (handleNext as any)(...args);
+            }}
             btnStyle={styles.nextButton}
             isLoading={isCompleting}
           />
@@ -238,7 +239,6 @@ const ModuleExercise = () => {
                 }
                 const source = (route.params as any)?.source;
                 const theme = (route.params as any)?.theme;
-
                 let actualTargetRoute = targetRoute;
                 if (
                   isLastPhase &&
@@ -246,13 +246,14 @@ const ModuleExercise = () => {
                 ) {
                   actualTargetRoute = AppRoutes.AllModules;
                 }
-
                 return CommonActions.reset({
                   index: 1,
                   routes: [
                     {
                       name: AppRoutes.BottomTab,
-                      params: { screen: AppRoutes.Modules },
+                      params: {
+                        screen: AppRoutes.Modules,
+                      },
                     },
                     {
                       name: actualTargetRoute,
@@ -266,13 +267,18 @@ const ModuleExercise = () => {
                 });
               });
             }}
-            subStyle={{ marginTop: -8, marginBottom: 20 }}
-            btnStyle={{ marginTop: 0, marginBottom: -4 }}
+            subStyle={{
+              marginTop: -8,
+              marginBottom: 20,
+            }}
+            btnStyle={{
+              marginTop: 0,
+              marginBottom: -4,
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default ModuleExercise;

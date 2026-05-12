@@ -10,14 +10,13 @@ import {
 import { useTheme } from '@react-navigation/native';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface JournalSearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
   placeholder?: string;
   onCalendarPress?: () => void;
 }
-
 const JournalSearchBar = ({
   value,
   onChangeText,
@@ -25,17 +24,33 @@ const JournalSearchBar = ({
   onCalendarPress,
 }: JournalSearchBarProps) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <View style={styles.searchRow}>
-      <View style={[styles.searchBox, { backgroundColor: '#E4D9D0' }]}>
+      <View
+        style={[
+          styles.searchBox,
+          {
+            backgroundColor: '#E4D9D0',
+          },
+        ]}
+      >
         <Image
           source={images.search}
-          style={[styles.searchIcon, { tintColor: colors.brown }]}
+          style={[
+            styles.searchIcon,
+            {
+              tintColor: colors.brown,
+            },
+          ]}
           resizeMode="contain"
         />
         <TextInput
-          style={[styles.searchInput, { color: colors.brown }]}
+          style={[
+            styles.searchInput,
+            {
+              color: colors.brown,
+            },
+          ]}
           placeholder={placeholder}
           placeholderTextColor={colors.brown}
           value={value}
@@ -45,19 +60,25 @@ const JournalSearchBar = ({
       </View>
       <TouchableOpacity
         style={styles.calendarBtn}
-        onPress={onCalendarPress}
+        onPress={(...args: any) => {
+          return (onCalendarPress as any)(...args);
+        }}
         activeOpacity={0.8}
       >
         <Image
           source={images.calendar}
-          style={[styles.calendarIcon, { tintColor: colors.brown }]}
+          style={[
+            styles.calendarIcon,
+            {
+              tintColor: colors.brown,
+            },
+          ]}
           resizeMode="contain"
         />
       </TouchableOpacity>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   searchRow: {
     flexDirection: 'row',
@@ -99,5 +120,4 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? 18 : 16,
   },
 });
-
 export default JournalSearchBar;

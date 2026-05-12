@@ -84,7 +84,7 @@ const style = (colors: any) =>
       borderWidth: 1,
       borderColor: '#EAE0D5',
       paddingHorizontal: 10,
-      paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+      // paddingVertical: Platform.OS === 'ios' ? 12 : 8,
       minHeight: 120,
       marginBottom: 20,
     },
@@ -99,8 +99,7 @@ const style = (colors: any) =>
       width: '90%',
       backgroundColor: colors.brown,
       borderRadius: 100,
-
-      marginVertical: 0,
+      marginBottom: 60,
     },
   });
 

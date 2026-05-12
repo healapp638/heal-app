@@ -1,17 +1,19 @@
 import React from 'react';
 import { View, TouchableOpacity, Image, Platform } from 'react-native';
 import SolidText from './SolidText';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface SubModuleItemProps {
   sub: any;
-  colorSet: { text: string; border: string };
+  colorSet: {
+    text: string;
+    border: string;
+  };
   isCompleted: boolean;
   onPress: () => void;
   images: any;
   colors: any;
   styles: any;
 }
-
 const SubModuleItem: React.FC<SubModuleItemProps> = ({
   sub,
   colorSet,
@@ -23,12 +25,28 @@ const SubModuleItem: React.FC<SubModuleItemProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       style={styles.itemCard}
       activeOpacity={isCompleted ? 1 : 0.8}
     >
-      <View style={[styles.itemCircle, { borderColor: colorSet.border }]}>
-        <SolidText style={[styles.circleText, { color: colorSet.text }]}>
+      <View
+        style={[
+          styles.itemCircle,
+          {
+            borderColor: colorSet.border,
+          },
+        ]}
+      >
+        <SolidText
+          style={[
+            styles.circleText,
+            {
+              color: colorSet.text,
+            },
+          ]}
+        >
           {`${sub.totalCompletedPhaseCount || 0}/${sub.totalPhaseCount || 0}`}
         </SolidText>
       </View>
@@ -46,5 +64,4 @@ const SubModuleItem: React.FC<SubModuleItemProps> = ({
     </TouchableOpacity>
   );
 };
-
 export default React.memo(SubModuleItem);

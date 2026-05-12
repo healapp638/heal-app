@@ -4,27 +4,46 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ModuleThemeCardProps {
   item: any;
   onPress?: () => void;
 }
-
 const ModuleThemeCard = ({ item, onPress }: ModuleThemeCardProps) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      style={[styles.themeCard, { backgroundColor: colors.white }]}
-      onPress={onPress}
+      style={[
+        styles.themeCard,
+        {
+          backgroundColor: colors.white,
+        },
+      ]}
+      onPress={(...args: any) => {
+        triggerHaptic('impactHeavy');
+        return (onPress as any)(...args);
+      }}
     >
       <Image
-        source={typeof item.icon === 'string' ? { uri: item.icon } : item.icon}
+        source={
+          typeof item.icon === 'string'
+            ? {
+                uri: item.icon,
+              }
+            : item.icon
+        }
         style={styles.themeIcon}
         resizeMode="contain"
       />
-      <SolidText style={[styles.themeLabel, { color: colors.brown }]}>
+      <SolidText
+        style={[
+          styles.themeLabel,
+          {
+            color: colors.brown,
+          },
+        ]}
+      >
         {item.title || item.label}
       </SolidText>
       <Image
@@ -36,7 +55,6 @@ const ModuleThemeCard = ({ item, onPress }: ModuleThemeCardProps) => {
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   themeCard: {
     width: '100%',
@@ -48,7 +66,10 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     // iOS shadow
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.04,
     shadowRadius: 5,
     // Android shadow
@@ -69,5 +90,4 @@ const styles = StyleSheet.create({
     height: 12,
   },
 });
-
 export default React.memo(ModuleThemeCard);

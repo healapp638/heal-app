@@ -10,26 +10,28 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface ChallengeCardProps {
   title: string;
   duration: string;
   onPress?: () => void;
 }
-
 const JournalCard = ({ title, duration, onPress }: ChallengeCardProps) => {
   const { colors, images } = useTheme() as any;
-
   return (
     <TouchableOpacity
       activeOpacity={0.9}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       style={styles.container}
     >
       <ImageBackground
         source={images.journalBack}
         style={styles.backgroundImage}
-        imageStyle={{ borderRadius: 14 }}
+        imageStyle={{
+          borderRadius: 14,
+        }}
       >
         <View style={styles.overlay}>
           <View style={styles.leftSection}>
@@ -56,7 +58,6 @@ const JournalCard = ({ title, duration, onPress }: ChallengeCardProps) => {
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     height: 90,
@@ -82,7 +83,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
   },
-
   iconStyles: {
     width: 34,
     height: 34,
@@ -116,5 +116,4 @@ const styles = StyleSheet.create({
     tintColor: 'white',
   },
 });
-
 export default JournalCard;

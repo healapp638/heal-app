@@ -8,18 +8,16 @@ import {
 import React from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 const options = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
 };
-
 interface HeaderProgressProps {
   progress?: number; // 0 to 1
   showBack?: boolean;
   onBackPress?: () => void;
 }
-
 const HeaderProgress: React.FC<HeaderProgressProps> = ({
   progress = 0.5,
   showBack = true,
@@ -27,7 +25,6 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
-
   return (
     <View style={styles.container}>
       {showBack ? (
@@ -55,12 +52,20 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
         <View style={styles.backButtonPlaceholder} />
       )}
       <View
-        style={[styles.progressBackground, { backgroundColor: colors.white }]}
+        style={[
+          styles.progressBackground,
+          {
+            backgroundColor: colors.white,
+          },
+        ]}
       >
         <View
           style={[
             styles.progressFill,
-            { backgroundColor: '#DF9D83', width: `${progress * 100}%` }, // Light peach/brown from screenshot
+            {
+              backgroundColor: '#DF9D83',
+              width: `${progress * 100}%`,
+            }, // Light peach/brown from screenshot
           ]}
         />
       </View>
@@ -68,9 +73,7 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
     </View>
   );
 };
-
 export default HeaderProgress;
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
@@ -97,7 +100,17 @@ const styles = StyleSheet.create({
     height: 8,
     borderLeftWidth: 2,
     borderBottomWidth: 2,
-    transform: [{ rotate: '45deg' }, { translateX: 1 }, { translateY: -1 }],
+    transform: [
+      {
+        rotate: '45deg',
+      },
+      {
+        translateX: 1,
+      },
+      {
+        translateY: -1,
+      },
+    ],
   },
   progressBackground: {
     flex: 1,

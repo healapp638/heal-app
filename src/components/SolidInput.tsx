@@ -14,7 +14,7 @@ import { useTheme } from '@react-navigation/native';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import SolidText from './SolidText';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface SolidInputProps {
   label?: string;
   viewStyle?: ViewStyle;
@@ -35,7 +35,6 @@ interface SolidInputProps {
   mainStyle?: ViewStyle;
   maxLength?: any;
 }
-
 const SolidInput: React.FC<SolidInputProps> = ({
   label,
   viewStyle,
@@ -63,10 +62,20 @@ const SolidInput: React.FC<SolidInputProps> = ({
       <View style={styles.labelRow}>
         {label && <SolidText style={styles.label}>{label}</SolidText>}
         {onInfoPress && (
-          <TouchableOpacity onPress={onInfoPress} style={styles.infoButton}>
+          <TouchableOpacity
+            onPress={(...args: any) => {
+              return (onInfoPress as any)(...args);
+            }}
+            style={styles.infoButton}
+          >
             <Image
               source={images.info}
-              style={[styles.infoIcon, { tintColor: colors.primary }]}
+              style={[
+                styles.infoIcon,
+                {
+                  tintColor: colors.primary,
+                },
+              ]}
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -94,12 +103,21 @@ const SolidInput: React.FC<SolidInputProps> = ({
           maxLength={maxLength}
         />
         {rightImg && (
-          <Pressable style={styles.rightIconWrapper} onPress={onRightPress}>
+          <Pressable
+            style={styles.rightIconWrapper}
+            onPress={(...args: any) => {
+              return (onRightPress as any)(...args);
+            }}
+          >
             <Image
               source={rightImg}
               style={[
                 styles.imgStyle,
-                rightImgTintColor ? { tintColor: rightImgTintColor } : {},
+                rightImgTintColor
+                  ? {
+                      tintColor: rightImgTintColor,
+                    }
+                  : {},
               ]}
               resizeMode="contain"
             />
@@ -109,7 +127,6 @@ const SolidInput: React.FC<SolidInputProps> = ({
     </View>
   );
 };
-
 const style = (colors: any) =>
   StyleSheet.create({
     mainContainer: {
@@ -166,5 +183,4 @@ const style = (colors: any) =>
       marginLeft: 10,
     },
   });
-
 export default SolidInput;

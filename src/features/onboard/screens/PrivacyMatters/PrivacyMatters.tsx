@@ -17,7 +17,7 @@ import {
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
 import HeaderCommon from '../../../../components/HeaderCommon';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const PrivacyMatters = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -29,17 +29,14 @@ const PrivacyMatters = () => {
       state.userData?.onboarding?.answers?.privacyAccepted ?? false,
   );
   const [accepted, setAccepted] = useState(savedAccepted);
-
   useEffect(() => {
     setAccepted(savedAccepted);
   }, [savedAccepted]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.PrivacyMatters));
     }, [dispatch]),
   );
-
   const privacyItems = [
     {
       id: '1',
@@ -60,14 +57,24 @@ const PrivacyMatters = () => {
       bg: '#E1F0FF', // Light blue
     },
   ];
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
-          <View style={{ paddingHorizontal: 20, marginBottom: -50 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              paddingHorizontal: 20,
+              marginBottom: -50,
+            }}
+          >
             <HeaderCommon title={''} />
           </View>
 
@@ -120,20 +127,26 @@ const PrivacyMatters = () => {
               </SolidText>
             </TouchableOpacity>
 
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
 
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!accepted}
-              onPress={() => navigation.navigate(AppRoutes.Warning as never)}
+              onPress={() => {
+                return navigation.navigate(AppRoutes.Warning as never);
+              }}
             />
 
             <View style={styles.footer}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate(AppRoutes.PrivacyPolicy as never)
-                }
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.PrivacyPolicy as never);
+                }}
               >
                 <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.privacyPolicy}
@@ -141,7 +154,9 @@ const PrivacyMatters = () => {
               </TouchableOpacity>
               <View style={styles.dot} />
               <TouchableOpacity
-                onPress={() => navigation.navigate(AppRoutes.Terms as never)}
+                onPress={() => {
+                  return navigation.navigate(AppRoutes.Terms as never);
+                }}
               >
                 <SolidText maxFontScale={1} style={styles.footerText}>
                   {localization.appkeys?.termsOfService}
@@ -154,5 +169,4 @@ const PrivacyMatters = () => {
     />
   );
 };
-
 export default PrivacyMatters;

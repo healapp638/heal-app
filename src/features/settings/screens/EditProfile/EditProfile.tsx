@@ -27,14 +27,14 @@ import {
 import { isAtLeast13YearsOld } from '../../../auth/utils/SignUp/signUpValidation';
 import { getUserDetail, setUser } from '../../../../redux/Reducers/userData';
 import getEnvVars from '../../../../../env';
-
+import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const EditProfile = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const user = useSelector((state: any) => state.userData?.user);
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   const { mutate: updateProfileApi, isPending } = usePostApi();
@@ -48,7 +48,14 @@ const EditProfile = () => {
   const [selectedCountry, setSelectedCountry] = useState<{
     name: string;
     isoCode: string;
-  } | null>(user?.country ? { name: user.country, isoCode: '' } : null);
+  } | null>(
+    user?.country
+      ? {
+          name: user.country,
+          isoCode: '',
+        }
+      : null,
+  );
 
   // Initialize DOB from user data
   const initialDob = user?.dob
@@ -69,7 +76,6 @@ const EditProfile = () => {
         day: '01',
         year: '2000',
       };
-
   const [selectedDate, setSelectedDate] = useState<DobDateParts>(initialDob);
 
   // Modal State
@@ -78,14 +84,12 @@ const EditProfile = () => {
   const [imagePickerVisible, setImagePickerVisible] = useState(false);
   const [countryInfoVisible, setCountryInfoVisible] = useState(false);
   const [ageModalVisible, setAgeModalVisible] = useState(false);
-
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
         selectedDate.month,
         localization,
       )} - ${selectedDate.year}`
     : localization.appkeys?.selectBirthDate;
-
   const handleImageSelect = (image: any) => {
     setProfilePic(image.path); // Set local preview immediately
     const formData = new FormData();
@@ -96,7 +100,6 @@ const EditProfile = () => {
       type: image.mime,
       name: image.filename || `profile_${Date.now()}.jpg`,
     } as any);
-
     uploadFileApi(
       {
         endpoint: endpoints.upload_file,
@@ -108,7 +111,6 @@ const EditProfile = () => {
       {
         onSuccess: (response: any) => {
           console.log('response', response);
-
           if (response?.data[0]) {
             setProfilePicUrl(response?.data[0]);
           }
@@ -120,7 +122,6 @@ const EditProfile = () => {
       },
     );
   };
-
   const handleSave = () => {
     if (!fullName?.trim()) {
       AppUtils.showToast(
@@ -140,27 +141,27 @@ const EditProfile = () => {
       );
       return;
     }
-
     const localizedMonths = getLocalizedMonths(localization);
     if (!isAtLeast13YearsOld(selectedDate, localizedMonths)) {
       setAgeModalVisible(true);
       return;
     }
-
     const formattedDob = `${selectedDate.year}-${
       monthToNumber[selectedDate.month]
     }-${selectedDate.day}`;
-
     const payload = {
-      language: appLanguage,
+      language: AppUtils.getLanguageCode(appLanguage),
       profilePic: profilePicUrl,
       dob: formattedDob,
       country: selectedCountry.name,
       fullName: fullName,
     };
-
+    console.log('appLanguage', appLanguage);
     updateProfileApi(
-      { endpoint: endpoints.update_profile, data: payload },
+      {
+        endpoint: endpoints.update_profile,
+        data: payload,
+      },
       {
         onSuccess: (response: any) => {
           dispatch(getUserDetail());
@@ -177,7 +178,6 @@ const EditProfile = () => {
       },
     );
   };
-
   return (
     <SolidView
       isScrollEnabled={true}
@@ -189,7 +189,10 @@ const EditProfile = () => {
           />
 
           <HomeHeader
-            viewStyle={{ marginTop: -8, marginBottom: 26 }}
+            viewStyle={{
+              marginTop: -8,
+              marginBottom: 26,
+            }}
             showCrown={false}
             showStreak={false}
             onCrownPress={() => {}}
@@ -199,7 +202,9 @@ const EditProfile = () => {
             safeSpaceLabel={
               localization.appkeys?.manageYourInfo || 'Manage your information'
             }
-            subStyle={{ marginTop: 5 }}
+            subStyle={{
+              marginTop: 5,
+            }}
           />
 
           {/* Profile Picture */}
@@ -208,7 +213,9 @@ const EditProfile = () => {
               <Image
                 source={
                   profilePic
-                    ? { uri: profilePic }
+                    ? {
+                        uri: profilePic,
+                      }
                     : {
                         uri: getEnvVars()?.fileUrl + user?.profilePic,
                       }
@@ -218,18 +225,29 @@ const EditProfile = () => {
               <TouchableOpacity
                 hitSlop={50}
                 style={styles.editIconContainer}
-                onPress={() => setImagePickerVisible(true)}
+                onPress={() => {
+                  triggerHaptic('impactHeavy');
+                  return setImagePickerVisible(true);
+                }}
               >
                 <Image
                   source={images.edit}
-                  style={[styles.editIcon, { tintColor: colors.white }]}
+                  style={[
+                    styles.editIcon,
+                    {
+                      tintColor: colors.white,
+                    },
+                  ]}
                   resizeMode="contain"
                 />
               </TouchableOpacity>
             </View>
             <TouchableOpacity
               activeOpacity={0.7}
-              onPress={() => setImagePickerVisible(true)}
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                return setImagePickerVisible(true);
+              }}
             >
               <SolidText style={styles.changePictureText}>
                 {localization.appkeys?.changePicture || 'Change Picture'}
@@ -264,12 +282,17 @@ const EditProfile = () => {
               rightImg={images.mail}
               rightImgTintColor={colors.primary}
               editable={false}
-              mainStyle={{ opacity: 0.7 }}
+              mainStyle={{
+                opacity: 0.7,
+              }}
             />
 
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => setDobModalVisible(true)}
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                return setDobModalVisible(true);
+              }}
             >
               <SolidInput
                 label={localization.appkeys?.whenBorn}
@@ -285,10 +308,44 @@ const EditProfile = () => {
               />
             </TouchableOpacity>
 
+            {user?.account_type != 'social' && (
+              <TouchableOpacity
+                activeOpacity={0.8}
+                style={styles.changePassCard}
+                onPress={() => {
+                  triggerHaptic('impactHeavy');
+                  return navigation.navigate(AppRoutes.ChangePassword as never);
+                }}
+              >
+                <View style={styles.changePassLeft}>
+                  <Image
+                    source={images.changePass}
+                    style={{
+                      width: 40,
+                      height: 40,
+                      marginRight: 12,
+                      borderRadius: 22,
+                    }}
+                    resizeMode="contain"
+                  />
+                  <SolidText style={styles.changePassTitle}>
+                    {localization.appkeys?.changePassword || 'Change password'}
+                  </SolidText>
+                </View>
+                <Image
+                  source={images.forward2}
+                  style={styles.arrowIcon}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            )}
+
             <SolidBtn
               titleTxt={localization.appkeys?.saveChanges || 'Save changes'}
               btnStyle={styles.saveBtn}
-              onPress={handleSave}
+              onPress={(...args: any) => {
+                return (handleSave as any)(...args);
+              }}
               isLoading={isPending || isUploading}
               disabled={isPending || isUploading}
             />
@@ -323,5 +380,4 @@ const EditProfile = () => {
     />
   );
 };
-
 export default EditProfile;

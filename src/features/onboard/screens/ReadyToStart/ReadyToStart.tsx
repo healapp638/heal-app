@@ -18,7 +18,7 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ReadyToStart = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -30,43 +30,50 @@ const ReadyToStart = () => {
     (state: any) => state.userData?.onboarding?.answers?.readyToStart ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
-
   useEffect(() => {
     setSelected(savedSelection);
   }, [savedSelection]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.ReadyToStart));
     }, [dispatch]),
   );
-
   const handleBackPress = () => {
-    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-
     if (previousRouteName === AppRoutes.TimeCommitment) {
       navigation.goBack();
       return;
     }
-
     navigation.navigate(AppRoutes.TimeCommitment as never);
   };
-
   const options = [
-    { id: '1', label: localization.appkeys?.optionExploring },
-    { id: '2', label: localization.appkeys?.optionWilling },
-    { id: '3', label: localization.appkeys?.optionReady },
+    {
+      id: '1',
+      label: localization.appkeys?.optionExploring,
+    },
+    {
+      id: '2',
+      label: localization.appkeys?.optionWilling,
+    },
+    {
+      id: '3',
+      label: localization.appkeys?.optionReady,
+    },
   ];
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <HeaderProgress progress={1.0} onBackPress={handleBackPress} />
 
           <Image
@@ -86,7 +93,6 @@ const ReadyToStart = () => {
               {options.map(option => {
                 const isSelected =
                   selected === option.id || selected === option.label;
-
                 return (
                   <TouchableOpacity
                     key={option.id}
@@ -118,12 +124,18 @@ const ReadyToStart = () => {
                 );
               })}
             </View>
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
-              onPress={() => navigation.navigate(AppRoutes.RightPlace as never)}
+              onPress={() => {
+                return navigation.navigate(AppRoutes.RightPlace as never);
+              }}
             />
           </View>
         </View>
@@ -131,5 +143,4 @@ const ReadyToStart = () => {
     />
   );
 };
-
 export default ReadyToStart;

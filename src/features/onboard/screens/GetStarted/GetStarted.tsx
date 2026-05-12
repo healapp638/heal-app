@@ -20,9 +20,8 @@ import { LocalizationContext } from '../../../../localization/localization';
 import { useDispatch } from 'react-redux';
 import { setOnboardingCurrentScreen } from '../../../../redux/Reducers/userData';
 import HeaderCommon from '../../../../components/HeaderCommon';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const { width } = Dimensions.get('window');
-
 const GetStarted = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -31,7 +30,6 @@ const GetStarted = () => {
   const styles = style(colors);
   const flatListRef = useRef<FlatList>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const testimonials = [
     localization.appkeys?.testimonial1,
     localization.appkeys?.testimonial2,
@@ -39,28 +37,32 @@ const GetStarted = () => {
     localization.appkeys?.testimonial4,
     localization.appkeys?.testimonial5,
   ];
-
   useEffect(() => {
     const timer = setInterval(() => {
       const nextIndex = (currentIndex + 1) % testimonials.length;
       setCurrentIndex(nextIndex);
-      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+      flatListRef.current?.scrollToIndex({
+        index: nextIndex,
+        animated: true,
+      });
     }, 3000);
     return () => clearInterval(timer);
   }, [currentIndex, testimonials.length]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.GetStarted));
     }, [dispatch]),
   );
-
   return (
     <SolidView
       isScrollEnabled
       view={
         <View style={styles.mainContainer}>
-          <View style={{ marginBottom: -60 }}>
+          <View
+            style={{
+              marginBottom: -60,
+            }}
+          >
             <HeaderCommon title={''} />
           </View>
           <Image
@@ -103,16 +105,21 @@ const GetStarted = () => {
               }}
             />
           </View>
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
           <SolidBtn
             titleTxt={localization.appkeys?.getStarted}
             btnStyle={styles.btn}
-            onPress={() => navigation.navigate(AppRoutes.HearAboutUs as never)}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.HearAboutUs as never);
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default GetStarted;

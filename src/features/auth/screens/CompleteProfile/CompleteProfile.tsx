@@ -29,9 +29,8 @@ import {
   setUser,
 } from '../../../../redux/Reducers/userData';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-
 import LogoutModal from '../../../../modals/LogoutModal';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const CompleteProfile = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -43,10 +42,8 @@ const CompleteProfile = () => {
   );
   const appLanguage = useSelector((state: any) => state?.userData?.appLanguage);
   const styles = style(colors);
-
   const { userData } = route.params || {};
   const { mutate: completeProfileApi, isPending } = usePostApi();
-
   const [fullName] = useState(userData?.fullName || userData?.name || '');
   const [email] = useState(userData?.email || '');
   const [selectedCountry, setSelectedCountry] = useState<{
@@ -61,7 +58,6 @@ const CompleteProfile = () => {
   const [isDobSelected, setIsDobSelected] = useState(false);
   const [dobModalVisible, setDobModalVisible] = useState(false);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
-
   const handleLogout = () => {
     dispatch(setAuth(false));
     dispatch(setUser(null));
@@ -76,14 +72,12 @@ const CompleteProfile = () => {
       ],
     });
   };
-
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
         selectedDate.month,
         localization,
       )} - ${selectedDate.year}`
     : localization.appkeys?.selectBirthDate;
-
   const handleComplete = () => {
     if (!selectedCountry) {
       AppUtils.showToast(
@@ -98,7 +92,6 @@ const CompleteProfile = () => {
       );
       return;
     }
-
     const localizedMonths = getLocalizedMonths(localization);
     if (!isAtLeast13YearsOld(selectedDate, localizedMonths)) {
       AppUtils.showToast(
@@ -107,18 +100,18 @@ const CompleteProfile = () => {
       );
       return;
     }
-
     const formattedDob = `${selectedDate.year}-${
       monthToNumber[selectedDate.month]
     }-${selectedDate.day}`;
-
     const payload = {
       dob: formattedDob,
       country: selectedCountry.name,
     };
-
     completeProfileApi(
-      { endpoint: endpoints.update_profile, data: payload },
+      {
+        endpoint: endpoints.update_profile,
+        data: payload,
+      },
       {
         onSuccess: (response: any) => {
           dispatch(setUser(response?.data));
@@ -131,7 +124,9 @@ const CompleteProfile = () => {
             routes: [
               {
                 name: AppRoutes.NonAuthStack,
-                params: { screen: AppRoutes.Offer },
+                params: {
+                  screen: AppRoutes.Offer,
+                },
               } as never,
             ],
           });
@@ -142,7 +137,6 @@ const CompleteProfile = () => {
       },
     );
   };
-
   return (
     <SolidView
       isScrollEnabled={true}
@@ -165,14 +159,18 @@ const CompleteProfile = () => {
               label={localization.appkeys?.fullName}
               value={fullName}
               editable={false}
-              mainStyle={{ opacity: 0.7 }}
+              mainStyle={{
+                opacity: 0.7,
+              }}
             />
 
             <SolidInput
               label={localization.appkeys?.email}
               value={email}
               editable={false}
-              mainStyle={{ opacity: 0.7 }}
+              mainStyle={{
+                opacity: 0.7,
+              }}
               rightImg={images.mail}
               rightImgTintColor={colors.primary}
             />
@@ -185,7 +183,9 @@ const CompleteProfile = () => {
 
             <TouchableOpacity
               activeOpacity={1}
-              onPress={() => setDobModalVisible(true)}
+              onPress={() => {
+                return setDobModalVisible(true);
+              }}
             >
               <SolidInput
                 label={localization.appkeys?.whenBorn}
@@ -203,7 +203,9 @@ const CompleteProfile = () => {
             <SolidBtn
               titleTxt={localization.appkeys?.continue || 'Continue'}
               btnStyle={styles.completeBtn}
-              onPress={handleComplete}
+              onPress={(...args: any) => {
+                return (handleComplete as any)(...args);
+              }}
               isLoading={isPending}
               disabled={isPending}
             />
@@ -226,5 +228,4 @@ const CompleteProfile = () => {
     />
   );
 };
-
 export default CompleteProfile;

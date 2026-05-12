@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   RefreshControl,
 } from 'react-native';
-
 import {
   useFocusEffect,
   useNavigation,
@@ -25,33 +24,33 @@ import JournalSearchBar from '../../../../components/JournalSearchBar';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Journal = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-
   const [search, setSearch] = useState('');
   const [entries, setEntries] = useState<any[]>([]);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
   const [page, setPage] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
   const { data, isLoading, refetch, isFetching, error } = useGetApi(
     endpoints.get_journals,
     ['journals', page, search],
-    { page, limit: 8, search_key: search },
+    {
+      page,
+      limit: 8,
+      search_key: search,
+    },
   );
-
   useFocusEffect(
     useCallback(() => {
       setPage(1);
       refetch();
     }, [refetch]),
   );
-
   useEffect(() => {
     if (data?.data?.result) {
       const fetchedEntries = data?.data?.result?.map((item: any) => {
@@ -76,7 +75,6 @@ const Journal = () => {
           groupDate: itemDate,
         };
       });
-
       if (page === 1) {
         setEntries(fetchedEntries);
       } else {
@@ -86,11 +84,9 @@ const Journal = () => {
     }
     setIsRefreshing(false);
   }, [data]);
-
   useEffect(() => {
     setPage(1);
   }, [search]);
-
   const onRefresh = () => {
     setIsRefreshing(true);
     if (page === 1) {
@@ -102,17 +98,14 @@ const Journal = () => {
       setIsRefreshing(false);
     }, 1000);
   };
-
   const loadMore = () => {
     if (entries.length < totalEntries && !isFetching) {
       setPage(prev => prev + 1);
     }
   };
-
   const handleAddEntry = () => {
     navigation.navigate(AppRoutes.AddJournal as never);
   };
-
   const renderEmptyState = () => (
     <View style={styles.emptyStateContainer}>
       <Image
@@ -129,7 +122,6 @@ const Journal = () => {
       </SolidText>
     </View>
   );
-
   return (
     <SolidView
       view={
@@ -149,9 +141,10 @@ const Journal = () => {
             value={search}
             onChangeText={setSearch}
             placeholder={localization.appkeys?.searchPlaceholder || 'Search...'}
-            onCalendarPress={() =>
-              navigation.navigate(AppRoutes.Calendar as never)
-            }
+            onCalendarPress={() => {
+              triggerHaptic('impactHeavy');
+              return navigation.navigate(AppRoutes.Calendar as never);
+            }}
           />
 
           {/* Date headers are now rendered inline via renderItem */}
@@ -162,7 +155,10 @@ const Journal = () => {
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={!isLoading ? renderEmptyState : null}
-            style={{ padding: 2, marginTop: Platform.OS == 'ios' ? 0 : -8 }}
+            style={{
+              padding: 2,
+              marginTop: Platform.OS == 'ios' ? 0 : -8,
+            }}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={
@@ -173,7 +169,9 @@ const Journal = () => {
                 <ActivityIndicator
                   size="small"
                   color={colors.brown}
-                  style={{ marginVertical: 20 }}
+                  style={{
+                    marginVertical: 20,
+                  }}
                 />
               ) : null
             }
@@ -190,7 +188,10 @@ const Journal = () => {
                     tag={item.tag}
                     title={item.title}
                     body={item.body}
-                    onPress={() => setSelectedEntry(item)}
+                    onPress={() => {
+                      triggerHaptic('impactHeavy');
+                      return setSelectedEntry(item);
+                    }}
                   />
                 </>
               );
@@ -201,7 +202,11 @@ const Journal = () => {
           <TouchableOpacity
             style={styles.fab}
             activeOpacity={0.8}
-            onPress={handleAddEntry}
+            onPress={(...args: any) => {
+              triggerHaptic('impactHeavy');
+
+              return (handleAddEntry as any)(...args);
+            }}
           >
             <Image
               source={images.bigPlus}
@@ -221,5 +226,4 @@ const Journal = () => {
     />
   );
 };
-
 export default Journal;

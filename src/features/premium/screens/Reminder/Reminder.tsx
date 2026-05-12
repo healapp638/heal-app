@@ -7,13 +7,12 @@ import { LocalizationContext } from '../../../../localization/localization';
 import SolidBtn from '../../../../components/SolidBtn';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Reminder = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
-
   return (
     <SolidView
       isScrollEnabled
@@ -33,12 +32,13 @@ const Reminder = () => {
           <SolidBtn
             btnStyle={styles.btn}
             titleTxt={localization.appkeys?.tryFreeBtn}
-            onPress={() => navigation.navigate(AppRoutes.Premium as never)}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.Premium as never);
+            }}
           />
         </View>
       }
     />
   );
 };
-
 export default Reminder;

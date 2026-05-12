@@ -18,7 +18,7 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const TimeCommitment = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -30,44 +30,54 @@ const TimeCommitment = () => {
     (state: any) => state.userData?.onboarding?.answers?.timeCommitment ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
-
   useEffect(() => {
     setSelected(savedSelection);
   }, [savedSelection]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.TimeCommitment));
     }, [dispatch]),
   );
-
   const handleBackPress = () => {
-    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-
     if (previousRouteName === AppRoutes.FeelMore) {
       navigation.goBack();
       return;
     }
-
     navigation.navigate(AppRoutes.FeelMore as never);
   };
-
   const options = [
-    { id: '1', label: localization.appkeys?.option2Min },
-    { id: '2', label: localization.appkeys?.option5Min },
-    { id: '3', label: localization.appkeys?.option10MinPlus },
-    { id: '4', label: localization.appkeys?.optionWhenNeeded },
+    {
+      id: '1',
+      label: localization.appkeys?.option2Min,
+    },
+    {
+      id: '2',
+      label: localization.appkeys?.option5Min,
+    },
+    {
+      id: '3',
+      label: localization.appkeys?.option10MinPlus,
+    },
+    {
+      id: '4',
+      label: localization.appkeys?.optionWhenNeeded,
+    },
   ];
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <HeaderProgress progress={0.8} onBackPress={handleBackPress} />
 
           <Image
@@ -87,7 +97,6 @@ const TimeCommitment = () => {
               {options.map(option => {
                 const isSelected =
                   selected === option.id || selected === option.label;
-
                 return (
                   <TouchableOpacity
                     key={option.id}
@@ -119,14 +128,18 @@ const TimeCommitment = () => {
                 );
               })}
             </View>
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
-              onPress={() =>
-                navigation.navigate(AppRoutes.ReadyToStart as never)
-              }
+              onPress={() => {
+                return navigation.navigate(AppRoutes.ReadyToStart as never);
+              }}
             />
           </View>
         </View>
@@ -134,5 +147,4 @@ const TimeCommitment = () => {
     />
   );
 };
-
 export default TimeCommitment;

@@ -4,7 +4,7 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface JournalEntryCardProps {
   time: string;
   tag: string;
@@ -12,7 +12,6 @@ interface JournalEntryCardProps {
   body: string;
   onPress?: () => void;
 }
-
 const JournalEntryCard = ({
   time,
   tag,
@@ -21,21 +20,36 @@ const JournalEntryCard = ({
   onPress,
 }: JournalEntryCardProps) => {
   const { colors } = useTheme() as any;
-
   return (
     <TouchableOpacity
       activeOpacity={0.8}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       style={styles.cardContainer}
     >
       <View style={styles.topRow}>
         <SolidText style={styles.timeText}>{time}</SolidText>
-        <View style={[styles.tagPill, { backgroundColor: colors.brown }]}>
+        <View
+          style={[
+            styles.tagPill,
+            {
+              backgroundColor: colors.brown,
+            },
+          ]}
+        >
           <SolidText style={styles.tagText}>{tag}</SolidText>
         </View>
       </View>
 
-      <SolidText style={[styles.title, { color: colors.brown }]}>
+      <SolidText
+        style={[
+          styles.title,
+          {
+            color: colors.brown,
+          },
+        ]}
+      >
         {title}
       </SolidText>
 
@@ -45,7 +59,6 @@ const JournalEntryCard = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: '#FFFFFF',
@@ -54,7 +67,10 @@ const styles = StyleSheet.create({
     marginBottom: 14,
     // iOS shadow
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     shadowOpacity: 0.04,
     shadowRadius: 5,
     // Android shadow
@@ -95,5 +111,4 @@ const styles = StyleSheet.create({
     lineHeight: Platform.OS == 'ios' ? 20 : 19,
   },
 });
-
 export default JournalEntryCard;

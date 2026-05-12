@@ -1,6 +1,11 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useNavigation, useTheme } from '@react-navigation/native';
-
 import {
   View,
   TextInput,
@@ -16,7 +21,6 @@ import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
-
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import style from './AddJournalStyle';
 import AppUtils from '../../../../utils/appUtils';
@@ -27,7 +31,7 @@ import Voice, {
   SpeechErrorEvent,
 } from '@dev-amirzubair/react-native-voice';
 import { useSelector } from 'react-redux';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const SPEECH_LOCALE_BY_LANGUAGE: Record<string, string> = {
   English: 'en-US',
   Spanish: 'es-ES',
@@ -37,7 +41,6 @@ const SPEECH_LOCALE_BY_LANGUAGE: Record<string, string> = {
   Portuguese: 'pt-PT',
   Italian: 'it-IT',
 };
-
 const AddJournal = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -67,7 +70,6 @@ const AddJournal = () => {
         setBodyText(prefix ? `${prefix} ${transcript}` : transcript);
       }
     };
-
     const onSpeechResults = (e: SpeechResultsEvent) => {
       const transcript = e.value?.[0] ?? '';
       if (transcript) {
@@ -75,15 +77,12 @@ const AddJournal = () => {
         setBodyText(prefix ? `${prefix} ${transcript}` : transcript);
       }
     };
-
     const onSpeechError = (_e: SpeechErrorEvent) => setIsListening(false);
     const onSpeechEnd = () => setIsListening(false);
-
     Voice.onSpeechPartialResults = onSpeechPartialResults;
     Voice.onSpeechResults = onSpeechResults;
     Voice.onSpeechError = onSpeechError;
     Voice.onSpeechEnd = onSpeechEnd;
-
     return () => {
       Voice.destroy().then(Voice.removeAllListeners);
     };
@@ -116,7 +115,6 @@ const AddJournal = () => {
   const ensureMicPermission = useCallback(async (): Promise<boolean> => {
     if (Platform.OS !== 'android') return true;
     if (micGranted) return true;
-
     try {
       const alreadyGranted = await PermissionsAndroid.check(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
@@ -125,7 +123,6 @@ const AddJournal = () => {
         setMicGranted(true);
         return true;
       }
-
       const result = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
         {
@@ -135,7 +132,6 @@ const AddJournal = () => {
           buttonNegative: 'Deny',
         },
       );
-
       const granted = result === PermissionsAndroid.RESULTS.GRANTED;
       setMicGranted(granted);
       return granted;
@@ -148,12 +144,12 @@ const AddJournal = () => {
   const startSpeechRecognition = useCallback(async () => {
     try {
       bodyBeforeSTT.current = bodyText;
-      const locale =
-        SPEECH_LOCALE_BY_LANGUAGE[appLanguage] || 'en-US';
-
+      const locale = SPEECH_LOCALE_BY_LANGUAGE[appLanguage] || 'en-US';
       const available = await Voice.isAvailable();
       if (!available) {
-        AppUtils.showToast('Speech recognition is not available on this device.');
+        AppUtils.showToast(
+          'Speech recognition is not available on this device.',
+        );
         return;
       }
       await Voice.destroy();
@@ -174,20 +170,21 @@ const AddJournal = () => {
       setIsListening(false);
       return;
     }
-
     const hasPermission = await ensureMicPermission();
     if (!hasPermission) {
       Alert.alert(
         'Microphone Access Required',
         'Please enable microphone access in your device Settings to use speech-to-text.',
-        [{ text: 'OK' }],
+        [
+          {
+            text: 'OK',
+          },
+        ],
       );
       return;
     }
-
     startSpeechRecognition();
   }, [isListening, ensureMicPermission, startSpeechRecognition]);
-
   const handleSave = async () => {
     if (!titleText.trim()) {
       AppUtils.showToast(
@@ -201,7 +198,6 @@ const AddJournal = () => {
       );
       return;
     }
-
     createJournal(
       {
         endpoint: endpoints.create_journal,
@@ -219,14 +215,11 @@ const AddJournal = () => {
           navigation.goBack();
         },
         onError: (error: any) => {
-          AppUtils.showToast(
-            error.message || 'Failed to save journal entry',
-          );
+          AppUtils.showToast(error.message || 'Failed to save journal entry');
         },
       },
     );
   };
-
   const emotions = [
     {
       id: 'calm',
@@ -259,7 +252,6 @@ const AddJournal = () => {
       image: images.hope,
     },
   ];
-
   return (
     <SolidView
       isScrollEnabled
@@ -293,7 +285,10 @@ const AddJournal = () => {
               <TouchableOpacity
                 key={emotion.id}
                 activeOpacity={0.8}
-                onPress={() => setSelectedEmotion(emotion.id)}
+                onPress={() => {
+                  triggerHaptic('impactHeavy');
+                  return setSelectedEmotion(emotion.id);
+                }}
                 style={[
                   styles.emotionCard,
                   selectedEmotion === emotion.id && styles.emotionCardSelected,
@@ -359,11 +354,20 @@ const AddJournal = () => {
             <Animated.View
               style={[
                 styles.micIconContainer,
-                { transform: [{ scale: pulseAnim }] },
+                {
+                  transform: [
+                    {
+                      scale: pulseAnim,
+                    },
+                  ],
+                },
               ]}
             >
               <TouchableOpacity
-                onPress={toggleListening}
+                onPress={(...args: any) => {
+                  triggerHaptic('impactHeavy');
+                  return (toggleListening as any)(...args);
+                }}
                 activeOpacity={0.7}
                 style={isListening ? styles.micButtonActive : undefined}
               >
@@ -371,7 +375,9 @@ const AddJournal = () => {
                   source={images.microphone2}
                   style={[
                     styles.micIcon,
-                    isListening && { tintColor: '#FFFFFF' },
+                    isListening && {
+                      tintColor: '#FFFFFF',
+                    },
                   ]}
                   resizeMode="contain"
                 />
@@ -390,7 +396,10 @@ const AddJournal = () => {
             btnStyle={styles.saveButton}
             isLoading={loading}
             disabled={loading}
-            onPress={handleSave}
+            onPress={(...args: any) => {
+              triggerHaptic('impactHeavy');
+              return (handleSave as any)(...args);
+            }}
           />
           <GetCreditsModal
             visible={showCreditsModal}
@@ -401,6 +410,4 @@ const AddJournal = () => {
     />
   );
 };
-
 export default AddJournal;
-

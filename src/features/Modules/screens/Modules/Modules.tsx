@@ -26,18 +26,16 @@ import style from './style';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import getEnvVars from '../../../../../env';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Modules = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
-
   const [themes, setThemes] = useState<any[]>([]);
   const [startedModules, setStartedModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-
   const {
     data: startedModulesData,
     isLoading: isStartedLoading,
@@ -45,7 +43,6 @@ const Modules = () => {
   } = useGetApi(endpoints.start_sub_module_list, ['start_sub_module_list'], {
     limit: 10,
   });
-
   const {
     data: finishedModulesData,
     isLoading: isFinishedLoading,
@@ -53,13 +50,14 @@ const Modules = () => {
   } = useGetApi(endpoints.end_sub_module_list, ['finished_sub_module_list'], {
     limit: 10,
   });
-
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.theme_list,
     ['theme_list', cursor],
-    { cursor, limit: 10 },
+    {
+      cursor,
+      limit: 10,
+    },
   );
-
   useFocusEffect(
     useCallback(() => {
       // Optional: refetch on focus if needed
@@ -69,7 +67,6 @@ const Modules = () => {
       refetchFinished();
     }, [refetch, refetchStarted, refetchFinished]),
   );
-
   useEffect(() => {
     if (data?.data) {
       const responseData = data.data;
@@ -83,7 +80,6 @@ const Modules = () => {
           ? `${getEnvVars().fileUrl}${item.imgUrl}`
           : images.romantic,
       }));
-
       if (cursor === null) {
         setThemes(fetchedThemes);
       } else {
@@ -92,13 +88,11 @@ const Modules = () => {
     }
     setIsRefreshing(false);
   }, [data]);
-
   useEffect(() => {
     if (startedModulesData?.data?.subModules) {
       setStartedModules(startedModulesData.data.subModules);
     }
   }, [startedModulesData]);
-
   const onRefresh = () => {
     setIsRefreshing(true);
     setCursor(null);
@@ -109,7 +103,6 @@ const Modules = () => {
       setIsRefreshing(false);
     }, 1000);
   };
-
   const loadMore = () => {
     const responseData = data?.data;
     const nextCursor = responseData?.nextCursor || responseData?.next_cursor;
@@ -117,7 +110,6 @@ const Modules = () => {
       setCursor(nextCursor);
     }
   };
-
   const renderHeader = () => (
     <View>
       {/* Header */}
@@ -135,24 +127,35 @@ const Modules = () => {
       <ProgressTrackerCard
         viewStyle={styles.progressCardMargin}
         title={localization.appkeys?.homeProgressTracker || 'Progress Tracker'}
-        onPress={() => navigation.navigate(AppRoutes.ProgressTracker as never)}
+        onPress={() => {
+          //
+          return navigation.navigate(AppRoutes.ProgressTracker as never);
+        }}
       />
 
       {startedModules.length > 0 && (
         <>
           <View style={styles.sectionHeader}>
-            <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
+            <SolidText
+              style={[
+                styles.sectionTitle,
+                {
+                  color: colors.brown,
+                },
+              ]}
+            >
               {localization.appkeys?.startedModules || 'Started Modules'}
             </SolidText>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                return navigation.navigate(
                   AppRoutes.AllModules as never,
                   {
                     type: 'started',
                   } as never,
-                )
-              }
+                );
+              }}
             >
               <SolidText style={styles.seeAllText}>
                 {localization.appkeys?.seeAll || 'See All'}
@@ -169,11 +172,15 @@ const Modules = () => {
             style={styles.horizontalList}
             contentContainerStyle={styles.horizontalListContent}
             onPress={item => {
+              //
               navigation.navigate(
                 AppRoutes.StartedModule as never,
                 {
                   module: item.module,
-                  subModule: { ...item, _id: item.sub_module_id },
+                  subModule: {
+                    ...item,
+                    _id: item.sub_module_id,
+                  },
                   source: 'dashboard',
                 } as never,
               );
@@ -184,20 +191,32 @@ const Modules = () => {
 
       {/* Modules Themes Title */}
       <SolidText
-        style={[styles.sectionTitle, { color: colors.brown, marginBottom: 10 }]}
+        style={[
+          styles.sectionTitle,
+          {
+            color: colors.brown,
+            marginBottom: 10,
+          },
+        ]}
       >
         {localization.appkeys?.modulesThemes || 'Modules Themes'}
       </SolidText>
     </View>
   );
-
   const renderFooter = () => (
-    <View style={{ paddingBottom: 40, marginTop: 10 }}>
+    <View
+      style={{
+        paddingBottom: 40,
+        marginTop: 10,
+      }}
+    >
       {isFetching && cursor !== null && (
         <ActivityIndicator
           size="small"
           color={colors.brown}
-          style={{ marginVertical: 20 }}
+          style={{
+            marginVertical: 20,
+          }}
         />
       )}
 
@@ -205,18 +224,26 @@ const Modules = () => {
       {(finishedModulesData?.data?.subModules || []).length > 0 && (
         <>
           <View style={styles.sectionHeader}>
-            <SolidText style={[styles.sectionTitle, { color: colors.brown }]}>
+            <SolidText
+              style={[
+                styles.sectionTitle,
+                {
+                  color: colors.brown,
+                },
+              ]}
+            >
               {localization.appkeys?.finishedModules || 'Finished Modules'}
             </SolidText>
             <TouchableOpacity
-              onPress={() =>
-                navigation.navigate(
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                return navigation.navigate(
                   AppRoutes.AllModules as never,
                   {
                     type: 'finished',
                   } as never,
-                )
-              }
+                );
+              }}
             >
               <SolidText style={styles.seeAllText}>
                 {localization.appkeys?.seeAll || 'See All'}
@@ -230,37 +257,45 @@ const Modules = () => {
             isFinished={true}
             style={styles.horizontalList}
             contentContainerStyle={styles.horizontalListContent}
-            onPress={_item => {
-              // Navigation disabled for finished modules
+            onPress={item => {
+              //
+              navigation.navigate(
+                AppRoutes.StartedModule as never,
+                {
+                  module: item.module,
+                  subModule: {
+                    ...item,
+                    _id: item.sub_module_id,
+                  },
+                  source: 'dashboard',
+                } as never,
+              );
             }}
           />
         </>
       )}
     </View>
   );
-
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
       <ModuleThemeCard
         item={item}
-        onPress={() =>
-          navigation.navigate(
+        onPress={() => {
+          return navigation.navigate(
             AppRoutes.ModuleThemeDetail as never,
             {
               theme: item,
             } as never,
-          )
-        }
+          );
+        }}
       />
     ),
     [navigation],
   );
-
   const keyExtractor = useCallback(
     (item: any, index: number) => (item.id || index).toString(),
     [],
   );
-
   return (
     <SolidView
       isScrollEnabled={false}
@@ -283,7 +318,9 @@ const Modules = () => {
           }
           contentContainerStyle={[
             styles.contentContainer,
-            { paddingHorizontal: 20 },
+            {
+              paddingHorizontal: 20,
+            },
           ]}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
@@ -291,7 +328,9 @@ const Modules = () => {
               <ActivityIndicator
                 size="large"
                 color={colors.brown}
-                style={{ marginTop: 50 }}
+                style={{
+                  marginTop: 50,
+                }}
               />
             ) : null
           }
@@ -300,5 +339,4 @@ const Modules = () => {
     />
   );
 };
-
 export default Modules;

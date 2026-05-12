@@ -18,7 +18,7 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const FeelingsLately = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -30,46 +30,62 @@ const FeelingsLately = () => {
     (state: any) => state.userData?.onboarding?.answers?.feelingsLately ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
-
   useEffect(() => {
     setSelected(savedSelection);
   }, [savedSelection]);
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.FeelingsLately));
     }, [dispatch]),
   );
-
   const handleBackPress = () => {
-    triggerHaptic('impactMedium');
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-
     if (previousRouteName === AppRoutes.BringYouHere) {
       navigation.goBack();
       return;
     }
-
     navigation.navigate(AppRoutes.BringYouHere as never);
   };
-
   const options = [
-    { id: '1', label: localization.appkeys?.optionOverwhelmed },
-    { id: '2', label: localization.appkeys?.optionDrained },
-    { id: '3', label: localization.appkeys?.optionOverthinking },
-    { id: '4', label: localization.appkeys?.optionStuck },
-    { id: '5', label: localization.appkeys?.optionLost },
-    { id: '6', label: localization.appkeys?.optionClarity },
+    {
+      id: '1',
+      label: localization.appkeys?.optionOverwhelmed,
+    },
+    {
+      id: '2',
+      label: localization.appkeys?.optionDrained,
+    },
+    {
+      id: '3',
+      label: localization.appkeys?.optionOverthinking,
+    },
+    {
+      id: '4',
+      label: localization.appkeys?.optionStuck,
+    },
+    {
+      id: '5',
+      label: localization.appkeys?.optionLost,
+    },
+    {
+      id: '6',
+      label: localization.appkeys?.optionClarity,
+    },
   ];
-
   return (
     <SolidView
       isScrollEnabled
-      viewStyle={{ flex: 1 }}
+      viewStyle={{
+        flex: 1,
+      }}
       view={
-        <View style={{ flex: 1 }}>
+        <View
+          style={{
+            flex: 1,
+          }}
+        >
           <HeaderProgress progress={0.5} onBackPress={handleBackPress} />
 
           <Image
@@ -89,7 +105,6 @@ const FeelingsLately = () => {
               {options.map(option => {
                 const isSelected = selected === option.id;
                 const isSelectedByText = selected === option.label;
-
                 return (
                   <TouchableOpacity
                     key={option.id}
@@ -123,12 +138,18 @@ const FeelingsLately = () => {
                 );
               })}
             </View>
-            <View style={{ flex: 1 }} />
+            <View
+              style={{
+                flex: 1,
+              }}
+            />
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
               disabled={!selected}
-              onPress={() => navigation.navigate(AppRoutes.FeelMore as never)}
+              onPress={() => {
+                return navigation.navigate(AppRoutes.FeelMore as never);
+              }}
             />
           </View>
         </View>
@@ -136,5 +157,4 @@ const FeelingsLately = () => {
     />
   );
 };
-
 export default FeelingsLately;

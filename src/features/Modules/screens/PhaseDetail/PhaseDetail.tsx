@@ -16,7 +16,7 @@ import style from './style';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import usePostApi from '../../../../hooks/usePostApi';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const PhaseDetail = () => {
   const { colors } = useTheme() as any;
   const { localization } = React.useContext(LocalizationContext) as any;
@@ -24,7 +24,6 @@ const PhaseDetail = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { phase, isLastPhase } = route.params as any;
-
   const {
     data,
     isLoading: isDetailLoading,
@@ -32,12 +31,13 @@ const PhaseDetail = () => {
   } = useGetApi(
     endpoints.exercise_detail_list,
     ['exercise_detail', phase?._id],
-    { phase_id: phase?._id, limit: 1 },
+    {
+      phase_id: phase?._id,
+      limit: 1,
+    },
   );
-
   const lesson = data?.data?.lesson;
   const phaseDetail = data?.data?.phase;
-
   const {
     data: exerciseListData,
     isLoading: isListLoading,
@@ -46,7 +46,6 @@ const PhaseDetail = () => {
     exercise_detail_id: lesson?._id,
   });
   const { mutate: startLesson, isPending: isStarting } = usePostApi();
-
   useFocusEffect(
     useCallback(() => {
       refetchDetail();
@@ -55,12 +54,15 @@ const PhaseDetail = () => {
       }
     }, [refetchDetail, refetchList, lesson?._id]),
   );
-
   const exercises = exerciseListData?.data?.exercises || [];
   const totalStepsCount = exercises.length + 2;
-  const steps = Array.from({ length: totalStepsCount }, (_, i) => i + 1);
+  const steps = Array.from(
+    {
+      length: totalStepsCount,
+    },
+    (_, i) => i + 1,
+  );
   const activeStep = 1;
-
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -71,7 +73,6 @@ const PhaseDetail = () => {
     );
     return () => backHandler.remove();
   }, []);
-
   if (isDetailLoading || (lesson?._id && isListLoading)) {
     return (
       <SolidView
@@ -79,7 +80,10 @@ const PhaseDetail = () => {
           <View
             style={[
               styles.mainContainer,
-              { justifyContent: 'center', alignItems: 'center' },
+              {
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
             ]}
           >
             <ActivityIndicator size="large" color={colors.brown} />
@@ -88,7 +92,6 @@ const PhaseDetail = () => {
       />
     );
   }
-
   return (
     <SolidView
       isScrollEnabled
@@ -96,10 +99,24 @@ const PhaseDetail = () => {
         <View style={styles.mainContainer}>
           <HeaderCommon title={localization.appkeys?.details || 'Details'} />
 
-          <SolidText style={[styles.title, { color: colors.brown }]}>
+          <SolidText
+            style={[
+              styles.title,
+              {
+                color: colors.brown,
+              },
+            ]}
+          >
             {phase?.phase || localization.appkeys?.phase1 || 'Phase 1'}
           </SolidText>
-          <SolidText style={[styles.subtitle, { color: colors.brown }]}>
+          <SolidText
+            style={[
+              styles.subtitle,
+              {
+                color: colors.brown,
+              },
+            ]}
+          >
             {phaseDetail?.title ||
               phase?.title ||
               localization.appkeys?.phase1Title ||
@@ -166,15 +183,22 @@ const PhaseDetail = () => {
               </SolidText>
             </View>
           </View>
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
           <SolidBtn
             titleTxt={localization.appkeys?.start || 'Start'}
             btnStyle={styles.startButton}
             onPress={() => {
+              //
               startLesson(
                 {
                   endpoint: endpoints.start_lesson,
-                  data: { phase_id: phase?._id },
+                  data: {
+                    phase_id: phase?._id,
+                  },
                 },
                 {
                   onSuccess: () => {
@@ -182,7 +206,10 @@ const PhaseDetail = () => {
                       AppRoutes.ModuleExercise as never,
                       {
                         lesson,
-                        phase: { ...phase, ...phaseDetail },
+                        phase: {
+                          ...phase,
+                          ...phaseDetail,
+                        },
                         exercises,
                         isLastPhase,
                         theme: (route.params as any)?.theme,
@@ -201,5 +228,4 @@ const PhaseDetail = () => {
     />
   );
 };
-
 export default PhaseDetail;

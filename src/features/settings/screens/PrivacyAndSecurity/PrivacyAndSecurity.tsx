@@ -10,7 +10,7 @@ import HomeHeader from '../../../../components/HomeHeader';
 import DeleteAccountModal from '../../../../modals/DeleteAccountModal';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useSelector } from 'react-redux';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const PrivacyAndSecurity = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
@@ -22,23 +22,24 @@ const PrivacyAndSecurity = () => {
     twoFactor: true,
     autoLock: true,
   });
-
   const [dataToggles, setDataToggles] = useState({
     encryption: false,
     privateDiary: true,
     sharing: true,
   });
-
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-
   const toggleAuth = (key: keyof typeof authToggles) => {
-    setAuthToggles(prev => ({ ...prev, [key]: !prev[key] }));
+    setAuthToggles(prev => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
-
   const toggleData = (key: keyof typeof dataToggles) => {
-    setDataToggles(prev => ({ ...prev, [key]: !prev[key] }));
+    setDataToggles(prev => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
-
   const renderSettingItem = (
     icon: any,
     title: string,
@@ -51,7 +52,12 @@ const PrivacyAndSecurity = () => {
       <View style={styles.settingItemContent}>
         <Image
           source={icon}
-          style={{ width: 40, height: 40, marginRight: 12, borderRadius: 22 }}
+          style={{
+            width: 40,
+            height: 40,
+            marginRight: 12,
+            borderRadius: 22,
+          }}
           resizeMode="contain"
         />
         <View style={styles.settingItemTextContainer}>
@@ -59,7 +65,12 @@ const PrivacyAndSecurity = () => {
           <SolidText style={styles.settingItemSubtitle}>{subtitle}</SolidText>
         </View>
       </View>
-      <TouchableOpacity activeOpacity={0.8} onPress={onToggle}>
+      <TouchableOpacity
+        activeOpacity={0.8}
+        onPress={(...args: any) => {
+          return (onToggle as any)(...args);
+        }}
+      >
         <Image
           source={value ? images.toggleOn : images.toggleOff}
           style={styles.toggleIcon}
@@ -68,7 +79,6 @@ const PrivacyAndSecurity = () => {
       </TouchableOpacity>
     </View>
   );
-
   return (
     <SolidView
       isScrollEnabled
@@ -98,7 +108,9 @@ const PrivacyAndSecurity = () => {
               localization.appkeys?.protectInformation ||
               'Protect your information'
             }
-            subStyle={{ marginTop: 5 }}
+            subStyle={{
+              marginTop: 5,
+            }}
           />
 
           {/* Security Level Card */}
@@ -197,38 +209,6 @@ const PrivacyAndSecurity = () => {
             )}
           </View>
 
-          {/* Change Password Button */}
-          {user?.account_type != 'social' && (
-            <TouchableOpacity
-              activeOpacity={0.8}
-              style={styles.changePassCard}
-              onPress={() =>
-                navigation.navigate(AppRoutes.ChangePassword as never)
-              }
-            >
-              <View style={styles.changePassLeft}>
-                <Image
-                  source={images.changePass}
-                  style={{
-                    width: 40,
-                    height: 40,
-                    marginRight: 12,
-                    borderRadius: 22,
-                  }}
-                  resizeMode="contain"
-                />
-                <SolidText style={styles.changePassTitle}>
-                  {localization.appkeys?.changePassword || 'Change password'}
-                </SolidText>
-              </View>
-              <Image
-                source={images.forward2}
-                style={styles.arrowIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          )}
-
           {/* Data Management Section */}
           <SolidText style={styles.sectionTitleManagement}>
             {localization.appkeys?.dataManagement || 'Data management'}
@@ -246,7 +226,9 @@ const PrivacyAndSecurity = () => {
           <TouchableOpacity
             activeOpacity={0.8}
             style={styles.managementCard}
-            onPress={() => setIsDeleteModalVisible(true)}
+            onPress={() => {
+              return setIsDeleteModalVisible(true);
+            }}
           >
             <SolidText style={styles.managementTitle}>
               {localization.appkeys?.deleteMyAccount || 'Delete my account'}
@@ -257,7 +239,11 @@ const PrivacyAndSecurity = () => {
             </SolidText>
           </TouchableOpacity>
 
-          <View style={{ height: 40 }} />
+          <View
+            style={{
+              height: 40,
+            }}
+          />
 
           <DeleteAccountModal
             visible={isDeleteModalVisible}
@@ -269,5 +255,4 @@ const PrivacyAndSecurity = () => {
     />
   );
 };
-
 export default PrivacyAndSecurity;

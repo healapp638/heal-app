@@ -16,13 +16,12 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import AppUtils from '../../../../utils/appUtils';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Calendar = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const [showCreditsModal, setShowCreditsModal] = useState(false);
-
   const MONTHS = [
     localization.appkeys?.monthJan || 'January',
     localization.appkeys?.monthFeb || 'February',
@@ -37,7 +36,6 @@ const Calendar = () => {
     localization.appkeys?.monthNov || 'November',
     localization.appkeys?.monthDec || 'December',
   ];
-
   const styles = style(colors);
   const today = new Date();
   const todayDay = today.getDate();
@@ -47,21 +45,20 @@ const Calendar = () => {
   const [month, setMonth] = useState(todayMonth);
   const [selectedDay, setSelectedDay] = useState(todayDay);
   const isCurrentMonth = year === todayYear && month === todayMonth;
-
   const { data: journalMapData, refetch } = useGetApi(
     endpoints.journal_map_list,
     ['journal_map'],
     {},
   );
-
   useFocusEffect(
     useCallback(() => {
       refetch();
     }, [refetch]),
   );
-
   const markedDates = useMemo(() => {
-    const map: { [date: string]: number } = {};
+    const map: {
+      [date: string]: number;
+    } = {};
     if (journalMapData?.data) {
       journalMapData.data.forEach((item: any) => {
         map[item.date] = item.total;
@@ -69,13 +66,11 @@ const Calendar = () => {
     }
     return map;
   }, [journalMapData]);
-
   const selectedDateString = `${year}-${String(month + 1).padStart(
     2,
     '0',
   )}-${String(selectedDay).padStart(2, '0')}`;
   const selectedDateEntries = markedDates[selectedDateString] || 0;
-
   function prevMonth() {
     if (month === 0) {
       setMonth(11);
@@ -84,7 +79,6 @@ const Calendar = () => {
       setMonth(m => m - 1);
     }
   }
-
   function nextMonth() {
     if (month === 11) {
       setMonth(0);
@@ -93,7 +87,6 @@ const Calendar = () => {
       setMonth(m => m + 1);
     }
   }
-
   return (
     <SolidView
       isScrollEnabled
@@ -108,7 +101,10 @@ const Calendar = () => {
           />
 
           <HomeHeader
-            viewStyle={{ marginTop: -10, marginBottom: 20 }}
+            viewStyle={{
+              marginTop: -10,
+              marginBottom: 20,
+            }}
             showCrown={false}
             showStreak={false}
             onCrownPress={() => {}}
@@ -119,7 +115,10 @@ const Calendar = () => {
           {/* Month Navigation Pill */}
           <View style={styles.monthRow}>
             <TouchableOpacity
-              onPress={prevMonth}
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                return prevMonth();
+              }}
               activeOpacity={0.7}
               style={styles.monthNavBtn}
             >
@@ -135,7 +134,10 @@ const Calendar = () => {
             </SolidText>
 
             <TouchableOpacity
-              onPress={nextMonth}
+              onPress={() => {
+                triggerHaptic('impactHeavy');
+                return nextMonth();
+              }}
               activeOpacity={0.7}
               style={styles.monthNavBtn}
             >
@@ -155,7 +157,10 @@ const Calendar = () => {
             isCurrentMonth={isCurrentMonth}
             markedDates={markedDates}
             selectedDay={selectedDay}
-            onDayPress={day => setSelectedDay(day)}
+            onDayPress={day => {
+              triggerHaptic('impactHeavy');
+              setSelectedDay(day);
+            }}
           />
 
           {/* Connected Pill */}
@@ -169,6 +174,7 @@ const Calendar = () => {
                 : ` - ${localization.appkeys?.noEntries || 'No entries'}`
             }
             onPress={() => {
+              triggerHaptic('impactHeavy');
               if (selectedDateEntries > 0) {
                 navigation.navigate(
                   AppRoutes.ConnectedEntries as never,
@@ -185,7 +191,11 @@ const Calendar = () => {
             }}
           />
 
-          <View style={{ height: 40 }} />
+          <View
+            style={{
+              height: 40,
+            }}
+          />
           <GetCreditsModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
@@ -195,5 +205,4 @@ const Calendar = () => {
     />
   );
 };
-
 export default Calendar;

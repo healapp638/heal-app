@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { FlatList, ActivityIndicator, ViewStyle } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import StartedModuleCard from './StartedModuleCard';
+import { triggerHaptic } from '../hooks/useHaptic';
 
 interface HorizontalModuleListProps {
   data: any[];
@@ -35,8 +36,11 @@ const HorizontalModuleList: React.FC<HorizontalModuleListProps> = ({
         }
         progressText={`${item.completed_phase_count}/${item.total_phase_count}`}
         isFinished={isFinished}
-        disabled={isFinished}
-        onPress={() => onPress(item)}
+        // disabled={isFinished}
+        onPress={() => {
+          triggerHaptic('impactHeavy');
+          onPress(item);
+        }}
       />
     ),
     [isFinished, localization.appkeys, onPress],

@@ -3,14 +3,13 @@ import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface DailyWeeklyToggleProps {
   activeTab: 'daily' | 'weekly';
   onTabChange: (tab: 'daily' | 'weekly') => void;
   dailyLabel: string;
   weeklyLabel: string;
 }
-
 const DailyWeeklyToggle = ({
   activeTab,
   onTabChange,
@@ -21,7 +20,10 @@ const DailyWeeklyToggle = ({
     <View style={styles.container}>
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={() => onTabChange('daily')}
+        onPress={() => {
+          triggerHaptic('impactHeavy');
+          return onTabChange('daily');
+        }}
         style={[
           styles.tab,
           activeTab === 'daily' ? styles.activeTab : styles.inactiveTab,
@@ -41,7 +43,10 @@ const DailyWeeklyToggle = ({
 
       <TouchableOpacity
         activeOpacity={0.9}
-        onPress={() => onTabChange('weekly')}
+        onPress={() => {
+          triggerHaptic('impactHeavy');
+          return onTabChange('weekly');
+        }}
         style={[
           styles.tab,
           activeTab === 'weekly' ? styles.activeTab : styles.inactiveTab,
@@ -61,12 +66,12 @@ const DailyWeeklyToggle = ({
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     height: 44,
-    backgroundColor: '#F7EDE1', // Pale light beige
+    backgroundColor: '#F7EDE1',
+    // Pale light beige
     borderRadius: 22,
     borderWidth: 1,
     borderColor: '#E7A189',
@@ -95,5 +100,4 @@ const styles = StyleSheet.create({
     color: '#3A2110', // Dark brown
   },
 });
-
 export default DailyWeeklyToggle;

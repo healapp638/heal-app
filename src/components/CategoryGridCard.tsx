@@ -7,14 +7,13 @@ import {
 } from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface CategoryGridCardProps {
   image: any;
   title: string;
   onPress: () => void;
   style?: ViewStyle;
 }
-
 const CategoryGridCard = ({
   image,
   title,
@@ -24,7 +23,9 @@ const CategoryGridCard = ({
   return (
     <TouchableOpacity
       style={[styles.container, style]}
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       activeOpacity={0.8}
     >
       <ImageBackground
@@ -38,7 +39,6 @@ const CategoryGridCard = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: '47.5%',
@@ -60,5 +60,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
 export default CategoryGridCard;

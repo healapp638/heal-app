@@ -9,18 +9,16 @@ import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import SolidBtn from '../../../../components/SolidBtn';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ChallengeDetail = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const navigation = useNavigation();
-
   const handleStart = () => {
     navigation.navigate(AppRoutes.Exercise as never);
   };
   const [showCreditsModal, setShowCreditsModal] = useState(false);
-
   return (
     <SolidView
       isScrollEnabled
@@ -81,11 +79,19 @@ const ChallengeDetail = () => {
                 'Gratitude is a powerful healing tool. By taking the time to acknowledge the positive aspects of your life, even the smallest ones, you train your mind to see beyond the pain and appreciate what surrounds you.'}
             </SolidText>
           </View>
-          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flex: 1,
+            }}
+          />
           <SolidBtn
             titleTxt={localization.appkeys?.start || 'Start'}
-            btnStyle={{ marginBottom: 40 }}
-            onPress={handleStart}
+            btnStyle={{
+              marginBottom: 40,
+            }}
+            onPress={(...args: any) => {
+              return (handleStart as any)(...args);
+            }}
           />
           <GetCreditsModal
             visible={showCreditsModal}
@@ -96,5 +102,4 @@ const ChallengeDetail = () => {
     />
   );
 };
-
 export default ChallengeDetail;

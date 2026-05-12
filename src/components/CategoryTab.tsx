@@ -3,14 +3,13 @@ import { TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface CategoryTabProps {
   title: string;
   isActive: boolean;
   onPress: () => void;
   isCreate?: boolean;
 }
-
 const CategoryTab = ({
   title,
   isActive,
@@ -19,7 +18,9 @@ const CategoryTab = ({
 }: CategoryTabProps) => {
   return (
     <TouchableOpacity
-      onPress={onPress}
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
       style={[
         styles.tab,
         isActive && styles.activeTab,
@@ -43,13 +44,13 @@ const CategoryTab = ({
     </TouchableOpacity>
   );
 };
-
 const styles = StyleSheet.create({
   tab: {
     paddingHorizontal: 16,
     height: 30,
     borderRadius: 22,
-    backgroundColor: 'rgb(213,203,193)', // Muted brown/gray
+    backgroundColor: 'rgb(213,203,193)',
+    // Muted brown/gray
     marginRight: 8,
     justifyContent: 'center',
     alignItems: 'center',
@@ -80,10 +81,9 @@ const styles = StyleSheet.create({
   plusText: {
     fontSize: AppUtils.fontSize(28),
     includeFontPadding: false,
-
-    marginTop: Platform.OS === 'ios' ? 0 : -1, // Adjust for high baseline of large Font
+    marginTop: Platform.OS === 'ios' ? 0 : -1,
+    // Adjust for high baseline of large Font
     fontFamily: AppFonts.regular,
   },
 });
-
 export default CategoryTab;

@@ -9,14 +9,13 @@ import {
   ImageBackground,
 } from 'react-native';
 import { useSelector } from 'react-redux';
-
 import { useTheme } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import getEnvVars from '../../env';
-
+import { triggerHaptic } from '../hooks/useHaptic';
 interface DailyQuoteCardProps {
   title: string;
   quote: string;
@@ -24,7 +23,6 @@ interface DailyQuoteCardProps {
   onPress?: () => void;
   isLoading?: boolean;
 }
-
 const DailyQuoteCard = ({
   title,
   quote,
@@ -35,28 +33,39 @@ const DailyQuoteCard = ({
   const { colors } = useTheme() as any;
   const user = useSelector((state: any) => state.userData?.user);
   const styles = useStyle(colors);
-
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
-
   const activeColor = homeThemeUrl ? '#FFFFFF' : colors.brown;
   return (
-    <Pressable onPress={onPress} style={styles.container}>
-      <SolidText style={[styles.title, { color: colors.brown }]}>
+    <Pressable
+      onPress={(...args: any) => {
+        return (onPress as any)(...args);
+      }}
+      style={styles.container}
+    >
+      <SolidText
+        style={[
+          styles.title,
+          {
+            color: colors.brown,
+          },
+        ]}
+      >
         {title}
       </SolidText>
       <TouchableOpacity
         style={{
           height: 100,
           width: '100%',
-
           borderWidth: 1,
           borderColor: '#3A21101A',
           borderRadius: 18,
         }}
         activeOpacity={0.9}
-        onPress={onPress}
+        onPress={(...args: any) => {
+          return (onPress as any)(...args);
+        }}
       >
         <LinearGradient
           colors={
@@ -64,21 +73,31 @@ const DailyQuoteCard = ({
               ? ['transparent', 'transparent']
               : ['#FFFFFF4D', '#FBE6D5', '#FBE6D5']
           }
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+          start={{
+            x: 0,
+            y: 0,
+          }}
+          end={{
+            x: 1,
+            y: 1,
+          }}
           style={styles.card}
         >
           {homeThemeUrl && (
             <>
               <ImageBackground
-                source={{ uri: homeThemeUrl }}
+                source={{
+                  uri: homeThemeUrl,
+                }}
                 style={StyleSheet.absoluteFillObject}
                 resizeMode="cover"
               />
               <View
                 style={[
                   StyleSheet.absoluteFillObject,
-                  { backgroundColor: 'rgba(0,0,0,0.25)' },
+                  {
+                    backgroundColor: 'rgba(0,0,0,0.25)',
+                  },
                 ]}
               />
             </>
@@ -96,7 +115,10 @@ const DailyQuoteCard = ({
                     textShadowColor: homeThemeUrl
                       ? 'rgba(0, 0, 0, 0.4)'
                       : 'transparent',
-                    textShadowOffset: { width: 0, height: 1 },
+                    textShadowOffset: {
+                      width: 0,
+                      height: 1,
+                    },
                     textShadowRadius: 4,
                   },
                 ]}
@@ -105,7 +127,12 @@ const DailyQuoteCard = ({
               </SolidText>
               <SolidText
                 maxFontScale={1}
-                style={[styles.exploreMore, { color: activeColor }]}
+                style={[
+                  styles.exploreMore,
+                  {
+                    color: activeColor,
+                  },
+                ]}
               >
                 {exploreLabel}
               </SolidText>
@@ -116,7 +143,6 @@ const DailyQuoteCard = ({
     </Pressable>
   );
 };
-
 const useStyle = (colors: any) =>
   StyleSheet.create({
     container: {
@@ -151,9 +177,7 @@ const useStyle = (colors: any) =>
     exploreMore: {
       fontSize: 10,
       fontFamily: AppFonts.light,
-
       includeFontPadding: false,
     },
   });
-
 export default DailyQuoteCard;

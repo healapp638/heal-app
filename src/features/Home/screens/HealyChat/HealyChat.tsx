@@ -13,14 +13,13 @@ import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const HealyChat = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
   const [chatText, setChatText] = useState('');
-
   return (
     <SolidView
       isScrollEnabled
@@ -90,7 +89,7 @@ const HealyChat = () => {
                   style={styles.listenIcon}
                   resizeMode="contain"
                 />
-              </TouchableOpacity> */}
+               </TouchableOpacity> */}
             </View>
 
             {/* Listen / Voice Wave Button */}
@@ -100,5 +99,4 @@ const HealyChat = () => {
     />
   );
 };
-
 export default HealyChat;

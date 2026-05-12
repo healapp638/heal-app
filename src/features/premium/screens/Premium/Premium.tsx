@@ -13,21 +13,18 @@ import PlansSection from '../../../../components/PlansSection';
 import PremiumFooter from '../../../../components/PremiumFooter';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useSelector } from 'react-redux';
-
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Premium = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
-
   const styles = style(colors, appLanguage);
-
   const [reminderEnabled, setReminderEnabled] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>(
     'yearly',
   );
   const [showCloseBtn, setShowCloseBtn] = useState(false);
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowCloseBtn(true);
@@ -39,12 +36,13 @@ const Premium = () => {
   const getTimelineDate = (daysToAdd: number) => {
     const date = new Date();
     date.setDate(date.getDate() + daysToAdd);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
   };
-
   const trialReminderDate = getTimelineDate(2);
   const becomeMemberDate = getTimelineDate(3);
-
   return (
     <SolidView
       isScrollEnabled={false}
@@ -55,7 +53,11 @@ const Premium = () => {
             onClose={() => {
               navigation.reset({
                 index: 0,
-                routes: [{ name: AppRoutes.BottomTab as never }],
+                routes: [
+                  {
+                    name: AppRoutes.BottomTab as never,
+                  },
+                ],
               });
             }}
             styles={styles}
@@ -104,7 +106,11 @@ const Premium = () => {
             onPress={() => {
               navigation.reset({
                 index: 0,
-                routes: [{ name: AppRoutes.BottomTab as never }],
+                routes: [
+                  {
+                    name: AppRoutes.BottomTab as never,
+                  },
+                ],
               });
             }}
           />
@@ -126,5 +132,4 @@ const Premium = () => {
     />
   );
 };
-
 export default Premium;
