@@ -19,7 +19,7 @@ interface AddCategoryModalProps {
     isUpdate?: boolean;
     isView?: boolean;
     homeThemeId?: string;
-    categoryID?:string
+    categoryID?: string
     onClose?: () => void;
 }
 
@@ -28,7 +28,7 @@ interface CategoryDetail {
 
 }
 
-const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView,categoryID, homeThemeId, onClose }: AddCategoryModalProps) => {
+const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, categoryID, homeThemeId, onClose }: AddCategoryModalProps) => {
 
     const [form] = Form.useForm();
     const [fileList, setFileList] = React.useState<any[]>([]);
@@ -131,21 +131,27 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView,categoryI
         const actualFile = fileObj.originFileObj || fileObj;
         formData.append("file", actualFile);
 
-        await tryCatchWrapper(
+        return await tryCatchWrapper(
             async () => {
-                await addMediaFile({
+                const res = await addMediaFile({
                     url: ENDPOINTS.COMMON.UPLOAD_FILE,
                     method: "POST",
                     body: formData,
                 });
+                if (res.status < 200 || res.status >= 300) {
+                    throw new Error(res.message || "Upload failed");
+                }
+                return res;
             },
             {
                 errorMessage: 'Failed to upload file',
                 showToast: true,
                 onError() {
-                    // Optionally handle error state here
                     console.error('Failed to upload file');
-                    handleCancel();
+                    setFileList([]);
+                    setFileUrl("");
+                    form.setFieldValue("imgUrl", "");
+                    fileListRef.current = [];
                 }
             }
         );
@@ -156,7 +162,11 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView,categoryI
         try {
             // Find the full object from the fileList state (using ref to ensure latest)
             const fullFileObject = fileListRef.current.find(f => f.uid === file.uid) || { originFileObj: file, uid: file.uid, name: file.name };
-            await handleAddFile(fullFileObject);
+            const result = await handleAddFile(fullFileObject);
+            if (!result) {
+                onError(new Error("Upload failed"));
+                return;
+            }
             onSuccess("ok");
         } catch (err) {
             onError(err);
@@ -234,28 +244,29 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView,categoryI
                             rules={[
                                 { required: true, message: 'Please enter theme image' },
                             ]}
-                            className='flex justify-center'
                         >
-                            <Upload
-                                name="imgUrl"
-                                listType="picture-card"
-                                accept="image/*"
-                                fileList={fileList}
-                                onChange={handleChange}
-                                customRequest={customRequest}
-                                maxCount={1}
-                                disabled={isView}
-                                className='flex justify-center w-fit rounded-lg p-2'
-                            >
-                                {fileList.length >= 1 ? null : uploadButton}
-                            </Upload>
+                            <div className="flex justify-center items-center w-full">
+                                <Upload
+                                    name="imgUrl"
+                                    listType="picture-card"
+                                    accept="image/*"
+                                    fileList={fileList}
+                                    onChange={handleChange}
+                                    customRequest={customRequest}
+                                    maxCount={1}
+                                    disabled={isView}
+                                    className="theme-upload-container"
+                                >
+                                    {fileList.length >= 1 ? null : uploadButton}
+                                </Upload>
+                            </div>
                         </Form.Item>
                         <Form.Item>
-                            <AppButton 
-                                isLoading={isPending || isUpdating} 
+                            <AppButton
+                                isLoading={isPending || isUpdating}
                                 disabled={!isView && !fileUrl}
-                                htmlType="submit" 
-                                className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" 
+                                htmlType="submit"
+                                className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!"
                                 block
                             >
                                 {isView ? "OK" : isUpdate ? "Update Home Theme" : "Add Home Theme"}

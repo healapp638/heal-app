@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Image, Switch, Table } from "antd"
+import { Image, Input, Switch, Table } from "antd"
 import { ENDPOINTS } from "@/Endpoints"
 import { ColumnsType } from "antd/es/table"
 import { MUTATION_KEYS } from "@/tanstack/keys"
@@ -10,7 +10,7 @@ import { FaEye } from "react-icons/fa";
 import { FILE_URL } from "@/utils/helper"
 import { useAppMutate } from "@/tanstack/useAppMutate"
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper"
-import { FiTrash2 } from "react-icons/fi"
+import { FiSearch, FiTrash2 } from "react-icons/fi"
 import IconButton from "@/components/ui/IconButton"
 import DeleteModal from "@/components/ui/modals/DeleteModal"
 import { ROUTES } from "@/routerKeys"
@@ -44,16 +44,27 @@ export default function Users() {
     const router=useRouter()
     const [SelectedUserId, setSelectedUserId] = React.useState<string>("")
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+    const [search, setSearch] = React.useState("");
+    const [debouncedSearch, setDebouncedSearch] = React.useState("");
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+            setPagination(prev => ({ ...prev, current: 1 }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [search]);
 
     const { data: userList } = useAppQuery<any>({
-        queryKey: [MUTATION_KEYS.USERS_LIST, pagination],
+        queryKey: [MUTATION_KEYS.USERS_LIST, pagination, debouncedSearch],
         url: ENDPOINTS.PRIVATE.USERS_LIST,
         options: {
             staleTime: Infinity,
         },
         params: {
             page: pagination.current,
-            pageSize: pagination.pageSize
+            pageSize: pagination.pageSize,
+            search: debouncedSearch
         }
     })
     const UserListData = userList?.data?.result;
@@ -182,9 +193,19 @@ export default function Users() {
 
     return (
         <div className='p-2 md:p-6'>
-            <h1 className="text-3xl font-bold text-black">
-                Users <span className="text-maincolor">List</span>
-            </h1>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <h1 className="text-3xl font-bold text-black">
+                    Users <span className="text-maincolor">List</span>
+                </h1>
+                <Input
+                    placeholder="Search users..."
+                    prefix={<FiSearch className="text-gray-400" />}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="max-w-md h-11 rounded-xl border-gray-200 focus:border-maincolor! shadow-sm"
+                    allowClear
+                />
+            </div>
             <Table
                 rowKey="_id"
                 dataSource={UserListData}

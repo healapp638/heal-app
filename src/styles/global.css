@@ -230,3 +230,7 @@
 .buttonGradient{
   background: linear-gradient(135deg, #F66F76 0%, #f66f7610 100%)!important;
 }
+
+.ant-form-item-explain {
+  text-align: center;
+}

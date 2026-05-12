@@ -134,21 +134,27 @@ const AddCategoryModal = ({ openModal, setOpenModal, isUpdate, isView, categoryI
         const actualFile = fileObj.originFileObj || fileObj;
         formData.append("file", actualFile);
 
-        await tryCatchWrapper(
+        return await tryCatchWrapper(
             async () => {
-                await addMediaFile({
+                const res = await addMediaFile({
                     url: ENDPOINTS.COMMON.UPLOAD_FILE,
                     method: "POST",
                     body: formData,
                 });
+                if (res.status < 200 || res.status >= 300) {
+                    throw new Error(res.message || "Upload failed");
+                }
+                return res;
             },
             {
                 errorMessage: 'Failed to upload file',
                 showToast: true,
                 onError() {
-                    // Optionally handle error state here
                     console.error('Failed to upload file');
-                    handleCancel();
+                    setFileList([]);
+                    setFileUrl("");
+                    form.setFieldValue("imgUrl", "");
+                    fileListRef.current = [];
                 }
             }
         );
@@ -159,7 +165,11 @@ const AddCategoryModal = ({ openModal, setOpenModal, isUpdate, isView, categoryI
         try {
             // Find the full object from the fileList state (using ref to ensure latest)
             const fullFileObject = fileListRef.current.find(f => f.uid === file.uid) || { originFileObj: file, uid: file.uid, name: file.name };
-            await handleAddFile(fullFileObject);
+            const result = await handleAddFile(fullFileObject);
+            if (!result) {
+                onError(new Error("Upload failed"));
+                return;
+            }
             onSuccess("ok");
         } catch (err) {
             onError(err);
@@ -238,7 +248,7 @@ const AddCategoryModal = ({ openModal, setOpenModal, isUpdate, isView, categoryI
                             rules={[
                                 { required: true, message: 'Please enter category theme image' },
                             ]}
-                            className='flex justify-center'
+                            className='flex justify-center items-center'
                         >
                             <Upload
                                 name="imgUrl"
@@ -260,6 +270,10 @@ const AddCategoryModal = ({ openModal, setOpenModal, isUpdate, isView, categoryI
                             rules={[
                                 { required: true, message: 'Please enter category theme title' },
                             ]}
+                            getValueFromEvent={(e) => {
+                                const val = e.target.value;
+                                return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                            }}
                         >
                             <Input
                                 disabled={isView}

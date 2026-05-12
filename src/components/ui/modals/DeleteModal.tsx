@@ -2,7 +2,8 @@
 import React from "react";
 import { Modal } from "antd";
 import AppButton from "../buttons/AppButton";
-import { RiDeleteBin5Fill } from "react-icons/ri";
+import { FiTrash2 } from "react-icons/fi"
+
 import { RxCross2 } from "react-icons/rx";
 
 
@@ -26,7 +27,7 @@ const DeleteModal = ({ openDeleteModal, setopenDeleteModal, handleDelete, title,
             centered
         >
             <div className="flex flex-col justify-center items-center gap-3 ">
-                <RiDeleteBin5Fill size={150} color="red" />
+                <FiTrash2 size={150} color="#F66F76" />
                 <h2 className="text-2xl font-bold text-black ">Delete <span className="text-maincolor">{title}</span>?</h2>
                 <p className="font-bold text-center text-black">Are you sure you want to delete this <span className="text-maincolor">{title}</span>?</p>
                 <div className="flex gap-4 items-center ">
