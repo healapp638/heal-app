@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View } from 'react-native';
+import { View, Linking } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -61,6 +61,7 @@ const Settings = () => {
               showCrown
               showStreak={false}
               onCrownPress={() => {
+                triggerHaptic('impactHeavy');
                 setShowCreditsModal(true);
               }}
               userName={localization.appkeys?.settingsTitle || 'Settings'}
@@ -115,7 +116,7 @@ const Settings = () => {
                   rightIcon={rightIcon}
                   rightIconStyle={rightIconStyle}
                   onPress={() => {
-                    // triggerHaptic('impactHeavy');
+                    triggerHaptic('impactHeavy');
                     if (isNotification) {
                       setIsNotificationEnabled(!isNotificationEnabled);
                     } else if (isPersonalInfo) {
@@ -189,8 +190,8 @@ const Settings = () => {
               leftIcon={images.insta}
               rightIcon={images.arrowRight}
               onPress={() => {
-                // triggerHaptic('impactHeavy');
-                // add instagram link later
+                triggerHaptic('impactHeavy');
+                Linking.openURL('https://www.instagram.com/heal.safespace');
               }}
             />
             <SettingItem
@@ -198,8 +199,8 @@ const Settings = () => {
               leftIcon={images.tiktok}
               rightIcon={images.arrowRight}
               onPress={() => {
-                // triggerHaptic('impactHeavy');
-                // add tiktok link later
+                triggerHaptic('impactHeavy');
+                Linking.openURL('https://www.tiktok.com/@heal.safespace');
               }}
             />
           </View>

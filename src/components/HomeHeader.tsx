@@ -65,6 +65,7 @@ const HomeHeader = ({
       {showStreak && (
         <Pressable
           onPress={(...args: any) => {
+            triggerHaptic('impactHeavy');
             return (onStreakPress as any)(...args);
           }}
           style={styles.headerRight}
@@ -88,6 +89,7 @@ const HomeHeader = ({
             <View style={styles.divider} />
             <TouchableOpacity
               onPress={(...args: any) => {
+                triggerHaptic('impactHeavy');
                 return (onCalendarPress as any)(...args);
               }}
             >
@@ -103,6 +105,7 @@ const HomeHeader = ({
       {showCrown && (
         <Pressable
           onPress={(...args: any) => {
+            triggerHaptic('impactHeavy');
             return (onCrownPress as any)(...args);
           }}
         >

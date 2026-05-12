@@ -41,10 +41,11 @@ const ProgressTrackerCard = ({
           userDetails.total_points || 0
         } PTS`
       : '0/0 PTS');
-  const progressWidth = userDetails?.completedPercentage || 0;
+  const progressWidth = Math.min(userDetails?.completedPercentage || 0, 100);
   return (
     <Pressable
       onPress={(...args: any) => {
+        triggerHaptic('impactHeavy');
         return (onPress as any)(...args);
       }}
       style={[

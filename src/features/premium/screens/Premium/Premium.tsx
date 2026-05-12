@@ -45,7 +45,7 @@ const Premium = () => {
   const becomeMemberDate = getTimelineDate(3);
   return (
     <SolidView
-      isScrollEnabled={false}
+      isScrollEnabled={true}
       view={
         <View style={styles.mainContainer}>
           <PremiumHeader

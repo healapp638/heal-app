@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 
 const options = {
   enableVibrateFallback: true,
-  ignoreAndroidSystemSettings: false,
+  ignoreAndroidSystemSettings: true,
 };
 
 export const triggerHaptic = (

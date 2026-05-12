@@ -9,11 +9,9 @@ import {
   StyleSheet,
 } from 'react-native';
 import Animated, {
-  withTiming,
-  Easing,
-  runOnJS,
-  useSharedValue,
-  useAnimatedStyle,
+  FadeInUp,
+  FadeOutDown,
+  LinearTransition,
 } from 'react-native-reanimated';
 import { useTheme, useNavigation } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -91,184 +89,16 @@ const ThemeMixes = () => {
         localization.appkeys.forYou;
   const forYouResult =
     forYouDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
-  const overlayOpacity = useSharedValue(0);
-  const overlayTranslateY = useSharedValue(0);
-  const [fadingData, setFadingData] = useState<any[] | null>(null);
-  const [fadingTitle, setFadingTitle] = useState('');
-  const overlayStyle = useAnimatedStyle(() => ({
-    opacity: overlayOpacity.value,
-    transform: [
-      {
-        translateY: overlayTranslateY.value,
-      },
-    ],
-  }));
   const handleCategoryChange = (catId: string) => {
     if (catId === activeTab) return;
     triggerHaptic('impactHeavy');
-    // Capture snapshot of current grid data ONLY
-    setFadingData([...forYouResult]);
-    setFadingTitle(sectionTitle);
     setActiveTab(catId);
     setActiveCategory(catId);
-
-    // Reset overlay position and opacity
-    overlayOpacity.value = 1;
-    overlayTranslateY.value = 0;
-
-    // Slide up and fade out the overlay over the new data
-    overlayOpacity.value = withTiming(0, {
-      duration: 800,
-      easing: Easing.out(Easing.cubic),
-    });
-    overlayTranslateY.value = withTiming(-150, {
-      duration: 800,
-      easing: Easing.out(Easing.cubic),
-    });
-    setTimeout(() => {
-      setFadingData(null);
-      setFadingTitle('');
-    }, 850);
   };
   return (
     <SolidView
       view={
         <View style={styles.mainContainer}>
-          <View style={styles.headerRow}>
-            <TouchableOpacity
-              onPress={() => {
-                navigation.goBack();
-                triggerHaptic('impactHeavy');
-              }}
-            >
-              <Image
-                source={images.back}
-                style={styles.backIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                triggerHaptic('impactHeavy');
-                return setShowCreditsModal(true);
-              }}
-              style={styles.unlockBtn}
-            >
-              <SolidText style={styles.unlockText}>
-                {localization.appkeys.unlockAll}
-              </SolidText>
-            </TouchableOpacity>
-          </View>
-
-          <SolidText style={styles.title}>
-            {localization.appkeys.themes}
-          </SolidText>
-
-          <View
-            style={{
-              flexGrow: 0,
-              flexShrink: 0,
-            }}
-          >
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.categoryList}
-              contentContainerStyle={{
-                paddingHorizontal: 20,
-                marginTop: 4,
-              }}
-            >
-              {categories.map(cat => (
-                <CategoryTab
-                  key={cat.id}
-                  title={cat.title}
-                  isActive={activeTab === cat.id}
-                  onPress={() => {
-                    return handleCategoryChange(cat.id);
-                  }}
-                />
-              ))}
-            </ScrollView>
-          </View>
-
-          {/* Theme mixes section (Static, No Animation) */}
-          <View style={{}}>
-            <View style={[styles.sectionHeader, styles.contentPadding]}>
-              <SolidText style={styles.sectionTitle}>
-                {localization.appkeys.themeMixes}
-              </SolidText>
-              <TouchableOpacity
-                onPress={() => {
-                  triggerHaptic('impactHeavy');
-                  return navigation.navigate(AppRoutes.ThemeSeeAll as never);
-                }}
-              >
-                <SolidText style={styles.seeAllText}>
-                  {localization.appkeys.seeAll}
-                </SolidText>
-              </TouchableOpacity>
-            </View>
-
-            {isCategoryLoading ? (
-              <ActivityIndicator
-                size="large"
-                color={colors.primary}
-                style={{
-                  marginVertical: 20,
-                }}
-              />
-            ) : (
-              <FlatList
-                horizontal
-                data={themeCategories}
-                keyExtractor={item => item._id}
-                showsHorizontalScrollIndicator={false}
-                style={styles.mixesList}
-                contentContainerStyle={{
-                  paddingHorizontal: 20,
-                }}
-                ListEmptyComponent={
-                  !isCategoryLoading ? (
-                    <View
-                      style={{
-                        paddingHorizontal: 20,
-                        marginTop: 10,
-                      }}
-                    >
-                      <SolidText
-                        style={{
-                          color: colors.brown,
-                          opacity: 0.5,
-                        }}
-                      >
-                        No theme mixes found
-                      </SolidText>
-                    </View>
-                  ) : null
-                }
-                renderItem={({ item }) => (
-                  <HorizontalMixCard
-                    image={{
-                      uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
-                    }}
-                    title={item.title}
-                    onPress={() => {
-                      triggerHaptic('impactHeavy');
-                      return navigation.navigate(
-                        AppRoutes.ThemeDetail as never,
-                        {
-                          title: item.title,
-                          categoryTheme_id: item._id,
-                        } as never,
-                      );
-                    }}
-                  />
-                )}
-              />
-            )}
-          </View>
-
           {/* Grid section with Snapshot Overlay */}
           <View
             style={{
@@ -295,6 +125,150 @@ const ThemeMixes = () => {
                     marginRight: -14,
                   }}
                 >
+                  <View style={styles.headerRow}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.goBack();
+                        triggerHaptic('impactHeavy');
+                      }}
+                    >
+                      <Image
+                        source={images.back}
+                        style={styles.backIcon}
+                        resizeMode="contain"
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => {
+                        triggerHaptic('impactHeavy');
+                        return setShowCreditsModal(true);
+                      }}
+                      style={styles.unlockBtn}
+                    >
+                      <SolidText style={styles.unlockText}>
+                        {localization.appkeys.unlockAll}
+                      </SolidText>
+                    </TouchableOpacity>
+                  </View>
+
+                  <SolidText style={styles.title}>
+                    {localization.appkeys.themes}
+                  </SolidText>
+
+                  <View
+                    style={{
+                      flexGrow: 0,
+                      flexShrink: 0,
+                    }}
+                  >
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      style={styles.categoryList}
+                      contentContainerStyle={{
+                        paddingHorizontal: 20,
+                        marginTop: 4,
+                      }}
+                    >
+                      {categories.map(cat => (
+                        <CategoryTab
+                          key={cat.id}
+                          title={cat.title}
+                          isActive={activeTab === cat.id}
+                          onPress={() => {
+                            return handleCategoryChange(cat.id);
+                          }}
+                        />
+                      ))}
+                    </ScrollView>
+                  </View>
+
+                  {/* Theme mixes section - only shown for 'all' filter */}
+                  {activeCategory === 'all' && (
+                    <Animated.View
+                      entering={FadeInUp.duration(600)}
+                      exiting={FadeOutDown.duration(600)}
+                      layout={LinearTransition}
+                      style={{}}
+                    >
+                      <View style={[styles.sectionHeader, styles.contentPadding]}>
+                        <SolidText style={styles.sectionTitle}>
+                          {localization.appkeys.themeMixes}
+                        </SolidText>
+                        <TouchableOpacity
+                          onPress={() => {
+                            triggerHaptic('impactHeavy');
+                            return navigation.navigate(
+                              AppRoutes.ThemeSeeAll as never,
+                            );
+                          }}
+                        >
+                          <SolidText style={styles.seeAllText}>
+                            {localization.appkeys.seeAll}
+                          </SolidText>
+                        </TouchableOpacity>
+                      </View>
+
+                      {isCategoryLoading ? (
+                        <ActivityIndicator
+                          size="large"
+                          color={colors.primary}
+                          style={{
+                            marginVertical: 20,
+                          }}
+                        />
+                      ) : (
+                        <FlatList
+                          horizontal
+                          data={themeCategories}
+                          keyExtractor={item => item._id}
+                          showsHorizontalScrollIndicator={false}
+                          style={styles.mixesList}
+                          contentContainerStyle={{
+                            paddingHorizontal: 20,
+                          }}
+                          ListEmptyComponent={
+                            !isCategoryLoading ? (
+                              <View
+                                style={{
+                                  paddingHorizontal: 20,
+                                  marginTop: 10,
+                                }}
+                              >
+                                <SolidText
+                                  style={{
+                                    color: colors.brown,
+                                    opacity: 0.5,
+                                  }}
+                                >
+                                  No theme mixes found
+                                </SolidText>
+                              </View>
+                            ) : null
+                          }
+                          renderItem={({ item }) => (
+                            <HorizontalMixCard
+                              image={{
+                                uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+                              }}
+                              title={item.title}
+                              onPress={() => {
+                                triggerHaptic('impactHeavy');
+                                return navigation.navigate(
+                                  AppRoutes.ThemeDetail as never,
+                                  {
+                                    title: item.title,
+                                    categoryTheme_id: item._id,
+                                  } as never,
+                                );
+                              }}
+                            />
+                          )}
+                        />
+                      )}
+                    </Animated.View>
+                  )}
+
                   <View
                     style={[
                       styles.sectionHeader,
@@ -338,8 +312,13 @@ const ThemeMixes = () => {
                   </View>
                 ) : null
               }
-              renderItem={({ item }) => (
+              renderItem={({ item, index }) => (
                 <GridThemeCard
+                  index={index}
+                  itemId={item._id}
+                  activeCategory={activeCategory}
+                  key={`${item._id}-${activeCategory}`}
+                  isMostPopular={activeCategory === 'most_popular'}
                   image={{
                     uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
                   }}
@@ -382,65 +361,6 @@ const ThemeMixes = () => {
                 ) : null
               }
             />
-
-            {/* Fading overlay snapshot of the previous grid data ONLY */}
-            {fadingData && (
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  StyleSheet.absoluteFill,
-                  {
-                    backgroundColor: colors.background,
-                  },
-                  overlayStyle,
-                ]}
-              >
-                <View
-                  style={{
-                    marginLeft: -14,
-                    marginRight: -14,
-                  }}
-                >
-                  <View
-                    style={[
-                      styles.sectionHeader,
-                      styles.contentPadding,
-                      {
-                        marginBottom: 10,
-                      },
-                    ]}
-                  >
-                    <SolidText style={styles.sectionTitle}>
-                      {fadingTitle}
-                    </SolidText>
-                  </View>
-                </View>
-
-                <FlatList
-                  data={fadingData.slice(0, 9)}
-                  keyExtractor={item => item._id}
-                  numColumns={3}
-                  scrollEnabled={false}
-                  contentContainerStyle={[
-                    styles.gridList,
-                    {
-                      paddingHorizontal: 14,
-                      paddingBottom: 40,
-                    },
-                  ]}
-                  renderItem={({ item }) => (
-                    <GridThemeCard
-                      image={{
-                        uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
-                      }}
-                      onPress={() => {
-                        // triggerHaptic('impactHeavy');
-                      }}
-                    />
-                  )}
-                />
-              </Animated.View>
-            )}
           </View>
 
           <GetCreditsModal

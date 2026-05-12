@@ -119,7 +119,7 @@ const StartedModule = () => {
             localization.appkeys?.homeProgressTracker || 'Progress Tracker'
           }
           onPress={() => {
-            //
+            triggerHaptic('impactHeavy');
             return navigation.navigate(AppRoutes.ProgressTracker as never);
           }}
         />
