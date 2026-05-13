@@ -65,6 +65,7 @@ const UserAuthHandler = {
             return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR)
         }
         const userData = findUser?.data
+        console.log(timeZone, 'timeZone')
         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { timeZone: timeZone } })
 
         //challenges logic start

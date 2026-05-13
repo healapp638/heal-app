@@ -106,6 +106,7 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
+        console.log(timeZone, 'timeZone');
         yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { timeZone: timeZone } });
         //challenges logic start
         const challengesDetails = yield commonHelper.challengsFn(userData);

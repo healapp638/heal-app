@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Security, Get } from 'tsoa'
+import { Route, Controller, Tags, Security, Get, Post } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserChallenges/user.challenges.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
@@ -25,6 +25,16 @@ export default class UserChallengesController extends Controller {
     @Get("/list")
     public async list(): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.list);
+        return wrappedFunc(this.userId); // Invoking the wrapped function 
+    }
+
+    /**
+     * Complete Challenges
+     */
+    @Security('Bearer')
+    @Post("/complete_challenges")
+    public async completeChallenges(): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.completeChallenges);
         return wrappedFunc(this.userId); // Invoking the wrapped function 
     }
 }

@@ -40,6 +40,15 @@ let UserChallengesController = class UserChallengesController extends tsoa_1.Con
             return wrappedFunc(this.userId); // Invoking the wrapped function 
         });
     }
+    /**
+     * Complete Challenges
+     */
+    completeChallenges() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_challenges_handler_1.default.completeChallenges);
+            return wrappedFunc(this.userId); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -48,6 +57,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserChallengesController.prototype, "list", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/complete_challenges"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserChallengesController.prototype, "completeChallenges", null);
 UserChallengesController = __decorate([
     (0, tsoa_1.Tags)('User Challenges Routes'),
     (0, tsoa_1.Route)('/user/challenges'),

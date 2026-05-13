@@ -50,7 +50,7 @@ const UserSchema = new Schema(
             default: 'email',
             Comment: "email for normal created google with google apple with apple "
         },
-        timezone: { type: String, default: "" },
+        timeZone: { type: String, default: "" },
         lastDailyChallengeGeneratedDate: { type: Date, default: null },
         lastWeeklyChallengeGeneratedDate: { type: Date, default: null },
 
