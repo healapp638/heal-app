@@ -27,15 +27,15 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password, language } = req.body;
+    const { email, password, language, timeZone } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.login({ email, password, language });
+    const result = yield controller.login({ email, password, language, timeZone });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/social_login', multer.addToMulter.none(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { login_source, social_auth, email, name, os_type, language } = req.body;
+    const { login_source, social_auth, email, name, os_type, language, timeZone } = req.body;
     const userAuthController = new user_auth_controller_1.default(req, res);
-    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language);
+    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language, timeZone);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/forgot_password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

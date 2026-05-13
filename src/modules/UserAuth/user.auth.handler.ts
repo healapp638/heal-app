@@ -58,13 +58,14 @@ const UserAuthHandler = {
     },//ends
 
     login: async (data: any): Promise<ApiResponse> => {
-        const { email, password, language } = data;
+        const { email, password, language, timeZone } = data;
         const queryObject = { email, isVerified: true, status: { $ne: USER_STATUS.DELETED } }
         const findUser = await findOne(userAuthModel, queryObject);
         if (!findUser.status) {
             return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR)
         }
         const userData = findUser?.data
+        await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { timeZone: timeZone } })
 
         //challenges logic start
         const challengesDetails = await commonHelper.challengsFn(userData);
@@ -77,7 +78,7 @@ const UserAuthHandler = {
             console.log(res, 'res')
             const result = await userDailyChallengesModel.insertMany(res.data)
             if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
             }
 
         }
@@ -85,7 +86,7 @@ const UserAuthHandler = {
             const res = await generateUserChallengesWeekly(payload, userData?._id)
             const result = await userWeeklyChallengesModel.insertMany(res.data)
             if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
             }
         }
         //end
@@ -158,7 +159,7 @@ const UserAuthHandler = {
     },//ends
 
     social_login: async (data: any) => {
-        const { login_source, social_auth, email, name = undefined, language } = data;
+        const { login_source, social_auth, email, name = undefined, language ,timeZone} = data;
         const queryObject = {
             status: { $ne: USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -191,7 +192,9 @@ const UserAuthHandler = {
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //challenges logic start
+            
             const data = findUser?.data
+            await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone } })
             const challengesDetails = await commonHelper.challengsFn(data);
             const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
             const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -202,14 +205,14 @@ const UserAuthHandler = {
                 console.log(res, 'res')
                 const result = await userDailyChallengesModel.insertMany(res.data)
                 if (result) {
-                    await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+                    await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
                 }
             }
             if (isOnBoardingComplete && !isWeeklyChallengeExist) {
                 const res = await generateUserChallengesWeekly(payload, data?._id)
                 const result = await userWeeklyChallengesModel.insertMany(res.data)
                 if (result) {
-                    await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+                    await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
                 }
             }
             //end
@@ -281,14 +284,14 @@ const UserAuthHandler = {
                 const res = await generateUserChallengesDaily(payload, result?.data?._id);
                 const results = await userDailyChallengesModel.insertMany(res.data)
                 if (results) {
-                    await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+                    await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
                 }
             }
             if (isOnBoardingComplete && !isWeeklyChallengeExist) {
                 const res = await generateUserChallengesWeekly(payload, result?.data?._id);
                 const results = await userWeeklyChallengesModel.insertMany(res.data)
                 if (results) {
-                    await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+                    await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
                 }
             }
             //end

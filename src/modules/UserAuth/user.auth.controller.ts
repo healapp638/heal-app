@@ -25,7 +25,7 @@ export default class UserAuthController extends Controller {
      * Get User login
      */
     @Post("/login")
-    public async login(@Body() request: { email: string, password: string, language: string }): Promise<ApiResponse> {
+    public async login(@Body() request: { email: string, password: string, language: string, timeZone: string }): Promise<ApiResponse> {
 
         request.email = request.email.toLocaleLowerCase().trim()
         const validate = validateLoginUser(request);
@@ -44,8 +44,8 @@ export default class UserAuthController extends Controller {
     //   * login_source can be for google use google & for apple use apple etc
     //   */
     @Post("/social_login")
-    public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() name?: string, @FormField() os_type?: string, @FormField() language?: string): Promise<ApiResponse> {
-        const request = { login_source, social_auth, email, name, os_type, language }
+    public async socialLogin(@FormField() login_source: string, @FormField() social_auth: string, @FormField() email: string, @FormField() name?: string, @FormField() os_type?: string, @FormField() language?: string ,@FormField() timeZone?: string): Promise<ApiResponse> {
+        const request = { login_source, social_auth, email, name, os_type, language ,timeZone}
 
         const validate = validateSocialLogin(request);
         if (validate.error) {

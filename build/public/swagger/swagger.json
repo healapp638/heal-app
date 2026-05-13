@@ -1123,6 +1123,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"timeZone": {
+										"type": "string"
+									},
 									"language": {
 										"type": "string"
 									},
@@ -1134,6 +1137,7 @@
 									}
 								},
 								"required": [
+									"timeZone",
 									"language",
 									"password",
 									"email"
@@ -1188,6 +1192,9 @@
 										"type": "string"
 									},
 									"language": {
+										"type": "string"
+									},
+									"timeZone": {
 										"type": "string"
 									}
 								},

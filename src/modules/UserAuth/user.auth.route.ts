@@ -18,16 +18,16 @@ router.post('/register', async (req: Request | any, res: Response) => {
 })
 
 router.post('/login', ratLimiting, async (req: Request | any, res: Response) => {
-    const { email, password, language } = req.body;
+    const { email, password, language, timeZone } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.login({ email, password, language });
+    const result: ApiResponse = await controller.login({ email, password, language, timeZone });
     return showOutput(res, result, result.code)
 })
 
 router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
-    const { login_source, social_auth, email, name, os_type, language } = req.body;
+    const { login_source, social_auth, email, name, os_type, language,timeZone } = req.body;
     const userAuthController = new UserAuthController(req, res)
-    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language);
+    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language,timeZone);
     return showOutput(res, result, result.code)
 })
 

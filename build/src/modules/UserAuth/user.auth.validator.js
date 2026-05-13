@@ -11,6 +11,7 @@ const validateLoginUser = (user) => {
         email: joi_1.default.string().trim().email().min(4).max(35).required(),
         password: joi_1.default.string().min(4).max(20).required(),
         language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+        timeZone: joi_1.default.string().optional().allow(''),
     }).validate(user);
 };
 exports.validateLoginUser = validateLoginUser;
@@ -83,7 +84,8 @@ const validateSocialLogin = (user) => {
         social_auth: joi_1.default.string().required(),
         name: joi_1.default.string().optional().allow(''),
         os_type: joi_1.default.string().optional().allow(''),
-        language: joi_1.default.string().optional().allow('')
+        language: joi_1.default.string().optional().allow(''),
+        timeZone: joi_1.default.string().optional().allow(''),
     }).validate(user);
 };
 exports.validateSocialLogin = validateSocialLogin;

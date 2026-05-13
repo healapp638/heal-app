@@ -6,6 +6,7 @@ export const validateLoginUser = (user: any) => {
         email: joi.string().trim().email().min(4).max(35).required(),
         password: joi.string().min(4).max(20).required(),
         language: joi.string().optional().allow(...Object.values(languages)),
+        timeZone: joi.string().optional().allow(''),
     }).validate(user)
 }
 
@@ -79,7 +80,8 @@ export const validateSocialLogin = (user: any) => {
         social_auth: joi.string().required(),
         name: joi.string().optional().allow(''),
         os_type: joi.string().optional().allow(''),
-        language: joi.string().optional().allow('')
+        language: joi.string().optional().allow(''),
+        timeZone: joi.string().optional().allow(''),
     }).validate(user)
 }
 

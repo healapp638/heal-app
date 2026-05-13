@@ -99,13 +99,14 @@ const UserAuthHandler = {
         }
     }), //ends
     login: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { email, password, language } = data;
+        const { email, password, language, timeZone } = data;
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
         if (!findUser.status) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
+        yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { timeZone: timeZone } });
         //challenges logic start
         const challengesDetails = yield commonHelper.challengsFn(userData);
         const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
@@ -117,14 +118,14 @@ const UserAuthHandler = {
             console.log(res, 'res');
             const result = yield user_daily_challenges_model_1.default.insertMany(res.data);
             if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } });
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
             }
         }
         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
             const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
             const result = yield user_weekly_challenges_model_1.default.insertMany(res.data);
             if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } });
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
             }
         }
         //end
@@ -186,7 +187,7 @@ const UserAuthHandler = {
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
-        const { login_source, social_auth, email, name = undefined, language } = data;
+        const { login_source, social_auth, email, name = undefined, language, timeZone } = data;
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -216,6 +217,7 @@ const UserAuthHandler = {
         if (findUser.status) {
             //challenges logic start
             const data = findUser === null || findUser === void 0 ? void 0 : findUser.data;
+            yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { timeZone: timeZone } });
             const challengesDetails = yield commonHelper.challengsFn(data);
             const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
             const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
@@ -226,14 +228,14 @@ const UserAuthHandler = {
                 console.log(res, 'res');
                 const result = yield user_daily_challenges_model_1.default.insertMany(res.data);
                 if (result) {
-                    yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } });
+                    yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
                 }
             }
             if (isOnBoardingComplete && !isWeeklyChallengeExist) {
                 const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, data === null || data === void 0 ? void 0 : data._id);
                 const result = yield user_weekly_challenges_model_1.default.insertMany(res.data);
                 if (result) {
-                    yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } });
+                    yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
                 }
             }
             //end
@@ -294,14 +296,14 @@ const UserAuthHandler = {
                 const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, (_q = result === null || result === void 0 ? void 0 : result.data) === null || _q === void 0 ? void 0 : _q._id);
                 const results = yield user_daily_challenges_model_1.default.insertMany(res.data);
                 if (results) {
-                    yield user_auth_model_1.default.findOneAndUpdate({ _id: (_r = result === null || result === void 0 ? void 0 : result.data) === null || _r === void 0 ? void 0 : _r._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } });
+                    yield user_auth_model_1.default.findOneAndUpdate({ _id: (_r = result === null || result === void 0 ? void 0 : result.data) === null || _r === void 0 ? void 0 : _r._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
                 }
             }
             if (isOnBoardingComplete && !isWeeklyChallengeExist) {
                 const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, (_s = result === null || result === void 0 ? void 0 : result.data) === null || _s === void 0 ? void 0 : _s._id);
                 const results = yield user_weekly_challenges_model_1.default.insertMany(res.data);
                 if (results) {
-                    yield user_auth_model_1.default.findOneAndUpdate({ _id: (_t = result === null || result === void 0 ? void 0 : result.data) === null || _t === void 0 ? void 0 : _t._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } });
+                    yield user_auth_model_1.default.findOneAndUpdate({ _id: (_t = result === null || result === void 0 ? void 0 : result.data) === null || _t === void 0 ? void 0 : _t._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
                 }
             }
             //end
