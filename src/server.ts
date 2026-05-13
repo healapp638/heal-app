@@ -15,6 +15,8 @@ import compression from "compression";
 import cron from "node-cron";
 import { generateAffirmation } from "./helpers/cronjob.func";
 import userDeeplinkModel from "./modules/UserAffirmation/user.deeplink.model";
+import { monitorEventLoopDelay } from "perf_hooks";
+// import blocked from "blocked-at";
 
 
 const app: Application = express();
@@ -24,15 +26,15 @@ const init = async () => {
   await connection()
     .then(() => {
 
-    // Start cronjobs
-  cron.schedule(
-    // "0 4 * * *",
-      "0 2 * * *",
-    generateAffirmation,
-    {
-        noOverlap: true,
-    }
-);
+      // Start cronjobs
+      cron.schedule(
+        // "0 4 * * *",
+        "0 2 * * *",
+        generateAffirmation,
+        {
+          noOverlap: true,
+        }
+      );
 
       bootstrapAdmin(() => {
         console.log("Bootstrapping finished!");
@@ -44,13 +46,26 @@ const init = async () => {
 }
 init();
 
+const h = monitorEventLoopDelay();
+h.enable();
+setInterval(() => {
+  console.log('min', h.min / 1e6);
+  console.log('max', h.max / 1e6);
+  console.log('mean', h.mean / 1e6);
+}, 50000);
+
+// blocked((time: any, stack: any) => {
+//   console.log(`Blocked for ${time}ms`);
+//   console.log(stack);
+//   console.log('blocked')
+// }, { threshold: 20 })
 
 //  SECURITY MIDDLEWARE
 app.use(helmet());
 
 
 //  CORS CONFIG 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/"];
 app.use(
   cors({
     origin: allowedOrigins,
@@ -112,64 +127,64 @@ setupSwagger(app)
 // ****************************** sharing logic ********************************
 // Serve apple-app-site-association file with correct content-type
 app.get("/apple-app-site-association", (req, res) => {
-   res.type("application/json");
-   res.sendFile(path.join(__dirname, "public", "apple-app-site-association"));
+  res.type("application/json");
+  res.sendFile(path.join(__dirname, "public", "apple-app-site-association"));
 });
 
 // Explicit route to serve assetlinks.json in .well-known folder
 
 app.get("/.well-known/assetlinks.json", (req, res) => {
-   res.type("application/json");
-   res.sendFile("assetlinks.json", {
-      root: path.join(__dirname, "public", ".well-known"),
-   });
+  res.type("application/json");
+  res.sendFile("assetlinks.json", {
+    root: path.join(__dirname, "public", ".well-known"),
+  });
 });
 
 app.get("/link/:code/:affirmation_id", async (req, res) => {
-   const { code, affirmation_id } = req.params;
-   //console.log(req.params, "req.params")
+  const { code, affirmation_id } = req.params;
+  //console.log(req.params, "req.params")
 
-   const doc = await userDeeplinkModel.findOne({ code });
+  const doc = await userDeeplinkModel.findOne({ code });
 
-   if (!doc) {
-      return res.redirect("https://myapp.com/notfound");
-   }
+  if (!doc) {
+    return res.redirect("https://myapp.com/notfound");
+  }
 
-   let deepLink = `myapp://open?code=${code}`;
-   const ua = req.headers["user-agent"] || "";
+  let deepLink = `myapp://open?code=${code}`;
+  const ua = req.headers["user-agent"] || "";
 
-   const iosStore = `https://apps.apple.com/us/app`;
-   const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
-   const fallbackWeb = "https://apidev.heal-app.com/";
+  const iosStore = `https://apps.apple.com/us/app`;
+  const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
+  const fallbackWeb = "https://apidev.heal-app.com/";
 
-   let storeUrl = fallbackWeb;
-   const codeParam = encodeURIComponent(code || "");
-   const idParam = encodeURIComponent(affirmation_id || "");
+  let storeUrl = fallbackWeb;
+  const codeParam = encodeURIComponent(code || "");
+  const idParam = encodeURIComponent(affirmation_id || "");
 
-   if (/iPhone|iPad|iPod/.test(ua)) {
-      // console.log("📱 iOS user detected");
-      storeUrl = iosStore;
-      // deepLink = `myapp://open?code=${code}`;
-      deepLink = `myapp://open?code=${codeParam}&affirmation_id=${idParam}`;
-      // console.log(deepLink, "deepLink ioss")
-   } else if (/Android/.test(ua)) {
-      console.log("🤖 Android user detected");
-      storeUrl = playStore;
-      // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
-      deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=pollture;package=com.heal;end`;
-      // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
-      console.log(deepLink, "deepLink android")
-   }
+  if (/iPhone|iPad|iPod/.test(ua)) {
+    // console.log("📱 iOS user detected");
+    storeUrl = iosStore;
+    // deepLink = `myapp://open?code=${code}`;
+    deepLink = `myapp://open?code=${codeParam}&affirmation_id=${idParam}`;
+    // console.log(deepLink, "deepLink ioss")
+  } else if (/Android/.test(ua)) {
+    console.log("🤖 Android user detected");
+    storeUrl = playStore;
+    // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
+    deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=pollture;package=com.heal;end`;
+    // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
+    console.log(deepLink, "deepLink android")
+  }
 
-   // Use a strong random nonce instead of hardcoding in production
-   const nonce = "123456";
+  // Use a strong random nonce instead of hardcoding in production
+  const nonce = "123456";
 
-   res.setHeader(
-      "Content-Security-Policy",
-      `script-src 'self' 'nonce-${nonce}';`,
-   );
+  res.setHeader(
+    "Content-Security-Policy",
+    `script-src 'self' 'nonce-${nonce}';`,
+  );
 
-   res.send(`
+  res.send(`
       <!DOCTYPE html>
       <html>
       <head>

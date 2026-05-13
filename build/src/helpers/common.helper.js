@@ -366,13 +366,18 @@ const challengsFn = (userData) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         const startOfDay = (0, moment_1.default)().startOf('day').toDate();
         const endOfDay = (0, moment_1.default)().endOf('day').toDate();
+        const startOfWeek = (0, moment_1.default)().startOf('week').toDate();
+        const endOfWeek = (0, moment_1.default)().endOf('week').toDate();
         const isOnBoardingComplete = !!((userData === null || userData === void 0 ? void 0 : userData.bringsYouHere) && (userData === null || userData === void 0 ? void 0 : userData.howFellingLately) && (userData === null || userData === void 0 ? void 0 : userData.likeToFellMore) && (userData === null || userData === void 0 ? void 0 : userData.timeYouCommit) && (userData === null || userData === void 0 ? void 0 : userData.startShowingOfYourSelf));
         const totalWeeklyChallanges = yield user_weekly_challenges_model_1.default.countDocuments({
-            createdAt: { $gte: startOfDay, $lte: endOfDay }
+            createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+            user_id: userData._id
         });
         const totalDailyChallanges = yield user_daily_challenges_model_1.default.countDocuments({
-            createdAt: { $gte: startOfDay, $lte: endOfDay }
+            createdAt: { $gte: startOfDay, $lte: endOfDay },
+            user_id: userData._id
         });
+        console.log(totalDailyChallanges, 'totalDailyChallanges');
         const isWeeklyChallengeExist = !!(totalWeeklyChallanges);
         const isDailyChallengeExist = !!(totalDailyChallanges);
         return {

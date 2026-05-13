@@ -15,16 +15,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const response_util_1 = require("../../utils/response.util");
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
-const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
 const user_daily_challenges_model_1 = __importDefault(require("./user.daily.challenges.model"));
 const user_weekly_challenges_model_1 = __importDefault(require("./user.weekly.challenges.model"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const UserChallengesHandler = {
-    add: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
-        yield user_auth_model_1.default.findOne({ _id: userId });
-        return (0, response_util_1.showResponse)(true, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.challenges_fetched_successfully, {}, statusCodes_1.default.SUCCESS);
-    }),
     list: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         // const startOfDay = moment().startOf('day').toDate();
         // const endOfDay = moment().endOf('day').toDate();

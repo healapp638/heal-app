@@ -52,6 +52,11 @@ const daily_challenges = new mongoose.Schema({
         type: String,
         enum: ['daily', 'weekly']
     },
+    //after 24 hour from now
+    end_date_unix: {
+        type: Number,
+        default: new Date().getTime() + 24 * 60 * 60 * 1000
+    },
 
 
 }, { timestamps: true });

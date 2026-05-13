@@ -32,15 +32,6 @@ let UserChallengesController = class UserChallengesController extends tsoa_1.Con
         this.userId = req.body.user ? req.body.user.id : '';
     }
     /**
-     * Add Challenges
-     */
-    add() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_challenges_handler_1.default.add);
-            return wrappedFunc(this.userId); // Invoking the wrapped function 
-        });
-    }
-    /**
      * List Challenges
      */
     list() {
@@ -50,13 +41,6 @@ let UserChallengesController = class UserChallengesController extends tsoa_1.Con
         });
     }
 };
-__decorate([
-    (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/add"),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], UserChallengesController.prototype, "add", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("/list"),

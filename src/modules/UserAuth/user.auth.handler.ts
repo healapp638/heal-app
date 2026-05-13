@@ -72,14 +72,21 @@ const UserAuthHandler = {
         const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
         const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
         const payload: any = challengesDetails?.payload;
-        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+        if (isOnBoardingComplete && !isDailyChallengeExist) {
             const res = await generateUserChallengesDaily(payload, userData?._id);
             console.log(res, 'res')
-            await userDailyChallengesModel.insertMany(res.data)
+            const result = await userDailyChallengesModel.insertMany(res.data)
+            if (result) {
+                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+            }
+
         }
-        if (isOnBoardingComplete && !isDailyChallengeExist) {
+        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
             const res = await generateUserChallengesWeekly(payload, userData?._id)
-            await userWeeklyChallengesModel.insertMany(res.data)
+            const result = await userWeeklyChallengesModel.insertMany(res.data)
+            if (result) {
+                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+            }
         }
         //end
 
@@ -183,6 +190,29 @@ const UserAuthHandler = {
         const is_profile_completed = !!userData?.dob && !!userData?.country
         //if account already existed then update details and return token with login success
         if (findUser.status) {
+            //challenges logic start
+            const data = findUser?.data
+            const challengesDetails = await commonHelper.challengsFn(data);
+            const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+            const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+            const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+            const payload: any = challengesDetails?.payload;
+            if (isOnBoardingComplete && !isDailyChallengeExist) {
+                const res = await generateUserChallengesDaily(payload, data?._id);
+                console.log(res, 'res')
+                const result = await userDailyChallengesModel.insertMany(res.data)
+                if (result) {
+                    await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+                }
+            }
+            if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+                const res = await generateUserChallengesWeekly(payload, data?._id)
+                const result = await userWeeklyChallengesModel.insertMany(res.data)
+                if (result) {
+                    await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+                }
+            }
+            //end
 
             if (!findUser?.data?.profilePic || findUser?.data?.profilePic == '') {
                 await userAuthModel.findOneAndUpdate({ _id: findUser?.data?._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } })
@@ -240,6 +270,28 @@ const UserAuthHandler = {
             if (!result.status) {
                 return showResponse(false, getMessage(language || 'en', "login_error"), null, statusCodes.API_ERROR);
             }
+
+            //challenges logic start
+            const challengesDetails = await commonHelper.challengsFn(result?.data);
+            const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+            const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+            const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+            const payload: any = challengesDetails?.payload;
+            if (isOnBoardingComplete && !isDailyChallengeExist) {
+                const res = await generateUserChallengesDaily(payload, result?.data?._id);
+                const results = await userDailyChallengesModel.insertMany(res.data)
+                if (results) {
+                    await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+                }
+            }
+            if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+                const res = await generateUserChallengesWeekly(payload, result?.data?._id);
+                const results = await userWeeklyChallengesModel.insertMany(res.data)
+                if (results) {
+                    await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+                }
+            }
+            //end
 
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
@@ -510,59 +562,60 @@ const UserAuthHandler = {
 
         const homeThemeAggregate: any = [
 
-    {
-        $match: {
-            user_id: commonHelper.convertToObjectId(userId),
-            status: USER_STATUS.ACTIVE,
-        },
-    },
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE,
+                },
+            },
 
-    {
-        $sort: {
-            createdAt: -1,
-        },
-    },
+            {
+                $sort: {
+                    createdAt: -1,
+                },
+            },
 
-    {
-        $limit: 1,
-    },
+            {
+                $limit: 1,
+            },
 
-    {
-        $lookup: {
-            from: "homethemeschemas",
-            localField: "homeTheme_id",
-            foreignField: "_id",
-            as: "themeData",
-        },
-    },
+            {
+                $lookup: {
+                    from: "homethemeschemas",
+                    localField: "homeTheme_id",
+                    foreignField: "_id",
+                    as: "themeData",
+                },
+            },
 
-    {
-        $unwind: {
-            path: "$themeData",
-            preserveNullAndEmptyArrays: true,
-        },
-    },
+            {
+                $unwind: {
+                    path: "$themeData",
+                    preserveNullAndEmptyArrays: true,
+                },
+            },
 
-    {
-        $project: {
-            _id: "$themeData._id",
-            imgUrl: "$themeData.imgUrl",
-            categoryTheme_id:
-                "$themeData.categoryTheme_id",
-            createdAt: "$themeData.createdAt",
-            updatedAt: "$themeData.updatedAt",
-        },
-    },
-];
+            {
+                $project: {
+                    _id: "$themeData._id",
+                    imgUrl: "$themeData.imgUrl",
+                    categoryTheme_id:
+                        "$themeData.categoryTheme_id",
+                    createdAt: "$themeData.createdAt",
+                    updatedAt: "$themeData.updatedAt",
+                },
+            },
+        ];
 
-const homeThemeResult =
-    await userRecentHomeThemeModel.aggregate(
-        homeThemeAggregate
-    );
+        const homeThemeResult =
+            await userRecentHomeThemeModel.aggregate(
+                homeThemeAggregate
+            );
 
-const homeTheme =
-    homeThemeResult?.[0] || null;
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel,homeTheme }, statusCodes.SUCCESS)
+        const homeTheme = homeThemeResult?.[0] || null;
+        const is_onboarding_complete = await commonHelper.challengsFn(userData);
+        const isOnBoardingComplete = is_onboarding_complete?.isOnBoardingComplete;
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {
@@ -678,14 +731,20 @@ const homeTheme =
         const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
         const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
         const payload: any = challengesDetails?.payload;
-        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+        if (isOnBoardingComplete && !isDailyChallengeExist) {
             const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
             console.log(res, 'res')
-            await userDailyChallengesModel.insertMany(res.data)
+            const result = await userDailyChallengesModel.insertMany(res.data)
+            if (result) {
+                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+            }
         }
-        if (isOnBoardingComplete && !isDailyChallengeExist) {
+        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
             const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
-            await userWeeklyChallengesModel.insertMany(res.data)
+            const result = await userWeeklyChallengesModel.insertMany(res.data)
+            if (result) {
+                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+            }
         }
         //end
         return showResponse(true, getMessage(user_language || 'en', "user_onboarding_complete"), null, statusCodes.SUCCESS)

@@ -52,10 +52,16 @@ const weekly_challenges = new mongoose.Schema({
         type: String,
         enum: ['daily', 'weekly']
     },
+    //after 7 day from now
+    end_date_unix: {
+        type: Number,
+        default: new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+    },
+
 
 
 }, { timestamps: true });
 
-const userWeeklyChallengesModel = mongoose.model('weekly_challenges', weekly_challenges,'weekly_challenges');
+const userWeeklyChallengesModel = mongoose.model('weekly_challenges', weekly_challenges, 'weekly_challenges');
 
 export default userWeeklyChallengesModel;

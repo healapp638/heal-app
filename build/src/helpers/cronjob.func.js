@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateAffirmation = void 0;
+exports.generateChallenges = exports.generateAffirmation = void 0;
 const response_util_1 = require("../utils/response.util");
 const responseMessages_1 = __importDefault(require("../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../constants/statusCodes"));
@@ -21,6 +21,12 @@ const langauge_translate_helper_1 = require("../helpers/langauge.translate.helpe
 const user_affirmation_model_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.model"));
 const openai_1 = __importDefault(require("openai"));
 const app_constant_1 = require("../constants/app.constant");
+const user_auth_model_1 = __importDefault(require("../modules/UserAuth/user.auth.model"));
+const user_daily_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.daily.challenges.model"));
+const moment_1 = __importDefault(require("moment"));
+const common_helper_1 = require("./common.helper");
+const openai_helper_1 = require("./openai.helper");
+const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
 const openai = new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
@@ -145,3 +151,52 @@ Return JSON:
     }
 }); // end
 exports.generateAffirmation = generateAffirmation;
+const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        //daily logic 
+        const startOfDay = (0, moment_1.default)().startOf('day').toDate();
+        const findUser = yield user_auth_model_1.default.find({ lastDailyChallengeGeneratedDate: { $lt: startOfDay }, isVerified: true });
+        if (findUser.length > 0) {
+            yield Promise.all(findUser.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
+                //challenges logic start
+                const challengesDetails = yield (0, common_helper_1.challengsFn)(curelem);
+                const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
+                const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
+                const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
+                if (isOnBoardingComplete && !isDailyChallengeExist) {
+                    const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, curelem === null || curelem === void 0 ? void 0 : curelem._id.toString());
+                    const result = yield user_daily_challenges_model_1.default.insertMany(res.data);
+                    if (result) {
+                        yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
+                    }
+                }
+                //end
+            })));
+        }
+        //weerkly section
+        const startOfWeek = (0, moment_1.default)().startOf('week').toDate();
+        const findUserWeekly = yield user_auth_model_1.default.find({ lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek }, isVerified: true });
+        if (findUserWeekly.length > 0) {
+            yield Promise.all(findUserWeekly.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
+                //challenges logic start
+                const challengesDetails = yield (0, common_helper_1.challengsFn)(curelem);
+                const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
+                const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
+                const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
+                if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+                    const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, curelem === null || curelem === void 0 ? void 0 : curelem._id.toString());
+                    const result = yield user_weekly_challenges_model_1.default.insertMany(res.data);
+                    if (result) {
+                        yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
+                    }
+                }
+                //end
+            })));
+        }
+    }
+    catch (err) {
+        console.log(err, "GENERATE_CHALLENGES_ERROR");
+        return (0, response_util_1.showResponse)(false, err.message, null, statusCodes_1.default.API_ERROR);
+    }
+});
+exports.generateChallenges = generateChallenges;

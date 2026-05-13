@@ -29,6 +29,8 @@ const compression_1 = __importDefault(require("compression"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const cronjob_func_1 = require("./helpers/cronjob.func");
 const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation/user.deeplink.model"));
+const perf_hooks_1 = require("perf_hooks");
+// import blocked from "blocked-at";
 const app = (0, express_1.default)();
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, app_constant_1.initializeAwsCredential)();
@@ -49,10 +51,22 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 init();
+const h = (0, perf_hooks_1.monitorEventLoopDelay)();
+h.enable();
+setInterval(() => {
+    console.log('min', h.min / 1e6);
+    console.log('max', h.max / 1e6);
+    console.log('mean', h.mean / 1e6);
+}, 50000);
+// blocked((time: any, stack: any) => {
+//   console.log(`Blocked for ${time}ms`);
+//   console.log(stack);
+//   console.log('blocked')
+// }, { threshold: 20 })
 //  SECURITY MIDDLEWARE
 app.use((0, helmet_1.default)());
 //  CORS CONFIG 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/"];
 app.use((0, cors_1.default)({
     origin: allowedOrigins,
     credentials: true,

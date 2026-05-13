@@ -6,11 +6,6 @@ import { verifyTokenUser } from '../../middlewares/auth.middleware'
 
 const router = express.Router()
 
-router.post('/add', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const controller = new UserChallengesController(req, res)
-    const result: ApiResponse = await controller.add();
-    return showOutput(res, result, result.code)
-});
 
 router.get('/list', verifyTokenUser, async (req: Request | any, res: Response) => {
     const controller = new UserChallengesController(req, res)

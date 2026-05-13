@@ -407,13 +407,18 @@ const challengsFn = async (userData: any) => {
     try {
         const startOfDay = moment().startOf('day').toDate();
         const endOfDay = moment().endOf('day').toDate();
+        const startOfWeek = moment().startOf('week').toDate();
+        const endOfWeek = moment().endOf('week').toDate();
         const isOnBoardingComplete = !!(userData?.bringsYouHere && userData?.howFellingLately && userData?.likeToFellMore && userData?.timeYouCommit && userData?.startShowingOfYourSelf);
         const totalWeeklyChallanges = await userWeeklyChallengesModel.countDocuments({
-            createdAt: { $gte: startOfDay, $lte: endOfDay }
+            createdAt: { $gte: startOfWeek, $lte: endOfWeek },
+            user_id: userData._id
         });
         const totalDailyChallanges = await userDailyChallengesModel.countDocuments({
-            createdAt: { $gte: startOfDay, $lte: endOfDay }
+            createdAt: { $gte: startOfDay, $lte: endOfDay },
+            user_id: userData._id
         });
+        console.log(totalDailyChallanges, 'totalDailyChallanges')
         const isWeeklyChallengeExist = !!(totalWeeklyChallanges)
         const isDailyChallengeExist = !!(totalDailyChallanges)
         return {
