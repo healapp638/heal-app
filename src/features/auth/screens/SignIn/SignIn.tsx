@@ -63,6 +63,7 @@ const SignIn = () => {
       );
       return;
     }
+
     loginUser(
       {
         endpoint: endpoints.login,
@@ -70,6 +71,7 @@ const SignIn = () => {
           email: email?.trim()?.toLowerCase(),
           password: password,
           language: AppUtils.getLanguageCode(appLanguage),
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
       },
       {
@@ -278,7 +280,10 @@ const SignIn = () => {
                 {Platform.OS === 'ios' && (
                   <TouchableOpacity
                     style={styles.socialBtn}
-                    onPress={() => {}}
+                    onPress={(...args: any) => {
+                      triggerHaptic('impactHeavy');
+                      return (appleLogin as any)(...args);
+                    }}
                     disabled={isSocialPending}
                   >
                     <Image

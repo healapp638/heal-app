@@ -70,7 +70,7 @@ const DailyQuoteCard = ({
         <LinearGradient
           colors={
             homeThemeUrl
-              ? ['transparent', 'transparent']
+              ? ['#3A211026', '#3A211026'] // Semi-transparent brown fallback
               : ['#FFFFFF4D', '#FBE6D5', '#FBE6D5']
           }
           start={{

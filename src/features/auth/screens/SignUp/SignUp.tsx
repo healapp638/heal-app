@@ -118,6 +118,7 @@ const SignUp = () => {
       startShowingOfYourSelf: answers?.readyToStart || '',
       timeYouCommit: answers?.timeCommitment || '',
       language: AppUtils.getLanguageCode(appLanguage),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
     registerUser(
       {
@@ -284,7 +285,10 @@ const SignUp = () => {
               {Platform.OS === 'ios' && (
                 <TouchableOpacity
                   style={styles.socialBtn}
-                  onPress={() => {}}
+                  onPress={(...args: any) => {
+                    triggerHaptic('impactHeavy');
+                    return (appleLogin as any)(...args);
+                  }}
                   disabled={isSocialPending || isRegistering}
                 >
                   <Image

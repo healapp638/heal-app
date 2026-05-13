@@ -34,4 +34,5 @@ export const endpoints = {
   get_home_theme_category: '/user/homeTheme/getHomeThemeCategory',
   add_user_theme: '/user/homeTheme/addUserTheme',
   contact_us: '/user/common/contactus/fill',
+  complete_onboarding: '/user/auth/complete_onboarding',
 };

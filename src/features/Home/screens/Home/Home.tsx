@@ -92,6 +92,7 @@ const Home = () => {
           />
 
           <DailyQuoteCard
+            key={user?.homeTheme?._id || 'default'}
             onPress={() => {
               triggerHaptic('impactHeavy');
               return navigation.navigate(AppRoutes.DailyQuote as never);
@@ -123,23 +124,23 @@ const Home = () => {
             }
             duration={localization.appkeys?.challengeDuration || '1 MIN'}
           />
-
-          <SectionHeader
-            title={localization.appkeys?.startedModule || 'Started Modules'}
-            actionLabel={localization.appkeys?.seeAll || 'See All'}
-            onActionPress={() => {
-              navigation.navigate(
-                AppRoutes.AllModules as never,
-                {
-                  type: 'started',
-                } as never,
-              );
-            }}
-            containerStyle={{
-              marginTop: 10,
-            }}
-          />
-
+          {startedModules?.length > 0 && (
+            <SectionHeader
+              title={localization.appkeys?.startedModule || 'Started Modules'}
+              actionLabel={localization.appkeys?.seeAll || 'See All'}
+              onActionPress={() => {
+                navigation.navigate(
+                  AppRoutes.AllModules as never,
+                  {
+                    type: 'started',
+                  } as never,
+                );
+              }}
+              containerStyle={{
+                marginTop: 10,
+              }}
+            />
+          )}
           <FlatList
             data={startedModules.slice(0, 2)}
             numColumns={2}

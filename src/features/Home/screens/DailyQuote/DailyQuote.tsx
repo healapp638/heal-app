@@ -19,7 +19,9 @@ import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import FavoritesModal from '../../../../modals/FavoritesModal';
+import PremiumModal from '../../../../modals/PremiumModal';
 import style from './style';
+import QuoteItem from './QuoteItem';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useHaptic } from '../../../../hooks/useHaptic';
 import useGetApi from '../../../../hooks/useGetApi';
@@ -39,13 +41,14 @@ const DailyQuote = () => {
   const { colors, images } = useTheme() as any;
   const { triggerHaptic } = useHaptic();
   const { localization } = useContext(LocalizationContext) as any;
-  const styles = style(colors);
+  const styles = style(colors, insets);
   const queryClient = useQueryClient();
   const { mutate: postApi } = usePostApi();
   const user = useSelector((state: any) => state.userData?.user);
   // console.log('user', user);
-  const [showCreditsModal, setShowCreditsModal] = useState(false);
+
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
   const viewShotRefs = useRef<{
     [key: string]: ViewShot;
   }>({});
@@ -86,25 +89,31 @@ const DailyQuote = () => {
     ],
     // Passing is_liked here as per request
     {
-      limit: 10,
+      limit: 20,
     },
   );
-  const handleShare = async (index: number) => {
+  const shareViewShotRef = useRef<ViewShot>(null);
+  const [shareItem, setShareItem] = useState<any>(null);
+
+  const handleShare = async (item: any) => {
     try {
       triggerHaptic('impactMedium');
-      const uri = await viewShotRefs.current[index]?.capture();
-      const quoteContent =
-        typeof quotes[index] === 'string'
-          ? quotes[index]
-          : quotes[index].affirmation;
-      const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
-      if (uri) {
-        await Share.open({
-          url: uri,
-          message: shareMessage,
-          type: 'image/png',
-        });
-      }
+      setShareItem(item);
+
+      // Small delay to ensure the hidden view has rendered with the new item
+      setTimeout(async () => {
+        const uri = await shareViewShotRef.current?.capture();
+        const quoteContent = item.affirmation;
+        const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
+
+        if (uri) {
+          await Share.open({
+            url: uri,
+            message: shareMessage,
+            type: 'image/png',
+          });
+        }
+      }, 100);
     } catch (error) {
       console.log('Share error:', error);
     }
@@ -208,121 +217,7 @@ const DailyQuote = () => {
       },
     );
   };
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const isLiked = !!item.is_liked;
-    const quoteContent = item.affirmation;
-    return (
-      <View style={styles.slideContainer}>
-        <ViewShot
-          ref={ref => {
-            if (ref) viewShotRefs.current[index] = ref;
-          }}
-          options={{
-            format: 'png',
-            quality: 0.9,
-          }}
-          style={[
-            styles.captureContainer,
-            {
-              height: SCREEN_HEIGHT,
-            },
-          ]}
-        >
-          {homeThemeUrl ? (
-            <>
-              <ImageBackground
-                source={{
-                  uri: homeThemeUrl,
-                }}
-                style={StyleSheet.absoluteFillObject}
-                resizeMode="cover"
-              />
-              <View
-                style={[
-                  StyleSheet.absoluteFillObject,
-                  {
-                    backgroundColor: 'rgba(0,0,0,0.25)',
-                  },
-                ]}
-              />
-            </>
-          ) : null}
 
-          <View
-            style={[
-              styles.quoteContainer,
-              {
-                width: '100%',
-              },
-            ]}
-          >
-            <SolidText
-              style={[
-                styles.quoteText,
-                {
-                  color: activeColor,
-                  textShadowColor:
-                    activeColor === '#FFFFFF'
-                      ? 'rgba(0, 0, 0, 0.4)'
-                      : 'transparent',
-                  textShadowOffset: {
-                    width: 0,
-                    height: 1,
-                  },
-                  textShadowRadius: 10,
-                },
-              ]}
-            >
-              {quoteContent.startsWith('"')
-                ? quoteContent
-                : `"${quoteContent}"`}
-            </SolidText>
-          </View>
-        </ViewShot>
-
-        <View style={styles.footerContainer}>
-          <View style={styles.actionRow}>
-            <TouchableOpacity
-              style={styles.iconBtn}
-              onPress={() => {
-                // triggerHaptic('impactHeavy');
-                return handleShare(index);
-              }}
-            >
-              <Image
-                source={images.share}
-                style={[
-                  styles.bottomIcon,
-                  {
-                    tintColor: activeColor,
-                  },
-                ]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.iconBtn}
-              onPress={() => {
-                // triggerHaptic('impactHeavy');
-                return handleLike(index);
-              }}
-            >
-              <Image
-                source={isLiked ? images.heartFill : images.like}
-                style={[
-                  styles.bottomIcon,
-                  {
-                    tintColor: activeColor,
-                  },
-                ]}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    );
-  };
   return (
     <SolidView
       edges={[]}
@@ -338,22 +233,10 @@ const DailyQuote = () => {
             },
           ]}
         >
-          <View
-            style={[
-              styles.headerWrapper,
-              {
-                paddingTop:
-                  Platform.OS == 'android'
-                    ? -10
-                    : insets.top > 0
-                    ? insets.top
-                    : 20,
-              },
-            ]}
-          >
+          <View style={styles.headerWrapper}>
             <HeaderCommon
               rightIcon={images.crown}
-              onRightPress={() => setShowCreditsModal(true)}
+              onRightPress={() => setShowPremiumModal(true)}
               tintColor={activeColor}
             />
           </View>
@@ -373,14 +256,32 @@ const DailyQuote = () => {
           ) : (
             <FlatList
               data={quotes}
-              renderItem={renderItem}
+              renderItem={({ item, index }) => (
+                <QuoteItem
+                  item={item}
+                  index={index}
+                  styles={styles}
+                  homeThemeUrl={homeThemeUrl}
+                  activeColor={activeColor}
+                  images={images}
+                  handleShare={handleShare}
+                  handleLike={handleLike}
+                  viewShotRefs={viewShotRefs}
+                />
+              )}
               keyExtractor={(item, index) => index.toString()}
-              pagingEnabled
-              vertical={true}
-              showsVerticalScrollIndicator={false}
+              pagingEnabled={Platform.OS === 'ios'}
               snapToInterval={SCREEN_HEIGHT}
               snapToAlignment="start"
               decelerationRate="fast"
+              disableIntervalMomentum={true}
+              getItemLayout={(data, index) => ({
+                length: SCREEN_HEIGHT,
+                offset: SCREEN_HEIGHT * index,
+                index,
+              })}
+              vertical={true}
+              showsVerticalScrollIndicator={false}
               windowSize={3}
               initialNumToRender={1}
               maxToRenderPerBatch={2}
@@ -457,10 +358,80 @@ const DailyQuote = () => {
             onClose={() => setShowFavoritesModal(false)}
           />
 
-          <GetCreditsModal
-            visible={showCreditsModal}
-            onClose={() => setShowCreditsModal(false)}
+          <PremiumModal
+            visible={showPremiumModal}
+            onClose={() => setShowPremiumModal(false)}
           />
+
+          {/* Hidden ViewShot for perfectly centered sharing captures */}
+          {shareItem && (
+            <View style={styles.hiddenCaptureContainer} pointerEvents="none">
+              <ViewShot
+                ref={shareViewShotRef}
+                options={{
+                  format: 'png',
+                  quality: 0.9,
+                }}
+                style={[
+                  styles.captureContainer,
+                  {
+                    height: SCREEN_HEIGHT,
+                    width: '100%',
+                  },
+                ]}
+              >
+                {homeThemeUrl ? (
+                  <>
+                    <ImageBackground
+                      source={{
+                        uri: homeThemeUrl,
+                      }}
+                      style={StyleSheet.absoluteFillObject}
+                      resizeMode="cover"
+                    />
+                    <View
+                      style={[
+                        StyleSheet.absoluteFillObject,
+                        {
+                          backgroundColor: 'rgba(0,0,0,0.25)',
+                        },
+                      ]}
+                    />
+                  </>
+                ) : null}
+                <View
+                  style={[
+                    styles.quoteContainer,
+                    {
+                      width: '100%',
+                    },
+                  ]}
+                >
+                  <SolidText
+                    style={[
+                      styles.quoteTextCentered,
+                      {
+                        color: activeColor,
+                        textShadowColor:
+                          activeColor === '#FFFFFF'
+                            ? 'rgba(0, 0, 0, 0.4)'
+                            : 'transparent',
+                        textShadowOffset: {
+                          width: 0,
+                          height: 1,
+                        },
+                        textShadowRadius: 10,
+                      },
+                    ]}
+                  >
+                    {shareItem.affirmation.startsWith('"')
+                      ? shareItem.affirmation
+                      : `"${shareItem.affirmation}"`}
+                  </SolidText>
+                </View>
+              </ViewShot>
+            </View>
+          )}
         </View>
       }
     />

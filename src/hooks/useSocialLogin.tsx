@@ -36,6 +36,7 @@ const useSocialLogin = () => {
       name: name,
       os_type: Platform.OS,
       language: AppUtils.getLanguageCode(appLanguage),
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
     console.log('payload', payload);
     socialLoginMutate(

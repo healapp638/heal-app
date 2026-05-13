@@ -26,6 +26,7 @@ interface GridThemeCardProps {
   activeCategory?: string;
   itemId?: string;
   index?: number;
+  isSelected?: boolean;
 }
 
 const GridThemeCard = ({
@@ -36,8 +37,9 @@ const GridThemeCard = ({
   activeCategory,
   itemId,
   index = 0,
+  isSelected = false,
 }: GridThemeCardProps) => {
-  const { images } = useTheme() as any;
+  const { images, colors } = useTheme() as any;
 
   const getEnteringAnimation = () => {
     if (activeCategory === 'most_popular') {
@@ -56,32 +58,40 @@ const GridThemeCard = ({
       exiting={FadeOut.duration(800).easing(Easing.inOut(Easing.ease))}
       style={[styles.card, style]}
     >
-      <ImageBackground
-        source={image}
-        style={{ flex: 1, width: '100%', height: '100%' }}
-        imageStyle={styles.imageStyle}
-        resizeMode="cover"
+      <View
+        style={[
+          styles.innerContainer,
+          isSelected && {
+            borderWidth: 2.5,
+            borderColor: colors.primary,
+            padding: 2,
+          },
+        ]}
       >
-        {/* <Image
-          source={images.h}
-          style={[
-            styles.hLogo,
-            {
-              position: 'absolute',
-            },
-          ]}
-          resizeMode="contain"
-        /> */}
-        <Pressable
+        <ImageBackground
+          source={image}
           style={{
-            height: '100%',
+            flex: 1,
             width: '100%',
+            height: '100%',
           }}
-          onPress={(...args: any) => {
-            return (onPress as any)(...args);
-          }}
-        ></Pressable>
-      </ImageBackground>
+          imageStyle={[
+            styles.imageStyle,
+            isSelected && { borderRadius: 15 },
+          ]}
+          resizeMode="cover"
+        >
+          <Pressable
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
+            onPress={(...args: any) => {
+              return (onPress as any)(...args);
+            }}
+          />
+        </ImageBackground>
+      </View>
     </Animated.View>
   );
 };
@@ -89,12 +99,12 @@ const styles = StyleSheet.create({
   card: {
     flex: 1,
     maxWidth: (SCREEN_WIDTH - 28) / 3 - 12,
-    // Consistent width for 3 columns
     aspectRatio: 0.75,
-    // Tall cards as per design
-    justifyContent: 'center',
-    alignItems: 'center',
     margin: 6,
+    borderRadius: 18,
+  },
+  innerContainer: {
+    flex: 1,
     borderRadius: 18,
     overflow: 'hidden',
   },

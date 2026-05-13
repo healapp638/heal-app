@@ -63,29 +63,31 @@ const HomeHeader = ({
         </SolidText>
       </View>
       {showStreak && (
-        <Pressable
-          onPress={(...args: any) => {
-            triggerHaptic('impactHeavy');
-            return (onStreakPress as any)(...args);
-          }}
-          style={styles.headerRight}
-        >
+        <View style={styles.headerRight}>
           <View style={styles.streakBox}>
-            <Image
-              source={images.streak}
-              style={styles.icon}
-              resizeMode="contain"
-            />
-            <SolidText
-              style={[
-                styles.streakText,
-                {
-                  color: colors.brown,
-                },
-              ]}
+            <TouchableOpacity
+              style={{ flexDirection: 'row', alignItems: 'center' }}
+              onPress={(...args: any) => {
+                triggerHaptic('impactHeavy');
+                return (onStreakPress as any)(...args);
+              }}
             >
-              {streakCount}
-            </SolidText>
+              <Image
+                source={images.streak}
+                style={styles.icon}
+                resizeMode="contain"
+              />
+              <SolidText
+                style={[
+                  styles.streakText,
+                  {
+                    color: colors.brown,
+                  },
+                ]}
+              >
+                {streakCount}
+              </SolidText>
+            </TouchableOpacity>
             <View style={styles.divider} />
             <TouchableOpacity
               onPress={(...args: any) => {
@@ -100,7 +102,7 @@ const HomeHeader = ({
               />
             </TouchableOpacity>
           </View>
-        </Pressable>
+        </View>
       )}
       {showCrown && (
         <Pressable

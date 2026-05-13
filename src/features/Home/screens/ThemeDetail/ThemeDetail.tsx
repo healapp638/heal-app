@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   FlatList,
@@ -16,10 +16,11 @@ import style from './style';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import useInfiniteGetApi from '../../../../hooks/useInfiniteGetApi';
 import usePostApi from '../../../../hooks/usePostApi';
+import { useQueryClient } from '@tanstack/react-query';
 import { endpoints } from '../../../../api/Services/endpoints';
 import GridThemeCard from '../../../../components/GridThemeCard';
 import getEnvVars from '../../../../../env';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ThemeDetail = () => {
@@ -32,10 +33,22 @@ const ThemeDetail = () => {
   const [toastMsg, setToastMsg] = useState('');
   const { mutate: postApi, isLoading: isAddingTheme } = usePostApi();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
+  const user = useSelector((state: any) => state.userData.user);
   // Title and category ID passed from navigation params
   const { title, categoryTheme_id } = route.params || {
     title: 'Abstract',
   };
+  const [optimisticThemeId, setOptimisticThemeId] = useState<string | null>(
+    user?.homeTheme?._id || user?.homeTheme || null,
+  );
+
+  useEffect(() => {
+    const themeId = user?.homeTheme?._id || user?.homeTheme;
+    if (themeId) {
+      setOptimisticThemeId(themeId);
+    }
+  }, [user?.homeTheme]);
   const {
     data: themeDataApi,
     fetchNextPage,
@@ -52,34 +65,71 @@ const ThemeDetail = () => {
   );
   const themeItems =
     themeDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
-  const renderItem = ({ item }: { item: any }) => (
-    <GridThemeCard
-      image={{
-        uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
-      }}
-      onPress={() => {
-        triggerHaptic('impactHeavy');
-        postApi(
-          {
-            endpoint: endpoints.add_user_theme,
-            data: {
-              homeTheme_id: item._id,
+  const renderItem = ({ item }: { item: any }) => {
+    return (
+      <GridThemeCard
+        image={{
+          uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+        }}
+        isSelected={
+          optimisticThemeId
+            ? optimisticThemeId === item._id
+            : item.isSelected ||
+              user?.homeTheme === item._id ||
+              user?.homeTheme?._id === item._id
+        }
+        onPress={() => {
+          console.log('item', item);
+          setOptimisticThemeId(item._id);
+          // Update ALL theme listing caches instantly
+          const updateCache = (oldData: any) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              pages: oldData.pages.map((page: any) => ({
+                ...page,
+                data: {
+                  ...page.data,
+                  result: page.data.result.map((theme: any) => ({
+                    ...theme,
+                    isSelected: theme._id === item._id,
+                  })),
+                },
+              })),
+            };
+          };
+
+          queryClient.setQueriesData(
+            { queryKey: ['getHomeThemeListing'] },
+            updateCache,
+          );
+          queryClient.setQueriesData(
+            { queryKey: ['getHomeThemeListingByCategory'] },
+            updateCache,
+          );
+          triggerHaptic('impactHeavy');
+          postApi(
+            {
+              endpoint: endpoints.add_user_theme,
+              data: {
+                homeTheme_id: item._id,
+              },
             },
-          },
-          {
-            onSuccess: () => {
-              dispatch(getUserDetail());
-              setToastMsg('Theme selected successfully!');
+            {
+              onSuccess: () => {
+                dispatch(getUserDetail());
+                setToastMsg('Theme selected successfully!');
+              },
+              onError: (error: any) => {
+                setToastMsg(error.message);
+              },
             },
-            onError: (error: any) => {
-              setToastMsg(error.message);
-            },
-          },
-        );
-        // setShowCreditsModal(true);
-      }}
-    />
-  );
+          );
+          // setShowCreditsModal(true);
+        }}
+      />
+    );
+  };
   return (
     <SolidView
       view={
@@ -103,6 +153,7 @@ const ThemeDetail = () => {
           ) : (
             <FlatList
               data={themeItems}
+              extraData={optimisticThemeId}
               renderItem={renderItem}
               keyExtractor={item => item._id}
               numColumns={3}
@@ -159,22 +210,6 @@ const ThemeDetail = () => {
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />
-
-          {isAddingTheme && (
-            <View
-              style={[
-                StyleSheet.absoluteFillObject,
-                {
-                  backgroundColor: 'rgba(0,0,0,0.3)',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  zIndex: 1000,
-                },
-              ]}
-            >
-              <ActivityIndicator size="large" color={colors.primary} />
-            </View>
-          )}
 
           {toastMsg !== '' && (
             <Toast message={toastMsg} onClose={() => setToastMsg('')} />

@@ -69,8 +69,9 @@ const AccessScreen = () => {
               {Platform.OS === 'ios' && (
                 <TouchableOpacity
                   style={styles.socialBtn}
-                  onPress={() => {
+                  onPress={(...args: any) => {
                     triggerHaptic('impactHeavy');
+                    return (appleLogin as any)(...args);
                   }}
                   disabled={isSocialPending}
                 >

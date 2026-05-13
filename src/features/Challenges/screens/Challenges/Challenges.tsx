@@ -9,12 +9,22 @@ import ProgressTrackerCard from '../../../../components/ProgressTrackerCard';
 import DailyWeeklyToggle from '../../../../components/DailyWeeklyToggle';
 import ChallengeList from '../../../../components/ChallengeList';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
+import OnboardingModal from '../../../../modals/OnboardingModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { useSelector } from 'react-redux';
 const Challenges = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const [activeTab, setActiveTab] = useState<'daily' | 'weekly'>('daily');
   const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const user = useSelector((state: any) => state.userData.user);
+  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
+
+  React.useEffect(() => {
+    if (user && user.isOnBoardingComplete === false) {
+      setShowOnboardingModal(true);
+    }
+  }, [user]);
 
   // Unified data array passed to the list component
   const allChallenges: any[] = [
@@ -138,6 +148,14 @@ const Challenges = () => {
           <GetCreditsModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
+          />
+          <OnboardingModal
+            visible={showOnboardingModal}
+            onClose={() => setShowOnboardingModal(false)}
+            onBack={() => {
+              setShowOnboardingModal(false);
+              navigation.navigate(AppRoutes.Home as never);
+            }}
           />
         </View>
       }

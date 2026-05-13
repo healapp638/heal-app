@@ -4,7 +4,7 @@ import AppFonts from '../../../../constants/fonts';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-const style = (colors: any) =>
+const style = (colors: any, insets: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -12,11 +12,12 @@ const style = (colors: any) =>
     },
     headerWrapper: {
       position: 'absolute',
-
+      top: 0,
       left: 0,
       right: 0,
       zIndex: 10,
       paddingHorizontal: 20,
+      paddingTop: insets.top > 0 ? insets.top : 20,
     },
     slideContainer: {
       height: SCREEN_HEIGHT,
@@ -44,11 +45,19 @@ const style = (colors: any) =>
       textAlign: 'center',
       lineHeight: 36,
       includeFontPadding: false,
-      marginTop: Platform.OS == 'ios' ? -80 : -10,
+      marginTop: Platform.OS == 'ios' ? -80 : -100, // Moved UP for better balance
+    },
+    quoteTextCentered: {
+      fontSize: AppUtils.fontSize(24),
+      fontFamily: AppFonts.reco,
+      color: '#3A2110',
+      textAlign: 'center',
+      lineHeight: 36,
+      includeFontPadding: false,
     },
     footerContainer: {
       position: 'absolute',
-      bottom: Platform.OS === 'ios' ? 160 : 100,
+      bottom: 180, // Consistent positioning relative to bottom safe area
       width: '100%',
       alignItems: 'center',
     },
@@ -71,18 +80,17 @@ const style = (colors: any) =>
     },
     themeBtn: {
       position: 'absolute',
-      bottom: Platform.OS === 'ios' ? 40 : 30,
+      bottom: 40,
       right: 25,
     },
     themeBtn2: {
       position: 'absolute',
-      bottom: Platform.OS === 'ios' ? 40 : 30,
-
+      bottom: 40,
       left: 25,
     },
     themeIcon: {
-      width: Platform.OS == 'ios' ? 56 : 50,
-      height: Platform.OS == 'ios' ? 56 : 50,
+      width: 56,
+      height: 56,
     },
     centerHeartContainer: {
       position: 'absolute',
@@ -95,6 +103,12 @@ const style = (colors: any) =>
     centerHeart: {
       width: 100,
       height: 100,
+    },
+    hiddenCaptureContainer: {
+      position: 'absolute',
+      left: -SCREEN_HEIGHT * 2, // Way off screen
+      width: SCREEN_HEIGHT * (9 / 16), // Use a standard aspect ratio or SCREEN_WIDTH
+      height: SCREEN_HEIGHT,
     },
   });
 
