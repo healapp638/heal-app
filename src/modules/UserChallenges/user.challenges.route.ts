@@ -8,10 +8,13 @@ const router = express.Router()
 
 
 router.get('/list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { challenge_type } = req.query
     const controller = new UserChallengesController(req, res)
-    const result: ApiResponse = await controller.list();
+    const result: ApiResponse = await controller.list(challenge_type);
     return showOutput(res, result, result.code)
 });
+
+
 
 router.post('/complete_challenges', verifyTokenUser, async (req: Request | any, res: Response) => {
     const { challenge_type, challenge_id } = req.body;

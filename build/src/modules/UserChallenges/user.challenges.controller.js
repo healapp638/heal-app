@@ -40,10 +40,10 @@ let UserChallengesController = class UserChallengesController extends tsoa_1.Con
     /**
      * List Challenges
      */
-    list() {
+    list(challenge_type) {
         return __awaiter(this, void 0, void 0, function* () {
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_challenges_handler_1.default.list);
-            return wrappedFunc(this.userId); // Invoking the wrapped function 
+            return wrappedFunc(this.userId, challenge_type); // Invoking the wrapped function 
         });
     }
     /**
@@ -63,8 +63,9 @@ let UserChallengesController = class UserChallengesController extends tsoa_1.Con
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("/list"),
+    __param(0, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserChallengesController.prototype, "list", null);
 __decorate([

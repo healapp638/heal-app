@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Security, Get, Post,  Body } from 'tsoa'
+import { Route, Controller, Tags, Security, Get, Post,  Body, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserChallenges/user.challenges.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
@@ -26,9 +26,9 @@ export default class UserChallengesController extends Controller {
      */
     @Security('Bearer')
     @Get("/list")
-    public async list(): Promise<ApiResponse> {
+    public async list(@Query() challenge_type: string): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.list);
-        return wrappedFunc(this.userId); // Invoking the wrapped function 
+        return wrappedFunc(this.userId, challenge_type); // Invoking the wrapped function 
     }
 
     /**

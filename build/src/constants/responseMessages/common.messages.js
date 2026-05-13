@@ -3,6 +3,7 @@ const common_messages = {
     parameter_store_post_success: "Parameter Stored to AWS Successfully",
     challenges_generated_successfully: "Challenges generated successfully",
     challenges_fetched_successfully: "Challenges fetched successfully",
+    invalid_challenge_type: "Invalid challenge type",
     parameter_store_post_error: "Error while Parameter Store to AWS",
     parameter_data_found: "Here is a parameter data",
     parameter_data_not_found: "Invalid Parameter Name",

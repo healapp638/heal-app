@@ -1093,7 +1093,16 @@
 						"Bearer": []
 					}
 				],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "challenge_type",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/user/challenges/complete_challenges": {
