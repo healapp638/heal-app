@@ -47,6 +47,19 @@ let UserChallengesController = class UserChallengesController extends tsoa_1.Con
         });
     }
     /**
+     * Challenge Details
+     */
+    challengeDetails(challenge_type, challenge_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_challenge_validation_1.validateChallengesDetails)({ challenge_type, challenge_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, {}, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_challenges_handler_1.default.challengeDetails);
+            return wrappedFunc(this.userId, challenge_type, challenge_id); // Invoking the wrapped function 
+        });
+    }
+    /**
      * Complete Challenges
      */
     completeChallenges(request) {
@@ -68,6 +81,15 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserChallengesController.prototype, "list", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/challenge_details"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], UserChallengesController.prototype, "challengeDetails", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Post)("/complete_challenges"),

@@ -95,6 +95,101 @@ const UserChallengesHandler = {
         }
         return (0, response_util_1.showResponse)(false, (_c = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _c === void 0 ? void 0 : _c.invalid_challenge_type, {}, statusCodes_1.default.API_ERROR);
     }),
+    challengeDetails: (userId, challenge_type, challenge_id) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b;
+        const userDetails = yield user_auth_model_1.default.findOne({ _id: userId });
+        if (!userDetails) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'user_not_found'), {}, statusCodes_1.default.API_ERROR);
+        }
+        const user_language = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en';
+        if (challenge_type == 'daily') {
+            const dailyChallenge = yield user_daily_challenges_model_1.default.aggregate([
+                {
+                    $match: {
+                        _id: (0, common_helper_1.convertToObjectId)(challenge_id),
+                        status: workflow_constant_1.USER_STATUS.ACTIVE,
+                        user_id: (0, common_helper_1.convertToObjectId)(userId),
+                        createdAt: {
+                            $gte: (0, moment_1.default)().startOf('day').toDate(),
+                            $lte: (0, moment_1.default)().endOf('day').toDate()
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        concept_title: `$concept_title.${user_language}`,
+                        concept_description: `$concept_description.${user_language}`,
+                        about_challenge: `$about_challenge.${user_language}`,
+                        exercises: {
+                            $map: {
+                                input: "$exercises",
+                                as: "exercise",
+                                in: {
+                                    _id: "$$exercise._id",
+                                    step_number: "$$exercise.step_number",
+                                    title: `$$exercise.title.${user_language}`
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        concept_title: 1,
+                        concept_description: 1,
+                        about_challenge: 1,
+                        points: 1,
+                        exercises: 1
+                    }
+                }
+            ]);
+            return (0, response_util_1.showResponse)(true, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.challenges_fetched_successfully, dailyChallenge, statusCodes_1.default.SUCCESS);
+        }
+        if (challenge_type == 'weekly') {
+            const weeklyChallenge = yield user_weekly_challenges_model_1.default.aggregate([
+                {
+                    $match: {
+                        _id: (0, common_helper_1.convertToObjectId)(challenge_id),
+                        status: workflow_constant_1.USER_STATUS.ACTIVE,
+                        user_id: (0, common_helper_1.convertToObjectId)(userId),
+                        createdAt: {
+                            $gte: (0, moment_1.default)().startOf('day').toDate(),
+                            $lte: (0, moment_1.default)().endOf('day').toDate()
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        concept_title: `$concept_title.${user_language}`,
+                        concept_description: `$concept_description.${user_language}`,
+                        about_challenge: `$about_challenge.${user_language}`,
+                        exercises: {
+                            $map: {
+                                input: "$exercises",
+                                as: "exercise",
+                                in: {
+                                    _id: "$$exercise._id",
+                                    step_number: "$$exercise.step_number",
+                                    title: `$$exercise.title.${user_language}`
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    $project: {
+                        concept_title: 1,
+                        concept_description: 1,
+                        about_challenge: 1,
+                        points: 1,
+                        exercises: 1
+                    }
+                }
+            ]);
+            return (0, response_util_1.showResponse)(true, (_b = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _b === void 0 ? void 0 : _b.challenges_fetched_successfully, weeklyChallenge, statusCodes_1.default.SUCCESS);
+        }
+        return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'invalid_challenge_type'), {}, statusCodes_1.default.API_ERROR);
+    }),
     completeChallenges: (userId, challenge_type, challenge_id) => __awaiter(void 0, void 0, void 0, function* () {
         const userDetails = yield user_auth_model_1.default.findOne({ _id: userId });
         if (!userDetails) {

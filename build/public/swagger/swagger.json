@@ -1105,6 +1105,50 @@
 				]
 			}
 		},
+		"/user/challenges/challenge_details": {
+			"get": {
+				"operationId": "ChallengeDetails",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Challenge Details",
+				"tags": [
+					"User Challenges Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "challenge_type",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "challenge_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/user/challenges/complete_challenges": {
 			"post": {
 				"operationId": "CompleteChallenges",

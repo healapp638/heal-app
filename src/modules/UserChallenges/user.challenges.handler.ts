@@ -86,6 +86,103 @@ const UserChallengesHandler = {
         return showResponse(false, responseMessage?.common?.invalid_challenge_type, {}, statusCodes.API_ERROR)
     },
 
+    challengeDetails: async (userId: string, challenge_type: string, challenge_id: string): Promise<ApiResponse> => {
+        const userDetails: any = await userAuthModel.findOne({ _id: userId })
+        if (!userDetails) {
+            return showResponse(false, getMessage(userDetails?.language || 'en', 'user_not_found'), {}, statusCodes.API_ERROR)
+        }
+        const user_language = userDetails?.language || 'en';
+        if (challenge_type == 'daily') {
+            const dailyChallenge = await userDailyChallengesModel.aggregate([
+                {
+                    $match: {
+                        _id: convertToObjectId(challenge_id),
+                        status: USER_STATUS.ACTIVE,
+                        user_id: convertToObjectId(userId),
+                        createdAt: {
+                            $gte: moment().startOf('day').toDate(),
+                            $lte: moment().endOf('day').toDate()
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        concept_title: `$concept_title.${user_language}`,
+                        concept_description: `$concept_description.${user_language}`,
+                        about_challenge: `$about_challenge.${user_language}`,
+                        exercises: {
+                            $map: {
+                                input: "$exercises",
+                                as: "exercise",
+                                in: {
+                                    _id: "$$exercise._id",
+                                    step_number: "$$exercise.step_number",
+                                    title: `$$exercise.title.${user_language}`
+                                }
+                            }
+                        }
+
+                    }
+                },
+                {
+                    $project: {
+                        concept_title: 1,
+                        concept_description: 1,
+                        about_challenge: 1,
+                        points: 1,
+                        exercises: 1
+                    }
+                }
+            ])
+            return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, dailyChallenge, statusCodes.SUCCESS)
+        }
+        if (challenge_type == 'weekly') {
+            const weeklyChallenge = await userWeeklyChallengesModel.aggregate([
+                {
+                    $match: {
+                        _id: convertToObjectId(challenge_id),
+                        status: USER_STATUS.ACTIVE,
+                        user_id: convertToObjectId(userId),
+                        createdAt: {
+                            $gte: moment().startOf('day').toDate(),
+                            $lte: moment().endOf('day').toDate()
+                        }
+                    }
+                },
+                {
+                    $addFields: {
+                        concept_title: `$concept_title.${user_language}`,
+                        concept_description: `$concept_description.${user_language}`,
+                        about_challenge: `$about_challenge.${user_language}`,
+                        exercises: {
+                            $map: {
+                                input: "$exercises",
+                                as: "exercise",
+                                in: {
+                                    _id: "$$exercise._id",
+                                    step_number: "$$exercise.step_number",
+                                    title: `$$exercise.title.${user_language}`
+                                }
+                            }
+                        }
+
+                    }
+                },
+                {
+                    $project: {
+                        concept_title: 1,
+                        concept_description: 1,
+                        about_challenge: 1,
+                        points: 1,
+                        exercises: 1
+                    }
+                }
+            ])
+            return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, weeklyChallenge, statusCodes.SUCCESS)
+        }
+        return showResponse(false, getMessage(userDetails?.language || 'en', 'invalid_challenge_type'), {}, statusCodes.API_ERROR)
+    },
+
     completeChallenges: async (userId: string, challenge_type: string, challenge_id: string): Promise<ApiResponse> => {
         const userDetails: any = await userAuthModel.findOne({ _id: userId })
         if (!userDetails) {

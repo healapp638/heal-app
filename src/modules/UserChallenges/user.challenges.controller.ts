@@ -5,7 +5,7 @@ import handler from '../UserChallenges/user.challenges.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes';
-import { validateCompleteChallenge } from './user.challenge.validation';
+import { validateChallengesDetails, validateCompleteChallenge } from './user.challenge.validation';
 
 @Tags('User Challenges Routes')
 @Route('/user/challenges')
@@ -29,6 +29,20 @@ export default class UserChallengesController extends Controller {
     public async list(@Query() challenge_type: string): Promise<ApiResponse> {
         const wrappedFunc = tryCatchWrapper(handler.list);
         return wrappedFunc(this.userId, challenge_type); // Invoking the wrapped function 
+    }
+
+    /**
+     * Challenge Details
+     */
+    @Security('Bearer')
+    @Get("/challenge_details")
+    public async challengeDetails(@Query() challenge_type: string, @Query() challenge_id: string): Promise<ApiResponse> {
+        const validate = validateChallengesDetails({challenge_type, challenge_id})
+        if (validate.error) {
+            return showResponse(false, validate.error.message, {}, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.challengeDetails);
+        return wrappedFunc(this.userId, challenge_type, challenge_id); // Invoking the wrapped function 
     }
 
     /**
