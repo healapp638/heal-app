@@ -5,7 +5,7 @@ import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { Form, Modal, Upload, message } from "antd";
+import { Form, Modal, Upload, message, Spin } from "antd";
 import { FiPlus } from "react-icons/fi"
 import AppButton from "../buttons/AppButton";
 import { RxCross2 } from "react-icons/rx";
@@ -115,13 +115,19 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
         );
     }
 
-    const { mutateAsync: addMediaFile } = useAppMutate({
+    const { mutateAsync: addMediaFile, isPending: fileuploadLoading } = useAppMutate({
         mutationKey: [MUTATION_KEYS.UPLOAD_FILE],
         showSuccessToast: false,
         showErrorToast: true,
         onSuccess(data: any) {
             setFileUrl(data[0])
             form.setFieldValue("imgUrl", data[0])
+        },
+        onError() {
+            setFileList([]);
+            setFileUrl("");
+            form.setFieldValue("imgUrl", "");
+            fileListRef.current = [];
         },
     });
 
@@ -183,18 +189,20 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
     };
 
     const handleChange = ({ fileList: newFileList }: any) => {
-        setFileList(newFileList);
-        fileListRef.current = newFileList;
-        if (newFileList.length === 0) {
+        // Filter out failed uploads (status 'error')
+        const validFiles = newFileList.filter((file: any) => file.status !== 'error');
+        setFileList(validFiles);
+        fileListRef.current = validFiles;
+        if (validFiles.length === 0) {
             setFileUrl("");
             form.setFieldValue("imgUrl", "");
         }
     };
 
     const uploadButton = (
-        <div className="flex flex-col items-center justify-center text-gray-500">
-            <FiPlus size={24} />
-            <div className="mt-2 text-sm">Upload</div>
+        <div className="flex flex-col items-center justify-center text-black!">
+            {fileuploadLoading ? <Spin /> : <FiPlus size={24} />}
+            <div className="mt-2 text-black! text-sm">{fileuploadLoading ? "Uploading..." : "Upload"}</div>
         </div>
     );
 

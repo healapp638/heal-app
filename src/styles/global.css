@@ -234,3 +234,7 @@
 .ant-form-item-explain {
   text-align: center;
 }
+
+.ant-upload-list-item-thumbnail{
+   @apply text-black! 
+}

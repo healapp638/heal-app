@@ -17,7 +17,7 @@ interface AddSubModuleModalProps {
     onClose?: () => void;
     subModuleId?: string;
     isUpdate?: boolean;
-    selectedLanguage?:string;
+    selectedLanguage?: string;
     isView?: boolean;
 }
 
@@ -41,11 +41,11 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
     }
 
     const { data: SubModuleDetail, isPending: isLoadingSubModuleDetail } = useAppQuery<SubModuleDetail>({
-        queryKey: [MUTATION_KEYS.SUBMODULE_DETAIL, subModuleId,selectedLanguage || "en"],
+        queryKey: [MUTATION_KEYS.SUBMODULE_DETAIL, subModuleId, selectedLanguage || "en"],
         url: `${ENDPOINTS.PRIVATE.SUBMODULE_DETAIL}`,
         params: {
             subModuleId: subModuleId,
-            lang: selectedLanguage ||"en"
+            lang: selectedLanguage || "en"
         },
         options: {
             enabled: openModal && !!subModuleId,
@@ -162,6 +162,10 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
                         rules={[
                             { required: true, message: 'Please enter sub module title' },
                         ]}
+                        getValueFromEvent={(e) => {
+                            const val = e.target.value;
+                            return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                        }}
                     >
                         <Input
                             readOnly={isView}

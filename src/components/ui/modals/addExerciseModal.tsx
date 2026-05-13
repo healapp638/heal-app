@@ -98,7 +98,7 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
                     method: "POST",
                     body: {
                         exercise_id: exerciseId,
-                        lang: selectedLanguage||"en",
+                        lang: selectedLanguage || "en",
                         ...values
                     },
                 });
@@ -115,11 +115,11 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
     }
 
     const { data: exerciseDetail, isLoading: isLoadingExerciseDetail } = useAppQuery<ExerciseResult>({
-        queryKey: [MUTATION_KEYS.EXERCISE_DETAIL, exerciseId,selectedLanguage||"en"],
+        queryKey: [MUTATION_KEYS.EXERCISE_DETAIL, exerciseId, selectedLanguage || "en"],
         url: ENDPOINTS.PRIVATE.EXERCISE_DETAIL,
         params: {
             exercise_id: exerciseId,
-            lang: selectedLanguage||"en"
+            lang: selectedLanguage || "en"
         },
         options: {
             staleTime: Infinity,
@@ -161,6 +161,10 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
                     <Form.Item
                         name="title"
                         label={<span className='text-black font-semibold text-md'>Exercise Title :</span>}
+                        getValueFromEvent={(e) => {
+                            const val = e.target.value;
+                            return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                        }}
                     >
                         <Input
                             readOnly={isView}

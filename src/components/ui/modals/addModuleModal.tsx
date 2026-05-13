@@ -18,7 +18,7 @@ interface AddModuleModalProps {
     isView?: boolean;
     isUpdate?: boolean;
     moduleId?: string;
-    selectedLanguage?:string;
+    selectedLanguage?: string;
     onClose?: () => void;
 }
 
@@ -26,7 +26,7 @@ interface ModuleDetail {
     title: string;
 }
 
-const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, moduleId, onClose , selectedLanguage }: AddModuleModalProps) => {
+const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, moduleId, onClose, selectedLanguage }: AddModuleModalProps) => {
 
     const [form] = Form.useForm();
     const handleCancel = () => {
@@ -35,11 +35,11 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
         if (onClose) onClose();
     }
     const { data: ModuleDetail, isPending: isLoadingModuleDetail } = useAppQuery<ModuleDetail>({
-        queryKey: [MUTATION_KEYS.DETAIL_MODULE, moduleId,selectedLanguage || "en"],
+        queryKey: [MUTATION_KEYS.DETAIL_MODULE, moduleId, selectedLanguage || "en"],
         url: `${ENDPOINTS.PRIVATE.DETAIL_MODULE}`,
         params: {
             moduleId: moduleId,
-            lang: selectedLanguage||"en"
+            lang: selectedLanguage || "en"
         },
         options: {
             staleTime: Infinity,
@@ -156,6 +156,10 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
                         rules={[
                             { required: true, message: 'Please enter module title' },
                         ]}
+                        getValueFromEvent={(e) => {
+                            const val = e.target.value;
+                            return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                        }}
                     >
                         <Input
                             readOnly={isView}

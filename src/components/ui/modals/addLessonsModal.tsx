@@ -18,7 +18,7 @@ interface AddLessonsModalProps {
     isUpdate?: boolean;
     isView?: boolean;
     lessonID?: string;
-    selectedLanguage?:string;
+    selectedLanguage?: string;
 }
 
 interface LessonDetail {
@@ -37,7 +37,7 @@ interface AddLessonsFormValues {
     reflection: string;
 }
 
-const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId, onClose, isUpdate, isView, lessonID,selectedLanguage }: AddLessonsModalProps) => {
+const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId, onClose, isUpdate, isView, lessonID, selectedLanguage }: AddLessonsModalProps) => {
 
 
     const [form] = Form.useForm<AddLessonsFormValues>();
@@ -47,13 +47,13 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
         if (onClose) onClose();
     }
 
-    
+
     const { data: lessonDetail, isLoading: isLoadingLessonDetail } = useAppQuery<LessonDetail>({
-        queryKey: [MUTATION_KEYS.LESSON_DETAIL, lessonID,selectedLanguage||"en"],
+        queryKey: [MUTATION_KEYS.LESSON_DETAIL, lessonID, selectedLanguage || "en"],
         url: `${ENDPOINTS.PRIVATE.LESSON_DETAIL}`,
         params: {
             exercise_details_id: lessonID,
-            lang: selectedLanguage||"en"
+            lang: selectedLanguage || "en"
         },
         options: {
             staleTime: Infinity,
@@ -125,7 +125,7 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                     url: ENDPOINTS.PRIVATE.LESSON_UPDATE,
                     method: "POST",
                     body: {
-                        lang: selectedLanguage||"en",
+                        lang: selectedLanguage || "en",
                         exercise_details_id: lessonID,
                         ...values,
                     },
@@ -171,6 +171,10 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                         rules={[
                             { required: true, message: 'Please enter reading title' },
                         ]}
+                        getValueFromEvent={(e) => {
+                            const val = e.target.value;
+                            return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                        }}
                     >
                         <Input
                             readOnly={isView}
@@ -199,6 +203,10 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                         rules={[
                             { required: true, message: 'Please enter concept title' },
                         ]}
+                        getValueFromEvent={(e) => {
+                            const val = e.target.value;
+                            return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                        }}
                     >
                         <Input
                             readOnly={isView}
@@ -226,6 +234,10 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                         rules={[
                             { required: true, message: 'Please enter reflection' },
                         ]}
+                        getValueFromEvent={(e) => {
+                                const val = e.target.value;
+                                return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                            }}
                     >
                         <Input.TextArea
                             readOnly={isView}

@@ -18,7 +18,7 @@ interface AddPhaseProps {
     onClose?: () => void;
     isUpdate?: boolean;
     isView?: boolean;
-    selectedLanguage?:string;
+    selectedLanguage?: string;
     phaseID?: string;
 }
 
@@ -31,7 +31,7 @@ interface PhaseDetail {
     __v: number;
 }
 
-const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, onClose, isUpdate, isView, phaseID ,selectedLanguage}: AddPhaseProps) => {
+const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, onClose, isUpdate, isView, phaseID, selectedLanguage }: AddPhaseProps) => {
 
 
     const [form] = Form.useForm();
@@ -46,7 +46,7 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
         url: `${ENDPOINTS.PRIVATE.PHASE_DETAIL}`,
         params: {
             phaseId: phaseID,
-            lang: selectedLanguage||"en"
+            lang: selectedLanguage || "en"
         },
         options: {
             staleTime: Infinity,
@@ -119,7 +119,7 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
                         phaseId: phaseID,
                         title: values.title,
                         points: values.points,
-                        lang: selectedLanguage||"en"
+                        lang: selectedLanguage || "en"
                     },
                 });
             },
@@ -164,6 +164,10 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
                         rules={[
                             { required: true, message: 'Please enter phase title' },
                         ]}
+                        getValueFromEvent={(e) => {
+                            const val = e.target.value;
+                            return val ? val.charAt(0).toUpperCase() + val.slice(1) : val;
+                        }}
                     >
                         <Input
                             readOnly={isView}
