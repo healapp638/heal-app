@@ -137,6 +137,17 @@ const homeThemeHandler = {
         try {
             const { filter = "all", // all | new | most_popular | recent
             categoryTheme_id = "", page = 1, limit = 10, } = data;
+            // ==================================================
+            // LATEST SELECTED THEME
+            // ==================================================
+            const latestRecentTheme = yield user_recentHomeTheme_model_1.default
+                .findOne({
+                user_id: (0, common_helper_1.convertToObjectId)(user_id),
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+            })
+                .sort({ createdAt: -1 })
+                .lean();
+            const selectedThemeId = (latestRecentTheme === null || latestRecentTheme === void 0 ? void 0 : latestRecentTheme.homeTheme_id) || null;
             // ================= MATCH =================
             const matchQuery = {
                 status: workflow_constant_1.USER_STATUS.ACTIVE,
@@ -262,6 +273,18 @@ const homeThemeHandler = {
                     imgUrl: 1,
                     categoryTheme_id: 1,
                     createdAt: 1,
+                    isSelected: {
+                        $cond: [
+                            {
+                                $eq: [
+                                    "$_id",
+                                    selectedThemeId,
+                                ],
+                            },
+                            true,
+                            false,
+                        ],
+                    },
                 },
             });
             // ==================================================

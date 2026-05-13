@@ -163,6 +163,22 @@ const homeThemeHandler = {
             page = 1,
             limit = 10,
         } = data;
+
+        // ==================================================
+        // LATEST SELECTED THEME
+        // ==================================================
+
+        const latestRecentTheme =
+            await userRecentHomeThemeModel
+                .findOne({
+                    user_id: convertToObjectId(user_id),
+                    status: USER_STATUS.ACTIVE,
+                })
+                .sort({ createdAt: -1 })
+                .lean();
+
+        const selectedThemeId =
+            latestRecentTheme?.homeTheme_id || null;
         // ================= MATCH =================
         const matchQuery: any = {
             status: USER_STATUS.ACTIVE,
@@ -311,6 +327,18 @@ const homeThemeHandler = {
                 imgUrl: 1,
                 categoryTheme_id: 1,
                 createdAt: 1,
+                isSelected: {
+                    $cond: [
+                        {
+                            $eq: [
+                                "$_id",
+                                selectedThemeId,
+                            ],
+                        },
+                        true,
+                        false,
+                    ],
+                },
             },
         });
 

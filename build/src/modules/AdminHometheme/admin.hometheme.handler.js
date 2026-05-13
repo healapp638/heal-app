@@ -20,6 +20,7 @@ const langauge_translate_helper_1 = require("../../helpers/langauge.translate.he
 const common_helper_1 = require("../../helpers/common.helper");
 const admin_homethemeCategory_model_1 = __importDefault(require("./admin.homethemeCategory.model"));
 const admin_hometheme_model_1 = __importDefault(require("./admin.hometheme.model"));
+const user_recentHomeTheme_model_1 = __importDefault(require("../UserHomeTheme/user.recentHomeTheme.model"));
 const CommonHandler = {
     createCategoryTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, imgUrl } = data;
@@ -51,11 +52,34 @@ const CommonHandler = {
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
+    // deleteCategoryTheme: async (data: any): Promise<ApiResponse> => {
+    //     const { themeCategoryId, status } = data
+    //     const deleteTheme = await adminHomethemeCategoryModel.findOneAndUpdate({ _id: themeCategoryId }, { $set: { status: status } }, { new: true })
+    //     if (!deleteTheme) {
+    //         return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
+    //     }
+    //     return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
+    // },
     deleteCategoryTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { themeCategoryId, status } = data;
-        const deleteTheme = yield admin_homethemeCategory_model_1.default.findOneAndUpdate({ _id: themeCategoryId }, { $set: { status: status } }, { new: true });
-        if (!deleteTheme) {
+        console.log(themeCategoryId, "themeCategoryId");
+        // 1. Delete Category
+        const deleteCategory = yield admin_homethemeCategory_model_1.default.findOneAndUpdate({ _id: (0, common_helper_1.convertToObjectId)(themeCategoryId) }, { $set: { status } }, { new: true });
+        console.log(deleteCategory, "deleteCategory");
+        if (!deleteCategory) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
+        }
+        // 2. Find all themes under this category
+        const themes = yield admin_hometheme_model_1.default.find({
+            categoryTheme_id: (0, common_helper_1.convertToObjectId)(themeCategoryId)
+        }).select('_id');
+        const themeIds = themes.map((item) => item._id);
+        // 3. Soft delete all themes
+        yield admin_hometheme_model_1.default.updateMany({ categoryTheme_id: (0, common_helper_1.convertToObjectId)(themeCategoryId) }, { $set: { status } });
+        console.log(themeIds, "themeIds");
+        // 4. Soft delete all recent theme records
+        if (themeIds.length > 0) {
+            yield user_recentHomeTheme_model_1.default.updateMany({ homeTheme_id: { $in: themeIds } }, { $set: { status } });
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),

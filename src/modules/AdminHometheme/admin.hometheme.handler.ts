@@ -7,6 +7,7 @@ import { translateText } from "../../helpers/langauge.translate.helper";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
 import adminHomethemeCategoryModel from "./admin.homethemeCategory.model";
 import adminHomethemeModel from "./admin.hometheme.model";
+import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.model";
 
 const CommonHandler = {
 
@@ -58,13 +59,64 @@ const CommonHandler = {
         return showResponse(true, responseMessage.common.updated_sucessfully, null, statusCodes.SUCCESS)
     },
 
+    // deleteCategoryTheme: async (data: any): Promise<ApiResponse> => {
+    //     const { themeCategoryId, status } = data
+    //     const deleteTheme = await adminHomethemeCategoryModel.findOneAndUpdate({ _id: themeCategoryId }, { $set: { status: status } }, { new: true })
+    //     if (!deleteTheme) {
+    //         return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
+    //     }
+    //     return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
+    // },
+
     deleteCategoryTheme: async (data: any): Promise<ApiResponse> => {
         const { themeCategoryId, status } = data
-        const deleteTheme = await adminHomethemeCategoryModel.findOneAndUpdate({ _id: themeCategoryId }, { $set: { status: status } }, { new: true })
-        if (!deleteTheme) {
-            return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
+        console.log(themeCategoryId,"themeCategoryId")
+
+        // 1. Delete Category
+        const deleteCategory = await adminHomethemeCategoryModel.findOneAndUpdate(
+            { _id: convertToObjectId(themeCategoryId) },
+            { $set: { status } },
+            { new: true }
+        )
+        console.log(deleteCategory,"deleteCategory")
+
+        if (!deleteCategory) {
+            return showResponse(
+                false,
+                responseMessage.common.delete_failed,
+                null,
+                statusCodes.API_ERROR
+            )
         }
-        return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
+
+        // 2. Find all themes under this category
+        const themes = await adminHomethemeModel.find({
+            categoryTheme_id: convertToObjectId(themeCategoryId)
+        }).select('_id')
+
+        const themeIds = themes.map((item) => item._id)
+
+        // 3. Soft delete all themes
+        await adminHomethemeModel.updateMany(
+            { categoryTheme_id: convertToObjectId(themeCategoryId) },
+            { $set: { status } }
+        )
+        console.log(themeIds,"themeIds")
+
+        // 4. Soft delete all recent theme records
+        if (themeIds.length > 0) {
+            await userRecentHomeThemeModel.updateMany(
+                { homeTheme_id: { $in: themeIds } },
+                { $set: { status } }
+            )
+        }
+
+        return showResponse(
+            true,
+            responseMessage.common.delete_sucess,
+            null,
+            statusCodes.SUCCESS
+        )
     },
 
     listCategoryTheme: async (page: number, limit: number, search: string = '', lang: string = 'en'): Promise<ApiResponse> => {
@@ -147,7 +199,7 @@ const CommonHandler = {
 
     listHomeTheme: async (categoryTheme_id: string, page: number, limit: number): Promise<ApiResponse> => {
         const aggregate = [
-            { $match: { categoryTheme_id:convertToObjectId(categoryTheme_id),status: { $ne: USER_STATUS.DELETED } } },
+            { $match: { categoryTheme_id: convertToObjectId(categoryTheme_id), status: { $ne: USER_STATUS.DELETED } } },
             { $sort: { createdAt: -1 } },
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminHomethemeModel, aggregate, page, limit)
