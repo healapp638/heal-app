@@ -12,6 +12,8 @@ export function middleware(req: NextRequest) {
     ROUTES.WELCOME.WELCOME,
     ROUTES.AUTH.REGISTER,
     ROUTES.AUTH.VERIFY_OTP,
+    ROUTES.AUTH.FORGOT_PASSWORD,
+    ROUTES.AUTH.RESET_PASSWORD,
   ];
 
   // Protected routes
@@ -22,6 +24,20 @@ export function middleware(req: NextRequest) {
     ROUTES.PRIVATE.PRIVACYPOLICY,
     ROUTES.PRIVATE.TERMSANDCONDITION,
     ROUTES.PRIVATE.CONTACTUS,
+    ROUTES.PRIVATE.CATEGORY,
+    ROUTES.PRIVATE.HOMETHEME,
+    ROUTES.PRIVATE.USERS,
+    ROUTES.PRIVATE.USERDETAIL,
+    ROUTES.PRIVATE.ADDEXCEL,
+    ROUTES.PRIVATE.AFFIRMATION,
+    ROUTES.PRIVATE.PROFILE,
+    ROUTES.PRIVATE.ADDMODULE,
+    ROUTES.PRIVATE.SUBMODULE,
+    ROUTES.PRIVATE.ADDPHASES,
+    ROUTES.PRIVATE.ADDLESSONS,
+    ROUTES.PRIVATE.ADDEXERCISE,
+    ROUTES.PRIVATE.ABOUTUS,
+
   ];
 
   // Logged-in user visiting auth pages → redirect home
@@ -46,6 +62,8 @@ export const config = {
     // Auth pages
     '/register',
     '/otp-verify',
+    '/forgot-password',
+    '/reset-password',
 
     // Common pages
     '/terms',
@@ -53,12 +71,26 @@ export const config = {
     '/delete-account',
 
     // Private pages
-    '/home',
-    '/module',
-    '/faq',
-    '/privacypolicy',
-    '/termsandcondition',
-    '/contactus',
+    "/home",
+    "/termsandcondition",
+    "/privacypolicy",
+    "/contactus",
+    "/module",
+    "/module/addModule",
+    "/module/subModule",
+    "/module/addPhase",
+    "/module/addLessons",
+    "/faq",
+    "/aboutus",
+    "/module/addExercise",
+    "/profile",
+    "/users",
+    "/users/userDetail",
+    "/addexcel",
+    "/affirmation",
+    "/category",
+    "/category/theme",
+
   ],
 };
 

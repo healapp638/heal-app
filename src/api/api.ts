@@ -18,6 +18,7 @@ import { store } from '@/redux/store/store';
 import { logout, storeToken } from '@/redux/features/auth/authSlice';
 import { getAccessToken } from '@/redux/store/authToken';
 import logger from '@/utils/logger';
+import { ROUTES } from '@/routerKeys';
 
 /* ======================================================
    CONFIG
@@ -99,48 +100,52 @@ api.interceptors.response.use(
   },
 
   async (error: AxiosError) => {
-    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean; };
+    const originalRequest = error.config as AxiosRequestConfig & {
+      _retry?: boolean;
+    };
 
-    if (error.response?.status === 401 && !originalRequest?._retry) {
-      originalRequest._retry = true;
-      // We don't increment loader here because retrying happens in background optionally,
-      // OR we can increment if we want the loader to stay. 
-      // Let's keep it simple: initial failure decremented it. 
-      // If we retry, we should probably increment it again if we want Visual feedback, 
-      // but usually silent refresh is better. 
-      // However, if we do a new request, we should probably ensure balance.
+    if (error.response?.status === 401) {
+      if (!originalRequest?._retry) {
+        originalRequest._retry = true;
 
-      if (isRefreshing) {
-        return new Promise((resolve, reject) => {
-          refreshQueue.push((token) => {
-            if (!token) {
-              reject(error);
-              return;
-            }
+        if (isRefreshing) {
+          return new Promise((resolve, reject) => {
+            refreshQueue.push((token) => {
+              if (!token) {
+                reject(error);
+                return;
+              }
 
-            originalRequest.headers!.Authorization = `Bearer ${token}`;
-            // When the queue resolves, we are making a new request.
-            // But `api` call will trigger request interceptor? 
-            // Yes, `api(originalRequest)` calls axios instance which triggers request interceptor.
-            resolve(api(originalRequest));
+              originalRequest.headers!.Authorization = `Bearer ${token}`;
+              resolve(api(originalRequest));
+            });
           });
-        });
-      }
+        }
 
-      isRefreshing = true;
+        isRefreshing = true;
 
-      const newToken = await refreshAccessToken();
+        const newToken = await refreshAccessToken();
 
-      isRefreshing = false;
-      resolveQueue(newToken);
+        isRefreshing = false;
+        resolveQueue(newToken);
 
-      if (!newToken) {
+        if (!newToken) {
+          store.dispatch(logout());
+          if (typeof window !== 'undefined') {
+            window.location.href = ROUTES.WELCOME.WELCOME;
+          }
+          return Promise.reject(error);
+        }
+
+        originalRequest.headers!.Authorization = `Bearer ${newToken}`;
+        return api(originalRequest);
+      } else {
+        // Already retried and still 401
         store.dispatch(logout());
-        return Promise.reject(error);
+        if (typeof window !== 'undefined') {
+          window.location.href = ROUTES.WELCOME.WELCOME;
+        }
       }
-
-      originalRequest.headers!.Authorization = `Bearer ${newToken}`;
-      return api(originalRequest);
     }
 
     return Promise.reject(error);
