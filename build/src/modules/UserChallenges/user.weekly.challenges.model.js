@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
+const moment_1 = __importDefault(require("moment"));
 const langSchema = {
     en: { type: String, default: '' },
     zh: { type: String, default: '' },
@@ -58,7 +59,10 @@ const weekly_challenges = new mongoose_1.default.Schema({
     //after 7 day from now
     end_date_unix: {
         type: Number,
-        default: new Date().getTime() + 7 * 24 * 60 * 60 * 1000
+        default: () => {
+            const endOfWeek = (0, moment_1.default)().endOf('week').unix();
+            return endOfWeek;
+        }
     },
 }, { timestamps: true });
 const userWeeklyChallengesModel = mongoose_1.default.model('weekly_challenges', weekly_challenges, 'weekly_challenges');

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { USER_STATUS } from "../../constants/workflow.constant";
+import moment from "moment";
 
 const langSchema = {
     en: { type: String, default: '' },
@@ -55,7 +56,10 @@ const daily_challenges = new mongoose.Schema({
     //after 24 hour from now
     end_date_unix: {
         type: Number,
-        default: new Date().getTime() + 24 * 60 * 60 * 1000
+        default: () => {
+            const endOfDay = moment().endOf('day').unix();
+            return endOfDay;
+        }
     },
 
 

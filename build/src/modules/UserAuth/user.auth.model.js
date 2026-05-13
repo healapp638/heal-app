@@ -50,8 +50,6 @@ const UserSchema = new mongoose_1.Schema({
     timezone: { type: String, default: "" },
     lastDailyChallengeGeneratedDate: { type: Date, default: null },
     lastWeeklyChallengeGeneratedDate: { type: Date, default: null },
-    lastDailyChallengeGeneratedDateUnix: { type: Number, default: null },
-    lastWeeklyChallengeGeneratedDateUnix: { type: Number, default: null },
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
