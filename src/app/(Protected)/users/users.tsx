@@ -64,7 +64,7 @@ export default function Users() {
         params: {
             page: pagination.current,
             pageSize: pagination.pageSize,
-            search: debouncedSearch
+            search_key: debouncedSearch
         }
     })
     const UserListData = userList?.data?.result;
@@ -199,10 +199,10 @@ export default function Users() {
                 </h1>
                 <Input
                     placeholder="Search users..."
-                    prefix={<FiSearch className="text-gray-400" />}
+                    prefix={<FiSearch className="text-black!" />}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="max-w-md h-11 rounded-xl border-gray-200 focus:border-maincolor! shadow-sm"
+                    className="max-w-md h-11 rounded-xl border-maincolor!  bg-white! text-black! focus:border-maincolor! focus:bg-white! shadow-sm"
                     allowClear
                 />
             </div>

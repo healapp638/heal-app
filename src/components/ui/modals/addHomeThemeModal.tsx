@@ -5,7 +5,7 @@ import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
-import { Form, Modal, Upload } from "antd";
+import { Form, Modal, Upload, message } from "antd";
 import { FiPlus } from "react-icons/fi"
 import AppButton from "../buttons/AppButton";
 import { RxCross2 } from "react-icons/rx";
@@ -117,7 +117,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
 
     const { mutateAsync: addMediaFile } = useAppMutate({
         mutationKey: [MUTATION_KEYS.UPLOAD_FILE],
-        showSuccessToast: true,
+        showSuccessToast: false,
         showErrorToast: true,
         onSuccess(data: any) {
             setFileUrl(data[0])
@@ -156,6 +156,15 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
             }
         );
     }
+
+    const beforeUpload = (file: any) => {
+        const isHeic = file.type === 'image/heic' || file.name.toLowerCase().endsWith('.heic');
+        if (isHeic) {
+            message.error('HEIC images are not allowed. Please upload JPG, PNG, or WEBP.');
+            return Upload.LIST_IGNORE;
+        }
+        return true;
+    };
 
     const customRequest = async (options: any) => {
         const { file, onSuccess, onError } = options;
@@ -253,6 +262,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
                                     fileList={fileList}
                                     onChange={handleChange}
                                     customRequest={customRequest}
+                                    beforeUpload={beforeUpload}
                                     maxCount={1}
                                     disabled={isView}
                                     className="theme-upload-container"
