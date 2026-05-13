@@ -13,9 +13,10 @@ router.get('/list', verifyTokenUser, async (req: Request | any, res: Response) =
     return showOutput(res, result, result.code)
 });
 
-router.post('/complete_challenges',verifyTokenUser, async (req: Request | any, res: Response) => {
+router.post('/complete_challenges', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { challenge_type, challenge_id } = req.body;
     const controller = new UserChallengesController(req, res)
-    const result: ApiResponse = await controller.completeChallenges();
+    const result: ApiResponse = await controller.completeChallenges({ challenge_type, challenge_id });
     return showOutput(res, result, result.code)
 });
 

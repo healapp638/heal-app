@@ -1120,7 +1120,29 @@
 						"Bearer": []
 					}
 				],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"challenge_id": {
+										"type": "string"
+									},
+									"challenge_type": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"challenge_id",
+									"challenge_type"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/user/auth/login": {

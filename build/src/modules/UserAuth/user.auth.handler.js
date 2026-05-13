@@ -480,7 +480,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
     }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e, _f, _g, _h;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
@@ -507,6 +507,37 @@ const UserAuthHandler = {
         ]);
         console.log(Allpahses, 'Allpahses');
         // const total_points = Allpahses[0]?.total_points || 0;
+        const weeklyChallengesTotalpoints = yield user_weekly_challenges_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        console.log(weeklyChallengesTotalpoints, 'allChallengesTotalpoints');
+        const dailyChallengesTotalpoints = yield user_daily_challenges_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        console.log(dailyChallengesTotalpoints, 'allChallengesTotalpoints');
+        // const total_points = Allpahses[0]?.total_points + weeklyChallengesTotalpoints[0]?.total_points + dailyChallengesTotalpoints[0]?.total_points;
         const total_points = 500;
         const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
             {
@@ -533,7 +564,41 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const total_earned_points = ((_c = CompletedPhases[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0;
+        console.log(userId, 'userId');
+        const completedWeeklyChallenges = yield user_weekly_challenges_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        const completedDailyChallenges = yield user_daily_challenges_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        console.log((_c = completedWeeklyChallenges[0]) === null || _c === void 0 ? void 0 : _c.total_points, 'completedWeeklyChallenges');
+        console.log((_d = completedDailyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points, 'completedDailyChallenges');
+        console.log((_e = CompletedPhases[0]) === null || _e === void 0 ? void 0 : _e.total_points, 'CompletedPhases');
+        const total_earned_points = (((_f = CompletedPhases[0]) === null || _f === void 0 ? void 0 : _f.total_points) || 0) + (((_g = completedWeeklyChallenges[0]) === null || _g === void 0 ? void 0 : _g.total_points) || 0) + (((_h = completedDailyChallenges[0]) === null || _h === void 0 ? void 0 : _h.total_points) || 0);
         const completedPercentage = total_points > 0
             ? (total_earned_points / total_points) * 100
             : 0;

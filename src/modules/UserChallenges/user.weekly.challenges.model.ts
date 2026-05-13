@@ -61,6 +61,10 @@ const weekly_challenges = new mongoose.Schema({
             return endOfWeek;
         }
     },
+    isCompleted: {
+        type: Boolean,
+        default: false
+    }
 
 
 

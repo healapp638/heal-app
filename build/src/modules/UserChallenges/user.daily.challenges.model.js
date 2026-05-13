@@ -64,6 +64,10 @@ const daily_challenges = new mongoose_1.default.Schema({
             return endOfDay;
         }
     },
+    isCompleted: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 const userDailyChallengesModel = mongoose_1.default.model('daily_challenges', daily_challenges, 'daily_challenges');
 exports.default = userDailyChallengesModel;

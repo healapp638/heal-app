@@ -23,8 +23,9 @@ router.get('/list', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(v
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/complete_challenges', auth_middleware_1.verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { challenge_type, challenge_id } = req.body;
     const controller = new user_challenges_controller_1.default(req, res);
-    const result = yield controller.completeChallenges();
+    const result = yield controller.completeChallenges({ challenge_type, challenge_id });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

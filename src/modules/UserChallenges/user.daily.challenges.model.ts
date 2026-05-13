@@ -61,6 +61,10 @@ const daily_challenges = new mongoose.Schema({
             return endOfDay;
         }
     },
+    isCompleted: {
+        type: Boolean,
+        default: false
+    }
 
 
 }, { timestamps: true });

@@ -64,6 +64,10 @@ const weekly_challenges = new mongoose_1.default.Schema({
             return endOfWeek;
         }
     },
+    isCompleted: {
+        type: Boolean,
+        default: false
+    }
 }, { timestamps: true });
 const userWeeklyChallengesModel = mongoose_1.default.model('weekly_challenges', weekly_challenges, 'weekly_challenges');
 exports.default = userWeeklyChallengesModel;

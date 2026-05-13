@@ -19,6 +19,8 @@ const user_daily_challenges_model_1 = __importDefault(require("./user.daily.chal
 const user_weekly_challenges_model_1 = __importDefault(require("./user.weekly.challenges.model"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const moment_1 = __importDefault(require("moment"));
+const messages_1 = require("../../helpers/messages");
+const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
 const UserChallengesHandler = {
     list: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
@@ -28,9 +30,20 @@ const UserChallengesHandler = {
         ]);
         return (0, response_util_1.showResponse)(true, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.challenges_fetched_successfully, { dailyChallenges, weeklyChallenges }, statusCodes_1.default.SUCCESS);
     }),
-    completeChallenges: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        console.log(userId, "userId");
-        return (0, response_util_1.showResponse)(true, "Challenges completed successfully", {}, statusCodes_1.default.SUCCESS);
+    completeChallenges: (userId, challenge_type, challenge_id) => __awaiter(void 0, void 0, void 0, function* () {
+        const userDetails = yield user_auth_model_1.default.findOne({ _id: userId });
+        if (!userDetails) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'user_not_found'), {}, statusCodes_1.default.API_ERROR);
+        }
+        if (challenge_type == 'daily') {
+            yield user_daily_challenges_model_1.default.findByIdAndUpdate(challenge_id, { isCompleted: true });
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'challenges_completed_successfully'), {}, statusCodes_1.default.SUCCESS);
+        }
+        if (challenge_type == 'weekly') {
+            yield user_weekly_challenges_model_1.default.findByIdAndUpdate(challenge_id, { isCompleted: true });
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'challenges_completed_successfully'), {}, statusCodes_1.default.SUCCESS);
+        }
+        return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'invalid_challenge_type'), {}, statusCodes_1.default.API_ERROR);
     })
 };
 exports.default = UserChallengesHandler;

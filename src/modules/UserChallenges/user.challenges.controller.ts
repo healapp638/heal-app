@@ -1,8 +1,11 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Security, Get, Post } from 'tsoa'
+import { Route, Controller, Tags, Security, Get, Post,  Body } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserChallenges/user.challenges.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
+import { showResponse } from '../../utils/response.util';
+import statusCodes from '../../constants/statusCodes';
+import { validateCompleteChallenge } from './user.challenge.validation';
 
 @Tags('User Challenges Routes')
 @Route('/user/challenges')
@@ -33,9 +36,13 @@ export default class UserChallengesController extends Controller {
      */
     @Security('Bearer')
     @Post("/complete_challenges")
-    public async completeChallenges(): Promise<ApiResponse> {
+    public async completeChallenges(@Body() request: { challenge_type: string, challenge_id: string }): Promise<ApiResponse> {
+        const validate = validateCompleteChallenge(request)
+        if (validate.error) {
+            return showResponse(false, validate.error.message, {}, statusCodes.VALIDATION_ERROR)
+        }
         const wrappedFunc = tryCatchWrapper(handler.completeChallenges);
-        return wrappedFunc(this.userId); // Invoking the wrapped function 
+        return wrappedFunc(this.userId, request.challenge_type, request.challenge_id); // Invoking the wrapped function 
     }
 }
 

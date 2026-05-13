@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getMessage = void 0;
 const messages = {
     en: {
+        challenges_completed_successfully: "Challenges completed successfully",
         USER_NOT_FOUND: "User not found",
         INVALID_CREDENTIALS: "Invalid email or password",
         email_already_exists: "Email already exists",
@@ -53,6 +54,7 @@ const messages = {
         user_onboarding_complete: "User onboarding complete",
     },
     es: {
+        challenges_completed_successfully: "Desafíos completados exitosamente",
         USER_NOT_FOUND: "Usuario no encontrado",
         INVALID_CREDENTIALS: "Correo o contraseña inválidos",
         email_already_exists: "Correo electrónico ya existe",
@@ -103,6 +105,7 @@ const messages = {
         user_onboarding_complete: "Onboarding del usuario completado exitosamente",
     },
     fr: {
+        challenges_completed_successfully: "Défis terminés avec succès",
         USER_NOT_FOUND: "Utilisateur non trouvé",
         INVALID_CREDENTIALS: "Email ou mot de passe invalide",
         email_already_exists: "Email déjà existant",
@@ -153,6 +156,7 @@ const messages = {
         user_onboarding_complete: "Onboarding utilisateur terminé avec succès",
     },
     zh: {
+        challenges_completed_successfully: "挑战完成成功",
         USER_NOT_FOUND: "用户未找到",
         INVALID_CREDENTIALS: "无效的电子邮件或密码",
         email_already_exists: "电子邮件已存在",
@@ -204,6 +208,7 @@ const messages = {
     },
     hi: {
         //hindi
+        challenges_completed_successfully: "चुनौतियां सफलतापूर्वक पूरी हुईं",
         USER_NOT_FOUND: "उपयोगकर्ता नहीं मिला",
         INVALID_CREDENTIALS: "अमान्य ईमेल या पासवर्ड",
         email_already_exists: "ईमेल पहले से मौजूद है",
@@ -254,6 +259,7 @@ const messages = {
         user_onboarding_complete: "उपयोगकर्ता ऑनबोर्डिंग सफलतापूर्वक पूरा हुआ",
     },
     de: {
+        challenges_completed_successfully: "Herausforderungen erfolgreich abgeschlossen",
         USER_NOT_FOUND: "Benutzer nicht gefunden",
         INVALID_CREDENTIALS: "Ungültige E-Mail oder Passwort",
         email_already_exists: "E-Mail existiert bereits",
@@ -304,6 +310,7 @@ const messages = {
         user_onboarding_complete: "Onboarding des Benutzers erfolgreich abgeschlossen",
     },
     ru: {
+        challenges_completed_successfully: "Задания успешно выполнены",
         USER_NOT_FOUND: "Пользователь не найден",
         INVALID_CREDENTIALS: "Неверный email или пароль",
         email_already_exists: "Email уже существует",
@@ -354,6 +361,7 @@ const messages = {
         user_onboarding_complete: "Онбординг пользователя успешно завершен",
     },
     pt: {
+        challenges_completed_successfully: "Desafios concluídos com sucesso",
         USER_NOT_FOUND: "Usuário não encontrado",
         INVALID_CREDENTIALS: "Email ou senha inválidos",
         email_already_exists: "Email já existe",
@@ -404,6 +412,7 @@ const messages = {
         user_onboarding_complete: "Onboarding do usuário concluído com sucesso",
     },
     it: {
+        challenges_completed_successfully: "Sfide completate con successo",
         USER_NOT_FOUND: "Utente non trovato",
         INVALID_CREDENTIALS: "Email o password non validi",
         email_already_exists: "Email già esistente",
@@ -454,6 +463,7 @@ const messages = {
         user_onboarding_complete: "Onboarding dell'utente completato con successo",
     },
     ro: {
+        challenges_completed_successfully: "Provocări completate cu succes",
         USER_NOT_FOUND: "Utilizator negăsit",
         INVALID_CREDENTIALS: "Email sau parolă invalide",
         email_already_exists: "Email deja existent",

@@ -160,7 +160,7 @@ const UserAuthHandler = {
     },//ends
 
     social_login: async (data: any) => {
-        const { login_source, social_auth, email, name = undefined, language ,timeZone} = data;
+        const { login_source, social_auth, email, name = undefined, language, timeZone } = data;
         const queryObject = {
             status: { $ne: USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -193,7 +193,7 @@ const UserAuthHandler = {
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //challenges logic start
-            
+
             const data = findUser?.data
             await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone } })
             const challengesDetails = await commonHelper.challengsFn(data);
@@ -524,6 +524,39 @@ const UserAuthHandler = {
         ]);
         console.log(Allpahses, 'Allpahses')
         // const total_points = Allpahses[0]?.total_points || 0;
+
+        const weeklyChallengesTotalpoints = await userWeeklyChallengesModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        console.log(weeklyChallengesTotalpoints, 'allChallengesTotalpoints')
+
+        const dailyChallengesTotalpoints = await userDailyChallengesModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        console.log(dailyChallengesTotalpoints, 'allChallengesTotalpoints')
+        // const total_points = Allpahses[0]?.total_points + weeklyChallengesTotalpoints[0]?.total_points + dailyChallengesTotalpoints[0]?.total_points;
         const total_points = 500
         const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
             {
@@ -550,7 +583,41 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const total_earned_points = CompletedPhases[0]?.total_points || 0;
+        console.log(userId, 'userId')
+        const completedWeeklyChallenges = await userWeeklyChallengesModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        const completedDailyChallenges = await userDailyChallengesModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        console.log(completedWeeklyChallenges[0]?.total_points, 'completedWeeklyChallenges')
+        console.log(completedDailyChallenges[0]?.total_points, 'completedDailyChallenges')
+        console.log(CompletedPhases[0]?.total_points, 'CompletedPhases')
+        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0);
         const completedPercentage = total_points > 0
             ? (total_earned_points / total_points) * 100
             : 0;
