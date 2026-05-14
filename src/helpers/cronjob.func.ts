@@ -26,11 +26,71 @@ const generateAffirmation = async () => {
     let retryCount = 0;
     const maxRetry = 10;
 
+      // ==================================================
+    // RANDOM CATEGORY
+    // ==================================================
+
+    const categories = [
+      "confidence",
+      "self-love",
+      "healing",
+      "success",
+      "peace",
+      "gratitude",
+      "motivation",
+      "growth",
+      "happiness",
+      "strength",
+      "focus",
+      "abundance",
+      "calmness",
+      "courage",
+      "discipline",
+      "joy",
+      "energy",
+      "creativity",
+      "mindfulness",
+    ];
+
+    // ==================================================
+    // RECENT AFFIRMATIONS
+    // ==================================================
+
+    const recentAffirmations =
+      await userAffirmationModel
+        .find(
+          {
+            status: USER_STATUS.ACTIVE,
+          },
+          {
+            "affirmation.en": 1,
+          }
+        )
+        .sort({ createdAt: -1 })
+        .limit(20)
+        .lean();
+
+    const avoidList =
+      recentAffirmations
+        .map(
+          (item: any) =>
+            item?.affirmation?.en
+        )
+        .filter(Boolean)
+        .join("\n");
+
     // Generate until unique quote found
     while (isDuplicate && retryCount < maxRetry) {
+            const randomCategory =
+        categories[
+          Math.floor(
+            Math.random() *
+            categories.length
+          )
+        ];
       const response = await openai.chat.completions.create({
         model: "gpt-4.1-mini",
-        temperature: 1,
+        temperature: 1.4,
         response_format: {
           type: "json_object",
         },
@@ -38,48 +98,56 @@ const generateAffirmation = async () => {
           {
             role: "system",
             content: `
-You are a powerful affirmation generator.
+You are an affirmation generator.
 
-Rules:
-- Generate SHORT positive affirmations
-- Write in FIRST PERSON
-- Every affirmation must feel DIFFERENT from previous ones
-- Use varied themes:
-confidence,
-self-love,
-healing,
-success,
-peace,
-gratitude,
-motivation,
-growth,
-happiness,
-strength,
-focus,
-abundance,
-calmness,
-positivity,
-courage
+Your job is to create highly diverse affirmations.
 
-- Avoid repetitive sentence structures
-- Avoid poetic quotes
-- Do NOT include author names
-- Make affirmations emotionally uplifting
-- Keep them natural, modern, and human
-- Maximum 15 words
-- Prefer present tense
-- Examples:
-  "I attract peace into my life"
-  "I am becoming stronger every day"
-  "I deserve happiness and success"
+STRICT RULES:
+- Every affirmation must feel completely different
+- Avoid repeating sentence structures
+- Avoid repeating verbs
+- Avoid repeating emotional patterns
+- Never repeatedly start with:
+  "I embrace"
+  "I am"
+  "I deserve"
 
-- Return ONLY valid JSON
+- Use varied tones:
+  calm,
+  energetic,
+  empowering,
+  peaceful,
+  joyful,
+  grounded,
+  ambitious,
+  healing
+
+- Use modern natural language
+- Keep under 15 words
+- First person only
+- No poetry
+- No author names
+- No explanations
+- No hashtags
+- No emojis
+- Return ONLY JSON
 `,
           },
           {
             role: "user",
             content: `
-Generate 1 completely unique affirmation.
+Generate 1 completely unique affirmation about "${randomCategory}".
+
+DO NOT generate anything similar to these affirmations:
+
+${avoidList}
+
+Rules:
+- Different wording
+- Different emotional direction
+- Different structure
+- Different verbs
+- Different emotional energy
 
 Return JSON:
 {
@@ -175,8 +243,7 @@ Return JSON:
       statusCodes.API_ERROR,
     );
   }
-}
-  ; // end
+}; // end
 
 const generateChallenges = async () => {
   try {
