@@ -26,6 +26,11 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
     const result = yield controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/toggle_biometric', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.toggleBiometric();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, language, timeZone } = req.body;
     const controller = new user_auth_controller_1.default(req, res);

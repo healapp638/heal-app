@@ -83,6 +83,13 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
         });
     }
     //ends
+    toggleBiometric() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.toggleBiometric);
+            return wrappedFunc(this.userId);
+        });
+    }
+    //ends
     /**
     * Forgot password api endpoint
     */
@@ -274,6 +281,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "register", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/toggle_biometric"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "toggleBiometric", null);
 __decorate([
     (0, tsoa_1.Post)("/forgot_password"),
     __param(0, (0, tsoa_1.Body)()),

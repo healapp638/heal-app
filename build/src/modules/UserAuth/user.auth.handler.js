@@ -372,6 +372,27 @@ const UserAuthHandler = {
         });
     },
     //ends
+    toggleBiometric: (userId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            // find user
+            const user = yield user_auth_model_1.default.findOne({
+                _id: commonHelper.convertToObjectId(userId),
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+            });
+            if (!user) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null);
+            }
+            // toggle value
+            user.is_biometric = !user.is_biometric;
+            yield user.save();
+            return (0, response_util_1.showResponse)(true, "Biometric status updated successfully", {
+                is_biometric: user.is_biometric,
+            });
+        }
+        catch (_a) {
+            return (0, response_util_1.showResponse)(false, "err while updating status", null);
+        }
+    }),
     forgotPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const { email } = data;

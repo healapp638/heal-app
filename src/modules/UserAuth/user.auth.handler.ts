@@ -369,6 +369,42 @@ const UserAuthHandler = {
         return showResponse(true, getMessage(language || 'en', "verification_email_sent"), null, statusCodes.SUCCESS);
     },
     //ends
+    toggleBiometric: async (userId: string): Promise<ApiResponse> => {
+    try {
+        // find user
+        const user = await userAuthModel.findOne({
+            _id: commonHelper.convertToObjectId(userId),
+            status: USER_STATUS.ACTIVE,
+        });
+
+        if (!user) {
+            return showResponse(
+                false,
+                responseMessage.common.data_not_found,
+                null
+            );
+        }
+
+        // toggle value
+        user.is_biometric = !user.is_biometric;
+
+        await user.save();
+
+        return showResponse(
+            true,
+            "Biometric status updated successfully",
+            {
+                is_biometric: user.is_biometric,
+            }
+        );
+    } catch {
+        return showResponse(
+            false,
+            "err while updating status",
+            null
+        );
+    }
+},
 
     forgotPassword: async (data: any): Promise<ApiResponse> => {
         const { email } = data;

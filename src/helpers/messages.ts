@@ -49,6 +49,7 @@ const messages: any = {
         invalid_credentials: "Invalid credentials",
         please_complete_your_onboarding: "Please complete your onboarding",
         user_onboarding_complete: "User onboarding complete",
+        
 
 
     },

@@ -72,6 +72,14 @@ export default class UserAuthController extends Controller {
 
     }
     //ends
+    
+    @Security('Bearer')
+    @Post("/toggle_biometric")
+    public async toggleBiometric(): Promise<ApiResponse> {
+        const wrappedFunc = tryCatchWrapper(handler.toggleBiometric);
+        return wrappedFunc(this.userId);
+    }
+    //ends
 
     /**
     * Forgot password api endpoint

@@ -1396,6 +1396,32 @@
 				}
 			}
 		},
+		"/user/auth/toggle_biometric": {
+			"post": {
+				"operationId": "ToggleBiometric",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/auth/forgot_password": {
 			"post": {
 				"operationId": "ForgotPassword",

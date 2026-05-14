@@ -47,7 +47,7 @@ const safeUpsert = async (model: any, query: any, insertData: any) => {
     try {
         return await model.findOneAndUpdate(
             query,
-            { $setOnInsert: insertData },
+            { $set: { status: USER_STATUS.ACTIVE }, $setOnInsert: insertData },
             { upsert: true, new: true }
         );
     } catch (err: any) {

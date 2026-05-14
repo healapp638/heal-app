@@ -51,7 +51,7 @@ const redisConnection = new ioredis_1.default({
 // ✅ Safe DB upsert
 const safeUpsert = (model, query, insertData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        return yield model.findOneAndUpdate(query, { $setOnInsert: insertData }, { upsert: true, new: true });
+        return yield model.findOneAndUpdate(query, { $set: { status: workflow_constant_1.USER_STATUS.ACTIVE }, $setOnInsert: insertData }, { upsert: true, new: true });
     }
     catch (err) {
         console.error("❌ safeUpsert failed:", {

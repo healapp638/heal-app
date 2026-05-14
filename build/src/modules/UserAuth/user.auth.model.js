@@ -47,6 +47,7 @@ const UserSchema = new mongoose_1.Schema({
         default: 'email',
         Comment: "email for normal created google with google apple with apple "
     },
+    is_biometric: { type: Boolean, default: false },
     timeZone: { type: String, default: "" },
     lastDailyChallengeGeneratedDate: { type: Date, default: null },
     lastWeeklyChallengeGeneratedDate: { type: Date, default: null },

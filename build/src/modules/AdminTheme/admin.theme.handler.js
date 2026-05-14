@@ -19,6 +19,11 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const admin_theme_model_1 = __importDefault(require("./admin.theme.model"));
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
 const common_helper_1 = require("../../helpers/common.helper");
+const admin_modules_model_1 = __importDefault(require("../AdminModules/admin.modules.model"));
+const admin_submodules_model_1 = __importDefault(require("../AdminSubModules/admin.submodules.model"));
+const admin_phases_model_1 = __importDefault(require("../AdminPhases/admin.phases.model"));
+const admin_exercise_details__model_1 = __importDefault(require("../AdminExercise/admin.exercise.details..model"));
+const admin_excercise_model_1 = __importDefault(require("../AdminExercise/admin.excercise.model"));
 const CommonHandler = {
     createTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, description, imgUrl } = data;
@@ -54,13 +59,114 @@ const CommonHandler = {
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, null, statusCodes_1.default.SUCCESS);
     }),
+    // deleteTheme: async (data: any): Promise<ApiResponse> => {
+    //     const { themeId, status } = data
+    //     const deleteTheme = await adminThemeModel.findOneAndUpdate({ _id: themeId }, { $set: { status: status } }, { new: true })
+    //     if (!deleteTheme) {
+    //         return showResponse(false, responseMessage.common.delete_failed, null, statusCodes.API_ERROR)
+    //     }
+    //     return showResponse(true, responseMessage.common.delete_sucess, null, statusCodes.SUCCESS)
+    // },
     deleteTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { themeId, status } = data;
-        const deleteTheme = yield admin_theme_model_1.default.findOneAndUpdate({ _id: themeId }, { $set: { status: status } }, { new: true });
-        if (!deleteTheme) {
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
+        try {
+            const { themeId, status, } = data;
+            // ================= THEME =================
+            const deleteTheme = yield admin_theme_model_1.default.findOneAndUpdate({
+                _id: (0, common_helper_1.convertToObjectId)(themeId),
+            }, {
+                $set: {
+                    status: status,
+                },
+            }, {
+                new: true,
+            });
+            if (!deleteTheme) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
+            }
+            // ================= MODULES =================
+            const modules = yield admin_modules_model_1.default.find({
+                themeId: (0, common_helper_1.convertToObjectId)(themeId),
+            }, {
+                _id: 1,
+            });
+            const moduleIds = modules.map((item) => item._id);
+            yield admin_modules_model_1.default.updateMany({
+                themeId: (0, common_helper_1.convertToObjectId)(themeId),
+            }, {
+                $set: {
+                    status: status,
+                },
+            });
+            // ================= SUB MODULES =================
+            const subModules = yield admin_submodules_model_1.default.find({
+                moduleId: {
+                    $in: moduleIds,
+                },
+            }, {
+                _id: 1,
+            });
+            const subModuleIds = subModules.map((item) => item._id);
+            yield admin_submodules_model_1.default.updateMany({
+                moduleId: {
+                    $in: moduleIds,
+                },
+            }, {
+                $set: {
+                    status: status,
+                },
+            });
+            // ================= PHASES =================
+            const phases = yield admin_phases_model_1.default.find({
+                subModuleId: {
+                    $in: subModuleIds,
+                },
+            }, {
+                _id: 1,
+            });
+            const phaseIds = phases.map((item) => item._id);
+            yield admin_phases_model_1.default.updateMany({
+                subModuleId: {
+                    $in: subModuleIds,
+                },
+            }, {
+                $set: {
+                    status: status,
+                },
+            });
+            // ================= EXERCISE DETAILS =================
+            const exerciseDetails = yield admin_exercise_details__model_1.default.find({
+                phase_id: {
+                    $in: phaseIds,
+                },
+            }, {
+                _id: 1,
+            });
+            const exerciseDetailIds = exerciseDetails.map((item) => item._id);
+            yield admin_exercise_details__model_1.default.updateMany({
+                phase_id: {
+                    $in: phaseIds,
+                },
+            }, {
+                $set: {
+                    status: status,
+                },
+            });
+            // ================= EXERCISES =================
+            yield admin_excercise_model_1.default.updateMany({
+                exercise_details_id: {
+                    $in: exerciseDetailIds,
+                },
+            }, {
+                $set: {
+                    status: status,
+                },
+            });
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
         }
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
+        catch (error) {
+            console.log(error, "DELETE_THEME_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
     }),
     listTheme: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en') {
         const aggregate = [

@@ -17,6 +17,12 @@ router.post('/register', async (req: Request | any, res: Response) => {
     return showOutput(res, result, result.code)
 })
 
+router.post('/toggle_biometric', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.toggleBiometric();
+    return showOutput(res, result, result.code)
+})
+
 router.post('/login', ratLimiting, async (req: Request | any, res: Response) => {
     const { email, password, language, timeZone } = req.body;
     const controller = new UserAuthController(req, res)
