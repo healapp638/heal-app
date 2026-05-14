@@ -45,7 +45,7 @@ const ProgressTrackerCard = ({
   return (
     <Pressable
       onPress={(...args: any) => {
-        triggerHaptic('impactLight');
+        triggerHaptic('impactMedium');
         return (onPress as any)(...args);
       }}
       style={[

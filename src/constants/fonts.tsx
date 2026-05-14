@@ -1,8 +1,10 @@
+import { Platform } from 'react-native';
+
 const AppFonts = {
-  reco: 'Recoleta Regular',
-  recoMedium: 'Recoleta Medium',
-  recoSemiBold: 'Recoleta SemiBold',
-  recoBold: 'Recoleta Bold',
+  reco: Platform.OS === 'ios' ? 'Recoleta-Regular' : 'Recoleta Regular',
+  recoMedium: Platform.OS === 'ios' ? 'Recoleta-Medium' : 'Recoleta Medium',
+  recoSemiBold: Platform.OS === 'ios' ? 'Recoleta-SemiBold' : 'Recoleta SemiBold',
+  recoBold: Platform.OS === 'ios' ? 'Recoleta-Bold' : 'Recoleta Bold',
 
   semiBold: 'Poppins-SemiBold',
   regular: 'Poppins-Regular',

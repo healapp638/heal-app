@@ -50,7 +50,7 @@ const style = (colors: any, insets: any = { top: 0 }) =>
     },
     quoteTextCentered: {
       fontSize: AppUtils.fontSize(24),
-      fontFamily: AppFonts.reco,
+      fontFamily: AppFonts.recoBold,
       color: '#3A2110',
       textAlign: 'center',
       lineHeight: 36,

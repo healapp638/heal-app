@@ -97,7 +97,7 @@ const DailyQuote = () => {
 
   const handleShare = async (item: any) => {
     try {
-      triggerHaptic('impactLight');
+      triggerHaptic('impactMedium');
       setShareItem(item);
 
       // Small delay to ensure the hidden view has rendered with the new item
@@ -165,7 +165,7 @@ const DailyQuote = () => {
       },
     );
     if (!isLiked) {
-      triggerHaptic('impactLight');
+      triggerHaptic('impactMedium');
       // Trigger center heart animation
       heartScale.setValue(0);
       heartOpacity.setValue(0);
@@ -327,7 +327,7 @@ const DailyQuote = () => {
 
           <TouchableOpacity
             onPress={() => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               setShowFavoritesModal(true);
             }}
             style={styles.themeBtn2}
@@ -341,7 +341,7 @@ const DailyQuote = () => {
 
           <TouchableOpacity
             onPress={() => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               navigation.navigate(AppRoutes.ThemeMixes as never);
             }}
             style={styles.themeBtn}
@@ -424,9 +424,7 @@ const DailyQuote = () => {
                       },
                     ]}
                   >
-                    {shareItem.affirmation.startsWith('"')
-                      ? shareItem.affirmation
-                      : `"${shareItem.affirmation}"`}
+                    {shareItem.affirmation}
                   </SolidText>
                 </View>
               </ViewShot>

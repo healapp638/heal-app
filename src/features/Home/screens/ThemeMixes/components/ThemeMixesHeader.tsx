@@ -63,7 +63,7 @@ const ThemeMixesHeader = ({
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-            triggerHaptic('impactLight');
+            triggerHaptic('impactMedium');
           }}
         >
           <Image
@@ -74,7 +74,7 @@ const ThemeMixesHeader = ({
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            triggerHaptic('impactLight');
+            triggerHaptic('impactMedium');
             return setShowCreditsModal(true);
           }}
           style={styles.unlockBtn}
@@ -129,7 +129,7 @@ const ThemeMixesHeader = ({
             </SolidText>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return navigation.navigate(AppRoutes.ThemeSeeAll as never);
               }}
             >
@@ -183,7 +183,7 @@ const ThemeMixesHeader = ({
                   }}
                   title={item.title}
                   onPress={() => {
-                    triggerHaptic('impactLight');
+                    triggerHaptic('impactMedium');
                     return navigation.navigate(
                       AppRoutes.ThemeDetail as never,
                       {

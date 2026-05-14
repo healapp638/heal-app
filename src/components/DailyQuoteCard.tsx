@@ -123,7 +123,7 @@ const DailyQuoteCard = ({
                   },
                 ]}
               >
-                "{quote}"
+                {quote}
               </SolidText>
               <SolidText
                 maxFontScale={1}

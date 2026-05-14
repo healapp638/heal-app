@@ -96,7 +96,7 @@ const Home = () => {
 
             <ProgressTrackerCard
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return navigation.navigate(AppRoutes.ProgressTracker as never);
               }}
               title={
@@ -107,7 +107,7 @@ const Home = () => {
             <DailyQuoteCard
               key={user?.homeTheme?._id || 'default'}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return navigation.navigate(AppRoutes.DailyQuote as never);
               }}
               title={localization.appkeys?.homeQuoteDay || 'Quote of the day'}
@@ -130,7 +130,7 @@ const Home = () => {
 
             <ChallengeCard
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 navigation.navigate(AppRoutes.ChallengeDetail as never);
               }}
               title={
@@ -168,7 +168,7 @@ const Home = () => {
               renderItem={({ item, index }) => (
                 <ModuleCard
                   onPress={() => {
-                    triggerHaptic('impactLight');
+                    triggerHaptic('impactMedium');
                     return navigation.navigate(
                       AppRoutes.StartedModule as never,
                       {
@@ -208,7 +208,7 @@ const Home = () => {
               }
               duration={localization.appkeys?.journalTitle || 'JOURNAL'}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 navigation.navigate(AppRoutes.Journal as never);
               }}
             />

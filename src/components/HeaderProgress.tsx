@@ -31,7 +31,7 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
         <TouchableOpacity
           style={[styles.backButton]}
           onPress={() => {
-            ReactNativeHapticFeedback.trigger('impactLight', options);
+            ReactNativeHapticFeedback.trigger('impactMedium', options);
             if (onBackPress) {
               onBackPress();
               return;

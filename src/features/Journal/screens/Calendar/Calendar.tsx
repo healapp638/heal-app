@@ -117,7 +117,7 @@ const Calendar = () => {
           <View style={styles.monthRow}>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return prevMonth();
               }}
               activeOpacity={0.7}
@@ -136,7 +136,7 @@ const Calendar = () => {
 
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return nextMonth();
               }}
               activeOpacity={0.7}
@@ -159,7 +159,7 @@ const Calendar = () => {
             markedDates={markedDates}
             selectedDay={selectedDay}
             onDayPress={day => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               setSelectedDay(day);
             }}
           />
@@ -175,7 +175,7 @@ const Calendar = () => {
                 : ` - ${localization.appkeys?.noEntries || 'No entries'}`
             }
             onPress={() => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               if (selectedDateEntries > 0) {
                 navigation.navigate(
                   AppRoutes.ConnectedEntries as never,

@@ -66,7 +66,7 @@ const Settings = () => {
               showCrown
               showStreak={false}
               onCrownPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 setShowCreditsModal(true);
               }}
               userName={localization.appkeys?.settingsTitle || 'Settings'}
@@ -131,7 +131,7 @@ const Settings = () => {
                     rightIcon={rightIcon}
                     rightIconStyle={rightIconStyle}
                     onPress={() => {
-                      triggerHaptic('impactLight');
+                      triggerHaptic('impactMedium');
                       if (isBiometric) {
                         const newVal = !isBioEnabled;
                         setIsBioEnabled(newVal);
@@ -216,7 +216,7 @@ const Settings = () => {
                 leftIcon={images.insta}
                 rightIcon={images.arrowRight}
                 onPress={() => {
-                  triggerHaptic('impactLight');
+                  triggerHaptic('impactMedium');
                   Linking.openURL('https://www.instagram.com/heal.safespace');
                 }}
               />
@@ -225,7 +225,7 @@ const Settings = () => {
                 leftIcon={images.tiktok}
                 rightIcon={images.arrowRight}
                 onPress={() => {
-                  triggerHaptic('impactLight');
+                  triggerHaptic('impactMedium');
                   Linking.openURL('https://www.tiktok.com/@heal.safespace');
                 }}
               />

@@ -79,7 +79,7 @@ const QuoteThemeModal = ({ visible, onClose }: QuoteThemeModalProps) => {
       <View style={styles.overlay}>
         <TouchableWithoutFeedback
           onPress={(...args: any) => {
-            triggerHaptic('impactLight');
+            triggerHaptic('impactMedium');
             return (onClose as any)(...args);
           }}
         >
@@ -93,7 +93,7 @@ const QuoteThemeModal = ({ visible, onClose }: QuoteThemeModalProps) => {
             <SolidText style={styles.title}>Quote Theme</SolidText>
             <TouchableOpacity
               onPress={(...args: any) => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return (onClose as any)(...args);
               }}
             >

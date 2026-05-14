@@ -109,7 +109,7 @@ const ThemeMixes = () => {
   console.log('forYouResult', forYouResult);
   const handleCategoryChange = (catId: string) => {
     if (catId === activeTab) return;
-    triggerHaptic('impactLight');
+    triggerHaptic('impactMedium');
     setActiveTab(catId);
     setActiveCategory(catId);
   };
@@ -220,7 +220,7 @@ const ThemeMixes = () => {
                       { queryKey: ['getHomeThemeListingByCategory'] },
                       updateCache,
                     );
-                    triggerHaptic('impactLight');
+                    triggerHaptic('impactMedium');
                     postApi(
                       {
                         endpoint: endpoints.add_user_theme,

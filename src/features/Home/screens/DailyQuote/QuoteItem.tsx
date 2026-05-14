@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import ViewShot from 'react-native-view-shot';
 import SolidText from '../../../../components/SolidText';
+import AppFonts from '../../../../constants/fonts';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
@@ -97,10 +98,11 @@ const QuoteItem = ({
                   height: 1,
                 },
                 textShadowRadius: 10,
+                fontFamily: AppFonts.recoBold,
               },
             ]}
           >
-            {quoteContent.startsWith('"') ? quoteContent : `"${quoteContent}"`}
+            {quoteContent}
           </SolidText>
         </View>
       </ViewShot>

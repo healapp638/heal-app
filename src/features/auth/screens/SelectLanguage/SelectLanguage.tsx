@@ -97,7 +97,7 @@ const SelectLanguage = () => {
       <TouchableOpacity
         style={[styles.card, isSelected && styles.selectedCard]}
         onPress={() => {
-          triggerHaptic('impactLight');
+          triggerHaptic('impactMedium');
           return setSelectedLang(item.key);
         }}
         activeOpacity={0.7}

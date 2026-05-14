@@ -68,7 +68,7 @@ const HomeHeader = ({
             <TouchableOpacity
               style={{ flexDirection: 'row', alignItems: 'center' }}
               onPress={(...args: any) => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return (onStreakPress as any)(...args);
               }}
             >
@@ -91,7 +91,7 @@ const HomeHeader = ({
             <View style={styles.divider} />
             <TouchableOpacity
               onPress={(...args: any) => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return (onCalendarPress as any)(...args);
               }}
             >
@@ -107,7 +107,7 @@ const HomeHeader = ({
       {showCrown && (
         <Pressable
           onPress={(...args: any) => {
-            triggerHaptic('impactLight');
+            triggerHaptic('impactMedium');
             return (onCrownPress as any)(...args);
           }}
         >

@@ -231,7 +231,7 @@ const EditProfile = () => {
                 hitSlop={50}
                 style={styles.editIconContainer}
                 onPress={() => {
-                  triggerHaptic('impactLight');
+                  triggerHaptic('impactMedium');
                   return setImagePickerVisible(true);
                 }}
               >
@@ -250,7 +250,7 @@ const EditProfile = () => {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return setImagePickerVisible(true);
               }}
             >
@@ -295,7 +295,7 @@ const EditProfile = () => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return setDobModalVisible(true);
               }}
             >
@@ -318,7 +318,7 @@ const EditProfile = () => {
                 activeOpacity={0.8}
                 style={styles.changePassCard}
                 onPress={() => {
-                  triggerHaptic('impactLight');
+                  triggerHaptic('impactMedium');
                   return navigation.navigate(AppRoutes.ChangePassword as never);
                 }}
               >

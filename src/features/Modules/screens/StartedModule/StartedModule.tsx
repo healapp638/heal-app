@@ -119,7 +119,7 @@ const StartedModule = () => {
             localization.appkeys?.homeProgressTracker || 'Progress Tracker'
           }
           onPress={() => {
-            triggerHaptic('impactLight');
+            triggerHaptic('impactMedium');
             return navigation.navigate(AppRoutes.ProgressTracker as never);
           }}
         />
@@ -154,7 +154,7 @@ const StartedModule = () => {
           onPress={() => {
             //
             if (!isLocked && !item.isCompleted) {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               navigation.navigate(
                 AppRoutes.PhaseDetail as never,
                 {

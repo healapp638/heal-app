@@ -72,7 +72,7 @@ const OnboardingModal = ({
   const totalSteps = 6;
 
   const handleNext = () => {
-    triggerHaptic('impactLight');
+    triggerHaptic('impactMedium');
     if (step < totalSteps - 1) {
       setStep(step + 1);
     } else {
@@ -81,7 +81,7 @@ const OnboardingModal = ({
   };
 
   const handleBack = () => {
-    triggerHaptic('impactLight');
+    triggerHaptic('impactMedium');
     if (step > 0) {
       setStep(step - 1);
     }
@@ -132,7 +132,7 @@ const OnboardingModal = ({
           { backgroundColor: colors.white },
         ]}
         onPress={() => {
-          triggerHaptic('impactLight');
+          triggerHaptic('impactMedium');
           updateAnswer(key, option.label);
         }}
         activeOpacity={0.7}
@@ -443,7 +443,7 @@ const OnboardingModal = ({
           <TouchableOpacity
             style={[styles.closeBtn, { top: insets.top + 10 }]}
             onPress={() => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               onClose();
             }}
           >

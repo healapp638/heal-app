@@ -8,10 +8,10 @@ const options = {
 
 export const triggerHaptic = (
   type:
-    | 'impactLight'
-    | 'impactLight'
-    | 'impactLight'
-    | 'selection' = 'impactLight',
+    | 'impactMedium'
+    | 'impactMedium'
+    | 'impactMedium'
+    | 'selection' = 'impactMedium',
 ) => {
   ReactNativeHapticFeedback.trigger(type, options);
 };
@@ -20,10 +20,10 @@ export const useHaptic = () => {
   const triggerHaptic = useCallback(
     (
       type:
-        | 'impactLight'
-        | 'impactLight'
-        | 'impactLight'
-        | 'selection' = 'impactLight',
+        | 'impactMedium'
+        | 'impactMedium'
+        | 'impactMedium'
+        | 'selection' = 'impactMedium',
     ) => {
       ReactNativeHapticFeedback.trigger(type, options);
     },

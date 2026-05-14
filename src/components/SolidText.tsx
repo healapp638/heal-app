@@ -1,6 +1,6 @@
 import { useTheme } from '@react-navigation/native';
 import React from 'react';
-import { Text, TextProps, StyleSheet, View } from 'react-native';
+import { Text, TextProps, StyleSheet, View, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 import AppFonts from '../constants/fonts';
 
@@ -20,24 +20,31 @@ const SolidText: React.FC<AppTextProps> = ({
   style,
   ...props
 }) => {
-  const fontScaling = useSelector((state: any) => state.userData?.fontScaling);
   const { colors } = useTheme();
 
-  // Normalize style to prevent iOS system font override when fontWeight/fontStyle is present
-  const flatStyle = StyleSheet.flatten(style) || {};
-  const cleanedStyle = { ...flatStyle };
-
-  if (cleanedStyle.fontWeight) {
-    delete cleanedStyle.fontWeight;
-  }
-  if (cleanedStyle.fontStyle) {
-    delete cleanedStyle.fontStyle;
-  }
+  // On iOS, custom fonts break if fontWeight/fontStyle are present.
+  // We sanitize the style aggressively on iOS to ensure custom fonts are always used.
+  const processedStyle = React.useMemo(() => {
+    const flatStyle = StyleSheet.flatten(style) || {};
+    const variantStyle = styles[variant];
+    
+    // If either the variant or the custom style has a fontFamily, we must sanitize on iOS
+    if (Platform.OS === 'ios' && (flatStyle.fontFamily || variantStyle.fontFamily)) {
+      const cleaned = { ...flatStyle };
+      
+      // Remove these to prevent iOS from overriding the custom font with the system font
+      if (cleaned.fontWeight) delete cleaned.fontWeight;
+      if (cleaned.fontStyle) delete cleaned.fontStyle;
+      
+      return cleaned;
+    }
+    return flatStyle;
+  }, [style, variant]);
 
   return (
     <Text
       {...props}
-      style={[styles[variant], cleanedStyle]}
+      style={[styles[variant], processedStyle]}
       maxFontSizeMultiplier={maxFontScale ?? 1.4}
       allowFontScaling
     >

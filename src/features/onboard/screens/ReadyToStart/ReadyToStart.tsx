@@ -101,7 +101,7 @@ const ReadyToStart = () => {
                       isSelected && styles.optionCardSelected,
                     ]}
                     onPress={() => {
-                      triggerHaptic('impactLight');
+                      triggerHaptic('impactMedium');
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({

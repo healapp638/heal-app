@@ -40,7 +40,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   const styles = useStyles(colors);
   const activeTintColor = tintColor || colors.brown;
   const handleBack = () => {
-    ReactNativeHapticFeedback.trigger('impactLight', options);
+    ReactNativeHapticFeedback.trigger('impactMedium', options);
     if (onBackPress) {
       onBackPress();
     } else {
@@ -109,7 +109,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
         ) : rightIcon ? (
           <TouchableOpacity
             onPress={(...args: any) => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               return (handleRightPress as any)(...args);
             }}
             activeOpacity={0.7}

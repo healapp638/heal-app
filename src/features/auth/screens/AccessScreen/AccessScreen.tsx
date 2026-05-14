@@ -32,7 +32,8 @@ const AccessScreen = () => {
   const styles = style(colors);
   const dispatch = useDispatch();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
-  const { handleBiometricAuth, biometric, email, password, lastLoginType } = useBiometric();
+  const { handleBiometricAuth, biometric, email, password, lastLoginType } =
+    useBiometric();
   const { mutate: loginUser } = usePostApi();
 
   const handleLogin = (ema?: string, pass?: string) => {
@@ -125,7 +126,7 @@ const AccessScreen = () => {
               <TouchableOpacity
                 style={styles.socialBtn}
                 onPress={(...args: any) => {
-                  triggerHaptic('impactLight');
+                  triggerHaptic('impactMedium');
                   return (googleLogin as any)(...args);
                 }}
                 disabled={isSocialPending}
@@ -144,7 +145,7 @@ const AccessScreen = () => {
                 <TouchableOpacity
                   style={styles.socialBtn}
                   onPress={(...args: any) => {
-                    triggerHaptic('impactLight');
+                    triggerHaptic('impactMedium');
                     return (appleLogin as any)(...args);
                   }}
                   disabled={isSocialPending}
@@ -163,7 +164,7 @@ const AccessScreen = () => {
               <TouchableOpacity
                 style={styles.socialBtn}
                 onPress={() => {
-                  triggerHaptic('impactLight');
+                  triggerHaptic('impactMedium');
                   navigation.navigate(AppRoutes.SignIn as never);
                 }}
               >
@@ -180,7 +181,7 @@ const AccessScreen = () => {
                 <TouchableOpacity
                   style={styles.socialBtn}
                   onPress={() => {
-                    triggerHaptic('impactLight');
+                    triggerHaptic('impactMedium');
                     handleBiometricAuth(onBiometricSuccess);
                   }}
                 >

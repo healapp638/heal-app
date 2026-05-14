@@ -147,7 +147,7 @@ const Journal = () => {
             onChangeText={setSearch}
             placeholder={localization.appkeys?.searchPlaceholder || 'Search...'}
             onCalendarPress={() => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
               return navigation.navigate(AppRoutes.Calendar as never);
             }}
           />
@@ -194,7 +194,7 @@ const Journal = () => {
                     title={item.title}
                     body={item.body}
                     onPress={() => {
-                      triggerHaptic('impactLight');
+                      triggerHaptic('impactMedium');
                       return setSelectedEntry(item);
                     }}
                   />
@@ -208,7 +208,7 @@ const Journal = () => {
             style={styles.fab}
             activeOpacity={0.8}
             onPress={(...args: any) => {
-              triggerHaptic('impactLight');
+              triggerHaptic('impactMedium');
 
               return (handleAddEntry as any)(...args);
             }}

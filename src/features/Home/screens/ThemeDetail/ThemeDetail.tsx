@@ -108,7 +108,7 @@ const ThemeDetail = () => {
             { queryKey: ['getHomeThemeListingByCategory'] },
             updateCache,
           );
-          triggerHaptic('impactLight');
+          triggerHaptic('impactMedium');
           postApi(
             {
               endpoint: endpoints.add_user_theme,

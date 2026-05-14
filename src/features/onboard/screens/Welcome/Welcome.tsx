@@ -139,7 +139,7 @@ const Welcome = () => {
             <TouchableOpacity
               style={styles.languagePill}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 navigation.navigate(AppRoutes.SelectLanguage as never);
               }}
             >

@@ -91,7 +91,7 @@ const SavedDailyQuote = () => {
   );
   const handleShare = async (index: number) => {
     try {
-      // triggerHaptic('impactLight');
+      // triggerHaptic('impactMedium');
       const uri = await viewShotRefs.current[index]?.capture();
       const quoteContent = quotes[index].affirmation;
       const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
@@ -259,7 +259,7 @@ const SavedDailyQuote = () => {
             <TouchableOpacity
               style={styles.iconBtn}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return handleShare(index);
               }}
             >
@@ -277,7 +277,7 @@ const SavedDailyQuote = () => {
             <TouchableOpacity
               style={styles.iconBtn}
               onPress={() => {
-                triggerHaptic('impactLight');
+                triggerHaptic('impactMedium');
                 return handleUnlike(index);
               }}
             >
