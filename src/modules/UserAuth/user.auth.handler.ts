@@ -395,7 +395,8 @@ const UserAuthHandler = {
             "Biometric status updated successfully",
             {
                 is_biometric: user.is_biometric,
-            }
+            },
+            statusCodes.SUCCESS
         );
     } catch {
         return showResponse(

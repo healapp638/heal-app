@@ -387,7 +387,7 @@ const UserAuthHandler = {
             yield user.save();
             return (0, response_util_1.showResponse)(true, "Biometric status updated successfully", {
                 is_biometric: user.is_biometric,
-            });
+            }, statusCodes_1.default.SUCCESS);
         }
         catch (_a) {
             return (0, response_util_1.showResponse)(false, "err while updating status", null);
