@@ -452,7 +452,7 @@ const affirmationHandler = {
                 ...remainingResult,
             ];
             // ================= RESET IF ALL USED =================
-            if (!result.length) {
+            if (!remainingResult.length) {
                 // remove user from all affirmations
                 yield user_affirmation_model_1.default.updateMany({
                     user_id: {
@@ -529,7 +529,9 @@ const affirmationHandler = {
                                 },
                                 type: 1,
                                 createdAt: 1,
-                                is_liked: false,
+                                is_liked: {
+                                    $literal: false,
+                                },
                             },
                         },
                     ]);

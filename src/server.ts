@@ -49,9 +49,9 @@ init();
 const h = monitorEventLoopDelay();
 h.enable();
 setInterval(() => {
-  console.log('min', h.min / 1e6);
-  console.log('max', h.max / 1e6);
-  console.log('mean', h.mean / 1e6);
+  // console.log('min', h.min / 1e6);
+  // console.log('max', h.max / 1e6);
+  // console.log('mean', h.mean / 1e6);
 }, 50000);
 
 // blocked((time: any, stack: any) => {

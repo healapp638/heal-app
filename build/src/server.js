@@ -54,9 +54,9 @@ init();
 const h = (0, perf_hooks_1.monitorEventLoopDelay)();
 h.enable();
 setInterval(() => {
-    console.log('min', h.min / 1e6);
-    console.log('max', h.max / 1e6);
-    console.log('mean', h.mean / 1e6);
+    // console.log('min', h.min / 1e6);
+    // console.log('max', h.max / 1e6);
+    // console.log('mean', h.mean / 1e6);
 }, 50000);
 // blocked((time: any, stack: any) => {
 //   console.log(`Blocked for ${time}ms`);

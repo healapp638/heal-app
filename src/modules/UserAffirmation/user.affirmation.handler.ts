@@ -537,7 +537,7 @@ const affirmationHandler = {
     ];
 
     // ================= RESET IF ALL USED =================
-    if (!result.length) {
+    if (!remainingResult.length) {
 
       // remove user from all affirmations
       await userAffirmationModel.updateMany(
@@ -641,7 +641,9 @@ const affirmationHandler = {
 
               createdAt: 1,
 
-              is_liked: false,
+              is_liked: {
+                $literal: false,
+              },
             },
           },
         ]);
