@@ -171,7 +171,7 @@ const ModuleThemeDetail = () => {
                 colors={colors}
                 styles={styles}
                 onPress={() => {
-                  triggerHaptic('impactHeavy');
+                  triggerHaptic('impactMedium');
                   if (!isCompleted) {
                     navigation.navigate(
                       AppRoutes.StartedModule as never,

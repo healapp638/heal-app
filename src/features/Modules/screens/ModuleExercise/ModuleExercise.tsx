@@ -77,6 +77,7 @@ const ModuleExercise = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
   const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -183,10 +184,12 @@ const ModuleExercise = () => {
                 <TextInput
                   style={styles.textInput}
                   multiline
-                  placeholder={currentStepData.placeholder}
+                  placeholder={isFocused ? '' : currentStepData.placeholder}
                   placeholderTextColor="grey"
                   value={reflectionText}
                   onChangeText={setReflectionText}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
                   maxFontSizeMultiplier={1.4}
                   textAlignVertical="top"
                 />

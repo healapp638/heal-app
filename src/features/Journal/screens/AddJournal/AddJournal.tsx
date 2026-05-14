@@ -32,6 +32,7 @@ import Voice, {
 } from '@dev-amirzubair/react-native-voice';
 import { useSelector } from 'react-redux';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const SPEECH_LOCALE_BY_LANGUAGE: Record<string, string> = {
   English: 'en-US',
   Spanish: 'es-ES',
@@ -286,7 +287,7 @@ const AddJournal = () => {
                 key={emotion.id}
                 activeOpacity={0.8}
                 onPress={() => {
-                  triggerHaptic('impactHeavy');
+                  triggerHaptic('impactMedium');
                   return setSelectedEmotion(emotion.id);
                 }}
                 style={[
@@ -365,7 +366,7 @@ const AddJournal = () => {
             >
               <TouchableOpacity
                 onPress={(...args: any) => {
-                  triggerHaptic('impactHeavy');
+                  triggerHaptic('impactMedium');
                   return (toggleListening as any)(...args);
                 }}
                 activeOpacity={0.7}
@@ -397,11 +398,11 @@ const AddJournal = () => {
             isLoading={loading}
             disabled={loading}
             onPress={(...args: any) => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               return (handleSave as any)(...args);
             }}
           />
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

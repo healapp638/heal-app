@@ -2,9 +2,9 @@ import { StyleSheet, Platform, Dimensions } from 'react-native';
 import AppUtils from '../../../../utils/appUtils';
 import AppFonts from '../../../../constants/fonts';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
-const style = (colors: any, insets: any) =>
+const style = (colors: any, insets: any = { top: 0 }) =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -17,7 +17,8 @@ const style = (colors: any, insets: any) =>
       right: 0,
       zIndex: 10,
       paddingHorizontal: 20,
-      paddingTop: insets.top > 0 ? insets.top : 20,
+      paddingTop:
+        Platform.OS != 'ios' ? 0 : insets?.top > 0 ? insets.top - 10 : 20,
     },
     slideContainer: {
       height: SCREEN_HEIGHT,
@@ -57,7 +58,7 @@ const style = (colors: any, insets: any) =>
     },
     footerContainer: {
       position: 'absolute',
-      bottom: 180, // Consistent positioning relative to bottom safe area
+      bottom: Platform.OS == 'ios' ? 120 : 200, // Consistent positioning relative to bottom safe area
       width: '100%',
       alignItems: 'center',
     },

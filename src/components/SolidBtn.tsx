@@ -49,7 +49,9 @@ const SolidBtn: React.FC<SolidBtnProps> = ({
       onPress={() => {
         //
         Keyboard.dismiss();
-        ReactNativeHapticFeedback.trigger('impactHeavy', hapticOptions);
+        // ReactNativeHapticFeedback.trigger('impactMedium', hapticOptions);
+        ReactNativeHapticFeedback.trigger('impactMedium', hapticOptions);
+
         onPress();
       }}
       disabled={disabled || isLoading}

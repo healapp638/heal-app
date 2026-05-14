@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Linking } from 'react-native';
+import { View, Linking, ScrollView } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -23,6 +23,7 @@ import getEnvVars from '../../../../../env';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import AppUtils from '../../../../utils/appUtils';
 import AppFonts from '../../../../constants/fonts';
+import PremiumModal from '../../../../modals/PremiumModal';
 const Settings = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -49,19 +50,15 @@ const Settings = () => {
 
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       view={
         <View style={styles.mainContainer}>
-          <View
-            style={{
-              flex: 1,
-            }}
-          >
+          <View style={{}}>
             <HomeHeader
               showCrown
               showStreak={false}
               onCrownPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 setShowCreditsModal(true);
               }}
               userName={localization.appkeys?.settingsTitle || 'Settings'}
@@ -74,149 +71,139 @@ const Settings = () => {
                 marginTop: 10,
               }}
             />
-
-            {settingItems.map(item => {
-              const isNotification =
-                item === (localization.appkeys?.biometricAuth || 'Biometric');
-              const isPersonalInfo =
-                item ===
-                (localization.appkeys?.personalInfo || 'Personal Information');
-              const isLanguage =
-                item === (localization.appkeys?.language || 'Language');
-              const isPrivacy =
-                item ===
-                (localization.appkeys?.privacySecurity || 'Privacy & Security');
-              const isHelp =
-                item === (localization.appkeys?.contactUs || 'Contact Us');
-              const isAbout =
-                item === (localization.appkeys?.aboutHeal || 'About HEAL');
-              const isTerms =
-                item ===
-                (localization.appkeys?.termsOfService || 'Terms of Service');
-              const isPolicy =
-                item ===
-                (localization.appkeys?.privacyPolicy || 'Privacy Policy');
-              const isLogout =
-                item === (localization.appkeys?.logout || 'Logout');
-              let rightIcon = undefined;
-              let rightIconStyle = undefined;
-              if (isNotification) {
-                rightIcon = isNotificationEnabled
-                  ? images.toggleOn
-                  : images.toggleOff;
-              } else if (isLogout) {
-                rightIcon = images.logout;
-                rightIconStyle = styles.logoutIcon;
-              }
-
-              return (
-                <SettingItem
-                  key={item}
-                  label={item}
-                  rightIcon={rightIcon}
-                  rightIconStyle={rightIconStyle}
-                  onPress={() => {
-                    triggerHaptic('impactHeavy');
-                    if (isNotification) {
-                      setIsNotificationEnabled(!isNotificationEnabled);
-                    } else if (isPersonalInfo) {
-                      navigation.navigate(AppRoutes.EditProfile as never);
-                    } else if (isLanguage) {
-                      navigation.navigate(
-                        AppRoutes.SelectLanguage as never,
-                        {
-                          from: 'Settings',
-                        } as never,
-                      );
-                    } else if (isPrivacy) {
-                      navigation.navigate(
-                        AppRoutes.PrivacyAndSecurity as never,
-                      );
-                    } else if (isHelp) {
-                      navigation.navigate(AppRoutes.HelpAndSupport as never);
-                    } else if (isAbout) {
-                      navigation.navigate(AppRoutes.aboutHeal as never);
-                    } else if (isTerms) {
-                      navigation.navigate(AppRoutes.Terms as never);
-                    } else if (isPolicy) {
-                      navigation.navigate(AppRoutes.PrivacyPolicy as never);
-                    } else if (isLogout) {
-                      setvisible(true);
-                    }
-                  }}
-                />
-              );
-            })}
-
-            {/* <SettingItem
-             label={
-              localization.appkeys?.emergencyResources || 'Emergency Resources'
-             }
-             isPink
-             onPress={() =>
-              navigation.navigate(AppRoutes.EmergencyResources as never)
-             }
-             /> */}
-
-            {/* <SettingsPremiumCard
-             description={
-              localization.appkeys?.unlockPremium ||
-              'Unlock all premium features to support your healing journey'
-             }
-             priceLabel="€6.99/month"
-             discoverLabel={
-              localization.appkeys?.discoverPremium || 'Discover Premium'
-             }
-             onDiscoverPress={() =>
-              // navigation.navigate(AppRoutes.Premium as never)
-              setShowCreditsModal(true)
-             }
-             /> */}
-            <SolidText
-              style={[
-                styles.subtitle,
-                {
-                  fontSize: AppUtils.fontSize(12),
-                  fontFamily: AppFonts.bold,
-                  marginBottom: 10,
-                  marginTop: 10,
-                },
-              ]}
+          </View>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 150 }}
+          >
+            <View
+              style={{
+                flex: 1,
+                paddingHorizontal: 2,
+              }}
             >
-              {localization.appkeys?.followUs || 'FOLLOW US'}
-            </SolidText>
-            <SettingItem
-              label="Instagram"
-              leftIcon={images.insta}
-              rightIcon={images.arrowRight}
-              onPress={() => {
-                triggerHaptic('impactHeavy');
-                Linking.openURL('https://www.instagram.com/heal.safespace');
-              }}
-            />
-            <SettingItem
-              label="TikTok"
-              leftIcon={images.tiktok}
-              rightIcon={images.arrowRight}
-              onPress={() => {
-                triggerHaptic('impactHeavy');
-                Linking.openURL('https://www.tiktok.com/@heal.safespace');
-              }}
-            />
-          </View>
+              {settingItems?.map(item => {
+                const isNotification =
+                  item === (localization.appkeys?.biometricAuth || 'Biometric');
+                const isPersonalInfo =
+                  item ===
+                  (localization.appkeys?.personalInfo ||
+                    'Personal Information');
+                const isLanguage =
+                  item === (localization.appkeys?.language || 'Language');
+                const isPrivacy =
+                  item ===
+                  (localization.appkeys?.privacySecurity ||
+                    'Privacy & Security');
+                const isHelp =
+                  item === (localization.appkeys?.contactUs || 'Contact Us');
+                const isAbout =
+                  item === (localization.appkeys?.aboutHeal || 'About HEAL');
+                const isTerms =
+                  item ===
+                  (localization.appkeys?.termsOfService || 'Terms of Service');
+                const isPolicy =
+                  item ===
+                  (localization.appkeys?.privacyPolicy || 'Privacy Policy');
+                const isLogout =
+                  item === (localization.appkeys?.logout || 'Logout');
+                let rightIcon = undefined;
+                let rightIconStyle = undefined;
+                if (isNotification) {
+                  rightIcon = isNotificationEnabled
+                    ? images.toggleOn
+                    : images.toggleOff;
+                } else if (isLogout) {
+                  rightIcon = images.logout;
+                  rightIconStyle = styles.logoutIcon;
+                }
 
-          <View style={styles.footer}>
-            <SolidText style={styles.footerText}>
-              HEAL - Safe Place v1.0.0
-            </SolidText>
-            <PremiumFooter
-              localization={localization}
-              styles={styles}
-              navigation={navigation}
-              appLanguage={appLanguage}
-              hideRestore
-            />
-          </View>
+                return (
+                  <SettingItem
+                    key={item}
+                    label={item}
+                    rightIcon={rightIcon}
+                    rightIconStyle={rightIconStyle}
+                    onPress={() => {
+                      triggerHaptic('impactMedium');
+                      if (isNotification) {
+                        setIsNotificationEnabled(!isNotificationEnabled);
+                      } else if (isPersonalInfo) {
+                        navigation.navigate(AppRoutes.EditProfile as never);
+                      } else if (isLanguage) {
+                        navigation.navigate(
+                          AppRoutes.SelectLanguage as never,
+                          {
+                            from: 'Settings',
+                          } as never,
+                        );
+                      } else if (isPrivacy) {
+                        navigation.navigate(
+                          AppRoutes.PrivacyAndSecurity as never,
+                        );
+                      } else if (isHelp) {
+                        navigation.navigate(AppRoutes.HelpAndSupport as never);
+                      } else if (isAbout) {
+                        navigation.navigate(AppRoutes.aboutHeal as never);
+                      } else if (isTerms) {
+                        navigation.navigate(AppRoutes.Terms as never);
+                      } else if (isPolicy) {
+                        navigation.navigate(AppRoutes.PrivacyPolicy as never);
+                      } else if (isLogout) {
+                        setvisible(true);
+                      }
+                    }}
+                  />
+                );
+              })}
+
+              <SolidText
+                style={[
+                  styles.subtitle,
+                  {
+                    fontSize: AppUtils.fontSize(12),
+                    fontFamily: AppFonts.bold,
+                    marginBottom: 10,
+                    marginTop: 10,
+                  },
+                ]}
+              >
+                {localization.appkeys?.followUs || 'FOLLOW US'}
+              </SolidText>
+              <SettingItem
+                label="Instagram"
+                leftIcon={images.insta}
+                rightIcon={images.arrowRight}
+                onPress={() => {
+                  triggerHaptic('impactMedium');
+                  Linking.openURL('https://www.instagram.com/heal.safespace');
+                }}
+              />
+              <SettingItem
+                label="TikTok"
+                leftIcon={images.tiktok}
+                rightIcon={images.arrowRight}
+                onPress={() => {
+                  triggerHaptic('impactMedium');
+                  Linking.openURL('https://www.tiktok.com/@heal.safespace');
+                }}
+              />
+            </View>
+
+            <View style={styles.footer}>
+              <SolidText style={styles.footerText}>
+                HEAL - Safe Place v1.0.0
+              </SolidText>
+              <PremiumFooter
+                localization={localization}
+                styles={styles}
+                navigation={navigation}
+                appLanguage={appLanguage}
+                hideRestore
+              />
+            </View>
+          </ScrollView>
+
           <LogoutModal
             visible={visible}
             onConfirm={() => {
@@ -238,7 +225,7 @@ const Settings = () => {
             onClose={() => setvisible(false)}
           />
 
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

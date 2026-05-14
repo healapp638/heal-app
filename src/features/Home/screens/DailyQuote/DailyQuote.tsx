@@ -34,7 +34,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import getEnvVars from '../../../../../env';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 const DailyQuote = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
@@ -230,6 +230,7 @@ const DailyQuote = () => {
             styles.container,
             {
               backgroundColor: 'transparent',
+              height: SCREEN_HEIGHT,
             },
           ]}
         >
@@ -270,7 +271,7 @@ const DailyQuote = () => {
                 />
               )}
               keyExtractor={(item, index) => index.toString()}
-              pagingEnabled={Platform.OS === 'ios'}
+              pagingEnabled={true}
               snapToInterval={SCREEN_HEIGHT}
               snapToAlignment="start"
               decelerationRate="fast"
@@ -326,7 +327,7 @@ const DailyQuote = () => {
 
           <TouchableOpacity
             onPress={() => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               setShowFavoritesModal(true);
             }}
             style={styles.themeBtn2}
@@ -340,8 +341,7 @@ const DailyQuote = () => {
 
           <TouchableOpacity
             onPress={() => {
-              triggerHaptic('impactHeavy');
-
+              triggerHaptic('impactMedium');
               navigation.navigate(AppRoutes.ThemeMixes as never);
             }}
             style={styles.themeBtn}

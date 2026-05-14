@@ -72,7 +72,7 @@ const OnboardingModal = ({
   const totalSteps = 6;
 
   const handleNext = () => {
-    triggerHaptic('impactHeavy');
+    triggerHaptic('impactMedium');
     if (step < totalSteps - 1) {
       setStep(step + 1);
     } else {
@@ -132,7 +132,7 @@ const OnboardingModal = ({
           { backgroundColor: colors.white },
         ]}
         onPress={() => {
-          triggerHaptic('impactHeavy');
+          triggerHaptic('impactMedium');
           updateAnswer(key, option.label);
         }}
         activeOpacity={0.7}
@@ -295,12 +295,12 @@ const OnboardingModal = ({
                 {
                   id: 'selfConfident',
                   label: localization.appkeys?.optionSelfConfident,
-                  icon: images.selfConfident,
+                  icon: images.selfconfident,
                 },
                 {
                   id: 'talk',
                   label: localization.appkeys?.optionNeedToTalk,
-                  icon: images.talk,
+                  icon: images.needtotalk,
                 },
               ].map(opt => renderOption('bringsYouHere', opt, true))}
             </View>

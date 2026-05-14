@@ -35,6 +35,7 @@ import Toast from '../../../../components/Toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const ThemeMixes = () => {
   const { triggerHaptic } = useHaptic();
   const navigation = useNavigation();
@@ -108,7 +109,7 @@ const ThemeMixes = () => {
   console.log('forYouResult', forYouResult);
   const handleCategoryChange = (catId: string) => {
     if (catId === activeTab) return;
-    triggerHaptic('impactHeavy');
+    triggerHaptic('impactMedium');
     setActiveTab(catId);
     setActiveCategory(catId);
   };
@@ -219,7 +220,7 @@ const ThemeMixes = () => {
                       { queryKey: ['getHomeThemeListingByCategory'] },
                       updateCache,
                     );
-                    triggerHaptic('impactHeavy');
+                    triggerHaptic('impactMedium');
                     postApi(
                       {
                         endpoint: endpoints.add_user_theme,
@@ -259,7 +260,7 @@ const ThemeMixes = () => {
             />
           </View>
 
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

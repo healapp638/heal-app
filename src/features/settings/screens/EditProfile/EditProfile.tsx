@@ -15,6 +15,7 @@ import AgeRestrictionModal from '../../../../modals/AgeRestrictionModal';
 import style from './style';
 import HomeHeader from '../../../../components/HomeHeader';
 import CustomImagePickerModal from '../../../../modals/CustomImagePickerModal';
+import InfoModal from '../../../../modals/InfoModal';
 import { useDispatch, useSelector } from 'react-redux';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
@@ -29,6 +30,7 @@ import { getUserDetail, setUser } from '../../../../redux/Reducers/userData';
 import getEnvVars from '../../../../../env';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const EditProfile = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -79,6 +81,8 @@ const EditProfile = () => {
   const [selectedDate, setSelectedDate] = useState<DobDateParts>(initialDob);
 
   // Modal State
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+
   const [isDobSelected, setIsDobSelected] = useState(!!user?.dob);
   const [dobModalVisible, setDobModalVisible] = useState(false);
   const [imagePickerVisible, setImagePickerVisible] = useState(false);
@@ -184,6 +188,7 @@ const EditProfile = () => {
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
+            onRightPress={() => setShowCreditsModal(true)}
             title={localization.appkeys?.editProfile || 'Edit Profile'}
             rightIcon={images.crown}
           />
@@ -226,7 +231,7 @@ const EditProfile = () => {
                 hitSlop={50}
                 style={styles.editIconContainer}
                 onPress={() => {
-                  triggerHaptic('impactHeavy');
+                  triggerHaptic('impactMedium');
                   return setImagePickerVisible(true);
                 }}
               >
@@ -245,7 +250,7 @@ const EditProfile = () => {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return setImagePickerVisible(true);
               }}
             >
@@ -290,7 +295,7 @@ const EditProfile = () => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return setDobModalVisible(true);
               }}
             >
@@ -313,7 +318,7 @@ const EditProfile = () => {
                 activeOpacity={0.8}
                 style={styles.changePassCard}
                 onPress={() => {
-                  triggerHaptic('impactHeavy');
+                  triggerHaptic('impactMedium');
                   return navigation.navigate(AppRoutes.ChangePassword as never);
                 }}
               >
@@ -351,6 +356,10 @@ const EditProfile = () => {
             />
           </View>
 
+          <PremiumModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
+          />
           {/* Modals */}
           <DobPickerModal
             visible={dobModalVisible}
@@ -371,9 +380,15 @@ const EditProfile = () => {
             onClose={() => setAgeModalVisible(false)}
             title={localization.appkeys?.sorryTitle || "We're sorry!"}
             message={
-              localization.appkeys?.ageRequirementMsg ||
               'You must be at least 13 years old to use HEAL.'
             }
+          />
+
+          <InfoModal
+            visible={countryInfoVisible}
+            onClose={() => setCountryInfoVisible(false)}
+            title={localization.appkeys?.selectWhereLive}
+            message={localization.appkeys?.helpResourcesMsg}
           />
         </View>
       }

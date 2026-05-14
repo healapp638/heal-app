@@ -22,6 +22,7 @@ import { triggerHaptic } from '../../../../hooks/useHaptic';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
+import PremiumModal from '../../../../modals/PremiumModal';
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -41,19 +42,27 @@ const HelpAndSupport = () => {
 
   const handleSendFeedback = () => {
     if (!name.trim()) {
-      AppUtils.showToast(localization.appkeys?.enterName || 'Please enter your name');
+      AppUtils.showToast(
+        localization.appkeys?.enterName || 'Please enter your name',
+      );
       return;
     }
     if (!email.trim()) {
-      AppUtils.showToast(localization.appkeys?.enterEmail || 'Please enter your email');
+      AppUtils.showToast(
+        localization.appkeys?.enterEmail || 'Please enter your email',
+      );
       return;
     }
     if (!AppUtils.validateEmail(email)) {
-      AppUtils.showToast(localization.appkeys?.invalidEmail || 'Please enter a valid email');
+      AppUtils.showToast(
+        localization.appkeys?.invalidEmail || 'Please enter a valid email',
+      );
       return;
     }
     if (!feedback.trim()) {
-      AppUtils.showToast(localization.appkeys?.enterFeedback || 'Please enter your feedback');
+      AppUtils.showToast(
+        localization.appkeys?.enterFeedback || 'Please enter your feedback',
+      );
       return;
     }
 
@@ -160,13 +169,13 @@ const HelpAndSupport = () => {
             titleTxt={localization.appkeys?.sendFeedback || 'Send feedback'}
             btnStyle={[styles.sendFeedbackBtn]}
             onPress={() => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               handleSendFeedback();
             }}
             isLoading={isPending}
             disabled={isPending}
           />
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

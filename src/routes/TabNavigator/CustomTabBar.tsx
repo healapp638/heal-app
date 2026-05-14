@@ -57,7 +57,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: any) => {
             <TouchableOpacity
               key={route.key}
               onPress={(...args: any) => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return (onPress as any)(...args);
               }}
               style={styles.tabItem}

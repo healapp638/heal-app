@@ -36,7 +36,7 @@ files.forEach(file => {
               needsImport = true;
 
               const hapticCall = t.expressionStatement(
-                t.callExpression(t.identifier('triggerHaptic'), [t.stringLiteral('impactHeavy')])
+                t.callExpression(t.identifier('triggerHaptic'), [t.stringLiteral('impactMedium')])
               );
 
               if (t.isBlockStatement(expr.body)) {
@@ -52,7 +52,7 @@ files.forEach(file => {
               needsImport = true;
 
               const hapticCall = t.expressionStatement(
-                t.callExpression(t.identifier('triggerHaptic'), [t.stringLiteral('impactHeavy')])
+                t.callExpression(t.identifier('triggerHaptic'), [t.stringLiteral('impactMedium')])
               );
               
               // (...args: any) => { ; return (expr as any)(...args); }

@@ -17,6 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const Calendar = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
@@ -116,7 +117,7 @@ const Calendar = () => {
           <View style={styles.monthRow}>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return prevMonth();
               }}
               activeOpacity={0.7}
@@ -135,7 +136,7 @@ const Calendar = () => {
 
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return nextMonth();
               }}
               activeOpacity={0.7}
@@ -158,7 +159,7 @@ const Calendar = () => {
             markedDates={markedDates}
             selectedDay={selectedDay}
             onDayPress={day => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               setSelectedDay(day);
             }}
           />
@@ -174,7 +175,7 @@ const Calendar = () => {
                 : ` - ${localization.appkeys?.noEntries || 'No entries'}`
             }
             onPress={() => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               if (selectedDateEntries > 0) {
                 navigation.navigate(
                   AppRoutes.ConnectedEntries as never,
@@ -196,7 +197,7 @@ const Calendar = () => {
               height: 40,
             }}
           />
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

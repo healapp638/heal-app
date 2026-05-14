@@ -23,6 +23,7 @@ import getEnvVars from '../../../../../env';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const ThemeDetail = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -107,7 +108,7 @@ const ThemeDetail = () => {
             { queryKey: ['getHomeThemeListingByCategory'] },
             updateCache,
           );
-          triggerHaptic('impactHeavy');
+          triggerHaptic('impactMedium');
           postApi(
             {
               endpoint: endpoints.add_user_theme,
@@ -206,7 +207,7 @@ const ThemeDetail = () => {
               }
             />
           )}
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

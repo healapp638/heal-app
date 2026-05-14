@@ -21,7 +21,7 @@ const DailyWeeklyToggle = ({
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          triggerHaptic('impactHeavy');
+          triggerHaptic('impactMedium');
           return onTabChange('daily');
         }}
         style={[
@@ -44,7 +44,7 @@ const DailyWeeklyToggle = ({
       <TouchableOpacity
         activeOpacity={0.9}
         onPress={() => {
-          triggerHaptic('impactHeavy');
+          triggerHaptic('impactMedium');
           return onTabChange('weekly');
         }}
         style={[

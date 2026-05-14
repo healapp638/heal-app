@@ -10,6 +10,7 @@ import style from './style';
 import SolidBtn from '../../../../components/SolidBtn';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const ChallengeDetail = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -43,8 +44,14 @@ const ChallengeDetail = () => {
           <View style={styles.taskCard}>
             <View style={styles.badgeWrapper}>
               <View style={styles.badgeCircle}>
-                <Image
+                {/* <Image
                   source={images.star1}
+                  style={styles.badgeIcon}
+                  resizeMode="contain"
+                  tintColor={colors.brown}
+                /> */}
+                <Image
+                  source={images.h}
                   style={styles.badgeIcon}
                   resizeMode="contain"
                   tintColor={colors.brown}
@@ -93,7 +100,7 @@ const ChallengeDetail = () => {
               return (handleStart as any)(...args);
             }}
           />
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

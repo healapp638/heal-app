@@ -23,6 +23,7 @@ import ModuleThemeCard from '../../../../components/ModuleThemeCard';
 import HorizontalModuleList from '../../../../components/HorizontalModuleList';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
+import PremiumModal from '../../../../modals/PremiumModal';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import getEnvVars from '../../../../../env';
@@ -36,6 +37,7 @@ const Modules = () => {
   const [startedModules, setStartedModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
   const {
     data: startedModulesData,
     isLoading: isStartedLoading,
@@ -112,17 +114,6 @@ const Modules = () => {
   };
   const renderHeader = () => (
     <View>
-      {/* Header */}
-      <HomeHeader
-        showStreak={false}
-        onCrownPress={() => {}}
-        userName={localization.appkeys?.tabModules || 'Modules'}
-        safeSpaceLabel={
-          localization.appkeys?.modulesSubtitle || 'Choose guided support'
-        }
-        onStreakPress={() => {}}
-      />
-
       {/* Progress Tracker Card */}
       <ProgressTrackerCard
         viewStyle={styles.progressCardMargin}
@@ -148,7 +139,7 @@ const Modules = () => {
             </SolidText>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return navigation.navigate(
                   AppRoutes.AllModules as never,
                   {
@@ -236,7 +227,7 @@ const Modules = () => {
             </SolidText>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return navigation.navigate(
                   AppRoutes.AllModules as never,
                   {
@@ -301,40 +292,58 @@ const Modules = () => {
       isScrollEnabled={false}
       showChat
       view={
-        <FlatList
-          data={themes}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-          initialNumToRender={10}
-          maxToRenderPerBatch={10}
-          windowSize={10}
-          removeClippedSubviews={true}
-          ListHeaderComponent={renderHeader}
-          ListFooterComponent={renderFooter}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-          }
-          contentContainerStyle={[
-            styles.contentContainer,
-            {
-              paddingHorizontal: 20,
-            },
-          ]}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={
-            isLoading && cursor === null ? (
-              <ActivityIndicator
-                size="large"
-                color={colors.brown}
-                style={{
-                  marginTop: 50,
-                }}
-              />
-            ) : null
-          }
-        />
+        <View style={{ flex: 1 }}>
+          <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+            <HomeHeader
+              showStreak={false}
+              showCrown
+              onCrownPress={() => setShowCreditsModal(true)}
+              userName={localization.appkeys?.tabModules || 'Modules'}
+              safeSpaceLabel={
+                localization.appkeys?.modulesSubtitle || 'Choose guided support'
+              }
+              onStreakPress={() => {}}
+            />
+          </View>
+          <FlatList
+            data={themes}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={10}
+            removeClippedSubviews={true}
+            ListHeaderComponent={renderHeader}
+            ListFooterComponent={renderFooter}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            refreshControl={
+              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+            }
+            contentContainerStyle={[
+              styles.contentContainer,
+              {
+                paddingHorizontal: 20,
+              },
+            ]}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              isLoading && cursor === null ? (
+                <ActivityIndicator
+                  size="large"
+                  color={colors.brown}
+                  style={{
+                    marginTop: 50,
+                  }}
+                />
+              ) : null
+            }
+          />
+          <PremiumModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
+          />
+        </View>
       }
     />
   );

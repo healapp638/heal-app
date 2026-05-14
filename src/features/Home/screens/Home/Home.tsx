@@ -1,5 +1,11 @@
 import React, { useContext } from 'react';
-import { View, FlatList, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+} from 'react-native';
 import {
   useFocusEffect,
   useNavigation,
@@ -16,6 +22,7 @@ import SectionHeader from '../../../../components/SectionHeader';
 import ChallengeCard from '../../../../components/ChallengeCard';
 import ModuleCard from '../../../../components/ModuleCard';
 import style from './style';
+import PremiumModal from '../../../../modals/PremiumModal';
 import JournalCard from '../../../../components/JournalCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,6 +38,7 @@ const Home = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const user = useSelector((state: any) => state.userData.user);
+  const [showCreditsModal, setShowCreditsModal] = React.useState(false);
 
   const userName = user?.fullName || 'User';
   const { data: startedModulesData, refetch: refetchStarted } = useGetApi(
@@ -63,7 +71,7 @@ const Home = () => {
   );
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       showChat
       view={
         <View style={styles.mainContainer}>
@@ -71,6 +79,8 @@ const Home = () => {
             userName={userName}
             safeSpaceLabel={localization.appkeys?.homeSafeSpace || 'Safe Space'}
             streakCount={3}
+            showCrown={false}
+            onCrownPress={() => setShowCreditsModal(true)}
             onStreakPress={() =>
               navigation.navigate(AppRoutes.DailyStreak as never)
             }
@@ -78,122 +88,134 @@ const Home = () => {
               navigation.navigate(AppRoutes.Calendar as never)
             }
           />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 150 }}
+          >
+            <WeeklyStreak />
 
-          <WeeklyStreak />
-
-          <ProgressTrackerCard
-            onPress={() => {
-              triggerHaptic('impactHeavy');
-              return navigation.navigate(AppRoutes.ProgressTracker as never);
-            }}
-            title={
-              localization.appkeys?.homeProgressTracker || 'Progress Tracker'
-            }
-          />
-
-          <DailyQuoteCard
-            key={user?.homeTheme?._id || 'default'}
-            onPress={() => {
-              triggerHaptic('impactHeavy');
-              return navigation.navigate(AppRoutes.DailyQuote as never);
-            }}
-            title={localization.appkeys?.homeQuoteDay || 'Quote of the day'}
-            quote={aiAffirmation}
-            exploreLabel={
-              localization.appkeys?.homeExploreMore || 'Tap to explore more'
-            }
-            isLoading={isAILoading}
-          />
-
-          <SectionHeader
-            title={localization.appkeys?.homeWhatYouCanDo || 'What you can do'}
-            actionLabel={localization.appkeys?.homeSeeAll || 'See All'}
-            onActionPress={() => {
-              navigation.navigate(AppRoutes.Challenges as never);
-            }}
-          />
-
-          <ChallengeCard
-            onPress={() => {
-              triggerHaptic('impactHeavy');
-              navigation.navigate(AppRoutes.ChallengeDetail as never);
-            }}
-            title={
-              localization.appkeys?.challengeCompletedTitle ||
-              "Completed today's challenge"
-            }
-            duration={localization.appkeys?.challengeDuration || '1 MIN'}
-          />
-          {startedModules?.length > 0 && (
-            <SectionHeader
-              title={localization.appkeys?.startedModule || 'Started Modules'}
-              actionLabel={localization.appkeys?.seeAll || 'See All'}
-              onActionPress={() => {
-                navigation.navigate(
-                  AppRoutes.AllModules as never,
-                  {
-                    type: 'started',
-                  } as never,
-                );
+            <ProgressTrackerCard
+              onPress={() => {
+                triggerHaptic('impactMedium');
+                return navigation.navigate(AppRoutes.ProgressTracker as never);
               }}
-              containerStyle={{
-                marginTop: 10,
+              title={
+                localization.appkeys?.homeProgressTracker || 'Progress Tracker'
+              }
+            />
+
+            <DailyQuoteCard
+              key={user?.homeTheme?._id || 'default'}
+              onPress={() => {
+                triggerHaptic('impactMedium');
+                return navigation.navigate(AppRoutes.DailyQuote as never);
+              }}
+              title={localization.appkeys?.homeQuoteDay || 'Quote of the day'}
+              quote={aiAffirmation}
+              exploreLabel={
+                localization.appkeys?.homeExploreMore || 'Tap to explore more'
+              }
+              isLoading={isAILoading}
+            />
+
+            <SectionHeader
+              title={
+                localization.appkeys?.homeWhatYouCanDo || 'What you can do'
+              }
+              actionLabel={localization.appkeys?.homeSeeAll || 'See All'}
+              onActionPress={() => {
+                navigation.navigate(AppRoutes.Challenges as never);
               }}
             />
-          )}
-          <FlatList
-            data={startedModules.slice(0, 2)}
-            numColumns={2}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={item => item._id}
-            style={{
-              marginTop: 10,
-            }}
-            renderItem={({ item, index }) => (
-              <ModuleCard
-                onPress={() => {
-                  triggerHaptic('impactHeavy');
-                  return navigation.navigate(
-                    AppRoutes.StartedModule as never,
+
+            <ChallengeCard
+              onPress={() => {
+                triggerHaptic('impactMedium');
+                navigation.navigate(AppRoutes.ChallengeDetail as never);
+              }}
+              title={
+                localization.appkeys?.challengeCompletedTitle ||
+                "Completed today's challenge"
+              }
+              duration={localization.appkeys?.challengeDuration || '1 MIN'}
+            />
+            {startedModules?.length > 0 && (
+              <SectionHeader
+                title={localization.appkeys?.startedModule || 'Started Modules'}
+                actionLabel={localization.appkeys?.seeAll || 'See All'}
+                onActionPress={() => {
+                  navigation.navigate(
+                    AppRoutes.AllModules as never,
                     {
-                      module: item.module,
-                      subModule: {
-                        ...item,
-                        _id: item.sub_module_id,
-                      },
+                      type: 'started',
                     } as never,
                   );
                 }}
-                background={
-                  index === 0 ? images.moduleBack1 : images.moduleBack2
-                }
-                progress={`${item.completed_phase_count}/${item.total_phase_count}`}
-                title={item.title}
-                category={
-                  item.theme_title ||
-                  localization.appkeys?.moduleRelationshipBasics ||
-                  'RELATIONSHIP BASICS'
-                }
+                containerStyle={{
+                  marginTop: 10,
+                }}
               />
             )}
-          />
+            <FlatList
+              data={startedModules.slice(0, 2)}
+              numColumns={2}
+              scrollEnabled={false}
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={item => item._id}
+              style={{
+                marginTop: 10,
+              }}
+              renderItem={({ item, index }) => (
+                <ModuleCard
+                  onPress={() => {
+                    triggerHaptic('impactMedium');
+                    return navigation.navigate(
+                      AppRoutes.StartedModule as never,
+                      {
+                        module: item.module,
+                        subModule: {
+                          ...item,
+                          _id: item.sub_module_id,
+                        },
+                      } as never,
+                    );
+                  }}
+                  background={
+                    index === 0 ? images.moduleBack1 : images.moduleBack2
+                  }
+                  progress={`${item.completed_phase_count}/${item.total_phase_count}`}
+                  title={item.title}
+                  category={
+                    item.theme_title ||
+                    localization.appkeys?.moduleRelationshipBasics ||
+                    'RELATIONSHIP BASICS'
+                  }
+                />
+              )}
+            />
 
-          <SectionHeader
-            title={localization.appkeys?.todayJournal || 'Today Journal'}
-            onActionPress={() => {}}
-            containerStyle={{
-              marginTop: 20,
-            }}
-          />
-          <JournalCard
-            title={
-              localization.appkeys?.writeFeeling || "Write what you're feeling"
-            }
-            duration={localization.appkeys?.journalTitle || 'JOURNAL'}
-            onPress={() => {
-              triggerHaptic('impactHeavy');
-              navigation.navigate(AppRoutes.Journal as never);
-            }}
+            <SectionHeader
+              title={localization.appkeys?.todayJournal || 'Today Journal'}
+              onActionPress={() => {}}
+              containerStyle={{
+                marginTop: 20,
+              }}
+            />
+            <JournalCard
+              title={
+                localization.appkeys?.writeFeeling ||
+                "Write what you're feeling"
+              }
+              duration={localization.appkeys?.journalTitle || 'JOURNAL'}
+              onPress={() => {
+                triggerHaptic('impactMedium');
+                navigation.navigate(AppRoutes.Journal as never);
+              }}
+            />
+          </ScrollView>
+          <PremiumModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
           />
         </View>
       }

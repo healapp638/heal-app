@@ -109,7 +109,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
         ) : rightIcon ? (
           <TouchableOpacity
             onPress={(...args: any) => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               return (handleRightPress as any)(...args);
             }}
             activeOpacity={0.7}

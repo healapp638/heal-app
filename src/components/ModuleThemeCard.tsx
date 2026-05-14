@@ -21,7 +21,7 @@ const ModuleThemeCard = ({ item, onPress }: ModuleThemeCardProps) => {
         },
       ]}
       onPress={(...args: any) => {
-        triggerHaptic('impactHeavy');
+        triggerHaptic('impactMedium');
         return (onPress as any)(...args);
       }}
     >

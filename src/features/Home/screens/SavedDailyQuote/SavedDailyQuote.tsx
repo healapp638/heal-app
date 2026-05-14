@@ -29,14 +29,15 @@ import Share from 'react-native-share';
 import usePostApi from '../../../../hooks/usePostApi';
 import { useQueryClient } from '@tanstack/react-query';
 import getEnvVars from '../../../../../env';
-import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
+
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const SavedDailyQuote = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { colors, images } = useTheme() as any;
   const { triggerHaptic } = useHaptic();
-  const styles = style(colors);
+  const styles = style(colors, insets);
   const queryClient = useQueryClient();
   const { mutate: postApi } = usePostApi();
   const user = useSelector((state: any) => state.userData?.user);
@@ -258,7 +259,7 @@ const SavedDailyQuote = () => {
             <TouchableOpacity
               style={styles.iconBtn}
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return handleShare(index);
               }}
             >
@@ -276,7 +277,7 @@ const SavedDailyQuote = () => {
             <TouchableOpacity
               style={styles.iconBtn}
               onPress={() => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return handleUnlike(index);
               }}
             >
@@ -332,8 +333,8 @@ const SavedDailyQuote = () => {
                   paddingTop:
                     Platform.OS == 'android'
                       ? -10
-                      : insets.top > 0
-                      ? insets.top
+                      : insets?.top > 0
+                      ? insets.top - 10
                       : 20,
                 },
               ]}
@@ -414,7 +415,7 @@ const SavedDailyQuote = () => {
               />
             )}
 
-            <GetCreditsModal
+            <PremiumModal
               visible={showCreditsModal}
               onClose={() => setShowCreditsModal(false)}
             />

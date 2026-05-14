@@ -10,7 +10,7 @@ const style = (colors: any) =>
     contentContainer: {
       paddingHorizontal: 20,
       paddingTop: Platform.OS === 'ios' ? 4 : 10,
-      paddingBottom: 100,
+      paddingBottom: 150,
     },
     progressCardMargin: {
       marginBottom: Platform.OS === 'ios' ? 20 : 18,

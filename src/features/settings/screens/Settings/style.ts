@@ -69,7 +69,7 @@ const style = (colors: any) =>
       justifyContent: 'space-between',
       backgroundColor: 'white',
       borderRadius: 16,
-      paddingVertical: Platform.OS == 'ios' ? 18 : 16,
+      minHeight: 62,
       paddingHorizontal: 12,
       marginBottom: 12,
       // Shadow
@@ -101,6 +101,7 @@ const style = (colors: any) =>
       justifyContent: 'space-between',
       backgroundColor: '#FDE2E4',
       borderRadius: 16,
+      minHeight: 62,
       paddingVertical: Platform.OS == 'ios' ? 8 : 6,
 
       paddingHorizontal: 12,

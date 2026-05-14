@@ -17,6 +17,7 @@ import { useRoute, useFocusEffect } from '@react-navigation/native';
 import AppUtils from '../../../../utils/appUtils';
 import { useCallback } from 'react';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 
 const ConnectedEntries = () => {
   const navigation = useNavigation();
@@ -28,7 +29,11 @@ const ConnectedEntries = () => {
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<any>(null);
 
-  const { data: journalData, isLoading, refetch } = useGetApi(
+  const {
+    data: journalData,
+    isLoading,
+    refetch,
+  } = useGetApi(
     endpoints.journal_list_by_date,
     ['journal_list_by_date', date],
     { date: date },
@@ -94,7 +99,7 @@ const ConnectedEntries = () => {
             }
             rightIcon={images.crown}
             onRightPress={() => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               setShowCreditsModal(true);
             }}
           />
@@ -131,7 +136,7 @@ const ConnectedEntries = () => {
                   title={item.title}
                   body={item.body}
                   onPress={() => {
-                    triggerHaptic('impactHeavy');
+                    triggerHaptic('impactMedium');
                     setSelectedEntry(item);
                   }}
                 />
@@ -145,7 +150,7 @@ const ConnectedEntries = () => {
             entry={selectedEntry}
             localization={localization}
           />
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

@@ -182,7 +182,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => {
-              // triggerHaptic('impactHeavy');
+              // triggerHaptic('impactMedium');
               return handleUnlike(item);
             }}
           >
@@ -195,7 +195,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               return handleShare(item);
             }}
           >
@@ -220,7 +220,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       <View style={styles.overlay}>
         <TouchableWithoutFeedback
           onPress={(...args: any) => {
-            triggerHaptic('impactHeavy');
+            triggerHaptic('impactMedium');
             return (onClose as any)(...args);
           }}
         >
@@ -231,7 +231,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <View style={styles.header}>
             <TouchableOpacity
               onPress={(...args: any) => {
-                triggerHaptic('impactHeavy');
+                triggerHaptic('impactMedium');
                 return (onClose as any)(...args);
               }}
               style={styles.backBtn}
@@ -265,7 +265,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <SolidBtn
             titleTxt="Show all in feed"
             onPress={() => {
-              // triggerHaptic('impactHeavy');
+              // triggerHaptic('impactMedium');
               onClose();
               navigation.navigate(AppRoutes.SavedDailyQuote as never);
             }}

@@ -25,6 +25,7 @@ import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import PremiumModal from '../../../../modals/PremiumModal';
 const Journal = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
@@ -36,6 +37,8 @@ const Journal = () => {
   const [page, setPage] = useState(1);
   const [totalEntries, setTotalEntries] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+
   const { data, isLoading, refetch, isFetching, error } = useGetApi(
     endpoints.get_journals,
     ['journals', page, search],
@@ -130,7 +133,9 @@ const Journal = () => {
           <HomeHeader
             showCrown
             showStreak={false}
-            onCrownPress={() => {}}
+            onCrownPress={() => {
+              setShowCreditsModal(true);
+            }}
             userName={localization.appkeys?.journalTitle || 'Journal'}
             safeSpaceLabel={
               localization.appkeys?.journalSubtitle || 'Your private space'
@@ -142,7 +147,7 @@ const Journal = () => {
             onChangeText={setSearch}
             placeholder={localization.appkeys?.searchPlaceholder || 'Search...'}
             onCalendarPress={() => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
               return navigation.navigate(AppRoutes.Calendar as never);
             }}
           />
@@ -189,7 +194,7 @@ const Journal = () => {
                     title={item.title}
                     body={item.body}
                     onPress={() => {
-                      triggerHaptic('impactHeavy');
+                      triggerHaptic('impactMedium');
                       return setSelectedEntry(item);
                     }}
                   />
@@ -203,7 +208,7 @@ const Journal = () => {
             style={styles.fab}
             activeOpacity={0.8}
             onPress={(...args: any) => {
-              triggerHaptic('impactHeavy');
+              triggerHaptic('impactMedium');
 
               return (handleAddEntry as any)(...args);
             }}
@@ -214,7 +219,10 @@ const Journal = () => {
               resizeMode="contain"
             />
           </TouchableOpacity>
-
+          <PremiumModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
+          />
           <JournalDetailsModal
             visible={!!selectedEntry}
             onClose={() => setSelectedEntry(null)}

@@ -87,7 +87,7 @@ const AllModules = () => {
         // disabled={type === 'finished'}
         containerStyle={styles.cardContainer}
         onPress={() => {
-          triggerHaptic('impactHeavy');
+          triggerHaptic('impactMedium');
           // if (type === 'finished') return;
           navigation.navigate(
             AppRoutes.StartedModule as never,

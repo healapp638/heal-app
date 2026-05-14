@@ -15,6 +15,7 @@ import JourneyModuleItem from '../../../../components/JourneyModuleItem';
 import { LocalizationContext } from '../../../../localization/localization';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import style from './style';
+import PremiumModal from '../../../../modals/PremiumModal';
 
 const ProgressTracker = () => {
   const { colors, images } = useTheme() as any;
@@ -105,7 +106,7 @@ const ProgressTracker = () => {
             ))}
           </View>
 
-          <GetCreditsModal
+          <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />

@@ -10,7 +10,7 @@ import {
 import ViewShot from 'react-native-view-shot';
 import SolidText from '../../../../components/SolidText';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
 interface QuoteItemProps {
   item: any;
