@@ -32,7 +32,7 @@ const ThemeSeeAll = () => {
       }}
       title={item.title}
       onPress={() => {
-        triggerHaptic('impactMedium');
+        triggerHaptic('impactLight');
         return navigation.navigate(
           AppRoutes.ThemeDetail as never,
           {

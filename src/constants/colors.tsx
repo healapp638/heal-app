@@ -172,6 +172,8 @@ const LightTheme = {
     heartFill: require('../assets/heartFill.png'),
     fav: require('../assets/fav.png'),
     whiteHeart: require('../assets/whiteHeart.png'),
+    iosBio: require('../assets/iosBio.png'),
+    andBio: require('../assets/andBio.png'),
   },
 };
 
@@ -323,7 +325,6 @@ const DarkTheme = {
     microphone2: require('../assets/microphone2.png'),
     logout: require('../assets/logout.png'),
     phone2: require('../assets/phone2.png'),
-
     edit: require('../assets/edit.png'),
     user: require('../assets/user.png'),
     logoutBig: require('../assets/logoutBig.png'),
@@ -349,6 +350,8 @@ const DarkTheme = {
     heartFill: require('../assets/heartFill.png'),
     fav: require('../assets/fav.png'),
     whiteHeart: require('../assets/whiteHeart.png'),
+    iosBio: require('../assets/iosBio.png'),
+    andBio: require('../assets/andBio.png'),
   },
 };
 export { LightTheme, DarkTheme };

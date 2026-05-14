@@ -231,7 +231,7 @@ const EditProfile = () => {
                 hitSlop={50}
                 style={styles.editIconContainer}
                 onPress={() => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   return setImagePickerVisible(true);
                 }}
               >
@@ -250,7 +250,7 @@ const EditProfile = () => {
             <TouchableOpacity
               activeOpacity={0.7}
               onPress={() => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return setImagePickerVisible(true);
               }}
             >
@@ -295,7 +295,7 @@ const EditProfile = () => {
             <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return setDobModalVisible(true);
               }}
             >
@@ -318,7 +318,7 @@ const EditProfile = () => {
                 activeOpacity={0.8}
                 style={styles.changePassCard}
                 onPress={() => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   return navigation.navigate(AppRoutes.ChangePassword as never);
                 }}
               >
@@ -379,9 +379,7 @@ const EditProfile = () => {
             visible={ageModalVisible}
             onClose={() => setAgeModalVisible(false)}
             title={localization.appkeys?.sorryTitle || "We're sorry!"}
-            message={
-              'You must be at least 13 years old to use HEAL.'
-            }
+            message={'You must be at least 13 years old to use HEAL.'}
           />
 
           <InfoModal

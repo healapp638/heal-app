@@ -12,12 +12,86 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import useBiometric from '../../../../hooks/useBiometric';
+import {
+  setAuth,
+  setBiometric,
+  setRefreshToken,
+  setToken,
+  setUser,
+  getUserDetail,
+} from '../../../../redux/Reducers/userData';
+import { useDispatch } from 'react-redux';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
 const AccessScreen = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+  const dispatch = useDispatch();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
+  const { handleBiometricAuth, biometric, email, password, lastLoginType } = useBiometric();
+  const { mutate: loginUser } = usePostApi();
+
+  const handleLogin = (ema?: string, pass?: string) => {
+    const payload = {
+      email: ema?.trim()?.toLowerCase(),
+      password: pass,
+      device_token: '123456',
+      device_type: Platform.OS,
+    };
+
+    loginUser(
+      { endpoint: endpoints.login, data: payload },
+      {
+        onSuccess: (response: any) => {
+          if (response?.data?.is_profile_completed == false) {
+            navigation.navigate(
+              AppRoutes.Verification as never,
+              {
+                email: ema?.trim()?.toLowerCase(),
+                password: pass,
+                from: 'SignIn',
+              } as never,
+            );
+          } else {
+            dispatch(setUser(response?.data));
+            dispatch(setToken(response?.data?.access_token));
+            dispatch(setRefreshToken(response?.data?.refresh_token));
+            dispatch(setAuth(true));
+            dispatch(getUserDetail() as any);
+            dispatch(setBiometric(true));
+
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: AppRoutes.NonAuthStack,
+                  params: {
+                    screen: AppRoutes.Offer,
+                  },
+                } as never,
+              ],
+            });
+          }
+        },
+        onError: (error: any) => {
+          AppUtils.showToast(error.message || 'Login failed');
+        },
+      },
+    );
+  };
+
+  const onBiometricSuccess = () => {
+    dispatch(setBiometric(true));
+    if (email && password) {
+      handleLogin(email, password);
+    } else {
+      navigation.navigate(AppRoutes.SignIn as never);
+    }
+  };
   return (
     <SolidView
       isScrollEnabled
@@ -51,7 +125,7 @@ const AccessScreen = () => {
               <TouchableOpacity
                 style={styles.socialBtn}
                 onPress={(...args: any) => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   return (googleLogin as any)(...args);
                 }}
                 disabled={isSocialPending}
@@ -70,7 +144,7 @@ const AccessScreen = () => {
                 <TouchableOpacity
                   style={styles.socialBtn}
                   onPress={(...args: any) => {
-                    triggerHaptic('impactMedium');
+                    triggerHaptic('impactLight');
                     return (appleLogin as any)(...args);
                   }}
                   disabled={isSocialPending}
@@ -89,7 +163,7 @@ const AccessScreen = () => {
               <TouchableOpacity
                 style={styles.socialBtn}
                 onPress={() => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   navigation.navigate(AppRoutes.SignIn as never);
                 }}
               >
@@ -102,6 +176,26 @@ const AccessScreen = () => {
                   {localization.appkeys?.continueWithEmail}
                 </SolidText>
               </TouchableOpacity>
+              {/* {!!biometric && (
+                <TouchableOpacity
+                  style={styles.socialBtn}
+                  onPress={() => {
+                    triggerHaptic('impactLight');
+                    handleBiometricAuth(onBiometricSuccess);
+                  }}
+                >
+                  <Image
+                    source={
+                      Platform.OS === 'ios' ? images.iosBio : images.andBio
+                    }
+                    style={styles.socialIcon}
+                    resizeMode="contain"
+                  />
+                  <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
+                    {localization.appkeys?.biometricAuth || 'Biometric'}
+                  </SolidText>
+                </TouchableOpacity>
+              )} */}
             </View>
 
             <View

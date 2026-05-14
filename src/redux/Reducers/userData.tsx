@@ -58,8 +58,36 @@ export const userDataSlice = createSlice({
     appLanguage: strings.english,
     fontScaling: 1.0,
     onboarding: initialOnboardingState,
+    biometric: false,
+    email: '',
+    password: '',
+    userType: 2,
+    lastLoginType: '', // 'manual', 'google', 'apple'
+    socialEmail: '',
+    rememberMe: false,
   },
   reducers: {
+    setBiometric: (state, action) => {
+      state.biometric = !!action.payload;
+    },
+    setEmail: (state, action) => {
+      state.email = action.payload;
+    },
+    setPassword: (state, action) => {
+      state.password = action.payload;
+    },
+    setUserType: (state, action) => {
+      state.userType = action.payload;
+    },
+    setLastLoginType: (state, action) => {
+      state.lastLoginType = action.payload;
+    },
+    setSocialEmail: (state, action) => {
+      state.socialEmail = action.payload;
+    },
+    setRememberMe: (state, action) => {
+      state.rememberMe = action.payload;
+    },
     setAuth: (state, action) => {
       state.auth = action.payload;
     },
@@ -112,6 +140,13 @@ export const {
   setOnboardingAnswer,
   setOnboardingCompleted,
   clearOnboardingProgress,
+  setBiometric,
+  setEmail,
+  setPassword,
+  setUserType,
+  setLastLoginType,
+  setSocialEmail,
+  setRememberMe,
 } = userDataSlice.actions;
 
 import api from '../../api/Manager/manager';

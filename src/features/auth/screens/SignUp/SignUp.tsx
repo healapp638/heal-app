@@ -286,7 +286,7 @@ const SignUp = () => {
                 <TouchableOpacity
                   style={styles.socialBtn}
                   onPress={(...args: any) => {
-                    triggerHaptic('impactMedium');
+                    triggerHaptic('impactLight');
                     return (appleLogin as any)(...args);
                   }}
                   disabled={isSocialPending || isRegistering}

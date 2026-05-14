@@ -38,7 +38,7 @@ const HorizontalModuleList: React.FC<HorizontalModuleListProps> = ({
         isFinished={isFinished}
         // disabled={isFinished}
         onPress={() => {
-          triggerHaptic('impactMedium');
+          triggerHaptic('impactLight');
           onPress(item);
         }}
       />

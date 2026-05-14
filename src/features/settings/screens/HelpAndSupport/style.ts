@@ -74,7 +74,7 @@ const style = (colors: any) =>
     },
     inputLabel: {
       fontSize: AppUtils.fontSize(13),
-      fontFamily: AppFonts.medium,
+      fontFamily: AppFonts.regular,
       color: colors.brown,
       marginBottom: 6,
     },

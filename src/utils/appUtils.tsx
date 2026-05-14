@@ -17,6 +17,7 @@ interface AppUtilsInterface {
   adaCompliance: () => void;
   checkAppVersion: () => Promise<boolean>;
   getLanguageCode: (language: string) => string;
+  getLanguageKey: (key: string | undefined, defaultValue: string) => string;
 }
 
 const AppUtils: AppUtilsInterface = {
@@ -88,6 +89,9 @@ const AppUtils: AppUtilsInterface = {
       Italian: 'it',
     };
     return languageMap[language] || 'en';
+  },
+  getLanguageKey: (key: string | undefined, defaultValue: string) => {
+    return key || defaultValue;
   },
 };
 

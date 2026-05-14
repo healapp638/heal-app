@@ -35,4 +35,5 @@ export const endpoints = {
   add_user_theme: '/user/homeTheme/addUserTheme',
   contact_us: '/user/common/contactus/fill',
   complete_onboarding: '/user/auth/complete_onboarding',
+  toggle_biometric: '/user/auth/toggle_biometric',
 };

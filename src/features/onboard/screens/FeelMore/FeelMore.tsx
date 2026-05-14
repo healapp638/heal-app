@@ -113,7 +113,7 @@ const FeelMore = () => {
                       isSelected && styles.optionCardSelected,
                     ]}
                     onPress={() => {
-                      triggerHaptic('impactMedium');
+                      triggerHaptic('impactLight');
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({

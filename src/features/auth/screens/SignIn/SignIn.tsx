@@ -5,7 +5,10 @@ import {
   TouchableOpacity,
   View,
   Platform,
+  Alert,
 } from 'react-native';
+import ReactNativeBiometrics from 'react-native-biometrics';
+import useBiometric from '../../../../hooks/useBiometric';
 import SolidView from '../../../../components/SolidView';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -27,8 +30,14 @@ import {
   setRefreshToken,
   setUser,
   getUserDetail,
+  setBiometric,
+  setEmail as setReduxEmail,
+  setPassword as setReduxPassword,
+  setLastLoginType,
+  setRememberMe as setReduxRememberMe,
 } from '../../../../redux/Reducers/userData';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
+import SuccessModal from '../../../../modals/SuccessModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 const SignIn = () => {
   const dispatch = useDispatch();
@@ -43,21 +52,60 @@ const SignIn = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const { mutate: loginUser, isPending } = usePostApi();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
-  const handleLogin = () => {
-    if (!email) {
+  const {
+    handleBiometricAuth,
+    biometric,
+    email: bioEmail,
+    password: bioPass,
+    lastLoginType,
+    isSupported,
+  } = useBiometric();
+  const reduxRememberMe = useSelector(
+    (state: any) => state?.userData?.rememberMe,
+  );
+
+  const onBiometricSuccess = () => {
+    dispatch(setBiometric(true));
+    if (bioEmail && bioPass) {
+      handleLogin(bioEmail, bioPass);
+    } else {
+      onEnableBiometricSuccess();
+    }
+  };
+
+  const onEnableBiometricSuccess = () => {
+    dispatch(setBiometric(true));
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: AppRoutes.NonAuthStack,
+          params: {
+            screen: AppRoutes.Offer,
+          },
+        } as never,
+      ],
+    });
+  };
+
+  const handleLogin = (ema?: string, pass?: string) => {
+    let finalEmail = ema || email;
+    let finalPass = pass || password;
+
+    if (!finalEmail) {
       AppUtils.showToast(
         localization.appkeys?.enterEmail || 'Please enter email',
       );
       return;
     }
-    if (!AppUtils.validateEmail(email)) {
+    if (!AppUtils.validateEmail(finalEmail)) {
       AppUtils.showToast(
         localization.appkeys?.toastInvalidEmail ||
           'Please enter a valid email address.',
       );
       return;
     }
-    if (!password) {
+    if (!finalPass) {
       AppUtils.showToast(
         localization.appkeys?.toastEnterPassword || 'Please enter password',
       );
@@ -68,8 +116,8 @@ const SignIn = () => {
       {
         endpoint: endpoints.login,
         data: {
-          email: email?.trim()?.toLowerCase(),
-          password: password,
+          email: finalEmail?.trim()?.toLowerCase(),
+          password: finalPass,
           language: AppUtils.getLanguageCode(appLanguage),
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },
@@ -82,8 +130,8 @@ const SignIn = () => {
             navigation.navigate(
               AppRoutes.Verification as never,
               {
-                email: email?.trim()?.toLowerCase(),
-                password: password,
+                email: finalEmail?.trim()?.toLowerCase(),
+                password: finalPass,
                 from: 'SignIn',
               } as never,
             );
@@ -93,26 +141,60 @@ const SignIn = () => {
             dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
             dispatch(getUserDetail() as any);
-            if (rememberMe) {
-              await localStore.storeData(storeKeys.rememberMe, {
-                email,
-                password,
-                rememberMe: true,
-              });
-            } else {
-              await localStore.removeData(storeKeys.rememberMe);
+            dispatch(setReduxEmail(finalEmail));
+            dispatch(setReduxPassword(finalPass));
+            if (response?.data?.is_biometric) {
+              dispatch(setBiometric(true));
             }
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: AppRoutes.NonAuthStack,
-                  params: {
-                    screen: AppRoutes.Offer,
+            dispatch(setLastLoginType('manual'));
+            dispatch(setReduxRememberMe(rememberMe));
+
+            const isBioEnabled = !!response?.data?.is_biometric || !!biometric;
+
+            if (!isBioEnabled) {
+              Alert.alert(
+                localization?.appkeys?.enableBiometric || 'Enable Biometric',
+                localization?.appkeys?.wouldYouLike ||
+                  'Would you like to enable biometric login for next time?',
+                [
+                  {
+                    text: localization?.appkeys?.skip || 'Skip',
+                    onPress: () => {
+                      navigation.reset({
+                        index: 0,
+                        routes: [
+                          {
+                            name: AppRoutes.NonAuthStack,
+                            params: {
+                              screen: AppRoutes.Offer,
+                            },
+                          } as never,
+                        ],
+                      });
+                    },
+                    style: 'cancel',
                   },
-                } as never,
-              ],
-            });
+                  {
+                    text: localization?.appkeys?.yes || 'Yes',
+                    onPress: () => {
+                      handleBiometricAuth(onEnableBiometricSuccess);
+                    },
+                  },
+                ],
+              );
+            } else {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.NonAuthStack,
+                    params: {
+                      screen: AppRoutes.Offer,
+                    },
+                  } as never,
+                ],
+              });
+            }
           }
         },
         onError: (error: any) => {
@@ -140,11 +222,10 @@ const SignIn = () => {
     return () => backHandler.remove();
   }, []);
   const checkRememberMe = async () => {
-    const res = await localStore.getData(storeKeys.rememberMe);
-    if (res?.status && res?.value) {
-      setEmail(res.value.email);
-      setPassword(res.value.password);
-      setRememberMe(res.value.rememberMe);
+    setRememberMe(reduxRememberMe);
+    if (reduxRememberMe) {
+      setEmail(bioEmail);
+      setPassword(bioPass);
     }
   };
   return (
@@ -239,15 +320,32 @@ const SignIn = () => {
                 paddingHorizontal: 20,
               }}
             >
-              <SolidBtn
-                titleTxt={localization.appkeys?.logInBtn}
-                btnStyle={styles.loginBtn}
-                onPress={(...args: any) => {
-                  return (handleLogin as any)(...args);
-                }}
-                isLoading={isPending}
-                disabled={isPending}
-              />
+              <View style={styles.loginRow}>
+                <SolidBtn
+                  titleTxt={localization.appkeys?.logInBtn}
+                  btnStyle={[styles.loginBtn, !!biometric && { flex: 1 }]}
+                  onPress={() => {
+                    return handleLogin();
+                  }}
+                  isLoading={isPending}
+                  disabled={isPending}
+                />
+
+                {isSupported && !!biometric && (
+                  <TouchableOpacity
+                    style={styles.bioContainer}
+                    onPress={() => handleBiometricAuth(onBiometricSuccess)}
+                  >
+                    <Image
+                      source={
+                        Platform.OS === 'ios' ? images.iosBio : images.andBio
+                      }
+                      style={styles.bioIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
 
               {/* Divider */}
               <View style={styles.dividerContainer}>

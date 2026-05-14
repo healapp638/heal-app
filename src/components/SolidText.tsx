@@ -20,12 +20,24 @@ const SolidText: React.FC<AppTextProps> = ({
   style,
   ...props
 }) => {
-  const fontScaling = useSelector((state: any) => state.userData.fontScaling);
+  const fontScaling = useSelector((state: any) => state.userData?.fontScaling);
   const { colors } = useTheme();
+
+  // Normalize style to prevent iOS system font override when fontWeight/fontStyle is present
+  const flatStyle = StyleSheet.flatten(style) || {};
+  const cleanedStyle = { ...flatStyle };
+
+  if (cleanedStyle.fontWeight) {
+    delete cleanedStyle.fontWeight;
+  }
+  if (cleanedStyle.fontStyle) {
+    delete cleanedStyle.fontStyle;
+  }
+
   return (
     <Text
       {...props}
-      style={[styles[variant], style]}
+      style={[styles[variant], cleanedStyle]}
       maxFontSizeMultiplier={maxFontScale ?? 1.4}
       allowFontScaling
     >

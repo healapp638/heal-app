@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Linking, ScrollView } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -18,7 +18,11 @@ import {
   setAuth,
   setToken,
   setUser,
+  setBiometric,
+  getUserDetail,
 } from '../../../../redux/Reducers/userData';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
 import getEnvVars from '../../../../../env';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import AppUtils from '../../../../utils/appUtils';
@@ -31,22 +35,26 @@ const Settings = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [visible, setvisible] = useState(false);
-  const [isNotificationEnabled, setIsNotificationEnabled] = useState(true);
-  const [showCreditsModal, setShowCreditsModal] = useState(false);
-  const user = useSelector((state: any) => state.userData?.user);
+  const biometric = useSelector((state: any) => state.userData?.biometric);
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+  const user = useSelector((state: any) => state.userData?.user);
+  const { mutate: toggleBioApi } = usePostApi();
+  const [isBioEnabled, setIsBioEnabled] = useState(!!biometric);
+  const [showCreditsModal, setShowCreditsModal] = useState(false);
+
+  useEffect(() => {
+    setIsBioEnabled(!!biometric);
+  }, [biometric]);
+
+  const isSocialUser = user?.account_type == 'social';
 
   const settingItems = [
     localization.appkeys?.personalInfo || 'Personal Information',
-    localization.appkeys?.biometricAuth || 'Biometric',
+    !isSocialUser && (localization.appkeys?.biometricAuth || 'Biometric'),
     localization.appkeys?.language || 'Language',
-    // localization.appkeys?.privacySecurity || 'Privacy & Security',
-    // localization.appkeys?.termsOfService || 'Terms of Service',
-    // localization.appkeys?.privacyPolicy || 'Privacy Policy',
     localization.appkeys?.contactUs || 'Contact Us',
     localization.appkeys?.logout || 'Logout',
-    // localization.appkeys?.aboutHeal || 'About HEAL',
-  ];
+  ].filter(Boolean) as string[];
 
   return (
     <SolidView
@@ -58,7 +66,7 @@ const Settings = () => {
               showCrown
               showStreak={false}
               onCrownPress={() => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 setShowCreditsModal(true);
               }}
               userName={localization.appkeys?.settingsTitle || 'Settings'}
@@ -83,7 +91,7 @@ const Settings = () => {
               }}
             >
               {settingItems?.map(item => {
-                const isNotification =
+                const isBiometric =
                   item === (localization.appkeys?.biometricAuth || 'Biometric');
                 const isPersonalInfo =
                   item ===
@@ -109,10 +117,8 @@ const Settings = () => {
                   item === (localization.appkeys?.logout || 'Logout');
                 let rightIcon = undefined;
                 let rightIconStyle = undefined;
-                if (isNotification) {
-                  rightIcon = isNotificationEnabled
-                    ? images.toggleOn
-                    : images.toggleOff;
+                if (isBiometric) {
+                  rightIcon = isBioEnabled ? images.toggleOn : images.toggleOff;
                 } else if (isLogout) {
                   rightIcon = images.logout;
                   rightIconStyle = styles.logoutIcon;
@@ -125,9 +131,44 @@ const Settings = () => {
                     rightIcon={rightIcon}
                     rightIconStyle={rightIconStyle}
                     onPress={() => {
-                      triggerHaptic('impactMedium');
-                      if (isNotification) {
-                        setIsNotificationEnabled(!isNotificationEnabled);
+                      triggerHaptic('impactLight');
+                      if (isBiometric) {
+                        const newVal = !isBioEnabled;
+                        setIsBioEnabled(newVal);
+                        dispatch(setBiometric(newVal));
+                        toggleBioApi(
+                          {
+                            endpoint: endpoints.toggle_biometric,
+                            data: { is_biometric: newVal },
+                          },
+                          {
+                            onSuccess: (res: any) => {
+                              // If server returns updated user, use it
+                              if (res?.data) {
+                                dispatch(setUser(res.data));
+                              } else {
+                                dispatch(getUserDetail());
+                              }
+                            },
+                            onError: error => {
+                              const errorMsg =
+                                error?.message ||
+                                (typeof error === 'string' ? error : '');
+                              // If the message says "successfully", it's a success in disguise
+                              if (
+                                errorMsg
+                                  ?.toLowerCase()
+                                  ?.includes('successfully')
+                              ) {
+                                dispatch(getUserDetail());
+                              } else {
+                                // Real error, rollback
+                                setIsBioEnabled(!newVal);
+                                dispatch(setBiometric(!newVal));
+                              }
+                            },
+                          },
+                        );
                       } else if (isPersonalInfo) {
                         navigation.navigate(AppRoutes.EditProfile as never);
                       } else if (isLanguage) {
@@ -175,7 +216,7 @@ const Settings = () => {
                 leftIcon={images.insta}
                 rightIcon={images.arrowRight}
                 onPress={() => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   Linking.openURL('https://www.instagram.com/heal.safespace');
                 }}
               />
@@ -184,7 +225,7 @@ const Settings = () => {
                 leftIcon={images.tiktok}
                 rightIcon={images.arrowRight}
                 onPress={() => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   Linking.openURL('https://www.tiktok.com/@heal.safespace');
                 }}
               />
@@ -208,7 +249,7 @@ const Settings = () => {
             visible={visible}
             onConfirm={() => {
               dispatch(setAuth(false));
-              dispatch(setUser(null));
+              dispatch(setUser({}));
               dispatch(setToken(null));
               navigation.reset({
                 index: 0,

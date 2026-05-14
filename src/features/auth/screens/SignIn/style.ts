@@ -60,9 +60,26 @@ const style = (colors: any) =>
     },
     loginBtn: {
       backgroundColor: colors.brown,
-      width: '100%',
       borderRadius: 100,
+      marginTop: 0,
+      marginBottom: 0,
+      width: '100%',
+    },
+    loginRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      width: '100%',
       marginBottom: hp('4%'),
+    },
+    bioContainer: {
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 10,
+    },
+    bioIcon: {
+      height: Platform.OS === 'ios' ? 54 : 50,
+      width: Platform.OS === 'ios' ? 54 : 50,
     },
     dividerContainer: {
       flexDirection: 'row',

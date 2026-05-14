@@ -99,7 +99,7 @@ const ConnectedEntries = () => {
             }
             rightIcon={images.crown}
             onRightPress={() => {
-              triggerHaptic('impactMedium');
+              triggerHaptic('impactLight');
               setShowCreditsModal(true);
             }}
           />
@@ -136,7 +136,7 @@ const ConnectedEntries = () => {
                   title={item.title}
                   body={item.body}
                   onPress={() => {
-                    triggerHaptic('impactMedium');
+                    triggerHaptic('impactLight');
                     setSelectedEntry(item);
                   }}
                 />

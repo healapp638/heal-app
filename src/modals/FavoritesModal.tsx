@@ -149,7 +149,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
     // Wait for the hidden view to render with the new item
     setTimeout(async () => {
       try {
-        // triggerHaptic('impactMedium');
+        // triggerHaptic('impactLight');
         const uri = await captureRef.current?.capture();
         const shareMessage = `${item.affirmation}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
         if (uri) {
@@ -182,7 +182,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => {
-              // triggerHaptic('impactMedium');
+              // triggerHaptic('impactLight');
               return handleUnlike(item);
             }}
           >
@@ -195,7 +195,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <TouchableOpacity
             style={styles.iconBtn}
             onPress={() => {
-              triggerHaptic('impactMedium');
+              triggerHaptic('impactLight');
               return handleShare(item);
             }}
           >
@@ -220,7 +220,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       <View style={styles.overlay}>
         <TouchableWithoutFeedback
           onPress={(...args: any) => {
-            triggerHaptic('impactMedium');
+            triggerHaptic('impactLight');
             return (onClose as any)(...args);
           }}
         >
@@ -231,7 +231,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <View style={styles.header}>
             <TouchableOpacity
               onPress={(...args: any) => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return (onClose as any)(...args);
               }}
               style={styles.backBtn}
@@ -265,7 +265,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           <SolidBtn
             titleTxt="Show all in feed"
             onPress={() => {
-              // triggerHaptic('impactMedium');
+              // triggerHaptic('impactLight');
               onClose();
               navigation.navigate(AppRoutes.SavedDailyQuote as never);
             }}

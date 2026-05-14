@@ -1,4 +1,4 @@
-import { Alert, Image, View, TouchableOpacity } from 'react-native';
+import { Alert, Image, View, TouchableOpacity, Text } from 'react-native';
 import React, { useCallback, useContext, useRef } from 'react';
 import SolidView from '../../../../components/SolidView';
 import {
@@ -139,7 +139,7 @@ const Welcome = () => {
             <TouchableOpacity
               style={styles.languagePill}
               onPress={() => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 navigation.navigate(AppRoutes.SelectLanguage as never);
               }}
             >
@@ -173,9 +173,9 @@ const Welcome = () => {
             style={styles.footerText}
           >
             {localization.appkeys?.alreadyAccount}{' '}
-            <SolidText style={styles.signInText}>
+            <Text style={styles.signInText}>
               {localization.appkeys?.signIn}
-            </SolidText>
+            </Text>
           </SolidText>
 
           <ResumeModal

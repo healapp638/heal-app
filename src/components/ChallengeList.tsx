@@ -54,7 +54,7 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
             badge={item.badge}
             isCompleted={item.isCompleted}
             onPress={() => {
-              triggerHaptic('impactMedium');
+              triggerHaptic('impactLight');
               return navigation.navigate(AppRoutes.ChallengeDetail as never);
             }}
           />

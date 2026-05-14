@@ -68,7 +68,7 @@ const HomeHeader = ({
             <TouchableOpacity
               style={{ flexDirection: 'row', alignItems: 'center' }}
               onPress={(...args: any) => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return (onStreakPress as any)(...args);
               }}
             >
@@ -91,7 +91,7 @@ const HomeHeader = ({
             <View style={styles.divider} />
             <TouchableOpacity
               onPress={(...args: any) => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return (onCalendarPress as any)(...args);
               }}
             >
@@ -107,7 +107,7 @@ const HomeHeader = ({
       {showCrown && (
         <Pressable
           onPress={(...args: any) => {
-            triggerHaptic('impactMedium');
+            triggerHaptic('impactLight');
             return (onCrownPress as any)(...args);
           }}
         >
@@ -115,8 +115,8 @@ const HomeHeader = ({
             source={images.crown}
             tintColor={colors.brown}
             style={{
-              height: 18,
-              width: 18,
+              height: 19,
+              width: 19,
             }} // Reusing same icon size constraints
             resizeMode="contain"
           />

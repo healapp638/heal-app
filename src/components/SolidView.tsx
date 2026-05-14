@@ -88,7 +88,7 @@ const SolidView: React.FC<SolidViewProps> = ({
         <TouchableOpacity
           style={styles.healContainer}
           onPress={() => {
-            triggerHaptic('impactMedium');
+            triggerHaptic('impactLight');
             return navigation.navigate(AppRoutes.HealyChat as never);
           }}
         >

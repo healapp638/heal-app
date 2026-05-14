@@ -169,7 +169,7 @@ const HelpAndSupport = () => {
             titleTxt={localization.appkeys?.sendFeedback || 'Send feedback'}
             btnStyle={[styles.sendFeedbackBtn]}
             onPress={() => {
-              triggerHaptic('impactMedium');
+              triggerHaptic('impactLight');
               handleSendFeedback();
             }}
             isLoading={isPending}

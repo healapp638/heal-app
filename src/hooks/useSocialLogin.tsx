@@ -1,7 +1,10 @@
+import React, { useContext } from 'react';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import auth from '@react-native-firebase/auth';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { Alert, Platform } from 'react-native';
+import ReactNativeBiometrics from 'react-native-biometrics';
+import useBiometric from './useBiometric';
 import usePostApi from './usePostApi';
 import { endpoints } from '../api/Services/endpoints';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,17 +14,23 @@ import {
   setRefreshToken,
   setUser,
   getUserDetail,
+  setBiometric,
+  setLastLoginType,
+  setSocialEmail,
 } from '../redux/Reducers/userData';
 import { useNavigation } from '@react-navigation/native';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
 import AppUtils from '../utils/appUtils';
 import { setLoader } from '../redux/Reducers/tempData';
+import { LocalizationContext } from '../localization/localization';
 
 const useSocialLogin = () => {
   const { mutate: socialLoginMutate, isPending } = usePostApi();
   const dispatch = useDispatch();
   const navigation = useNavigation();
+  const { localization } = useContext(LocalizationContext) as any;
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+  const { handleBiometricAuth, biometric } = useBiometric();
 
   const handleSocialLogin = (
     uID: string,
@@ -62,6 +71,8 @@ const useSocialLogin = () => {
             dispatch(setToken(response?.data?.access_token));
             dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
+            dispatch(setLastLoginType(source));
+            dispatch(setSocialEmail(email));
             dispatch(getUserDetail() as any);
             navigation.reset({
               index: 0,

@@ -139,7 +139,7 @@ const Modules = () => {
             </SolidText>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return navigation.navigate(
                   AppRoutes.AllModules as never,
                   {
@@ -227,7 +227,7 @@ const Modules = () => {
             </SolidText>
             <TouchableOpacity
               onPress={() => {
-                triggerHaptic('impactMedium');
+                triggerHaptic('impactLight');
                 return navigation.navigate(
                   AppRoutes.AllModules as never,
                   {

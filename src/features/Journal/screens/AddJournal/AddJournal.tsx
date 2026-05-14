@@ -287,7 +287,7 @@ const AddJournal = () => {
                 key={emotion.id}
                 activeOpacity={0.8}
                 onPress={() => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   return setSelectedEmotion(emotion.id);
                 }}
                 style={[
@@ -366,7 +366,7 @@ const AddJournal = () => {
             >
               <TouchableOpacity
                 onPress={(...args: any) => {
-                  triggerHaptic('impactMedium');
+                  triggerHaptic('impactLight');
                   return (toggleListening as any)(...args);
                 }}
                 activeOpacity={0.7}
@@ -398,7 +398,7 @@ const AddJournal = () => {
             isLoading={loading}
             disabled={loading}
             onPress={(...args: any) => {
-              triggerHaptic('impactMedium');
+              triggerHaptic('impactLight');
               return (handleSave as any)(...args);
             }}
           />
