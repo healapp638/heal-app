@@ -12,6 +12,7 @@ import moment from "moment";
 import { challengsFn } from "./common.helper";
 import { generateUserChallengesDaily, generateUserChallengesWeekly } from "./openai.helper";
 import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.challenges.model";
+import nodeCron from "node-cron";
 
 
 const openai = new OpenAI({
@@ -26,7 +27,7 @@ const generateAffirmation = async () => {
     let retryCount = 0;
     const maxRetry = 10;
 
-      // ==================================================
+    // ==================================================
     // RANDOM CATEGORY
     // ==================================================
 
@@ -81,12 +82,12 @@ const generateAffirmation = async () => {
 
     // Generate until unique quote found
     while (isDuplicate && retryCount < maxRetry) {
-            const randomCategory =
+      const randomCategory =
         categories[
-          Math.floor(
-            Math.random() *
-            categories.length
-          )
+        Math.floor(
+          Math.random() *
+          categories.length
+        )
         ];
       const response = await openai.chat.completions.create({
         model: "gpt-4.1-mini",
@@ -295,8 +296,14 @@ const generateChallenges = async () => {
   }
 }
 
+export const scheduleCroneJOb = () => {
+  nodeCron.schedule('*/5 * * * *', () => {
+    console.log('running a task every minute');
+    generateChallenges()
+  })
+}
 
 export {
   generateAffirmation,
-  generateChallenges
+
 };

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateChallenges = exports.generateAffirmation = void 0;
+exports.generateAffirmation = exports.scheduleCroneJOb = void 0;
 const response_util_1 = require("../utils/response.util");
 const responseMessages_1 = __importDefault(require("../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../constants/statusCodes"));
@@ -27,6 +27,7 @@ const moment_1 = __importDefault(require("moment"));
 const common_helper_1 = require("./common.helper");
 const openai_helper_1 = require("./openai.helper");
 const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
+const node_cron_1 = __importDefault(require("node-cron"));
 const openai = new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
@@ -249,4 +250,10 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
         return (0, response_util_1.showResponse)(false, err.message, null, statusCodes_1.default.API_ERROR);
     }
 });
-exports.generateChallenges = generateChallenges;
+const scheduleCroneJOb = () => {
+    node_cron_1.default.schedule('*/5 * * * *', () => {
+        console.log('running a task every minute');
+        generateChallenges();
+    });
+};
+exports.scheduleCroneJOb = scheduleCroneJOb;

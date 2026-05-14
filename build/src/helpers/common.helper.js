@@ -377,7 +377,6 @@ const challengsFn = (userData) => __awaiter(void 0, void 0, void 0, function* ()
             createdAt: { $gte: startOfDay, $lte: endOfDay },
             user_id: userData._id
         });
-        console.log(totalDailyChallanges, 'totalDailyChallanges');
         const isWeeklyChallengeExist = !!(totalWeeklyChallanges);
         const isDailyChallengeExist = !!(totalDailyChallanges);
         return {

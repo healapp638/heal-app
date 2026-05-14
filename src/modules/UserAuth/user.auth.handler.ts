@@ -370,42 +370,42 @@ const UserAuthHandler = {
     },
     //ends
     toggleBiometric: async (userId: string): Promise<ApiResponse> => {
-    try {
-        // find user
-        const user = await userAuthModel.findOne({
-            _id: commonHelper.convertToObjectId(userId),
-            status: USER_STATUS.ACTIVE,
-        });
+        try {
+            // find user
+            const user = await userAuthModel.findOne({
+                _id: commonHelper.convertToObjectId(userId),
+                status: USER_STATUS.ACTIVE,
+            });
 
-        if (!user) {
+            if (!user) {
+                return showResponse(
+                    false,
+                    responseMessage.common.data_not_found,
+                    null
+                );
+            }
+
+            // toggle value
+            user.is_biometric = !user.is_biometric;
+
+            await user.save();
+
+            return showResponse(
+                true,
+                "Biometric status updated successfully",
+                {
+                    is_biometric: user.is_biometric,
+                },
+                statusCodes.SUCCESS
+            );
+        } catch {
             return showResponse(
                 false,
-                responseMessage.common.data_not_found,
+                "err while updating status",
                 null
             );
         }
-
-        // toggle value
-        user.is_biometric = !user.is_biometric;
-
-        await user.save();
-
-        return showResponse(
-            true,
-            "Biometric status updated successfully",
-            {
-                is_biometric: user.is_biometric,
-            },
-            statusCodes.SUCCESS
-        );
-    } catch {
-        return showResponse(
-            false,
-            "err while updating status",
-            null
-        );
-    }
-},
+    },
 
     forgotPassword: async (data: any): Promise<ApiResponse> => {
         const { email } = data;
@@ -841,17 +841,16 @@ const UserAuthHandler = {
         const payload: any = challengesDetails?.payload;
         if (isOnBoardingComplete && !isDailyChallengeExist) {
             const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
-            console.log(res, 'res')
             const result = await userDailyChallengesModel.insertMany(res.data)
             if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } })
+                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
             }
         }
         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
             const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
             const result = await userWeeklyChallengesModel.insertMany(res.data)
             if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } })
+                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
             }
         }
         //end

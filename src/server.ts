@@ -13,7 +13,7 @@ import { handleFileSize } from "./utils/config.util";
 import basicAuth from "express-basic-auth";
 import compression from "compression";
 import cron from "node-cron";
-import { generateAffirmation } from "./helpers/cronjob.func";
+import { generateAffirmation, scheduleCroneJOb } from "./helpers/cronjob.func";
 import userDeeplinkModel from "./modules/UserAffirmation/user.deeplink.model";
 import { monitorEventLoopDelay } from "perf_hooks";
 // import blocked from "blocked-at";
@@ -236,3 +236,5 @@ app.listen(APP.PORT, () => {
   console.log("Server is running on port", APP.PORT);
   console.log("Swagger link:", `http://localhost:${APP.PORT}/swagger`);
 });
+
+scheduleCroneJOb()

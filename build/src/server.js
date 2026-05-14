@@ -200,3 +200,4 @@ app.listen(app_constant_1.APP.PORT, () => {
     console.log("Server is running on port", app_constant_1.APP.PORT);
     console.log("Swagger link:", `http://localhost:${app_constant_1.APP.PORT}/swagger`);
 });
+(0, cronjob_func_1.scheduleCroneJOb)();

@@ -22,7 +22,6 @@ router.get('/challenge_details', verifyTokenUser, async (req: Request | any, res
 });
 
 
-
 router.post('/complete_challenges', verifyTokenUser, async (req: Request | any, res: Response) => {
     const { challenge_type, challenge_id } = req.body;
     const controller = new UserChallengesController(req, res)

@@ -775,17 +775,16 @@ const UserAuthHandler = {
         const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
         if (isOnBoardingComplete && !isDailyChallengeExist) {
             const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
-            console.log(res, 'res');
             const result = yield user_daily_challenges_model_1.default.insertMany(res.data);
             if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), lastDailyChallengeGeneratedDateUnix: new Date().getTime() } });
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
             }
         }
         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
             const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
             const result = yield user_weekly_challenges_model_1.default.insertMany(res.data);
             if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), lastWeeklyChallengeGeneratedDateUnix: new Date().getTime() } });
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
             }
         }
         //end
