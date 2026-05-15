@@ -31,6 +31,7 @@ const ChallengeItem = ({
   return (
     <TouchableOpacity
       activeOpacity={0.9}
+      disabled={isCompleted}
       onPress={(...args: any) => {
         return (onPress as any)(...args);
       }}
@@ -43,7 +44,7 @@ const ChallengeItem = ({
           }}
         >
           {/* Top Left Badge Tag */}
-          {badge && (
+          {badge && !isCompleted && (
             <View style={styles.badgeContainer}>
               <Image
                 source={images.time} // Using calendar as a fallback clock

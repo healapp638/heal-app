@@ -13,6 +13,14 @@ import OnboardingModal from '../../../../modals/OnboardingModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import { useSelector } from 'react-redux';
 import PremiumModal from '../../../../modals/PremiumModal';
+import AppFonts from '../../../../constants/fonts';
+import AppUtils from '../../../../utils/appUtils';
+import SolidText from '../../../../components/SolidText';
+import useGetApi from '../../../../hooks/useGetApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import moment from 'moment';
+import { useTheme } from '@react-navigation/native';
+import { ActivityIndicator } from 'react-native';
 const Challenges = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
@@ -27,76 +35,50 @@ const Challenges = () => {
     }
   }, [user]);
 
+  const { colors } = useTheme() as any;
+
+  const {
+    data: challengeResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetApi(endpoints.challenge_list, ['challenge_list', activeTab], {
+    challenge_type: activeTab,
+  });
+  const formatRemainingTime = (endDateUnix: number) => {
+    const now = moment();
+    const end = moment.unix(endDateUnix);
+    const duration = moment.duration(end.diff(now));
+
+    if (duration.asMilliseconds() <= 0) return 'Expired';
+
+    const days = duration.asDays();
+    if (days >= 1) {
+      const roundedDays = Math.ceil(days);
+      return `${roundedDays} day${roundedDays > 1 ? 's' : ''}`;
+    }
+
+    const hours = duration.asHours();
+    if (hours >= 1) {
+      const roundedHours = Math.ceil(hours);
+      return `${roundedHours} hr${roundedHours > 1 ? 's' : ''}`;
+    }
+
+    const minutes = Math.ceil(duration.asMinutes());
+    return `${minutes} min`;
+  };
+
   // Unified data array passed to the list component
-  const allChallenges: any[] = [
-    {
-      id: '1',
-      title: localization.appkeys?.challenge1Title || '5 minutes of meditation',
-      description:
-        localization.appkeys?.challenge1Desc ||
-        'Take a moment to breathe and center yourself',
-      isCompleted: true,
-      category: 'daily',
-    },
-    {
-      id: '2',
-      title: localization.appkeys?.challenge2Title || 'Moment of gratitude',
-      description:
-        localization.appkeys?.challenge2Desc ||
-        'Write 3 things you are grateful for today',
-      points: '25 Pts',
-      badge: '1 day',
-      isCompleted: false,
-      category: 'daily',
-    },
-    {
-      id: '3',
-      title: localization.appkeys?.challenge3Title || 'Letter to yourself',
-      description:
-        localization.appkeys?.challenge3Desc ||
-        'Write a compassionate letter to yourself as if to a friend',
-      points: '25 Pts',
-      badge: '1 day',
-      isCompleted: false,
-      category: 'daily',
-    },
-    {
-      id: '4',
-      title:
-        localization.appkeys?.challenge4Title || 'Weekly Mindfulness session',
-      description:
-        localization.appkeys?.challenge4Desc ||
-        'Deep dive into your emotional well-being',
-      points: '75 Pts',
-      isCompleted: false,
-      category: 'weekly',
-      badge: '3 day',
-    },
-    {
-      id: '4',
-      title:
-        localization.appkeys?.challenge4Title || 'Weekly Mindfulness session',
-      description:
-        localization.appkeys?.challenge4Desc ||
-        'Deep dive into your emotional well-being',
-      points: '75 Pts',
-      isCompleted: false,
-      category: 'weekly',
-      badge: '3 day',
-    },
-    {
-      id: '4',
-      title:
-        localization.appkeys?.challenge4Title || 'Weekly Mindfulness session',
-      description:
-        localization.appkeys?.challenge4Desc ||
-        'Deep dive into your emotional well-being',
-      points: '75 Pts',
-      isCompleted: false,
-      category: 'weekly',
-      badge: '3 day',
-    },
-  ];
+  const allChallenges =
+    challengeResponse?.data?.map((item: any) => ({
+      id: item._id,
+      title: item.title,
+      description: item.description,
+      points: `${item.points} Pts`,
+      badge: formatRemainingTime(item.end_date_unix),
+      isCompleted: item.isCompleted,
+      category: item.challenge_type, // 'daily' or 'weekly'
+    })) || [];
   return (
     <SolidView
       isScrollEnabled={false}
@@ -153,7 +135,49 @@ const Challenges = () => {
               weeklyLabel={localization.appkeys?.weekly || 'Weekly'}
             />
 
-            <ChallengeList activeTab={activeTab} data={allChallenges} />
+            {isLoading ? (
+              <View
+                style={{
+                  marginTop: 60,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: 20,
+                }}
+              >
+                <View
+                  style={{
+                    width: 70,
+                    height: 70,
+                    borderRadius: 35,
+                    backgroundColor: colors.white,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: 20,
+                    shadowColor: colors.brown,
+                    shadowOffset: { width: 0, height: 8 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 12,
+                    elevation: 5,
+                  }}
+                >
+                  <ActivityIndicator size="large" color={colors.brown} />
+                </View>
+                <SolidText
+                  style={{
+                    fontSize: AppUtils.fontSize(16),
+                    fontFamily: AppFonts.medium,
+                    color: colors.brown,
+                    textAlign: 'center',
+                    opacity: 0.8,
+                  }}
+                >
+                  {localization.appkeys?.fetchingChallenges ||
+                    'Preparing your daily journey...'}
+                </SolidText>
+              </View>
+            ) : (
+              <ChallengeList activeTab={activeTab} data={allChallenges} />
+            )}
           </ScrollView>
           <PremiumModal
             visible={showCreditsModal}
@@ -161,7 +185,10 @@ const Challenges = () => {
           />
           <OnboardingModal
             visible={showOnboardingModal}
-            onClose={() => setShowOnboardingModal(false)}
+            onClose={() => {
+              setShowOnboardingModal(false);
+              refetch();
+            }}
             onBack={() => {
               setShowOnboardingModal(false);
               navigation.navigate(AppRoutes.Home as never);
