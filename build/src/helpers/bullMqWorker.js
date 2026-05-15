@@ -28,6 +28,7 @@ exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
 });
 exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log("BullMQ Worker Started...");
         const { userData } = job.data;
         const challengesDetails = yield (0, common_helper_1.challengsFn)(userData);
         const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;

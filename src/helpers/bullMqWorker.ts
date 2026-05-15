@@ -15,6 +15,7 @@ export const ChallengesQueue = new Queue('challenges', {
 
 export const challengesWorker = new Worker("challenges", async (job: any) => {
     try {
+        console.log("BullMQ Worker Started...")
         const { userData } = job.data;
         const challengesDetails = await challengsFn(userData);
         const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
