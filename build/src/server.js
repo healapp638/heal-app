@@ -32,6 +32,7 @@ const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation
 const perf_hooks_1 = require("perf_hooks");
 // import blocked from "blocked-at";
 const app = (0, express_1.default)();
+app.set('trust proxy', 1);
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, app_constant_1.initializeAwsCredential)();
     yield (0, mongoose_config_1.connection)()

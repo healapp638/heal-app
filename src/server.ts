@@ -20,6 +20,7 @@ import { monitorEventLoopDelay } from "perf_hooks";
 
 
 const app: Application = express();
+app.set('trust proxy', 1);
 
 const init = async () => {
   await initializeAwsCredential()
