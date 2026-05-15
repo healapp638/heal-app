@@ -12,11 +12,11 @@ import statusCodes from '../../constants/statusCodes'
 import { getMessage } from "../../helpers/messages";
 import adminPhasesModel from "../AdminPhases/admin.phases.model";
 import userModulesCompletePhaseModel from "../UserModules/user.modules.complete.phase.model";
-import { generateUserChallengesDaily, generateUserChallengesWeekly } from "../../helpers/openai.helper";
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.model";
 
 import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.model";
+import { ChallengesQueue } from "../../helpers/bullMqWorker";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -68,7 +68,14 @@ const UserAuthHandler = {
         console.log(timeZone, 'timeZone')
         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { timeZone: timeZone } })
 
-        //challenges logic start
+        // challenges logic start
+        await ChallengesQueue.add('challenges', { userData }, {
+            attempts: 3,
+            backoff: {
+                type: 'exponential',
+                delay: 1000
+            }
+        });
         // const challengesDetails = await commonHelper.challengsFn(userData);
         // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
         // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -90,7 +97,7 @@ const UserAuthHandler = {
         //         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
         //     }
         // }
-        //end
+        // end
 
 
 
@@ -195,7 +202,15 @@ const UserAuthHandler = {
             //challenges logic start
 
             const data = findUser?.data
-            await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone } })
+            await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone } });
+
+            await ChallengesQueue.add('challenges', { userData: data }, {
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 1000
+                }
+            });
             // const challengesDetails = await commonHelper.challengsFn(data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
             // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -276,6 +291,13 @@ const UserAuthHandler = {
             }
 
             //challenges logic start
+            await ChallengesQueue.add('challenges', { userData: result?.data }, {
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 1000
+                }
+            });
             // const challengesDetails = await commonHelper.challengsFn(result?.data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
             // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -834,25 +856,32 @@ const UserAuthHandler = {
         }
         await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj)
         //challenges logic start
-        const challengesDetails = await commonHelper.challengsFn(userDetails);
-        const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-        const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-        const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-        const payload: any = challengesDetails?.payload;
-        if (isOnBoardingComplete && !isDailyChallengeExist) {
-            const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
-            const result = await userDailyChallengesModel.insertMany(res.data)
-            if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+        await ChallengesQueue.add('challenges', { userData: userDetails }, {
+            attempts: 3,
+            backoff: {
+                type: 'exponential',
+                delay: 1000
             }
-        }
-        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-            const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
-            const result = await userWeeklyChallengesModel.insertMany(res.data)
-            if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-            }
-        }
+        })
+        // const challengesDetails = await commonHelper.challengsFn(userDetails);
+        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+        // const payload: any = challengesDetails?.payload;
+        // if (isOnBoardingComplete && !isDailyChallengeExist) {
+        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
+        //     const result = await userDailyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
+        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
+        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
         //end
         return showResponse(true, getMessage(user_language || 'en', "user_onboarding_complete"), null, statusCodes.SUCCESS)
     },

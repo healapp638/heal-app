@@ -24,9 +24,10 @@ const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model")
 const common_helper_1 = require("../../helpers/common.helper");
 const UserChallengesHandler = {
     list: (userId, challenge_type) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         const userLang = yield user_auth_model_1.default.findOne({ _id: userId });
         const user_language = (userLang === null || userLang === void 0 ? void 0 : userLang.language) || 'en';
+        const isOnBoardingComplete = !!((userLang === null || userLang === void 0 ? void 0 : userLang.bringsYouHere) && (userLang === null || userLang === void 0 ? void 0 : userLang.howFellingLately) && (userLang === null || userLang === void 0 ? void 0 : userLang.likeToFellMore) && (userLang === null || userLang === void 0 ? void 0 : userLang.timeYouCommit) && (userLang === null || userLang === void 0 ? void 0 : userLang.startShowingOfYourSelf));
         if (challenge_type == 'daily') {
             const dailyChallenges = yield user_daily_challenges_model_1.default.aggregate([
                 {
@@ -58,7 +59,10 @@ const UserChallengesHandler = {
                     }
                 }
             ]);
-            return (0, response_util_1.showResponse)(true, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.challenges_fetched_successfully, dailyChallenges, statusCodes_1.default.SUCCESS);
+            if (dailyChallenges.length == 0 && isOnBoardingComplete) {
+                return (0, response_util_1.showResponse)(true, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.challenges_fetched_successfully, { isUnderProgress: true }, statusCodes_1.default.SUCCESS);
+            }
+            return (0, response_util_1.showResponse)(true, (_b = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _b === void 0 ? void 0 : _b.challenges_fetched_successfully, dailyChallenges, statusCodes_1.default.SUCCESS);
         }
         if (challenge_type == 'weekly') {
             const weeklyChallenges = yield user_weekly_challenges_model_1.default.aggregate([
@@ -91,9 +95,12 @@ const UserChallengesHandler = {
                     }
                 }
             ]);
-            return (0, response_util_1.showResponse)(true, (_b = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _b === void 0 ? void 0 : _b.challenges_fetched_successfully, weeklyChallenges, statusCodes_1.default.SUCCESS);
+            if (weeklyChallenges.length == 0 && isOnBoardingComplete) {
+                return (0, response_util_1.showResponse)(true, (_c = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _c === void 0 ? void 0 : _c.challenges_fetched_successfully, { isUnderProgress: true }, statusCodes_1.default.SUCCESS);
+            }
+            return (0, response_util_1.showResponse)(true, (_d = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _d === void 0 ? void 0 : _d.challenges_fetched_successfully, weeklyChallenges, statusCodes_1.default.SUCCESS);
         }
-        return (0, response_util_1.showResponse)(false, (_c = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _c === void 0 ? void 0 : _c.invalid_challenge_type, {}, statusCodes_1.default.API_ERROR);
+        return (0, response_util_1.showResponse)(false, (_e = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _e === void 0 ? void 0 : _e.invalid_challenge_type, {}, statusCodes_1.default.API_ERROR);
     }),
     challengeDetails: (userId, challenge_type, challenge_id) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b;

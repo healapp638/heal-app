@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.redisConnection = void 0;
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
 const xlsx_1 = __importDefault(require("xlsx"));
@@ -30,7 +31,7 @@ const admin_auth_model_1 = __importDefault(require("../modules/AdminAuth/admin.a
 const user_affirmation_model_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.model"));
 console.log("👷 Worker booting...");
 // ✅ Redis connection
-const redisConnection = new ioredis_1.default({
+exports.redisConnection = new ioredis_1.default({
     host: "127.0.0.1",
     port: 6379,
     maxRetriesPerRequest: null,
@@ -284,7 +285,7 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
             // throw err;
         }
     }), {
-        connection: redisConnection,
+        connection: exports.redisConnection,
         concurrency: 1,
     });
     worker.on("completed", (job) => {
@@ -388,7 +389,7 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
             throw error;
         }
     }), {
-        connection: redisConnection,
+        connection: exports.redisConnection,
         concurrency: 5,
     });
     // ================= EVENTS =================

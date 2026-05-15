@@ -8,7 +8,7 @@ import { USER_STATUS } from "../../constants/workflow.constant";
 import moment from "moment";
 import { getMessage } from "../../helpers/messages";
 import userAuthModel from "../UserAuth/user.auth.model";
-import { convertToObjectId } from "../../helpers/common.helper";
+import {convertToObjectId } from "../../helpers/common.helper";
 
 
 const UserChallengesHandler = {
@@ -17,6 +17,8 @@ const UserChallengesHandler = {
     list: async (userId: string, challenge_type: string): Promise<ApiResponse> => {
         const userLang = await userAuthModel.findOne({ _id: userId });
         const user_language = userLang?.language || 'en';
+        const isOnBoardingComplete = !!(userLang?.bringsYouHere && userLang?.howFellingLately && userLang?.likeToFellMore && userLang?.timeYouCommit && userLang?.startShowingOfYourSelf);
+
         if (challenge_type == 'daily') {
             const dailyChallenges = await userDailyChallengesModel.aggregate([
                 {
@@ -47,7 +49,10 @@ const UserChallengesHandler = {
                         end_date_unix: 1,
                     }
                 }
-            ])
+            ]);
+            if (dailyChallenges.length == 0 && isOnBoardingComplete) {
+                return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, { isUnderProgress: true }, statusCodes.SUCCESS)
+            }
             return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, dailyChallenges, statusCodes.SUCCESS)
         }
         if (challenge_type == 'weekly') {
@@ -80,9 +85,14 @@ const UserChallengesHandler = {
                         end_date_unix: 1,
                     }
                 }
-            ])
+            ]);
+            if (weeklyChallenges.length == 0 && isOnBoardingComplete) {
+                return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, { isUnderProgress: true }, statusCodes.SUCCESS)
+            }
             return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, weeklyChallenges, statusCodes.SUCCESS)
         }
+
+
         return showResponse(false, responseMessage?.common?.invalid_challenge_type, {}, statusCodes.API_ERROR)
     },
 

@@ -298,7 +298,7 @@ const generateChallenges = async () => {
 
 export const scheduleCroneJOb = () => {
   nodeCron.schedule('*/5 * * * *', () => {
-    console.log('running a task every minute');
+    console.log('running a task every 5 minute');
     generateChallenges()
   })
 }

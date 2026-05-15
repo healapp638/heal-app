@@ -59,10 +59,10 @@ const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const messages_1 = require("../../helpers/messages");
 const admin_phases_model_1 = __importDefault(require("../AdminPhases/admin.phases.model"));
 const user_modules_complete_phase_model_1 = __importDefault(require("../UserModules/user.modules.complete.phase.model"));
-const openai_helper_1 = require("../../helpers/openai.helper");
 const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
 const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
 const user_recentHomeTheme_model_1 = __importDefault(require("../UserHomeTheme/user.recentHomeTheme.model"));
+const bullMqWorker_1 = require("../../helpers/bullMqWorker");
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -108,7 +108,14 @@ const UserAuthHandler = {
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
         console.log(timeZone, 'timeZone');
         yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { timeZone: timeZone } });
-        //challenges logic start
+        // challenges logic start
+        yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData }, {
+            attempts: 3,
+            backoff: {
+                type: 'exponential',
+                delay: 1000
+            }
+        });
         // const challengesDetails = await commonHelper.challengsFn(userData);
         // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
         // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -129,7 +136,7 @@ const UserAuthHandler = {
         //         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
         //     }
         // }
-        //end
+        // end
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
@@ -219,6 +226,13 @@ const UserAuthHandler = {
             //challenges logic start
             const data = findUser === null || findUser === void 0 ? void 0 : findUser.data;
             yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { timeZone: timeZone } });
+            yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: data }, {
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 1000
+                }
+            });
             // const challengesDetails = await commonHelper.challengsFn(data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
             // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -288,6 +302,13 @@ const UserAuthHandler = {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "login_error"), null, statusCodes_1.default.API_ERROR);
             }
             //challenges logic start
+            yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: result === null || result === void 0 ? void 0 : result.data }, {
+                attempts: 3,
+                backoff: {
+                    type: 'exponential',
+                    delay: 1000
+                }
+            });
             // const challengesDetails = await commonHelper.challengsFn(result?.data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
             // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -768,25 +789,32 @@ const UserAuthHandler = {
         const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (bringsYouHere && { bringsYouHere })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (startShowingOfYourSelf && { startShowingOfYourSelf }));
         yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj);
         //challenges logic start
-        const challengesDetails = yield commonHelper.challengsFn(userDetails);
-        const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
-        const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
-        const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
-        const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
-        if (isOnBoardingComplete && !isDailyChallengeExist) {
-            const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
-            const result = yield user_daily_challenges_model_1.default.insertMany(res.data);
-            if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
+        yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: userDetails }, {
+            attempts: 3,
+            backoff: {
+                type: 'exponential',
+                delay: 1000
             }
-        }
-        if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-            const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString());
-            const result = yield user_weekly_challenges_model_1.default.insertMany(res.data);
-            if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
-            }
-        }
+        });
+        // const challengesDetails = await commonHelper.challengsFn(userDetails);
+        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+        // const payload: any = challengesDetails?.payload;
+        // if (isOnBoardingComplete && !isDailyChallengeExist) {
+        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
+        //     const result = await userDailyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
+        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
+        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
         //end
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "user_onboarding_complete"), null, statusCodes_1.default.SUCCESS);
     }),

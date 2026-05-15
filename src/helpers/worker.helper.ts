@@ -19,7 +19,7 @@ import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.mo
 console.log("👷 Worker booting...");
 
 // ✅ Redis connection
-const redisConnection = new IORedis({
+export const redisConnection = new IORedis({
     host: "127.0.0.1",
     port: 6379,
     maxRetriesPerRequest: null,
@@ -98,268 +98,266 @@ const startWorker = async () => {
     await connectDB();
     console.log("✅ DB connected");
 
-    const worker = new Worker(
-        "excel-import",
-        async (job) => {
-            // let themeTitle = "unknown"; // Initialize with default value
-            console.log(`🚀 Processing Job ${job.id}`);
+    const worker = new Worker("excel-import", async (job) => {
+        // let themeTitle = "unknown"; // Initialize with default value
+        console.log(`🚀 Processing Job ${job.id}`);
 
-            try {
-                // ✅ Fix buffer
-                const rawBuffer = job.data.fileBuffer;
-                const fileBuffer = Buffer.isBuffer(rawBuffer)
-                    ? rawBuffer
-                    : Buffer.from(rawBuffer.data);
+        try {
+            // ✅ Fix buffer
+            const rawBuffer = job.data.fileBuffer;
+            const fileBuffer = Buffer.isBuffer(rawBuffer)
+                ? rawBuffer
+                : Buffer.from(rawBuffer.data);
 
-                const workbook = xlsx.read(fileBuffer, { type: "buffer" });
-                const sheetName = workbook.SheetNames[0];
+            const workbook = xlsx.read(fileBuffer, { type: "buffer" });
+            const sheetName = workbook.SheetNames[0];
 
-                const sheetData: any[] = xlsx.utils.sheet_to_json(
-                    workbook.Sheets[sheetName],
-                    { defval: "" }
-                );
+            const sheetData: any[] = xlsx.utils.sheet_to_json(
+                workbook.Sheets[sheetName],
+                { defval: "" }
+            );
 
-                console.log("📊 Rows:", sheetData.length);
+            console.log("📊 Rows:", sheetData.length);
 
-                if (!sheetData.length) {
-                    console.log("❌ Empty Excel");
-                    return;
-                }
+            if (!sheetData.length) {
+                console.log("❌ Empty Excel");
+                return;
+            }
 
-                // Get theme title from first row (it will remain same throughout)
-                const themeTitle = sheetData[0]?.theme_title?.trim();
-                if (!themeTitle) {
-                    console.error("❌ No theme title found in Excel");
-                    return;
-                }
+            // Get theme title from first row (it will remain same throughout)
+            const themeTitle = sheetData[0]?.theme_title?.trim();
+            if (!themeTitle) {
+                console.error("❌ No theme title found in Excel");
+                return;
+            }
 
-                // Status 1: Start/Pending
-                await updateImportStatus(themeTitle, 1);
-                console.log(`✅ Theme "${themeTitle}" import started - Status: 1`);
+            // Status 1: Start/Pending
+            await updateImportStatus(themeTitle, 1);
+            console.log(`✅ Theme "${themeTitle}" import started - Status: 1`);
 
-                // Status 2: In Progress
-                await updateImportStatus(themeTitle, 2);
-                console.log(`🔄 Theme "${themeTitle}" import in progress - Status: 2`);
+            // Status 2: In Progress
+            await updateImportStatus(themeTitle, 2);
+            console.log(`🔄 Theme "${themeTitle}" import in progress - Status: 2`);
 
-                let rowCount = 1;
+            let rowCount = 1;
 
-                for (const row of sheetData) {
-                    try {
-                        console.log(`\n📦 Row ${rowCount++}`);
+            for (const row of sheetData) {
+                try {
+                    console.log(`\n📦 Row ${rowCount++}`);
 
-                        // ================= THEME =================
-                        if (!row.theme_title) continue;
+                    // ================= THEME =================
+                    if (!row.theme_title) continue;
 
-                        const theme = await safeUpsert(
-                            adminThemeModel,
-                            { "title.en": row.theme_title.trim() },
-                            {
-                                title: await getTranslatedObj(row.theme_title),
-                                description: await getTranslatedObj(row.theme_description),
-                                imgUrl: row.theme_imgUrl || "",
-                            }
-                        );
+                    const theme = await safeUpsert(
+                        adminThemeModel,
+                        { "title.en": row.theme_title.trim() },
+                        {
+                            title: await getTranslatedObj(row.theme_title),
+                            description: await getTranslatedObj(row.theme_description),
+                            imgUrl: row.theme_imgUrl || "",
+                        }
+                    );
 
-                        // ================= MODULE =================
-                        const module = await safeUpsert(
-                            adminModulesModel,
-                            {
-                                themeId: theme._id,
-                                "title.en": row.module_title.trim(),
-                            },
-                            {
-                                themeId: theme._id,
-                                title: await getTranslatedObj(row.module_title),
-                            }
-                        );
+                    // ================= MODULE =================
+                    const module = await safeUpsert(
+                        adminModulesModel,
+                        {
+                            themeId: theme._id,
+                            "title.en": row.module_title.trim(),
+                        },
+                        {
+                            themeId: theme._id,
+                            title: await getTranslatedObj(row.module_title),
+                        }
+                    );
 
-                        // ================= SUBMODULE =================
-                        const subModule = await safeUpsert(
-                            adminSubmodulesModel,
-                            {
-                                moduleId: module._id,
-                                "title.en": row.submodule_title.trim(),
-                            },
-                            {
-                                moduleId: module._id,
-                                title: await getTranslatedObj(row.submodule_title),
-                                description: await getTranslatedObj(row.submodule_description),
-                            }
-                        );
+                    // ================= SUBMODULE =================
+                    const subModule = await safeUpsert(
+                        adminSubmodulesModel,
+                        {
+                            moduleId: module._id,
+                            "title.en": row.submodule_title.trim(),
+                        },
+                        {
+                            moduleId: module._id,
+                            title: await getTranslatedObj(row.submodule_title),
+                            description: await getTranslatedObj(row.submodule_description),
+                        }
+                    );
 
-                        // ================= PHASE =================
-                        const phase = await safeUpsert(
-                            adminPhasesModel,
-                            {
-                                subModuleId: subModule._id,
-                                "title.en": row.phase_title.trim(),
-                            },
-                            {
-                                subModuleId: subModule._id,
-                                title: await getTranslatedObj(row.phase_title),
-                                points: row.phase_points || 0,
-                            }
-                        );
-                        console.log("📌 Phase:", phase._id);
+                    // ================= PHASE =================
+                    const phase = await safeUpsert(
+                        adminPhasesModel,
+                        {
+                            subModuleId: subModule._id,
+                            "title.en": row.phase_title.trim(),
+                        },
+                        {
+                            subModuleId: subModule._id,
+                            title: await getTranslatedObj(row.phase_title),
+                            points: row.phase_points || 0,
+                        }
+                    );
+                    console.log("📌 Phase:", phase._id);
 
-                        // ================= LESSON =================
-                        const exerciseDetail = await safeUpsert(
-                            adminExerciseDetailsModel,
-                            {
-                                phase_id: phase._id,
-                                "reading_title.en": row.lesson_reading_title.trim(),
-                            },
-                            {
-                                phase_id: phase._id,
-                                reading_title: await getTranslatedObj(row.lesson_reading_title.trim()),
-                                reading_description: await getTranslatedObj(
-                                    row.lesson_reading_description
-                                ),
-                                concept_title: await getTranslatedObj(
-                                    row.lesson_concept_title
-                                ),
-                                concept_description: await getTranslatedObj(
-                                    row.lesson_concept_description
-                                ),
-                                reflection: await getTranslatedObj(row.lesson_reflection),
-                            }
-                        );
-                        console.log("📘 ExerciseDetail:", exerciseDetail._id);
+                    // ================= LESSON =================
+                    const exerciseDetail = await safeUpsert(
+                        adminExerciseDetailsModel,
+                        {
+                            phase_id: phase._id,
+                            "reading_title.en": row.lesson_reading_title.trim(),
+                        },
+                        {
+                            phase_id: phase._id,
+                            reading_title: await getTranslatedObj(row.lesson_reading_title.trim()),
+                            reading_description: await getTranslatedObj(
+                                row.lesson_reading_description
+                            ),
+                            concept_title: await getTranslatedObj(
+                                row.lesson_concept_title
+                            ),
+                            concept_description: await getTranslatedObj(
+                                row.lesson_concept_description
+                            ),
+                            reflection: await getTranslatedObj(row.lesson_reflection),
+                        }
+                    );
+                    console.log("📘 ExerciseDetail:", exerciseDetail._id);
 
-                        // ================= EXERCISES =================
-                        // const exerciseKeys = Object.keys(row).filter((key) =>
-                        //   key.startsWith("exercise_description_step")
-                        // );
+                    // ================= EXERCISES =================
+                    // const exerciseKeys = Object.keys(row).filter((key) =>
+                    //   key.startsWith("exercise_description_step")
+                    // );
 
-                        // for (const descKey of exerciseKeys) {
-                        //   const stepDesc = row[descKey];
-                        //   if (!stepDesc) continue;
+                    // for (const descKey of exerciseKeys) {
+                    //   const stepDesc = row[descKey];
+                    //   if (!stepDesc) continue;
 
-                        //   const suffix = descKey.replace(
-                        //     "exercise_description_step",
-                        //     ""
-                        //   );
+                    //   const suffix = descKey.replace(
+                    //     "exercise_description_step",
+                    //     ""
+                    //   );
 
-                        //   const stepTitle = row[`exercise_title_step${suffix}`];
+                    //   const stepTitle = row[`exercise_title_step${suffix}`];
 
-                        //   await safeUpsert(
-                        //     adminExcerciseModel,
-                        //     {
-                        //       exercise_details_id: exerciseDetail._id,
-                        //       "description.en": ciMatch(stepDesc),
-                        //     },
-                        //     {
-                        //       exercise_details_id: exerciseDetail._id,
-                        //       title: await getTranslatedObj(stepTitle),
-                        //       description: await getTranslatedObj(stepDesc),
-                        //     }
-                        //   );
-                        // }
-                        // ✅ Step map builder (groups by step number)
-                        const stepsMap: Record<string, { title?: string; desc?: string }> = {};
+                    //   await safeUpsert(
+                    //     adminExcerciseModel,
+                    //     {
+                    //       exercise_details_id: exerciseDetail._id,
+                    //       "description.en": ciMatch(stepDesc),
+                    //     },
+                    //     {
+                    //       exercise_details_id: exerciseDetail._id,
+                    //       title: await getTranslatedObj(stepTitle),
+                    //       description: await getTranslatedObj(stepDesc),
+                    //     }
+                    //   );
+                    // }
+                    // ✅ Step map builder (groups by step number)
+                    const stepsMap: Record<string, { title?: string; desc?: string }> = {};
 
-                        Object.keys(row).forEach((key) => {
-                            const value = row[key];
+                    Object.keys(row).forEach((key) => {
+                        const value = row[key];
 
-                            if (!value) return;
+                        if (!value) return;
 
-                            // Match description
-                            if (key.startsWith("exercise_description_step")) {
-                                const stepNo = key.replace("exercise_description_step", "").trim();
+                        // Match description
+                        if (key.startsWith("exercise_description_step")) {
+                            const stepNo = key.replace("exercise_description_step", "").trim();
 
-                                if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
-                                stepsMap[stepNo].desc = value.toString().trim();
-                            }
+                            if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
+                            stepsMap[stepNo].desc = value.toString().trim();
+                        }
 
-                            // Match title
-                            if (key.startsWith("exercise_title_step")) {
-                                const stepNo = key.replace("exercise_title_step", "").trim();
+                        // Match title
+                        if (key.startsWith("exercise_title_step")) {
+                            const stepNo = key.replace("exercise_title_step", "").trim();
 
-                                if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
-                                stepsMap[stepNo].title = value.toString().trim();
-                            }
+                            if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
+                            stepsMap[stepNo].title = value.toString().trim();
+                        }
+                    });
+
+                    console.log("🧩 Steps Map:", stepsMap);
+
+                    // ✅ Now process each step
+                    for (const stepNo of Object.keys(stepsMap)) {
+                        const { title, desc } = stepsMap[stepNo];
+
+                        // ❗ Description is mandatory (your rule)
+                        if (!desc) {
+                            console.log(`⚠️ Skipping step ${stepNo} (no description)`);
+                            continue;
+                        }
+
+                        console.log(`📝 Processing Step ${stepNo}`, {
+                            title,
+                            desc,
                         });
 
-                        console.log("🧩 Steps Map:", stepsMap);
-
-                        // ✅ Now process each step
-                        for (const stepNo of Object.keys(stepsMap)) {
-                            const { title, desc } = stepsMap[stepNo];
-
-                            // ❗ Description is mandatory (your rule)
-                            if (!desc) {
-                                console.log(`⚠️ Skipping step ${stepNo} (no description)`);
-                                continue;
-                            }
-
-                            console.log(`📝 Processing Step ${stepNo}`, {
-                                title,
-                                desc,
-                            });
-
-                            try {
-                                const exercise = await safeUpsert(
-                                    adminExcerciseModel,
-                                    {
-                                        exercise_details_id: exerciseDetail._id,
-                                        "description.en": {
-                                            $regex: new RegExp(`^${desc}$`, "i"),
-                                        },
+                        try {
+                            const exercise = await safeUpsert(
+                                adminExcerciseModel,
+                                {
+                                    exercise_details_id: exerciseDetail._id,
+                                    "description.en": {
+                                        $regex: new RegExp(`^${desc}$`, "i"),
                                     },
-                                    {
-                                        exercise_details_id: exerciseDetail._id,
+                                },
+                                {
+                                    exercise_details_id: exerciseDetail._id,
 
-                                        // ✅ if title empty → store empty object
-                                        title: title
-                                            ? await getTranslatedObj(title)
-                                            : {
-                                                en: "",
-                                                hi: "",
-                                                zh: "",
-                                                es: "",
-                                                fr: "",
-                                                de: "",
-                                                ru: "",
-                                                pt: "",
-                                                it: "",
-                                                ro: "",
-                                            },
+                                    // ✅ if title empty → store empty object
+                                    title: title
+                                        ? await getTranslatedObj(title)
+                                        : {
+                                            en: "",
+                                            hi: "",
+                                            zh: "",
+                                            es: "",
+                                            fr: "",
+                                            de: "",
+                                            ru: "",
+                                            pt: "",
+                                            it: "",
+                                            ro: "",
+                                        },
 
-                                        description: await getTranslatedObj(desc),
-                                    }
-                                );
+                                    description: await getTranslatedObj(desc),
+                                }
+                            );
 
-                                console.log("✅ Exercise saved:", exercise._id);
-                            } catch (err) {
-                                console.error(`❌ Step ${stepNo} failed`, err);
-                            }
+                            console.log("✅ Exercise saved:", exercise._id);
+                        } catch (err) {
+                            console.error(`❌ Step ${stepNo} failed`, err);
                         }
-                    } catch (rowErr) {
-                        console.error("❌ Row failed, skipping:", rowErr);
-                        continue;
                     }
+                } catch (rowErr) {
+                    console.error("❌ Row failed, skipping:", rowErr);
+                    continue;
                 }
-                await updateImportStatus(themeTitle, 3);
-                const admindata = await adminAuthModel.findOne({ user_type: 1 }).lean();
-                const admin_id = admindata?._id
-                const title = "Excel Import Completed Successfully";
-                const message = "Excel has been successfully imported"
-                const noti = await sendTopicNotification(
-                    `${admin_id}`,
-                    title,
-                    message,
-                    {},
-                );
-                console.log(noti,"noti")
-                console.log(`✅ Job ${job.id} completed`);
-            } catch (err) {
-                console.error("❌ Job error:", err);
-                const themeTitle = job.data.fileBuffer ? "unknown" : "unknown";
-                await updateImportStatus(themeTitle, 0);
-                // throw err;
-
             }
-        },
+            await updateImportStatus(themeTitle, 3);
+            const admindata = await adminAuthModel.findOne({ user_type: 1 }).lean();
+            const admin_id = admindata?._id
+            const title = "Excel Import Completed Successfully";
+            const message = "Excel has been successfully imported"
+            const noti = await sendTopicNotification(
+                `${admin_id}`,
+                title,
+                message,
+                {},
+            );
+            console.log(noti, "noti")
+            console.log(`✅ Job ${job.id} completed`);
+        } catch (err) {
+            console.error("❌ Job error:", err);
+            const themeTitle = job.data.fileBuffer ? "unknown" : "unknown";
+            await updateImportStatus(themeTitle, 0);
+            // throw err;
+
+        }
+    },
         {
             connection: redisConnection,
             concurrency: 1,
@@ -477,42 +475,42 @@ const startAffirmationWorker = async () => {
                         // ================= CHECK DUPLICATE =================
 
                         const existingAffirmation =
-                        await userAffirmationModel.findOne({
+                            await userAffirmationModel.findOne({
 
-                       "affirmation.en": {
-                        $regex: `^${affirmation}$`,
-                        $options: "i",
-                        },
+                                "affirmation.en": {
+                                    $regex: `^${affirmation}$`,
+                                    $options: "i",
+                                },
 
-                        status: {
-                        $ne: USER_STATUS.DELETED,
-                        },
-                        });
+                                status: {
+                                    $ne: USER_STATUS.DELETED,
+                                },
+                            });
 
                         if (existingAffirmation) {
 
-                        console.log(
-                        "⚠️ Duplicate affirmation skipped:",
-                        affirmation
-                        );
+                            console.log(
+                                "⚠️ Duplicate affirmation skipped:",
+                                affirmation
+                            );
 
-                        continue;
+                            continue;
                         }
 
-                       // ================= SAVE =================
+                        // ================= SAVE =================
 
-                       const savedAffirmation =
-                       await userAffirmationModel.create({
+                        const savedAffirmation =
+                            await userAffirmationModel.create({
 
-                        affirmation:
-                       translatedAffirmation,
+                                affirmation:
+                                    translatedAffirmation,
 
-                       type: "Admin",
+                                type: "Admin",
 
-                       user_id: [],
-                       });
+                                user_id: [],
+                            });
 
-                      console.log("✅ Saved:",savedAffirmation._id);
+                        console.log("✅ Saved:", savedAffirmation._id);
 
                     } catch (rowError) {
 

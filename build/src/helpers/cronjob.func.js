@@ -252,7 +252,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 });
 const scheduleCroneJOb = () => {
     node_cron_1.default.schedule('*/5 * * * *', () => {
-        console.log('running a task every minute');
+        console.log('running a task every 5 minute');
         generateChallenges();
     });
 };
