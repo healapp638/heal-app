@@ -8,16 +8,16 @@ const { verifyTokenAdmin } = middlewares.auth
 const router = express.Router()
 
 router.post('/create_phase', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { title, points, subModuleId } = req.body
+    const { title, reflection, points, subModuleId } = req.body
     const controller = new PhaseController(req, res)
-    const result: ApiResponse = await controller.createPhase({ title, points, subModuleId });
+    const result: ApiResponse = await controller.createPhase({ title, reflection, points, subModuleId });
     return showOutput(res, result, result.code)
 });
 
 router.post('/update_phase', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { title, points, lang, phaseId } = req.body
+    const { title, reflection, points, lang, phaseId } = req.body
     const controller = new PhaseController(req, res)
-    const result: ApiResponse = await controller.updatePhase({ title, points, lang, phaseId });
+    const result: ApiResponse = await controller.updatePhase({ title, reflection, points, lang, phaseId });
     return showOutput(res, result, result.code)
 });
 

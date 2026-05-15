@@ -39,7 +39,7 @@ export const validateExerciseList = (data: any) => {
 export const validateCompleteLesson = (data: any) => {
     const schema = Joi.object({
         exercise_id: Joi.string().required(),
-        exercise_details_id: Joi.string().required(),
+        // exercise_details_id: Joi.string().required(),
         phase_id: Joi.string().required(),
         reflection: Joi.string().required(),
     });

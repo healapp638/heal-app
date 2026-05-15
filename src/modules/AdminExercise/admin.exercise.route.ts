@@ -79,5 +79,40 @@ router.get('/single_exercise', verifyTokenAdmin, async (req: Request | any, res:
     return showOutput(res, result, result.code)
 });
 
+router.post('/create_mcq_exercise', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { title, description, mcq, phase_id } = req.body
+    const controller = new ExerciseController(req, res)
+    const result: ApiResponse = await controller.createMcqExercise({ title, description, mcq, phase_id });
+    return showOutput(res, result, result.code)
+});
+
+router.post('/update_mcq_exercise', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { title, description, mcq, mcqexercise_id, lang } = req.body
+    const controller = new ExerciseController(req, res)
+    const result: ApiResponse = await controller.updateMcqExercise({ title, description, mcq, mcqexercise_id, lang });
+    return showOutput(res, result, result.code)
+});
+
+router.delete('/delete_mcq_exercise', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { mcqexercise_id, status } = req.body
+    const controller = new ExerciseController(req, res)
+    const result: ApiResponse = await controller.deleteMcqExercise({ mcqexercise_id, status });
+    return showOutput(res, result, result.code)
+});
+
+router.get('/list_mcq_exercise', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { page, limit, search, lang, phase_id } = req.query
+    const controller = new ExerciseController(req, res)
+    const result: ApiResponse = await controller.listMcqExercise(page, limit, search, lang, phase_id);
+    return showOutput(res, result, result.code)
+});
+
+router.get('/single_mcq_exercise', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const { mcqexercise_id, lang } = req.query
+    const controller = new ExerciseController(req, res)
+    const result: ApiResponse = await controller.singleMcqExercise(mcqexercise_id, lang);
+    return showOutput(res, result, result.code)
+});
+
 
 export default router

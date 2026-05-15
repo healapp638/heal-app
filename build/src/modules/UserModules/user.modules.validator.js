@@ -44,7 +44,7 @@ exports.validateExerciseList = validateExerciseList;
 const validateCompleteLesson = (data) => {
     const schema = joi_1.default.object({
         exercise_id: joi_1.default.string().required(),
-        exercise_details_id: joi_1.default.string().required(),
+        // exercise_details_id: Joi.string().required(),
         phase_id: joi_1.default.string().required(),
         reflection: joi_1.default.string().required(),
     });

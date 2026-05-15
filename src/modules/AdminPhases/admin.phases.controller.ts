@@ -23,7 +23,7 @@ export default class AdminPhasesController extends Controller {
 
     @Security('Bearer')
     @Post('/create_phase')
-    public async createPhase(@Body() request: { title: string, points: number, subModuleId: string }): Promise<ApiResponse> {
+    public async createPhase(@Body() request: { title: string, reflection: string, points: number, subModuleId: string }): Promise<ApiResponse> {
         const validate = validateCreatePhase(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -34,7 +34,7 @@ export default class AdminPhasesController extends Controller {
 
     @Security('Bearer')
     @Post('/update_phase')
-    public async updatePhase(@Body() request: { title: string, points: number, lang: string, phaseId: string }): Promise<ApiResponse> {
+    public async updatePhase(@Body() request: { title: string, reflection: string, points: number, lang: string, phaseId: string }): Promise<ApiResponse> {
         const validate = validateUpdatePhase(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

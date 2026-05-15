@@ -14,6 +14,9 @@ import adminExcerciseModel from "../AdminExercise/admin.excercise.model";
 import userModulesCompleteLessonModel from "./user.modules.complete.lesson.model";
 import userModulesCompletePhaseModel from "./user.modules.complete.phase.model";
 import userModuleStartLessonModel from "./user.module.start.lesson.model";
+import adminMcqexerciseModel from "../AdminExercise/admin.mcqexercise.model";
+import userMcqanswerExerciseModel from "./user.mcqanswer.exercise.model";
+import responseMessages from "../../constants/responseMessages";
 
 const UserCommonHandler = {
 
@@ -318,6 +321,339 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases: updatedPhases, nextCursor }, statusCodes.SUCCESS);
     },
 
+addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
+    try {
+        const {mcq_exercise_id,mcq_id} = data;
+
+        // ======================================================
+        // CHECK EXERCISE EXISTS
+        // ======================================================
+
+        const exercise = await adminMcqexerciseModel.findOne({
+            _id:convertToObjectId( mcq_exercise_id ),status:USER_STATUS.ACTIVE,
+        });
+
+        if (!exercise) {
+            return showResponse(false,"MCQ Exercise not found",null,statusCodes.NOT_FOUND);
+        }
+
+        // ======================================================
+        // CHECK MCQ OPTION EXISTS
+        // ======================================================
+
+        const mcqExists = exercise.mcq.find((item: any) =>item?._id?.toString() === mcq_id);
+
+        if (!mcqExists) {
+            return showResponse(false,"MCQ option not found",null,statusCodes.NOT_FOUND);
+        }
+
+        // ======================================================
+        // CHECK ALREADY ANSWERED
+        // ======================================================
+
+        const alreadyAnswered = await userMcqanswerExerciseModel.findOne({
+                user_id:convertToObjectId(user_id),
+                mcq_exercise_id:convertToObjectId(mcq_exercise_id),
+                status:USER_STATUS.ACTIVE,
+            });
+
+        // ======================================================
+        // UPDATE EXISTING ANSWER
+        // ======================================================
+
+        if (alreadyAnswered) {
+            alreadyAnswered.mcq_id = convertToObjectId( mcq_id );
+            await alreadyAnswered.save();
+            return showResponse( true, "MCQ answer updated successfully", alreadyAnswered, statusCodes.SUCCESS );
+        }
+
+        // ======================================================
+        // CREATE ANSWER
+        // ======================================================
+
+        const createAnswer = await userMcqanswerExerciseModel.create({
+                user_id:convertToObjectId(user_id),
+                mcq_exercise_id:convertToObjectId(mcq_exercise_id),
+                mcq_id:convertToObjectId(mcq_id)
+            });
+
+        if (!createAnswer) {
+            return showResponse(false,responseMessages.common.save_failed,null,statusCodes.API_ERROR);
+        }
+
+        return showResponse(true,responseMessages.common.data_save,createAnswer,statusCodes.SUCCESS);
+
+    } catch (error) {
+        console.log(error,"ADD_MCQ_ANSWER_ERROR");
+        return showResponse(false,responseMessages.common.server_error,null,statusCodes.API_ERROR);
+    }
+},
+
+    excerciseMcqList: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { phase_id, cursor, limit = 10 } = data;
+        const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+        const userLang = user?.language || 'en';
+
+        const match: any = {
+            status: USER_STATUS.ACTIVE,
+            phase_id: convertToObjectId(phase_id)
+        }
+
+        if (cursor) {
+            const parsedCursor = JSON.parse(cursor);
+            match.$or = [
+                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+                {
+                    createdAt: new Date(parsedCursor.createdAt),
+                    _id: { $lt: convertToObjectId(parsedCursor._id) }
+                }
+            ]
+        }
+
+        const mcqList = await adminMcqexerciseModel.aggregate([
+            {
+                $match: match
+            },
+            {
+                $addFields: {
+                    question: `$question.${userLang}`,
+                    description: `$description.${userLang}`,
+                    mcq: { $map: { input: "$mcq", as: "mcq", in: { _id: "$$mcq._id", option: `$$mcq.option.${userLang}` } } }
+                }
+            },
+            {
+                $sort: {
+                    createdAt: -1,
+                    _id: -1
+                }
+            },
+            {
+                $limit: Number(limit)
+            },
+            {
+                $project: {
+                    question: 1,
+                    description: 1,
+                    mcq: 1
+                }
+            }
+        ]);
+
+        const last = mcqList[mcqList.length - 1];
+        const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
+        return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { mcqList, nextCursor }, statusCodes.SUCCESS);
+    },
+
+    excerciseMcqAnswerList: async (data: any,userId: string): Promise<ApiResponse> => {
+    try {
+        const {phase_id,cursor,limit = 10} = data;
+
+        const user =await userAuthModel.findOne({
+                _id:convertToObjectId(userId),
+                status:USER_STATUS.ACTIVE,
+            });
+
+        if (!user) {
+            return showResponse(false,responseMessages.common.not_exist,null,statusCodes.NOT_FOUND);
+        }
+        const userLang = user?.language || "en";
+
+        const match: any = {
+            status:USER_STATUS.ACTIVE,
+            phase_id:convertToObjectId(phase_id),
+        };
+
+        if (cursor) {
+            const parsedCursor =JSON.parse(cursor);
+            match.$or = [
+                {
+                    createdAt: {$lt: new Date(parsedCursor.createdAt)},   
+                },
+                {
+                    createdAt:new Date(parsedCursor.createdAt),  
+                    _id: {$lt: convertToObjectId(parsedCursor._id)},
+                },
+            ];
+        }
+
+        // ======================================================
+        // AGGREGATION
+        // ======================================================
+
+        const mcqList = await adminMcqexerciseModel.aggregate([
+
+                {
+                    $match: match,
+                },
+
+                // ======================================================
+                // USER ANSWER
+                // ======================================================
+
+                {
+                    $lookup: {
+
+                        from:"mcqanswerexercises",
+
+                        let:{
+                            exerciseId: "$_id",
+                        },
+
+                        pipeline: [
+
+                            {
+                                $match: {
+
+                                    $expr: {
+
+                                        $and: [
+
+                                            {
+                                                $eq: [
+                                                    "$mcq_exercise_id",
+                                                    "$$exerciseId",
+                                                ],
+                                            },
+
+                                            {
+                                                $eq: [
+                                                    "$user_id",
+                                                    convertToObjectId(
+                                                        userId
+                                                    ),
+                                                ],
+                                            },
+
+                                            {
+                                                $eq: [
+                                                    "$status",
+                                                    USER_STATUS.ACTIVE,
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+
+                        as: "answerData",
+                    },
+                },
+
+                // ======================================================
+                // LANGUAGE + ANSWER FORMAT
+                // ======================================================
+
+                {
+                    $addFields: {
+
+                        title: {
+                            $ifNull: [
+                                `$title.${userLang}`,
+                                "$title.en",
+                            ],
+                        },
+
+                        description: {
+                            $ifNull: [
+                                `$description.${userLang}`,
+                                "$description.en",
+                            ],
+                        },
+
+                        mcq: {
+
+                            $map: {
+
+                                input: "$mcq",
+
+                                as: "mcq",
+
+                                in: {
+
+                                    _id:
+                                        "$$mcq._id",
+
+                                    option: {
+                                        $ifNull: [
+                                            `$$mcq.option.${userLang}`,
+                                            "$$mcq.option.en",
+                                        ],
+                                    },
+
+                                    is_selected: {
+
+                                        $cond: [
+
+                                            {
+                                                $eq: [
+
+                                                    "$$mcq._id",
+
+                                                    {
+                                                        $arrayElemAt: [
+                                                            "$answerData.mcq_id",
+                                                            0,
+                                                        ],
+                                                    },
+                                                ],
+                                            },
+
+                                            true,
+
+                                            false,
+                                        ],
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+
+                {
+                    $sort: {
+
+                        createdAt: -1,
+                        _id: -1,
+                    },
+                },
+
+                {
+                    $limit: Number(limit),
+                },
+
+                {
+                    $project: {
+
+                        title: 1,
+
+                        description: 1,
+
+                        mcq: 1,
+
+                        createdAt: 1,
+                    },
+                },
+            ]);
+
+        const last = mcqList[ mcqList.length - 1];
+
+        const nextCursor = last ? JSON.stringify({
+
+                    createdAt: last.createdAt,
+                    _id: last._id,
+                }) : null;
+
+        return showResponse(true,getMessage(userLang || "en","data_fetch_success"),{mcqList,nextCursor},statusCodes.SUCCESS);
+
+    } catch (error) {
+
+        console.log(error,"MCQ_EXERCISE_LIST_ERROR");
+
+        return showResponse(false, responseMessages.common.server_error, null, statusCodes.API_ERROR);
+    }
+},
+
     exerciseDetailList: async (data: any, userId: string): Promise<ApiResponse> => {
         const { phase_id, cursor, limit = 10 } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
@@ -478,15 +814,97 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { exerciseDetail: exerciseDetail[0], exercises, nextCursor }, statusCodes.SUCCESS);
     },
 
+    // completeLesson: async (data: any, userId: string): Promise<ApiResponse> => {
+    //     const { exercise_id, exercise_details_id, phase_id, reflection } = data;
+    //     const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+    //     const userLang = user?.language || 'en';
+
+    //     const completedLesson = await userModulesCompleteLessonModel.findOne({
+    //         user_id: convertToObjectId(userId),
+    //         exercise_id: convertToObjectId(exercise_id),
+    //         exercise_details_id: convertToObjectId(exercise_details_id),
+    //         phase_id: convertToObjectId(phase_id),
+    //         status: USER_STATUS.ACTIVE
+    //     });
+
+    //     if (completedLesson) {
+    //         return showResponse(false, getMessage(userLang || 'en', 'already_completed'), null, statusCodes.API_ERROR);
+    //     }
+
+    //     const completedLessonData = await userModulesCompleteLessonModel.create({
+    //         user_id: convertToObjectId(userId),
+    //         exercise_id: convertToObjectId(exercise_id),
+    //         exercise_details_id: convertToObjectId(exercise_details_id),
+    //         phase_id: convertToObjectId(phase_id),
+    //         reflection: reflection,
+    //         status: USER_STATUS.ACTIVE
+    //     });
+
+    //     if (!completedLessonData) {
+    //         return showResponse(false, getMessage(userLang || 'en', 'error_while_completing_lesson'), null, statusCodes.API_ERROR);
+    //     }
+
+    //     const totalLessonInPhase = await adminExerciseDetailsModel.countDocuments({
+    //         phase_id: convertToObjectId(phase_id),
+    //         status: USER_STATUS.ACTIVE
+    //     })
+
+    //     const completedLessonCount = await userModulesCompleteLessonModel.countDocuments({
+    //         user_id: convertToObjectId(userId),
+    //         phase_id: convertToObjectId(phase_id),
+    //         status: USER_STATUS.ACTIVE
+    //     });
+
+    //     const submodule = await adminPhasesModel.findOne({
+    //         _id: convertToObjectId(phase_id),
+    //         status: USER_STATUS.ACTIVE
+    //     });
+
+    //     const subModuleId: any = submodule?.subModuleId;
+    //     console.log(subModuleId, "subModuleId")
+
+    //     if (totalLessonInPhase === completedLessonCount) {
+    //         await userModulesCompletePhaseModel.create({
+    //             user_id: convertToObjectId(userId),
+    //             phase_id: convertToObjectId(phase_id),
+    //             sub_module_id: subModuleId,
+    //             status: USER_STATUS.ACTIVE
+    //         });
+    //     }
+
+
+    //     const totalPhaseInSubModule = await adminPhasesModel.countDocuments({
+    //         subModuleId: convertToObjectId(subModuleId),
+    //         status: USER_STATUS.ACTIVE
+    //     })
+
+    //     const completedPhaseInSubModule = await userModulesCompletePhaseModel.countDocuments({
+    //         user_id: convertToObjectId(userId),
+    //         sub_module_id: convertToObjectId(subModuleId),
+    //         status: USER_STATUS.ACTIVE
+    //     })
+
+    //     if (totalPhaseInSubModule === completedPhaseInSubModule) {
+    //         await userModuleStartLessonModel.updateOne({
+    //             user_id: convertToObjectId(userId),
+    //             sub_module_id: convertToObjectId(subModuleId),
+    //         }, {
+    //             $set: {
+    //                 sub_module_status: "end"
+    //             }
+    //         });
+    //     }
+
+    //     return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes.SUCCESS);
+    // },
     completeLesson: async (data: any, userId: string): Promise<ApiResponse> => {
-        const { exercise_id, exercise_details_id, phase_id, reflection } = data;
+        const { exercise_id, phase_id, reflection } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const userLang = user?.language || 'en';
 
         const completedLesson = await userModulesCompleteLessonModel.findOne({
             user_id: convertToObjectId(userId),
             exercise_id: convertToObjectId(exercise_id),
-            exercise_details_id: convertToObjectId(exercise_details_id),
             phase_id: convertToObjectId(phase_id),
             status: USER_STATUS.ACTIVE
         });
@@ -498,7 +916,6 @@ const UserCommonHandler = {
         const completedLessonData = await userModulesCompleteLessonModel.create({
             user_id: convertToObjectId(userId),
             exercise_id: convertToObjectId(exercise_id),
-            exercise_details_id: convertToObjectId(exercise_details_id),
             phase_id: convertToObjectId(phase_id),
             reflection: reflection,
             status: USER_STATUS.ACTIVE
@@ -508,7 +925,7 @@ const UserCommonHandler = {
             return showResponse(false, getMessage(userLang || 'en', 'error_while_completing_lesson'), null, statusCodes.API_ERROR);
         }
 
-        const totalLessonInPhase = await adminExerciseDetailsModel.countDocuments({
+        const totalLessonInPhase = await adminMcqexerciseModel.countDocuments({
             phase_id: convertToObjectId(phase_id),
             status: USER_STATUS.ACTIVE
         })
@@ -562,6 +979,38 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes.SUCCESS);
     },
 
+    // startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
+    //     const { phase_id } = data;
+    //     const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
+    //     const userLang = user?.language || 'en';
+
+    //     const submodule = await adminPhasesModel.findOne({
+    //         _id: convertToObjectId(phase_id),
+    //         status: USER_STATUS.ACTIVE
+    //     });
+
+    //     const subModuleId: any = submodule?.subModuleId;
+
+    //     const start_lesson = await userModuleStartLessonModel.findOneAndUpdate({
+    //         user_id: convertToObjectId(userId),
+    //         sub_module_id: convertToObjectId(subModuleId),
+    //     }, {
+    //         $set: {
+    //             user_id: convertToObjectId(userId),
+    //             sub_module_id: convertToObjectId(subModuleId),
+    //             status: USER_STATUS.ACTIVE
+    //         }
+    //     }, {
+    //         upsert: true,
+    //         new: true
+    //     });
+
+    //     if (!start_lesson) {
+    //         return showResponse(false, getMessage(userLang || 'en', 'error_while_starting_lesson'), null, statusCodes.API_ERROR);
+    //     }
+
+    //     return showResponse(true, getMessage(userLang || 'en', 'lesson_started_successfully'), null, statusCodes.SUCCESS);
+    // },
     startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
         const { phase_id } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
@@ -580,6 +1029,7 @@ const UserCommonHandler = {
         }, {
             $set: {
                 user_id: convertToObjectId(userId),
+                phase_id: convertToObjectId(phase_id),
                 sub_module_id: convertToObjectId(subModuleId),
                 status: USER_STATUS.ACTIVE
             }

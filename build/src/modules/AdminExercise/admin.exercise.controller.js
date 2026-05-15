@@ -137,6 +137,56 @@ let AdminExerciseController = class AdminExerciseController extends tsoa_1.Contr
             return wrappedFunc({ exercise_id, lang }); // Invoking the wrapped function 
         });
     }
+    createMcqExercise(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_exercise_validator_1.validateCreateMcqExercise)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_exercise_handler_1.default.createmcqExercise);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    updateMcqExercise(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_exercise_validator_1.validateUpdateMcqExercise)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_exercise_handler_1.default.updateMcqExercise);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    deleteMcqExercise(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_exercise_validator_1.validateDeleteMcqExercise)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_exercise_handler_1.default.deleteMcqExercise);
+            return wrappedFunc(request); // Invoking the wrapped function 
+        });
+    }
+    listMcqExercise(page, limit, search, lang, phase_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_exercise_validator_1.validateListMcqExercise)({ page, limit, search, lang, phase_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_exercise_handler_1.default.listMcqExercise);
+            return wrappedFunc(page, limit, search, lang, phase_id); // Invoking the wrapped function 
+        });
+    }
+    singleMcqExercise(mcqexercise_id, lang) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, admin_exercise_validator_1.validateSingleMcqExercise)({ mcqexercise_id, lang });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(admin_exercise_handler_1.default.singleMcqExercise);
+            return wrappedFunc({ mcqexercise_id, lang }); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -228,6 +278,51 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], AdminExerciseController.prototype, "singleExercise", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)('/create_mcq_exercise'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminExerciseController.prototype, "createMcqExercise", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)('/update_mcq_exercise'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminExerciseController.prototype, "updateMcqExercise", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Delete)('/delete_mcq_exercise'),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminExerciseController.prototype, "deleteMcqExercise", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/list_mcq_exercise'),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __param(3, (0, tsoa_1.Query)()),
+    __param(4, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Number, String, String, String]),
+    __metadata("design:returntype", Promise)
+], AdminExerciseController.prototype, "listMcqExercise", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)('/single_mcq_exercise'),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AdminExerciseController.prototype, "singleMcqExercise", null);
 AdminExerciseController = __decorate([
     (0, tsoa_1.Tags)('Admin Exercise'),
     (0, tsoa_1.Route)('/admin/exercise'),

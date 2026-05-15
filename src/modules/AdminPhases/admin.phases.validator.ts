@@ -4,6 +4,7 @@ import { languages, USER_STATUS } from '../../constants/workflow.constant';
 export const validateCreatePhase = (common: any) => {
     return joi.object({
         title: joi.string().trim().required(),
+        reflection: joi.string().trim().required(),
         points: joi.number().required(),
         subModuleId: joi.string().trim().required(),
     }).validate(common)

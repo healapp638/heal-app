@@ -43,9 +43,9 @@ router.get('/exercise_list', verifyTokenUser, async (req: Request | any, res: Re
 });
 
 router.post('/complete_lesson', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { exercise_id, exercise_details_id, phase_id, reflection } = req.body;
+    const { exercise_id, phase_id, reflection } = req.body;
     const controller = new UserModulesController(req, res)
-    const result: ApiResponse = await controller.completeLesson({ exercise_id, exercise_details_id, phase_id, reflection });
+    const result: ApiResponse = await controller.completeLesson({ exercise_id, phase_id, reflection });
     return showOutput(res, result, result.code)
 });
 

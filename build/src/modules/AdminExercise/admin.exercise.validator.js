@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateSingleExercise = exports.validateListExercise = exports.validateExercise = exports.validateDeleteExercise = exports.validateUpdateExercise = exports.validateCreateExercise = exports.validateListExerciseDetails = exports.validateExerciseDetails = exports.validateDeleteExerciseDetails = exports.validateUpdateExerciseDetails = exports.validateCreateExerciseDetails = void 0;
+exports.validateSingleMcqExercise = exports.validateListMcqExercise = exports.validateMcqExercise = exports.validateDeleteMcqExercise = exports.validateUpdateMcqExercise = exports.validateCreateMcqExercise = exports.validateSingleExercise = exports.validateListExercise = exports.validateExercise = exports.validateDeleteExercise = exports.validateUpdateExercise = exports.validateCreateExercise = exports.validateListExerciseDetails = exports.validateExerciseDetails = exports.validateDeleteExerciseDetails = exports.validateUpdateExerciseDetails = exports.validateCreateExerciseDetails = void 0;
 const joi_1 = __importDefault(require("joi"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const validateCreateExerciseDetails = (common) => {
@@ -101,3 +101,59 @@ const validateSingleExercise = (common) => {
     }).validate(common);
 };
 exports.validateSingleExercise = validateSingleExercise;
+const validateCreateMcqExercise = (common) => {
+    return joi_1.default.object({
+        title: joi_1.default.string().trim().required(),
+        description: joi_1.default.string().trim().required(),
+        mcq: joi_1.default.array().items({
+            question: joi_1.default.string().trim().required(),
+            option: joi_1.default.string().trim().required(),
+        }).required(),
+        phase_id: joi_1.default.string().trim().required(),
+    }).validate(common);
+};
+exports.validateCreateMcqExercise = validateCreateMcqExercise;
+const validateUpdateMcqExercise = (common) => {
+    return joi_1.default.object({
+        title: joi_1.default.string().optional().allow(''),
+        description: joi_1.default.string().optional().allow(''),
+        mcq: joi_1.default.array().items({
+            question: joi_1.default.string().trim().required(),
+            option: joi_1.default.string().trim().required(),
+        }).optional(),
+        mcqexercise_id: joi_1.default.string().trim().required(),
+        lang: joi_1.default.string().trim().required().valid(...Object.values(workflow_constant_1.languages)),
+    }).validate(common);
+};
+exports.validateUpdateMcqExercise = validateUpdateMcqExercise;
+const validateDeleteMcqExercise = (common) => {
+    return joi_1.default.object({
+        phase_id: joi_1.default.string().trim().required(),
+        status: joi_1.default.number().required().allow(workflow_constant_1.USER_STATUS.ACTIVE, workflow_constant_1.USER_STATUS.DEACTIVATED, workflow_constant_1.USER_STATUS.DELETED),
+    }).validate(common);
+};
+exports.validateDeleteMcqExercise = validateDeleteMcqExercise;
+const validateMcqExercise = (common) => {
+    return joi_1.default.object({
+        mcqexercise_id: joi_1.default.string().trim().required(),
+        lang: joi_1.default.string().trim().required(),
+    }).validate(common);
+};
+exports.validateMcqExercise = validateMcqExercise;
+const validateListMcqExercise = (common) => {
+    return joi_1.default.object({
+        page: joi_1.default.number().optional(),
+        limit: joi_1.default.number().optional(),
+        search: joi_1.default.string().optional(),
+        lang: joi_1.default.string().trim().required().valid(...Object.values(workflow_constant_1.languages)),
+        exercise_details_id: joi_1.default.string().trim().required(),
+    }).validate(common);
+};
+exports.validateListMcqExercise = validateListMcqExercise;
+const validateSingleMcqExercise = (common) => {
+    return joi_1.default.object({
+        mcqexercise_id: joi_1.default.string().trim().required(),
+        lang: joi_1.default.string().trim().required(),
+    }).validate(common);
+};
+exports.validateSingleMcqExercise = validateSingleMcqExercise;

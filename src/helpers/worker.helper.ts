@@ -7,14 +7,14 @@ import adminThemeModel from "../modules/AdminTheme/admin.theme.model";
 import adminModulesModel from "../modules/AdminModules/admin.modules.model";
 import adminSubmodulesModel from "../modules/AdminSubModules/admin.submodules.model";
 import adminPhasesModel from "../modules/AdminPhases/admin.phases.model";
-import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
-import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
-
+// import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
+// import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
 import { connection as connectDB } from "../configs/mongoose.config";
 import adminExelModel from "../modules/AdminCommon/admin.exel.model";
 import { sendTopicNotification } from "../services/notification.service";
 import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
 import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.model";
+import adminMcqexerciseModel from "../modules/AdminExercise/admin.mcqexercise.model";
 
 console.log("👷 Worker booting...");
 
@@ -197,143 +197,199 @@ const startWorker = async () => {
                             {
                                 subModuleId: subModule._id,
                                 title: await getTranslatedObj(row.phase_title),
+                                reflection: await getTranslatedObj(row.lesson_reflection),
                                 points: row.phase_points || 0,
                             }
                         );
                         console.log("📌 Phase:", phase._id);
 
-                        // ================= LESSON =================
-                        const exerciseDetail = await safeUpsert(
-                            adminExerciseDetailsModel,
-                            {
-                                phase_id: phase._id,
-                                "reading_title.en": row.lesson_reading_title.trim(),
-                            },
-                            {
-                                phase_id: phase._id,
-                                reading_title: await getTranslatedObj(row.lesson_reading_title.trim()),
-                                reading_description: await getTranslatedObj(
-                                    row.lesson_reading_description
-                                ),
-                                concept_title: await getTranslatedObj(
-                                    row.lesson_concept_title
-                                ),
-                                concept_description: await getTranslatedObj(
-                                    row.lesson_concept_description
-                                ),
-                                reflection: await getTranslatedObj(row.lesson_reflection),
-                            }
-                        );
-                        console.log("📘 ExerciseDetail:", exerciseDetail._id);
+                    //     // ================= LESSON =================
+                    //     const exerciseDetail = await safeUpsert(
+                    //         adminExerciseDetailsModel,
+                    //         {
+                    //             phase_id: phase._id,
+                    //             "reading_title.en": row.lesson_reading_title.trim(),
+                    //         },
+                    //         {
+                    //             phase_id: phase._id,
+                    //             reading_title: await getTranslatedObj(row.lesson_reading_title.trim()),
+                    //             reading_description: await getTranslatedObj(
+                    //                 row.lesson_reading_description
+                    //             ),
+                    //             concept_title: await getTranslatedObj(
+                    //                 row.lesson_concept_title
+                    //             ),
+                    //             concept_description: await getTranslatedObj(
+                    //                 row.lesson_concept_description
+                    //             ),
+                    //             reflection: await getTranslatedObj(row.lesson_reflection),
+                    //         }
+                    //     );
+                    //     console.log("📘 ExerciseDetail:", exerciseDetail._id);
 
-                        // ================= EXERCISES =================
-                        // const exerciseKeys = Object.keys(row).filter((key) =>
-                        //   key.startsWith("exercise_description_step")
-                        // );
+                    //     const stepsMap: Record<string, { title?: string; desc?: string }> = {};
 
-                        // for (const descKey of exerciseKeys) {
-                        //   const stepDesc = row[descKey];
-                        //   if (!stepDesc) continue;
+                    //     Object.keys(row).forEach((key) => {
+                    //         const value = row[key];
 
-                        //   const suffix = descKey.replace(
-                        //     "exercise_description_step",
-                        //     ""
-                        //   );
+                    //         if (!value) return;
 
-                        //   const stepTitle = row[`exercise_title_step${suffix}`];
+                    //         // Match description
+                    //         if (key.startsWith("exercise_description_step")) {
+                    //             const stepNo = key.replace("exercise_description_step", "").trim();
 
-                        //   await safeUpsert(
-                        //     adminExcerciseModel,
-                        //     {
-                        //       exercise_details_id: exerciseDetail._id,
-                        //       "description.en": ciMatch(stepDesc),
-                        //     },
-                        //     {
-                        //       exercise_details_id: exerciseDetail._id,
-                        //       title: await getTranslatedObj(stepTitle),
-                        //       description: await getTranslatedObj(stepDesc),
-                        //     }
-                        //   );
-                        // }
-                        // ✅ Step map builder (groups by step number)
-                        const stepsMap: Record<string, { title?: string; desc?: string }> = {};
+                    //             if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
+                    //             stepsMap[stepNo].desc = value.toString().trim();
+                    //         }
 
-                        Object.keys(row).forEach((key) => {
-                            const value = row[key];
+                    //         // Match title
+                    //         if (key.startsWith("exercise_title_step")) {
+                    //             const stepNo = key.replace("exercise_title_step", "").trim();
 
-                            if (!value) return;
+                    //             if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
+                    //             stepsMap[stepNo].title = value.toString().trim();
+                    //         }
+                    //     });
 
-                            // Match description
-                            if (key.startsWith("exercise_description_step")) {
-                                const stepNo = key.replace("exercise_description_step", "").trim();
+                    //     console.log("🧩 Steps Map:", stepsMap);
 
-                                if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
-                                stepsMap[stepNo].desc = value.toString().trim();
-                            }
+                    //     // ✅ Now process each step
+                    //     for (const stepNo of Object.keys(stepsMap)) {
+                    //         const { title, desc } = stepsMap[stepNo];
 
-                            // Match title
-                            if (key.startsWith("exercise_title_step")) {
-                                const stepNo = key.replace("exercise_title_step", "").trim();
+                    //         // ❗ Description is mandatory (your rule)
+                    //         if (!desc) {
+                    //             console.log(`⚠️ Skipping step ${stepNo} (no description)`);
+                    //             continue;
+                    //         }
 
-                                if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
-                                stepsMap[stepNo].title = value.toString().trim();
-                            }
-                        });
+                    //         console.log(`📝 Processing Step ${stepNo}`, {
+                    //             title,
+                    //             desc,
+                    //         });
 
-                        console.log("🧩 Steps Map:", stepsMap);
+                    //         try {
+                    //             const exercise = await safeUpsert(
+                    //                 adminExcerciseModel,
+                    //                 {
+                    //                     exercise_details_id: exerciseDetail._id,
+                    //                     "description.en": {
+                    //                         $regex: new RegExp(`^${desc}$`, "i"),
+                    //                     },
+                    //                 },
+                    //                 {
+                    //                     exercise_details_id: exerciseDetail._id,
 
-                        // ✅ Now process each step
-                        for (const stepNo of Object.keys(stepsMap)) {
-                            const { title, desc } = stepsMap[stepNo];
+                    //                     // ✅ if title empty → store empty object
+                    //                     title: title
+                    //                         ? await getTranslatedObj(title)
+                    //                         : {
+                    //                             en: "",
+                    //                             hi: "",
+                    //                             zh: "",
+                    //                             es: "",
+                    //                             fr: "",
+                    //                             de: "",
+                    //                             ru: "",
+                    //                             pt: "",
+                    //                             it: "",
+                    //                             ro: "",
+                    //                         },
 
-                            // ❗ Description is mandatory (your rule)
-                            if (!desc) {
-                                console.log(`⚠️ Skipping step ${stepNo} (no description)`);
-                                continue;
-                            }
+                    //                     description: await getTranslatedObj(desc),
+                    //                 }
+                    //             );
 
-                            console.log(`📝 Processing Step ${stepNo}`, {
-                                title,
-                                desc,
-                            });
+                    //             console.log("✅ Exercise saved:", exercise._id);
+                    //         } catch (err) {
+                    //             console.error(`❌ Step ${stepNo} failed`, err);
+                    //         }
+                    //     }
+                        
+                        // ======================================================
+                        // STEP 1
+                        // NORMAL CONTENT TYPE
+                        // ======================================================
 
-                            try {
-                                const exercise = await safeUpsert(
-                                    adminExcerciseModel,
-                                    {
-                                        exercise_details_id: exerciseDetail._id,
-                                        "description.en": {
-                                            $regex: new RegExp(`^${desc}$`, "i"),
-                                        },
-                                    },
-                                    {
-                                        exercise_details_id: exerciseDetail._id,
+                        const step1Title = row["exercise_title_step1"];
+                        const step1Description =row["exercise_description_step1"];
 
-                                        // ✅ if title empty → store empty object
-                                        title: title
-                                            ? await getTranslatedObj(title)
-                                            : {
-                                                en: "",
-                                                hi: "",
-                                                zh: "",
-                                                es: "",
-                                                fr: "",
-                                                de: "",
-                                                ru: "",
-                                                pt: "",
-                                                it: "",
-                                                ro: "",
-                                            },
+                        // create even if mcq empty
+                        if (step1Title) {
 
-                                        description: await getTranslatedObj(desc),
-                                    }
-                                );
+                            console.log("📝 Creating Step 1");
 
-                                console.log("✅ Exercise saved:", exercise._id);
-                            } catch (err) {
-                                console.error(`❌ Step ${stepNo} failed`, err);
-                            }
+                            await safeUpsert(
+                                adminMcqexerciseModel,
+                                {
+                                    phase_id:phase._id,
+                                    "title.en": step1Title.trim(),
+                                },
+                                {
+                                    phase_id:phase._id,
+                                    title: await getTranslatedObj(step1Title),
+                                    // optional
+                                    description:await getTranslatedObj(step1Description || ""),
+                                    // empty
+                                    mcq: [],
+                                }
+                            );
+                            console.log("✅ Step 1 saved");
                         }
+                        // ======================================================
+                        // STEP 2+
+                        // MCQ TYPE
+                        // ======================================================
+
+                        for (let step = 2;step <= 20;step++) {
+
+                            const exerciseTitle = row[`exercise_title_step${step}`];
+
+                            // skip if no title
+                            if (!exerciseTitle) continue;
+
+                            // ======================================================
+                            // OPTIONS
+                            // ======================================================
+
+                            const mcqOptions: any[] = [];
+
+                            for (let i = 1;i <= 10;i++) {
+
+                                const optionText = row[`mcq${i}_step${step}`];
+
+                                if (!optionText) continue;
+
+                                mcqOptions.push({
+                                    option: await getTranslatedObj(optionText.toString().trim()),
+                                });
+                            }
+
+                            console.log(`📝 Creating Step ${step}`);
+
+                            // ======================================================
+                            // CREATE MCQ
+                            // ======================================================
+
+                            await safeUpsert(adminMcqexerciseModel,
+                                {
+                                    phase_id: phase._id,
+                                    "title.en": exerciseTitle.trim(),
+                                },
+                                {
+                                    phase_id: phase._id,
+                                    title: await getTranslatedObj(exerciseTitle),
+                                    description: await getTranslatedObj(""),
+                                    mcq: mcqOptions,
+                                }
+                            );
+
+                            console.log(
+                                `✅ Step ${step} saved`
+                            );
+                        }
+
+                    
                     } catch (rowErr) {
                         console.error("❌ Row failed, skipping:", rowErr);
                         continue;

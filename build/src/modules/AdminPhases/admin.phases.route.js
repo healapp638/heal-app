@@ -19,15 +19,15 @@ const middlewares_1 = __importDefault(require("../../middlewares"));
 const { verifyTokenAdmin } = middlewares_1.default.auth;
 const router = express_1.default.Router();
 router.post('/create_phase', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, points, subModuleId } = req.body;
+    const { title, reflection, points, subModuleId } = req.body;
     const controller = new admin_phases_controller_1.default(req, res);
-    const result = yield controller.createPhase({ title, points, subModuleId });
+    const result = yield controller.createPhase({ title, reflection, points, subModuleId });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/update_phase', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, points, lang, phaseId } = req.body;
+    const { title, reflection, points, lang, phaseId } = req.body;
     const controller = new admin_phases_controller_1.default(req, res);
-    const result = yield controller.updatePhase({ title, points, lang, phaseId });
+    const result = yield controller.updatePhase({ title, reflection, points, lang, phaseId });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/delete_phase', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

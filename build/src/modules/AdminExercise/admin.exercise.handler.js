@@ -21,6 +21,7 @@ const common_helper_1 = require("../../helpers/common.helper");
 const admin_exercise_details__model_1 = __importDefault(require("./admin.exercise.details..model"));
 const admin_excercise_model_1 = __importDefault(require("./admin.excercise.model"));
 const admin_phases_model_1 = __importDefault(require("../AdminPhases/admin.phases.model"));
+const admin_mcqexercise_model_1 = __importDefault(require("./admin.mcqexercise.model"));
 const exerciseHandler = {
     createExerciseDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { reading_title, reading_description, concept_title, concept_description, reflection, phase_id } = data;
@@ -226,6 +227,169 @@ const exerciseHandler = {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, themeDetails[0], statusCodes_1.default.SUCCESS);
+    }),
+    createmcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { title, description, phase_id, mcq = [] } = data;
+            const obj = {
+                title: {},
+                description: {},
+            };
+            const langs = Object.values(workflow_constant_1.languages);
+            // ================= TRANSLATE TITLE/DESC =================
+            yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                const [translatedTitle, translatedDescription] = yield Promise.all([
+                    (0, langauge_translate_helper_1.translateText)(title, lang),
+                    (0, langauge_translate_helper_1.translateText)(description, lang),
+                ]);
+                obj.title[lang] = translatedTitle;
+                obj.description[lang] = translatedDescription;
+            })));
+            // ================= TRANSLATE MCQ OPTIONS =================
+            const translatedMcqs = [];
+            for (const optionText of mcq) {
+                const optionObj = { option: {} };
+                yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    const translatedOption = yield (0, langauge_translate_helper_1.translateText)(optionText, lang);
+                    optionObj.option[lang] = translatedOption;
+                })));
+                translatedMcqs.push(optionObj);
+            }
+            // ================= CREATE =================
+            const createExercise = yield admin_mcqexercise_model_1.default.create({
+                title: obj.title,
+                description: obj.description,
+                phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
+                mcq: translatedMcqs,
+            });
+            if (!createExercise) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common
+                    .save_failed, null, statusCodes_1.default.API_ERROR);
+            }
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, createExercise, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "CREATE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    updateMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { mcqexercise_id, title, description, phase_id, mcq = [] } = data;
+            const existingExercise = yield admin_mcqexercise_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), status: workflow_constant_1.USER_STATUS.ACTIVE, });
+            if (!existingExercise) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            const langs = Object.values(workflow_constant_1.languages);
+            const obj = {
+                title: {},
+                description: {},
+            };
+            // ================= TRANSLATE =================
+            yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                const [translatedTitle, translatedDescription] = yield Promise.all([
+                    (0, langauge_translate_helper_1.translateText)(title, lang),
+                    (0, langauge_translate_helper_1.translateText)(description, lang),
+                ]);
+                obj.title[lang] = translatedTitle;
+                obj.description[lang] = translatedDescription;
+            })));
+            // ================= MCQ =================
+            const translatedMcqs = [];
+            for (const optionText of mcq) {
+                const optionObj = {
+                    option: {},
+                };
+                yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    const translatedOption = yield (0, langauge_translate_helper_1.translateText)(optionText, lang);
+                    optionObj.option[lang] = translatedOption;
+                })));
+                translatedMcqs.push(optionObj);
+            }
+            // ================= UPDATE =================
+            const updatedExercise = yield admin_mcqexercise_model_1.default.findOneAndUpdate({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), }, {
+                $set: {
+                    title: obj.title,
+                    description: obj.description,
+                    phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
+                    mcq: translatedMcqs,
+                },
+            }, {
+                new: true,
+            });
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, updatedExercise, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "UPDATE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    deleteMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { mcqexercise_id, status } = data;
+            const existingExercise = yield admin_mcqexercise_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), status: workflow_constant_1.USER_STATUS.ACTIVE, });
+            if (!existingExercise) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            const updatedExercise = yield admin_mcqexercise_model_1.default.findOneAndUpdate({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), }, { $set: { status: status } }, { new: true });
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, updatedExercise, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "DELETE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    listMcqExercise: (page, limit, search, lang, phase_id) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const aggregate = [
+                { $match: { status: workflow_constant_1.USER_STATUS.ACTIVE, phase_id: (0, common_helper_1.convertToObjectId)(phase_id), }, },
+                {
+                    $addFields: {
+                        title: `$title.${lang}`,
+                        description: `$description.${lang}`,
+                    },
+                },
+                {
+                    $match: {
+                        title: {
+                            $regex: search,
+                            $options: "i",
+                        },
+                    },
+                },
+                { $sort: { createdAt: -1 } },
+            ];
+            const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_mcqexercise_model_1.default, aggregate, page, limit);
+            const result = yield admin_mcqexercise_model_1.default.aggregate(aggregation);
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "LIST_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    singleMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { mcqexercise_id, lang } = data;
+            const existingExercise = yield admin_mcqexercise_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), status: workflow_constant_1.USER_STATUS.ACTIVE, });
+            if (!existingExercise) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            const exercise = yield admin_mcqexercise_model_1.default.aggregate([
+                { $match: { _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id) } },
+                {
+                    $addFields: {
+                        title: `$title.${lang}`,
+                        description: `$description.${lang}`,
+                    },
+                },
+            ]);
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, exercise[0], statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "SINGLE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
     })
 };
 exports.default = exerciseHandler;
