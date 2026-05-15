@@ -5,6 +5,7 @@ set -e
 echo "Stopping old process..."
 pm2 delete heal_api_3001 || true
 pm2 delete excel_import_worker || true
+pm2 delete bullMqWorker || true
 
 echo "Starting application..."
 cd /var/www/html/Heal-Dev-API
