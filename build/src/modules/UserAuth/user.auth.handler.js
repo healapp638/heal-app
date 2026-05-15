@@ -185,7 +185,6 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "password_incorrect"), null, statusCodes_1.default.API_ERROR);
         }
         commonHelper.keysDeleteFromObject(userData); //delete password & other keys from response
-        console.log(userData, "userData");
         const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)(userData === null || userData === void 0 ? void 0 : userData._id, userData === null || userData === void 0 ? void 0 : userData.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
         //if account deactivated by user then reactivate account
         if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {

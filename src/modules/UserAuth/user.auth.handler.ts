@@ -155,7 +155,6 @@ const UserAuthHandler = {
         }
 
         commonHelper.keysDeleteFromObject(userData) //delete password & other keys from response
-        console.log(userData, "userData")
         const { access_token, refresh_token } = await generateAccessRefreshToken(userData?._id, userData?.user_type, tokenUserTypeInterface.USER)
 
         //if account deactivated by user then reactivate account

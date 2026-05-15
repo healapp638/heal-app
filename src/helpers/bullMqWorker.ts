@@ -4,6 +4,7 @@ import { generateUserChallengesDaily, generateUserChallengesWeekly } from "./ope
 import userDailyChallengesModel from "../modules/UserChallenges/user.daily.challenges.model";
 import userAuthModel from "../modules/UserAuth/user.auth.model";
 import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.challenges.model";
+import { connection as connectDB } from "../configs/mongoose.config";
 
 export const ChallengesQueue = new Queue('challenges', {
     connection: {
@@ -15,6 +16,7 @@ export const ChallengesQueue = new Queue('challenges', {
 
 export const challengesWorker = new Worker("challenges", async (job: any) => {
     try {
+        await connectDB()
         console.log("BullMQ Worker Started...")
         const { userData } = job.data;
         const challengesDetails = await challengsFn(userData);

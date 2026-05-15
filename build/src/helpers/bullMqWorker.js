@@ -19,6 +19,7 @@ const openai_helper_1 = require("./openai.helper");
 const user_daily_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.daily.challenges.model"));
 const user_auth_model_1 = __importDefault(require("../modules/UserAuth/user.auth.model"));
 const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
+const mongoose_config_1 = require("../configs/mongoose.config");
 exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     connection: {
         port: 6379,
@@ -28,6 +29,7 @@ exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
 });
 exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        yield (0, mongoose_config_1.connection)();
         console.log("BullMQ Worker Started...");
         const { userData } = job.data;
         const challengesDetails = yield (0, common_helper_1.challengsFn)(userData);
