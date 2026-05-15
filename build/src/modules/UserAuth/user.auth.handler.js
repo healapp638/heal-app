@@ -114,7 +114,9 @@ const UserAuthHandler = {
             backoff: {
                 type: 'exponential',
                 delay: 1000
-            }
+            },
+            removeOnComplete: true,
+            jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString(),
         });
         // const challengesDetails = await commonHelper.challengsFn(userData);
         // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -193,7 +195,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
         const { login_source, social_auth, email, name = undefined, language, timeZone } = data;
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
@@ -230,7 +232,9 @@ const UserAuthHandler = {
                 backoff: {
                     type: 'exponential',
                     delay: 1000
-                }
+                },
+                removeOnComplete: true,
+                jobId: data === null || data === void 0 ? void 0 : data._id.toString(),
             });
             // const challengesDetails = await commonHelper.challengsFn(data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -306,7 +310,9 @@ const UserAuthHandler = {
                 backoff: {
                     type: 'exponential',
                     delay: 1000
-                }
+                },
+                removeOnComplete: true,
+                jobId: (_q = result === null || result === void 0 ? void 0 : result.data) === null || _q === void 0 ? void 0 : _q._id.toString(),
             });
             // const challengesDetails = await commonHelper.challengsFn(result?.data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -329,7 +335,7 @@ const UserAuthHandler = {
             // }
             //end
             commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_q = result.data) === null || _q === void 0 ? void 0 : _q._id, (_r = result.data) === null || _r === void 0 ? void 0 : _r.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_r = result.data) === null || _r === void 0 ? void 0 : _r._id, (_s = result.data) === null || _s === void 0 ? void 0 : _s.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
             const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
@@ -793,7 +799,9 @@ const UserAuthHandler = {
             backoff: {
                 type: 'exponential',
                 delay: 1000
-            }
+            },
+            removeOnComplete: true,
+            jobId: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString(),
         });
         // const challengesDetails = await commonHelper.challengsFn(userDetails);
         // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;

@@ -74,7 +74,10 @@ const UserAuthHandler = {
             backoff: {
                 type: 'exponential',
                 delay: 1000
-            }
+            },
+            removeOnComplete: true,
+            jobId: userData?._id.toString(),
+
         });
         // const challengesDetails = await commonHelper.challengsFn(userData);
         // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -208,7 +211,9 @@ const UserAuthHandler = {
                 backoff: {
                     type: 'exponential',
                     delay: 1000
-                }
+                },
+                removeOnComplete: true,
+                jobId: data?._id.toString(),
             });
             // const challengesDetails = await commonHelper.challengsFn(data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -295,7 +300,9 @@ const UserAuthHandler = {
                 backoff: {
                     type: 'exponential',
                     delay: 1000
-                }
+                },
+                removeOnComplete: true,
+                jobId: result?.data?._id.toString(),
             });
             // const challengesDetails = await commonHelper.challengsFn(result?.data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -860,7 +867,9 @@ const UserAuthHandler = {
             backoff: {
                 type: 'exponential',
                 delay: 1000
-            }
+            },
+            removeOnComplete: true,
+            jobId: userDetails?._id.toString(),
         })
         // const challengesDetails = await commonHelper.challengsFn(userDetails);
         // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
