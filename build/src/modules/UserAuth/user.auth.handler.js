@@ -63,6 +63,7 @@ const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges
 const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
 const user_recentHomeTheme_model_1 = __importDefault(require("../UserHomeTheme/user.recentHomeTheme.model"));
 const bullMqWorker_1 = require("../../helpers/bullMqWorker");
+const moment_1 = __importDefault(require("moment"));
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -700,7 +701,27 @@ const UserAuthHandler = {
         const homeTheme = (homeThemeResult === null || homeThemeResult === void 0 ? void 0 : homeThemeResult[0]) || null;
         const is_onboarding_complete = yield commonHelper.challengsFn(userData);
         const isOnBoardingComplete = is_onboarding_complete === null || is_onboarding_complete === void 0 ? void 0 : is_onboarding_complete.isOnBoardingComplete;
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete }), statusCodes_1.default.SUCCESS);
+        const totalDailyChallenges = yield user_daily_challenges_model_1.default.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: (0, moment_1.default)().startOf('day').toDate(),
+                $lte: (0, moment_1.default)().endOf('day').toDate()
+            }
+        });
+        const totalWeeklyChallanges = yield user_weekly_challenges_model_1.default.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: (0, moment_1.default)().startOf('week').toDate(),
+                $lte: (0, moment_1.default)().endOf('week').toDate()
+            }
+        });
+        let isUnderProgress = false;
+        if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
+            isUnderProgress = true;
+        }
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }), statusCodes_1.default.SUCCESS);
     }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;

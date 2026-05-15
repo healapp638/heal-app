@@ -17,6 +17,7 @@ import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.
 
 import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.model";
 import { ChallengesQueue } from "../../helpers/bullMqWorker";
+import moment from "moment";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -751,7 +752,27 @@ const UserAuthHandler = {
         const homeTheme = homeThemeResult?.[0] || null;
         const is_onboarding_complete = await commonHelper.challengsFn(userData);
         const isOnBoardingComplete = is_onboarding_complete?.isOnBoardingComplete;
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete }, statusCodes.SUCCESS)
+        const totalDailyChallenges = await userDailyChallengesModel.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: moment().startOf('day').toDate(),
+                $lte: moment().endOf('day').toDate()
+            }
+        });
+        const totalWeeklyChallanges = await userWeeklyChallengesModel.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: moment().startOf('week').toDate(),
+                $lte: moment().endOf('week').toDate()
+            }
+        });
+        let isUnderProgress = false
+        if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
+            isUnderProgress = true
+        }
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {
