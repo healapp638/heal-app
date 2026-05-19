@@ -55,14 +55,6 @@ const PhaseDetail = () => {
     }, [refetchDetail, refetchList, lesson?._id]),
   );
   const exercises = exerciseListData?.data?.exercises || [];
-  const totalStepsCount = exercises.length + 2;
-  const steps = Array.from(
-    {
-      length: totalStepsCount,
-    },
-    (_, i) => i + 1,
-  );
-  const activeStep = 1;
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -123,38 +115,7 @@ const PhaseDetail = () => {
               'Defining Friendship for Yourself'}
           </SolidText>
 
-          {/* Progress Circles */}
-          <View style={styles.progressRow}>
-            {steps.map((step, index) => {
-              const isActive = step === activeStep;
-              return (
-                <React.Fragment key={step}>
-                  <View style={styles.circleContainer}>
-                    <View
-                      style={
-                        isActive ? styles.circleActive : styles.circleInactive
-                      }
-                    >
-                      <SolidText
-                        style={
-                          isActive
-                            ? styles.circleTextActive
-                            : styles.circleTextInactive
-                        }
-                      >
-                        {step}
-                      </SolidText>
-                    </View>
-                  </View>
-                  {index < steps.length - 1 && (
-                    <View
-                      style={[styles.line, isActive && styles.lineActive]}
-                    />
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </View>
+
 
           {/* Main Content Card */}
           <View style={styles.cardContainer}>

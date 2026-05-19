@@ -21,6 +21,8 @@ export const endpoints = {
   phase_list: '/user/modules/phase_list',
   exercise_detail_list: '/user/modules/exercise_detail_list',
   exercise_list: '/user/modules/exercise_list',
+  exercise_mcq_list: '/user/modules/exercise_mcq_list',
+  add_mcq_answer: '/user/modules/add_mcq_answer',
   start_lesson: '/user/modules/start_lesson',
   complete_lesson: '/user/modules/complete_lesson',
   start_sub_module_list: '/user/modules/start_sub_module_list',

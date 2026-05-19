@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { cloneElement, useCallback, useContext, useEffect, useState } from 'react';
 import {
   View,
   FlatList,
@@ -21,6 +21,7 @@ import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import useGetApi from '../../../../hooks/useGetApi';
+import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 const StartedModule = () => {
@@ -34,6 +35,7 @@ const StartedModule = () => {
   const [cursor, setCursor] = useState<string | null>(null);
   const [subModuleDetail, setSubModuleDetail] = useState<any>(subModule);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { mutate: startLesson, isPending: isStarting } = usePostApi();
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.phase_list,
     ['phase_list', subModule?._id, cursor],
@@ -113,16 +115,42 @@ const StartedModule = () => {
           </SolidText>
         </View>
 
-        <ProgressTrackerCard
-          viewStyle={styles.progressCardMargin}
-          title={
-            localization.appkeys?.homeProgressTracker || 'Progress Tracker'
-          }
-          onPress={() => {
-            triggerHaptic('impactMedium');
-            return navigation.navigate(AppRoutes.ProgressTracker as never);
-          }}
-        />
+        {/* Progress Circles */}
+        {phases.length > 0 && (
+          <View style={styles.progressRow}>
+            {phases.map((phaseItem, index) => {
+              const isCompleted = phaseItem?.isCompleted;
+              const step = index + 1;
+              return (
+                <React.Fragment key={phaseItem?._id || step}>
+                  <View style={styles.circleContainer}>
+                    <View
+                      style={
+                        isCompleted ? styles.circleActive : styles.circleInactive
+                      }
+                    >
+                      <SolidText
+                        style={
+                          isCompleted
+                            ? styles.circleTextActive
+                            : styles.circleTextInactive
+                        }
+                      >
+                        {step}
+                      </SolidText>
+                    </View>
+                  </View>
+                  {index < phases.length - 1 && (
+                    <View
+                      style={[styles.line, isCompleted && styles.lineActive]}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </View>
+        )}
+
 
         <SolidText
           style={[
@@ -136,7 +164,7 @@ const StartedModule = () => {
         </SolidText>
       </>
     ),
-    [styles, subModuleDetail, localization.appkeys, colors.brown, navigation],
+    [styles, subModuleDetail, localization.appkeys, colors.brown, navigation, phases],
   );
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => {
@@ -152,25 +180,46 @@ const StartedModule = () => {
           isLocked={isLocked}
           isCompleted={item.isCompleted}
           onPress={() => {
-            //
+            if (isStarting) return;
             if (!isLocked && !item.isCompleted) {
+
               triggerHaptic('impactMedium');
-              navigation.navigate(
-                AppRoutes.PhaseDetail as never,
+              startLesson(
                 {
-                  phase: item,
-                  isLastPhase: phases.length === 1,
-                  theme: (route.params as any)?.theme,
-                  subModule: subModuleDetail,
-                  source: (route.params as any)?.source,
-                } as never,
+                  endpoint: endpoints.start_lesson,
+                  data: {
+                    phase_id: item?._id,
+                  },
+                },
+                {
+                  onSuccess: () => {
+                    (navigation.navigate as any)(
+                      AppRoutes.ModuleExercise,
+                      {
+                        phase: item,
+                        isLastPhase: index === phases.length - 1,
+                        theme: (route.params as any)?.theme,
+                        subModule: subModuleDetail,
+                        source: (route.params as any)?.source,
+                      },
+                    );
+                  },
+                },
               );
             }
           }}
         />
       );
     },
-    [localization.appkeys, navigation, phases.length],
+    [
+      localization.appkeys,
+      navigation,
+      phases.length,
+      startLesson,
+      isStarting,
+      route.params,
+      subModuleDetail,
+    ],
   );
   const keyExtractor = useCallback(
     (item: any, index: number) => (item._id || index).toString(),

@@ -1,6 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { cloneElement, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { View, TextInput, BackHandler } from 'react-native';
+import { View, TextInput, BackHandler, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import useGetApi from '../../../../hooks/useGetApi';
 import {
   CommonActions,
   useNavigation,
@@ -21,6 +22,7 @@ import { ToastService } from '../../../../utils/ToastManager';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import AppFonts from '../../../../constants/fonts';
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
@@ -30,55 +32,65 @@ const ModuleExercise = () => {
   const dispatch = useDispatch();
   const route = useRoute();
   const {
-    lesson,
     phase,
-    exercises = [],
     isLastPhase,
   } = (route.params as any) || {};
+
+  const { data: mcqData, isLoading: isMcqLoading } = useGetApi(
+    endpoints.exercise_mcq_list,
+    ['exercise_mcq_list', phase?._id],
+    {
+      phase_id: phase?._id,
+    },
+  );
+
+  const mcqList = (mcqData as any)?.data?.mcqList || [];
+
   const steps = [
-    ...exercises.map((ex: any) => {
-      const cleanText = (ex.description || ex.text || '')
-        .replace('→', '')
-        .trim();
-      const cleanPrefix = (ex.prefix_text || '').replace('→', '').trim();
+    ...mcqList.map((item: any) => {
+      const isMcq = Array.isArray(item.mcq) && item.mcq.length > 0;
       return {
-        type: ex.type || 'number',
-        text: cleanText,
-        prefixText: cleanPrefix,
-        title:
-          ex.title ||
-          localization.appkeys?.moduleExerciseReflectionTitle ||
-          'Reflection',
-        question: ex.question || '',
-        instruction: ex.instruction || '',
-        placeholder: ex.placeholder || '',
+        type: isMcq ? 'mcq' : 'text',
+        _id: item._id,
+        title: item.title,
+        description: item.description || '',
+        options: item.mcq || [],
       };
     }),
     {
       type: 'reflection',
       title:
-        lesson?.reflection_title ||
+        phase?.title ||
         localization.appkeys?.moduleExerciseReflectionTitle ||
         'Reflection',
       question:
-        lesson?.reflection_question ||
+        phase?.reflection ||
         localization.appkeys?.moduleExerciseReflectionQuestion ||
         'What is the most important quality in a friendship for you?',
       instruction:
-        lesson?.reflection_instruction ||
         localization.appkeys?.moduleExerciseReflectionInstruction ||
         'In your head or on paper, take the time to answer honestly.',
       placeholder:
-        lesson?.reflection_placeholder ||
         localization.appkeys?.moduleExerciseReflectionPlaceholder ||
         'Express what you feel. This space is yours, without judgment.',
     },
   ];
+
   const [currentStep, setCurrentStep] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: string }>({});
+
   const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
+  const { mutate: addMcqAnswer, isPending: isSavingAnswer } = usePostApi();
+
+  useEffect(() => {
+    if (showModal) {
+      console.log('Selected item of phase details:', phase);
+    }
+  }, [showModal, phase]);
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
@@ -88,26 +100,64 @@ const ModuleExercise = () => {
     );
     return () => backHandler.remove();
   }, []);
+
+  const handleSelectOption = (optionId: string) => {
+    triggerHaptic('selection');
+    setSelectedOptions(prev => ({
+      ...prev,
+      [currentStep]: optionId,
+    }));
+  };
+
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
+      if (currentStepData.type === 'mcq') {
+        const selectedOptionId = selectedOptions[currentStep];
+        if (!selectedOptionId) {
+          ToastService.show(
+            localization.appkeys?.pleaseSelectOption ||
+            'Please select an option to proceed',
+          );
+          return;
+        }
+
+        addMcqAnswer(
+          {
+            endpoint: endpoints.add_mcq_answer,
+            data: {
+              phase_id: phase?._id,
+              mcq_id: selectedOptionId,
+              mcq_exercise_id: currentStepData._id,
+            },
+          },
+          {
+            onSuccess: () => {
+              setCurrentStep(currentStep + 1);
+            },
+            onError: () => {
+              ToastService.show('Failed to save answer. Please try again.');
+            },
+          },
+        );
+      } else {
+        setCurrentStep(currentStep + 1);
+      }
     } else {
       if (!reflectionText.trim()) {
         ToastService.show(
           localization.appkeys?.pleaseEnterReflection ||
-            'Please enter your reflection',
+          'Please enter your reflection',
         );
         return;
       }
       const lastExerciseId =
-        exercises.length > 0 ? exercises[exercises.length - 1]._id : '';
+        mcqList.length > 0 ? mcqList[mcqList.length - 1]._id : '';
       completeLesson(
         {
           endpoint: endpoints.complete_lesson,
           data: {
             reflection: reflectionText,
             phase_id: phase?._id,
-            exercise_details_id: lesson?._id,
             exercise_id: lastExerciseId,
           },
         },
@@ -131,6 +181,10 @@ const ModuleExercise = () => {
             dispatch(getUserDetail());
             setShowModal(true);
           },
+          onError: (error) => {
+            console.log(error)
+            ToastService.show('Failed to complete lesson. Please try again.');
+          }
         },
       );
     }
@@ -143,38 +197,104 @@ const ModuleExercise = () => {
     }
   };
   const currentStepData = steps[currentStep];
+
+  if (isMcqLoading) {
+    return (
+      <SolidView
+        view={
+          <View
+            style={[
+              styles.mainContainer,
+              {
+                justifyContent: 'center',
+                alignItems: 'center',
+              },
+            ]}
+          >
+            <ActivityIndicator size="large" color={colors.brown} />
+          </View>
+        }
+      />
+    );
+  }
+
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
             title={localization.appkeys?.exercise || 'Exercise'}
             onBackPress={handleBack}
+            viewStyle={{ marginBottom: -2 }}
           />
 
           <View style={styles.contentContainer}>
-            {currentStepData.type === 'number' ? (
-              <>
+            {currentStepData.type !== 'reflection' ? (
+              <ScrollView
+                style={{ width: '100%', flex: 1 }}
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+              >
+                {/* Step Number */}
                 <SolidText style={styles.numberText}>
                   {currentStep + 1}
                 </SolidText>
-                <SolidText style={styles.descriptionText}>
-                  {currentStepData.prefixText && (
-                    <SolidText
-                      style={[styles.descriptionText, styles.pinkText]}
-                    >
-                      {currentStepData.prefixText}
-                    </SolidText>
-                  )}
-                  {currentStepData.text}
-                </SolidText>
-              </>
-            ) : (
-              <View style={styles.reflectionCard}>
-                <SolidText style={styles.reflectionTitle}>
+
+                {/* Title */}
+                <SolidText
+                  style={[
+                    styles.exerciseTitle,
+                    currentStepData.type === 'text'
+                      ? {
+                        textAlign: 'left',
+                        alignSelf: 'flex-start',
+                        fontFamily: AppFonts.semiBold,
+                      }
+                      : {
+                        fontFamily: AppFonts.medium,
+                      },
+                  ]}
+                >
                   {currentStepData.title}
                 </SolidText>
+
+                {/* Reading Text / MCQ options */}
+                {currentStepData.type === 'text' ? (
+                  <SolidText style={styles.exerciseDescription}>
+                    {currentStepData.description}
+                  </SolidText>
+                ) : (
+                  <View style={styles.optionList}>
+                    {currentStepData.options.map((optionItem: any) => {
+                      const isSelected = selectedOptions[currentStep] === optionItem._id;
+                      return (
+                        <TouchableOpacity
+                          key={optionItem._id}
+                          activeOpacity={0.7}
+                          style={[
+                            styles.optionCard,
+                            isSelected && styles.optionCardSelected,
+                          ]}
+                          onPress={() => handleSelectOption(optionItem._id)}
+                        >
+                          <SolidText
+                            style={[
+                              styles.optionText,
+                              isSelected && styles.optionTextSelected,
+                            ]}
+                          >
+                            {optionItem.option}
+                          </SolidText>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                )}
+              </ScrollView>
+            ) : (
+              <View style={styles.reflectionCard}>
+
                 <SolidText style={styles.reflectionQuestion}>
                   {currentStepData.question}
                 </SolidText>
@@ -208,21 +328,18 @@ const ModuleExercise = () => {
               return (handleNext as any)(...args);
             }}
             btnStyle={styles.nextButton}
-            isLoading={isCompleting}
+            isLoading={isCompleting || isSavingAnswer}
           />
 
           <SuccessModal
             visible={showModal}
             onClose={() => setShowModal(false)}
             title={localization.appkeys?.wellDone || 'Well done'}
-            subtitle={`${
-              localization.appkeys?.completedPhase || "You've completed"
-            } ${
-              phase?.phase ||
-              `${localization.appkeys?.phase || 'Phase'} ${
-                phase?.phaseNumber || 1
+            subtitle={`${localization.appkeys?.completedPhase || "You've completed"
+              } ${phase?.phase ||
+              `${localization.appkeys?.phase || 'Phase'} ${phase?.phaseNumber || 1
               }`
-            }`}
+              }`}
             btnLabel={localization.appkeys?.continue || 'Continue'}
             onPressBtn={() => {
               setShowModal(false);

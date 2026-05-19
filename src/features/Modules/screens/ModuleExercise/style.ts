@@ -10,15 +10,16 @@ const style = (colors: any) =>
     },
     contentContainer: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
+      justifyContent: "center",
+      alignItems: 'center'
     },
     numberText: {
       fontFamily: AppFonts.reco,
       fontSize: AppUtils.fontSize(195),
       color: '#EBA187', // Peach color matching the screenshot
       includeFontPadding: false,
-      marginTop: -100,
+      marginTop: -20
+
     },
     descriptionText: {
       fontFamily: AppFonts.medium,
@@ -26,8 +27,7 @@ const style = (colors: any) =>
       color: colors.brown,
       textAlign: 'center',
       lineHeight: 28,
-      marginTop: Platform.OS == 'ios' ? -40 : -50,
-      paddingHorizontal: 10,
+      paddingHorizontal: 10
     },
     pinkText: {
       color: '#F66F76',
@@ -84,6 +84,64 @@ const style = (colors: any) =>
     nextButton: {
       width: '90%',
       marginBottom: 40,
+    },
+    scrollContent: {
+      width: '100%',
+      paddingBottom: 30,
+      alignItems: 'center',
+    },
+    exerciseTitle: {
+      fontFamily: AppFonts.recoSemiBold,
+      fontSize: AppUtils.fontSize(17),
+      color: colors.brown,
+      textAlign: 'center',
+      marginBottom: 20,
+      lineHeight: 28,
+      includeFontPadding: false,
+      marginTop: -40
+    },
+    exerciseDescription: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(13),
+      color: '#3A2110',
+      textAlign: 'left',
+      lineHeight: 26,
+
+      marginBottom: 30,
+      includeFontPadding: false,
+    },
+    optionList: {
+      width: '100%',
+      paddingHorizontal: 5,
+      marginBottom: 30,
+    },
+    optionCard: {
+      width: '100%',
+      backgroundColor: 'white',
+      borderRadius: 14,
+      padding: 16,
+      borderWidth: 1.5,
+      borderColor: '#EFEFEF',
+      marginBottom: 12,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.03,
+      shadowRadius: 4,
+      elevation: 2,
+    },
+    optionCardSelected: {
+      borderColor: colors.brown,
+      backgroundColor: 'white',
+    },
+    optionText: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(14),
+      color: colors.brown,
+      includeFontPadding: false,
+    },
+    optionTextSelected: {
+      fontFamily: AppFonts.medium,
+      color: colors.brown,
     },
   });
 
