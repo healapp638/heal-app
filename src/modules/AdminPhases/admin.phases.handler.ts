@@ -80,7 +80,8 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
-                    reflection: `$reflection.${lang}`
+                    reflection: `$reflection.${lang}`,
+                    description: `$description.${lang}`,
                 }
             }
         ]);

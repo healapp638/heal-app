@@ -477,19 +477,29 @@ listMcqExercise: async (page:number, limit:number, search:string, lang:string, p
                 $addFields: {
                     title: `$title.${lang}`,
                     description: `$description.${lang}`,
+                    mcq: {
+                        $map: {
+                            input: "$mcq",
+                            as: "mcqItem",
+                            in: {
+                                _id: "$$mcqItem._id",
+                                option: `$$mcqItem.option.${lang}`,
+                            },
+                        },
+                    },
                 },
             },
 
             {
                 $match: {
                     title: {
-                        $regex: search,
+                        $regex: search || "",
                         $options: "i",
                     },
                 },
             },
 
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ];
 
         const { totalCount, aggregation } = await getCountAndPagination(adminMcqexerciseModel, aggregate, page, limit);
@@ -530,6 +540,16 @@ singleMcqExercise: async (data: any):Promise<ApiResponse> => {
                 $addFields: {
                     title: `$title.${lang}`,
                     description: `$description.${lang}`,
+                    mcq: {
+                        $map: {
+                            input: "$mcq",
+                            as: "mcqItem",
+                            in: {
+                                _id: "$$mcqItem._id",
+                                option: `$$mcqItem.option.${lang}`,
+                            },
+                        },
+                    },
                 },
             },
         ]);

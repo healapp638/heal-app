@@ -104,11 +104,10 @@ exports.validateSingleExercise = validateSingleExercise;
 const validateCreateMcqExercise = (common) => {
     return joi_1.default.object({
         title: joi_1.default.string().trim().required(),
-        description: joi_1.default.string().trim().required(),
-        mcq: joi_1.default.array().items({
-            question: joi_1.default.string().trim().required(),
-            option: joi_1.default.string().trim().required(),
-        }).required(),
+        description: joi_1.default.string().trim().optional(),
+        mcq: joi_1.default.array()
+            .items(joi_1.default.string().trim())
+            .optional(),
         phase_id: joi_1.default.string().trim().required(),
     }).validate(common);
 };
@@ -117,10 +116,9 @@ const validateUpdateMcqExercise = (common) => {
     return joi_1.default.object({
         title: joi_1.default.string().optional().allow(''),
         description: joi_1.default.string().optional().allow(''),
-        mcq: joi_1.default.array().items({
-            question: joi_1.default.string().trim().required(),
-            option: joi_1.default.string().trim().required(),
-        }).optional(),
+        mcq: joi_1.default.array()
+            .items(joi_1.default.string().trim())
+            .optional(),
         mcqexercise_id: joi_1.default.string().trim().required(),
         lang: joi_1.default.string().trim().required().valid(...Object.values(workflow_constant_1.languages)),
     }).validate(common);
@@ -128,7 +126,7 @@ const validateUpdateMcqExercise = (common) => {
 exports.validateUpdateMcqExercise = validateUpdateMcqExercise;
 const validateDeleteMcqExercise = (common) => {
     return joi_1.default.object({
-        phase_id: joi_1.default.string().trim().required(),
+        mcqexercise_id: joi_1.default.string().trim().required(),
         status: joi_1.default.number().required().allow(workflow_constant_1.USER_STATUS.ACTIVE, workflow_constant_1.USER_STATUS.DEACTIVATED, workflow_constant_1.USER_STATUS.DELETED),
     }).validate(common);
 };
@@ -146,7 +144,7 @@ const validateListMcqExercise = (common) => {
         limit: joi_1.default.number().optional(),
         search: joi_1.default.string().optional(),
         lang: joi_1.default.string().trim().required().valid(...Object.values(workflow_constant_1.languages)),
-        exercise_details_id: joi_1.default.string().trim().required(),
+        phase_id: joi_1.default.string().trim().required(),
     }).validate(common);
 };
 exports.validateListMcqExercise = validateListMcqExercise;

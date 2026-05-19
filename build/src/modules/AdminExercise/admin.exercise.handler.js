@@ -347,17 +347,27 @@ const exerciseHandler = {
                     $addFields: {
                         title: `$title.${lang}`,
                         description: `$description.${lang}`,
+                        mcq: {
+                            $map: {
+                                input: "$mcq",
+                                as: "mcqItem",
+                                in: {
+                                    _id: "$$mcqItem._id",
+                                    option: `$$mcqItem.option.${lang}`,
+                                },
+                            },
+                        },
                     },
                 },
                 {
                     $match: {
                         title: {
-                            $regex: search,
+                            $regex: search || "",
                             $options: "i",
                         },
                     },
                 },
-                { $sort: { createdAt: -1 } },
+                { $sort: { createdAt: 1 } },
             ];
             const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_mcqexercise_model_1.default, aggregate, page, limit);
             const result = yield admin_mcqexercise_model_1.default.aggregate(aggregation);
@@ -381,6 +391,16 @@ const exerciseHandler = {
                     $addFields: {
                         title: `$title.${lang}`,
                         description: `$description.${lang}`,
+                        mcq: {
+                            $map: {
+                                input: "$mcq",
+                                as: "mcqItem",
+                                in: {
+                                    _id: "$$mcqItem._id",
+                                    option: `$$mcqItem.option.${lang}`,
+                                },
+                            },
+                        },
                     },
                 },
             ]);
