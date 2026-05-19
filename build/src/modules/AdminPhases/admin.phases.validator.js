@@ -9,6 +9,7 @@ const workflow_constant_1 = require("../../constants/workflow.constant");
 const validateCreatePhase = (common) => {
     return joi_1.default.object({
         title: joi_1.default.string().trim().required(),
+        reflection: joi_1.default.string().trim().optional().allow(''),
         points: joi_1.default.number().required(),
         subModuleId: joi_1.default.string().trim().required(),
     }).validate(common);

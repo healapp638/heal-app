@@ -95,3 +95,59 @@ export const validateSingleExercise = (common: any) => {
         lang: joi.string().trim().required(),
     }).validate(common)
 }
+
+export const validateCreateMcqExercise = (common: any) => {
+    return joi.object({
+        title: joi.string().trim().required(),
+        description: joi.string().trim().required(),
+        mcq: joi.array().items({
+            question: joi.string().trim().required(),
+            option: joi.string().trim().required(),
+        }).required(),
+        phase_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateUpdateMcqExercise = (common: any) => {
+    return joi.object({
+        title: joi.string().optional().allow(''),
+        description: joi.string().optional().allow(''),
+        mcq: joi.array().items({
+            question: joi.string().trim().required(),
+            option: joi.string().trim().required(),
+        }).optional(),
+        mcqexercise_id: joi.string().trim().required(),
+        lang: joi.string().trim().required().valid(...Object.values(languages)),
+    }).validate(common)
+}
+
+export const validateDeleteMcqExercise = (common: any) => {
+    return joi.object({
+        phase_id: joi.string().trim().required(),
+        status: joi.number().required().allow(USER_STATUS.ACTIVE, USER_STATUS.DEACTIVATED, USER_STATUS.DELETED),
+    }).validate(common)
+}
+
+export const validateMcqExercise = (common: any) => {
+    return joi.object({
+        mcqexercise_id: joi.string().trim().required(),
+        lang: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateListMcqExercise = (common: any) => {
+    return joi.object({
+        page: joi.number().optional(),
+        limit: joi.number().optional(),
+        search: joi.string().optional(),
+        lang: joi.string().trim().required().valid(...Object.values(languages)),
+        exercise_details_id: joi.string().trim().required(),
+    }).validate(common)
+}
+
+export const validateSingleMcqExercise = (common: any) => {
+    return joi.object({
+        mcqexercise_id: joi.string().trim().required(),
+        lang: joi.string().trim().required(),
+    }).validate(common)
+}

@@ -26,6 +26,7 @@ const user_auth_route_1 = __importDefault(require("../modules/UserAuth/user.auth
 const user_common_route_1 = __importDefault(require("../modules/UserCommon/user.common.route"));
 const user_affirmation_route_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.route"));
 const user_HomeTheme_route_1 = __importDefault(require("../modules/UserHomeTheme/user.HomeTheme.route"));
+const user_aichat_route_1 = __importDefault(require("../modules/UserHealyChat/user.aichat.route"));
 // *********assign order of routes for swagger in last to show on first **********
 //admin routes
 Route.use('/admin/common', admin_common_route_1.default);
@@ -46,6 +47,7 @@ Route.use('/user/journal', user_journal_route_1.default);
 Route.use('/user/challenges', user_challenges_route_1.default);
 Route.use('/user/affirmation', user_affirmation_route_1.default);
 Route.use('/user/homeTheme', user_HomeTheme_route_1.default);
+Route.use('/user/healyChat', user_aichat_route_1.default);
 //user and admin all usertype common routes
 Route.use('/common', common_route_1.default);
 exports.default = Route;

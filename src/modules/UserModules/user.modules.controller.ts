@@ -74,7 +74,7 @@ export default class UserModulesController extends Controller {
 
     @Security('Bearer')
     @Post("/complete_lesson")
-    public async completeLesson(@Body() body: { exercise_id: string, exercise_details_id: string, phase_id: string, reflection: string }): Promise<ApiResponse> {
+    public async completeLesson(@Body() body: { exercise_id: string,  phase_id: string, reflection: string }): Promise<ApiResponse> {
         const validate = validateCompleteLesson(body);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)

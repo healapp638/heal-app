@@ -374,6 +374,7 @@ const UserAuthHandler = {
         const otp = commonHelper.generateRandomOtp(6)
         obj.otp = otp
         const emailPayload = { user_name: fullName, otp }
+        console.log(emailPayload,"emailPayload")
         // const payload = { ...data, account_source: 'email', password: hashed, otp }
 
 
@@ -383,14 +384,18 @@ const UserAuthHandler = {
         if (findUser.status && findUser?.data?.account_source == 'email' && findUser?.data?.isVerified) {
             return showResponse(false, getMessage(language || 'en', "email_already_exists"), null, statusCodes.API_ERROR);
         }
+        console.log(findUser,"findUser")
 
         //if exist with different source (through google apple login) then update details and account source else insert new account entry
         const result = await findOneAndUpdate(userAuthModel, queryObject, obj, true);
         if (!result.status) {
             return showResponse(false, getMessage(language || 'en', "err_while_register"), null, statusCodes.API_ERROR);
         }
+        console.log(result,"result")
+        console.log(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll")
 
         const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
+        console.log(sendEmail,"sendEmail")
         if (!sendEmail.status) {
             return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
         }

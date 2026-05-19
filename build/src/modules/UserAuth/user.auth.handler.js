@@ -379,6 +379,7 @@ const UserAuthHandler = {
             const otp = commonHelper.generateRandomOtp(6);
             obj.otp = otp;
             const emailPayload = { user_name: fullName, otp };
+            console.log(emailPayload, "emailPayload");
             // const payload = { ...data, account_source: 'email', password: hashed, otp }
             // check if user exists
             const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
@@ -386,12 +387,16 @@ const UserAuthHandler = {
             if (findUser.status && ((_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.account_source) == 'email' && ((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.isVerified)) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "email_already_exists"), null, statusCodes_1.default.API_ERROR);
             }
+            console.log(findUser, "findUser");
             //if exist with different source (through google apple login) then update details and account source else insert new account entry
             const result = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, obj, true);
             if (!result.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_register"), null, statusCodes_1.default.API_ERROR);
             }
+            console.log(result, "result");
+            console.log(workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll");
             const sendEmail = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload);
+            console.log(sendEmail, "sendEmail");
             if (!sendEmail.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
             }

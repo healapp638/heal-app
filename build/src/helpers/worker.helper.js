@@ -12,7 +12,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.redisConnection = void 0;
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
 const xlsx_1 = __importDefault(require("xlsx"));
@@ -22,16 +21,17 @@ const admin_theme_model_1 = __importDefault(require("../modules/AdminTheme/admin
 const admin_modules_model_1 = __importDefault(require("../modules/AdminModules/admin.modules.model"));
 const admin_submodules_model_1 = __importDefault(require("../modules/AdminSubModules/admin.submodules.model"));
 const admin_phases_model_1 = __importDefault(require("../modules/AdminPhases/admin.phases.model"));
-const admin_exercise_details__model_1 = __importDefault(require("../modules/AdminExercise/admin.exercise.details..model"));
-const admin_excercise_model_1 = __importDefault(require("../modules/AdminExercise/admin.excercise.model"));
+// import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
+// import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
 const mongoose_config_1 = require("../configs/mongoose.config");
 const admin_exel_model_1 = __importDefault(require("../modules/AdminCommon/admin.exel.model"));
 const notification_service_1 = require("../services/notification.service");
 const admin_auth_model_1 = __importDefault(require("../modules/AdminAuth/admin.auth.model"));
 const user_affirmation_model_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.model"));
+const admin_mcqexercise_model_1 = __importDefault(require("../modules/AdminExercise/admin.mcqexercise.model"));
 console.log("👷 Worker booting...");
 // ✅ Redis connection
-exports.redisConnection = new ioredis_1.default({
+const redisConnection = new ioredis_1.default({
     host: "127.0.0.1",
     port: 6379,
     maxRetriesPerRequest: null,
@@ -157,111 +157,154 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                     }, {
                         subModuleId: subModule._id,
                         title: yield getTranslatedObj(row.phase_title),
+                        reflection: yield getTranslatedObj(row.personal_reflection),
                         points: row.phase_points || 0,
                     });
                     console.log("📌 Phase:", phase._id);
-                    // ================= LESSON =================
-                    const exerciseDetail = yield safeUpsert(admin_exercise_details__model_1.default, {
-                        phase_id: phase._id,
-                        "reading_title.en": row.lesson_reading_title.trim(),
-                    }, {
-                        phase_id: phase._id,
-                        reading_title: yield getTranslatedObj(row.lesson_reading_title.trim()),
-                        reading_description: yield getTranslatedObj(row.lesson_reading_description),
-                        concept_title: yield getTranslatedObj(row.lesson_concept_title),
-                        concept_description: yield getTranslatedObj(row.lesson_concept_description),
-                        reflection: yield getTranslatedObj(row.lesson_reflection),
-                    });
-                    console.log("📘 ExerciseDetail:", exerciseDetail._id);
-                    // ================= EXERCISES =================
-                    // const exerciseKeys = Object.keys(row).filter((key) =>
-                    //   key.startsWith("exercise_description_step")
-                    // );
-                    // for (const descKey of exerciseKeys) {
-                    //   const stepDesc = row[descKey];
-                    //   if (!stepDesc) continue;
-                    //   const suffix = descKey.replace(
-                    //     "exercise_description_step",
-                    //     ""
-                    //   );
-                    //   const stepTitle = row[`exercise_title_step${suffix}`];
-                    //   await safeUpsert(
-                    //     adminExcerciseModel,
-                    //     {
-                    //       exercise_details_id: exerciseDetail._id,
-                    //       "description.en": ciMatch(stepDesc),
-                    //     },
-                    //     {
-                    //       exercise_details_id: exerciseDetail._id,
-                    //       title: await getTranslatedObj(stepTitle),
-                    //       description: await getTranslatedObj(stepDesc),
+                    //     // ================= LESSON =================
+                    //     const exerciseDetail = await safeUpsert(
+                    //         adminExerciseDetailsModel,
+                    //         {
+                    //             phase_id: phase._id,
+                    //             "reading_title.en": row.lesson_reading_title.trim(),
+                    //         },
+                    //         {
+                    //             phase_id: phase._id,
+                    //             reading_title: await getTranslatedObj(row.lesson_reading_title.trim()),
+                    //             reading_description: await getTranslatedObj(
+                    //                 row.lesson_reading_description
+                    //             ),
+                    //             concept_title: await getTranslatedObj(
+                    //                 row.lesson_concept_title
+                    //             ),
+                    //             concept_description: await getTranslatedObj(
+                    //                 row.lesson_concept_description
+                    //             ),
+                    //             reflection: await getTranslatedObj(row.lesson_reflection),
+                    //         }
+                    //     );
+                    //     console.log("📘 ExerciseDetail:", exerciseDetail._id);
+                    //     const stepsMap: Record<string, { title?: string; desc?: string }> = {};
+                    //     Object.keys(row).forEach((key) => {
+                    //         const value = row[key];
+                    //         if (!value) return;
+                    //         // Match description
+                    //         if (key.startsWith("exercise_description_step")) {
+                    //             const stepNo = key.replace("exercise_description_step", "").trim();
+                    //             if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
+                    //             stepsMap[stepNo].desc = value.toString().trim();
+                    //         }
+                    //         // Match title
+                    //         if (key.startsWith("exercise_title_step")) {
+                    //             const stepNo = key.replace("exercise_title_step", "").trim();
+                    //             if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
+                    //             stepsMap[stepNo].title = value.toString().trim();
+                    //         }
+                    //     });
+                    //     console.log("🧩 Steps Map:", stepsMap);
+                    //     // ✅ Now process each step
+                    //     for (const stepNo of Object.keys(stepsMap)) {
+                    //         const { title, desc } = stepsMap[stepNo];
+                    //         // ❗ Description is mandatory (your rule)
+                    //         if (!desc) {
+                    //             console.log(`⚠️ Skipping step ${stepNo} (no description)`);
+                    //             continue;
+                    //         }
+                    //         console.log(`📝 Processing Step ${stepNo}`, {
+                    //             title,
+                    //             desc,
+                    //         });
+                    //         try {
+                    //             const exercise = await safeUpsert(
+                    //                 adminExcerciseModel,
+                    //                 {
+                    //                     exercise_details_id: exerciseDetail._id,
+                    //                     "description.en": {
+                    //                         $regex: new RegExp(`^${desc}$`, "i"),
+                    //                     },
+                    //                 },
+                    //                 {
+                    //                     exercise_details_id: exerciseDetail._id,
+                    //                     // ✅ if title empty → store empty object
+                    //                     title: title
+                    //                         ? await getTranslatedObj(title)
+                    //                         : {
+                    //                             en: "",
+                    //                             hi: "",
+                    //                             zh: "",
+                    //                             es: "",
+                    //                             fr: "",
+                    //                             de: "",
+                    //                             ru: "",
+                    //                             pt: "",
+                    //                             it: "",
+                    //                             ro: "",
+                    //                         },
+                    //                     description: await getTranslatedObj(desc),
+                    //                 }
+                    //             );
+                    //             console.log("✅ Exercise saved:", exercise._id);
+                    //         } catch (err) {
+                    //             console.error(`❌ Step ${stepNo} failed`, err);
+                    //         }
                     //     }
-                    //   );
-                    // }
-                    // ✅ Step map builder (groups by step number)
-                    const stepsMap = {};
-                    Object.keys(row).forEach((key) => {
-                        const value = row[key];
-                        if (!value)
-                            return;
-                        // Match description
-                        if (key.startsWith("exercise_description_step")) {
-                            const stepNo = key.replace("exercise_description_step", "").trim();
-                            if (!stepsMap[stepNo])
-                                stepsMap[stepNo] = {};
-                            stepsMap[stepNo].desc = value.toString().trim();
-                        }
-                        // Match title
-                        if (key.startsWith("exercise_title_step")) {
-                            const stepNo = key.replace("exercise_title_step", "").trim();
-                            if (!stepsMap[stepNo])
-                                stepsMap[stepNo] = {};
-                            stepsMap[stepNo].title = value.toString().trim();
-                        }
-                    });
-                    console.log("🧩 Steps Map:", stepsMap);
-                    // ✅ Now process each step
-                    for (const stepNo of Object.keys(stepsMap)) {
-                        const { title, desc } = stepsMap[stepNo];
-                        // ❗ Description is mandatory (your rule)
-                        if (!desc) {
-                            console.log(`⚠️ Skipping step ${stepNo} (no description)`);
-                            continue;
-                        }
-                        console.log(`📝 Processing Step ${stepNo}`, {
-                            title,
-                            desc,
+                    // ======================================================
+                    // STEP 1
+                    // NORMAL CONTENT TYPE
+                    // ======================================================
+                    const step1Title = row["exercise_title_step1"];
+                    const step1Description = row["exercise_description_step1"];
+                    // create even if mcq empty
+                    if (step1Title) {
+                        console.log("📝 Creating Step 1");
+                        yield safeUpsert(admin_mcqexercise_model_1.default, {
+                            phase_id: phase._id,
+                            "title.en": step1Title.trim(),
+                        }, {
+                            phase_id: phase._id,
+                            title: yield getTranslatedObj(step1Title),
+                            // optional
+                            description: yield getTranslatedObj(step1Description || ""),
+                            // empty
+                            mcq: [],
                         });
-                        try {
-                            const exercise = yield safeUpsert(admin_excercise_model_1.default, {
-                                exercise_details_id: exerciseDetail._id,
-                                "description.en": {
-                                    $regex: new RegExp(`^${desc}$`, "i"),
-                                },
-                            }, {
-                                exercise_details_id: exerciseDetail._id,
-                                // ✅ if title empty → store empty object
-                                title: title
-                                    ? yield getTranslatedObj(title)
-                                    : {
-                                        en: "",
-                                        hi: "",
-                                        zh: "",
-                                        es: "",
-                                        fr: "",
-                                        de: "",
-                                        ru: "",
-                                        pt: "",
-                                        it: "",
-                                        ro: "",
-                                    },
-                                description: yield getTranslatedObj(desc),
+                        console.log("✅ Step 1 saved");
+                    }
+                    // ======================================================
+                    // STEP 2+
+                    // MCQ TYPE
+                    // ======================================================
+                    for (let step = 2; step <= 20; step++) {
+                        const exerciseTitle = row[`exercise_title_step${step}`];
+                        // skip if no title
+                        if (!exerciseTitle)
+                            continue;
+                        // ======================================================
+                        // OPTIONS
+                        // ======================================================
+                        const mcqOptions = [];
+                        for (let i = 1; i <= 10; i++) {
+                            const optionText = row[`mcq${i}_step${step}`];
+                            if (!optionText)
+                                continue;
+                            mcqOptions.push({
+                                option: yield getTranslatedObj(optionText.toString().trim()),
                             });
-                            console.log("✅ Exercise saved:", exercise._id);
                         }
-                        catch (err) {
-                            console.error(`❌ Step ${stepNo} failed`, err);
-                        }
+                        console.log(`📝 Creating Step ${step}`);
+                        // ======================================================
+                        // CREATE MCQ
+                        // ======================================================
+                        yield safeUpsert(admin_mcqexercise_model_1.default, {
+                            phase_id: phase._id,
+                            "title.en": exerciseTitle.trim(),
+                        }, {
+                            phase_id: phase._id,
+                            title: yield getTranslatedObj(exerciseTitle),
+                            description: yield getTranslatedObj(""),
+                            mcq: mcqOptions,
+                        });
+                        console.log(`✅ Step ${step} saved`);
                     }
                 }
                 catch (rowErr) {
@@ -285,7 +328,7 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
             // throw err;
         }
     }), {
-        connection: exports.redisConnection,
+        connection: redisConnection,
         concurrency: 1,
     });
     worker.on("completed", (job) => {
@@ -389,7 +432,7 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
             throw error;
         }
     }), {
-        connection: exports.redisConnection,
+        connection: redisConnection,
         concurrency: 5,
     });
     // ================= EVENTS =================

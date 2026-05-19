@@ -19,6 +19,7 @@ const phaseSchema = new mongoose.Schema(
         subModuleId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubModule', default: null },
         title: langSchema,
         points: { type: Number, default: 0 },
+        reflection: langSchema,
         status: { type: Number, default: USER_STATUS.ACTIVE },
     },
     { timestamps: true, versionKey: false }

@@ -5,7 +5,7 @@ import handler from './admin.exercise.handler'
 import { showResponse } from '../../utils/response.util';
 import { tryCatchWrapper } from '../../utils/config.util';
 import statusCodes from '../../constants/statusCodes';
-import { validateCreateExerciseDetails, validateDeleteExerciseDetails, validateListExerciseDetails, validateExerciseDetails, validateUpdateExerciseDetails, validateCreateExercise, validateUpdateExercise, validateDeleteExercise, validateListExercise, validateSingleExercise } from './admin.exercise.validator';
+import { validateCreateExerciseDetails, validateDeleteExerciseDetails, validateListExerciseDetails, validateExerciseDetails, validateUpdateExerciseDetails, validateCreateExercise, validateUpdateExercise, validateDeleteExercise, validateListExercise, validateSingleExercise, validateCreateMcqExercise, validateUpdateMcqExercise, validateDeleteMcqExercise, validateListMcqExercise, validateSingleMcqExercise } from './admin.exercise.validator';
 
 
 @Tags('Admin Exercise')
@@ -129,5 +129,60 @@ export default class AdminExerciseController extends Controller {
         }
         const wrappedFunc = tryCatchWrapper(handler.singleExercise);
         return wrappedFunc({ exercise_id, lang }); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Post('/create_mcq_exercise')
+    public async createMcqExercise(@Body() request: { title: string, description: string, mcq:string[], phase_id: string }): Promise<ApiResponse> {
+        const validate = validateCreateMcqExercise(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.createmcqExercise);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Post('/update_mcq_exercise')
+    public async updateMcqExercise(@Body() request: { title: string, description: string, mcq:string[], mcqexercise_id: string, lang: string }): Promise<ApiResponse> {
+        const validate = validateUpdateMcqExercise(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.updateMcqExercise);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Delete('/delete_mcq_exercise')
+    public async deleteMcqExercise(@Body() request: { mcqexercise_id: string,status:string }): Promise<ApiResponse> {
+        const validate = validateDeleteMcqExercise(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.deleteMcqExercise);
+        return wrappedFunc(request); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get('/list_mcq_exercise')
+    public async listMcqExercise(@Query() page?: number, @Query() limit?: number, @Query() search?: string, @Query() lang?: string, @Query() phase_id?: string): Promise<ApiResponse> {
+        const validate = validateListMcqExercise({ page, limit, search, lang, phase_id });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.listMcqExercise);
+        return wrappedFunc(page, limit, search, lang, phase_id); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Get('/single_mcq_exercise')
+    public async singleMcqExercise(@Query() mcqexercise_id?: string, @Query() lang?: string): Promise<ApiResponse> {
+        const validate = validateSingleMcqExercise({ mcqexercise_id, lang });
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.singleMcqExercise);
+        return wrappedFunc({ mcqexercise_id, lang }); // Invoking the wrapped function 
     }
 }

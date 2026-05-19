@@ -21,6 +21,7 @@ const phaseSchema = new mongoose_1.default.Schema({
     subModuleId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: 'SubModule', default: null },
     title: langSchema,
     points: { type: Number, default: 0 },
+    reflection: langSchema,
     status: { type: Number, default: workflow_constant_1.USER_STATUS.ACTIVE },
 }, { timestamps: true, versionKey: false });
 phaseSchema.index({ subModuleId: 1, "title.en": 1 }, { unique: true });

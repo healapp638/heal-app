@@ -9,48 +9,126 @@ import responseMessages from "../constants/responseMessages";
 import statusCodes from '../constants/statusCodes';
 import sgMail from '@sendgrid/mail'
 
-const nodemail = async (to: string, subject: string, body: any, attachments: any = []): Promise<ApiResponse> => {
-    const EMAIL_HOST = await EMAIL_CREDENTIAL.EMAIL_HOST
-    const SMTP_EMAIL = await EMAIL_CREDENTIAL.SMTP_EMAIL
-    const SMTP_API_KEY = await EMAIL_CREDENTIAL.SMTP_API_KEY
+// const nodemail = async (to: string, subject: string, body: any, attachments: any = []): Promise<ApiResponse> => {
+//     const EMAIL_HOST = await EMAIL_CREDENTIAL.EMAIL_HOST
+//     const SMTP_EMAIL = await EMAIL_CREDENTIAL.SMTP_EMAIL
+//     const SMTP_API_KEY = await EMAIL_CREDENTIAL.SMTP_API_KEY
 
-    return new Promise((resolve) => {
+//     console.log(EMAIL_HOST,"EMAIL_HOST")
+//     console.log(SMTP_EMAIL,"SMTP_EMAIL")
+//     console.log(SMTP_API_KEY,"SMTP_API_KEY")
 
-        try {
-            const transporter = nodemailer.createTransport({
-                host: EMAIL_HOST,
-                port: 465,
-                secure: true,
-                auth: {
-                    user: SMTP_EMAIL,
-                    pass: SMTP_API_KEY
-                }
-            });
 
-            const mailOptions = {
-                from: EMAIL_HOST,
-                to,
-                subject,
-                html: body,
-                attachments
+//     return new Promise((resolve) => {
+
+//         try {
+//             const transporter = nodemailer.createTransport({
+//                 host: EMAIL_HOST,
+//                 port: 465,
+//                 secure: true,
+//                 auth: {
+//                     user: SMTP_EMAIL,
+//                     pass: SMTP_API_KEY
+//                 }
+//             });
+//              console.log("before verify");
+
+
+//         console.log("after verify");
+
+//             const mailOptions = {
+//                 from: SMTP_EMAIL,
+//                 to,
+//                 subject,
+//                 html: body,
+//                 attachments
+//             }
+//                 console.log("before send");
+//              transporter.sendMail(mailOptions, (error: any, data: any) => {
+//                 if (error) {
+//                     return resolve(showResponse(false, responseMessages.common.email_sent_error, error, statusCodes.API_ERROR));
+//                 }
+//                 return resolve(showResponse(true, responseMessages.common.email_sent_success, data, statusCodes.SUCCESS));
+//             })
+//         } catch (err) {
+//             return resolve(showResponse(false, responseMessages.common.email_sent_error, err, statusCodes.API_ERROR));
+//         }
+//     });
+// }//ends
+const nodemail = async (
+    to: string,
+    subject: string,
+    body: any,
+    attachments: any = []
+): Promise<ApiResponse> => {
+
+    try {
+
+        const EMAIL_HOST = EMAIL_CREDENTIAL.EMAIL_HOST;
+        const SMTP_EMAIL = EMAIL_CREDENTIAL.SMTP_EMAIL;
+        const SMTP_API_KEY = EMAIL_CREDENTIAL.SMTP_API_KEY;
+
+        // console.log(EMAIL_HOST, "EMAIL_HOST");
+        // console.log(SMTP_EMAIL, "SMTP_EMAIL");
+
+        const transporter = nodemailer.createTransport({
+            host: EMAIL_HOST,
+            port: 465,
+            secure: true,
+            auth: {
+                user: SMTP_EMAIL,
+                pass: SMTP_API_KEY
             }
-            transporter.sendMail(mailOptions, (error: any, data: any) => {
-                if (error) {
-                    return resolve(showResponse(false, responseMessages.common.email_sent_error, error, statusCodes.API_ERROR));
-                }
-                return resolve(showResponse(true, responseMessages.common.email_sent_success, data, statusCodes.SUCCESS));
-            })
-        } catch (err) {
-            return resolve(showResponse(false, responseMessages.common.email_sent_error, err, statusCodes.API_ERROR));
-        }
-    });
-}//ends
+        });
+
+        // console.log("before verify");
+
+        await transporter.verify();
+
+        // console.log("after verify");
+
+        const mailOptions = {
+            from: SMTP_EMAIL,
+            to,
+            subject,
+            html: body,
+            attachments
+        };
+
+        // console.log("before send");
+
+        const data = await transporter.sendMail(mailOptions);
+
+        // console.log(data, "mail success");
+
+        return showResponse(
+            true,
+            responseMessages.common.email_sent_success,
+            data,
+            statusCodes.SUCCESS
+        );
+
+    } catch (err) {
+
+        console.log(err, "mail error");
+
+        return showResponse(
+            false,
+            responseMessages.common.email_sent_error,
+            err,
+            statusCodes.API_ERROR
+        );
+    }
+}
 
 
 const sendgridMail = async (to: string, subject: string, body: any, attachments: any = []): Promise<ApiResponse> => {
     const SENDGRID_FROM_EMAIL = await EMAIL_CREDENTIAL.SMTP_EMAIL
     const SENDGRID_API_KEY = await EMAIL_CREDENTIAL.SMTP_API_KEY
     sgMail.setApiKey(SENDGRID_API_KEY);
+
+    // console.log(SENDGRID_FROM_EMAIL,"SENDGRID_FROM_EMAIL")
+    // console.log(SENDGRID_API_KEY,"SENDGRID_API_KEY")
 
     return new Promise((resolve) => {
         try {
@@ -128,6 +206,7 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
         const emailSent = transportMethod === 'sendgrid'
             ? await sendgridMail(to, subject, template)
             : await nodemail(to, subject, template, attachments);
+        console.log(emailSent,"emailSent")
 
         if (!emailSent.status) {
             return showResponse(false, responseMessages.common.email_sent_error, null, statusCodes.API_ERROR);
@@ -137,7 +216,7 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
     } catch (error: any) {
         return showResponse(false, responseMessages.common.email_sent_error, error, statusCodes.API_ERROR);
     }
-};//
+};
 
 
 

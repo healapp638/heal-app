@@ -49,9 +49,9 @@ router.get('/exercise_list', verifyTokenUser, (req, res) => __awaiter(void 0, vo
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/complete_lesson', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { exercise_id, exercise_details_id, phase_id, reflection } = req.body;
+    const { exercise_id, phase_id, reflection } = req.body;
     const controller = new user_modules_controller_1.default(req, res);
-    const result = yield controller.completeLesson({ exercise_id, exercise_details_id, phase_id, reflection });
+    const result = yield controller.completeLesson({ exercise_id, phase_id, reflection });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/start_lesson', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

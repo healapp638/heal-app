@@ -53,43 +53,298 @@ const common_helper_1 = require("../../helpers/common.helper");
 const user_aichat_message_model_1 = __importDefault(require("./user.aichat.message.model"));
 const user_aichat_conversation_model_2 = __importDefault(require("./user.aichat.conversation.model"));
 const commonHelper = __importStar(require("../../helpers/common.helper"));
+const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
+const workflow_constant_1 = require("../../constants/workflow.constant");
+const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
+const openai_1 = __importDefault(require("openai"));
+const app_constant_1 = require("../../constants/app.constant");
 const UserCommonHandler = {
+    // sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
+    //     try {
+    //         const {conversation_id,message,role} = data;
+    //         if (!message?.trim()) {
+    //             return showResponse(false,"Message is required",null,statusCodes.VALIDATION_ERROR);
+    //         }
+    //         let finalConversationId = conversation_id;
+    //         // =========================================
+    //         // USER LANGUAGE
+    //         // =========================================
+    //         const user = await userAuthModel.findOne({_id: convertToObjectId(user_id),status: USER_STATUS.ACTIVE});
+    //         const userLanguage =
+    //             user?.language || "en";
+    //         // =========================================
+    //         // TRANSLATE MESSAGE
+    //         // =========================================
+    //         const translatedMessage: any = {};
+    //         const langs:any = Object.values(languages);
+    //         await Promise.all(
+    //             langs.map(async (lang: string) => {
+    //                 translatedMessage[lang] =await translateText(message,lang);
+    //             })
+    //         );
+    //         // =========================================
+    //         // CREATE CONVERSATION
+    //         // =========================================
+    //         if (!conversation_id) {
+    //             // const shortTitle = message.trim().length > 40 ? `${message.trim().slice(0, 40)}...` : message.trim();
+    //             let shortTitle = "New Chat";
+    //             try {
+    //         const openai = new OpenAI({
+    //             apiKey: APP.OPENAI_API_KEY,
+    //         });
+    //                 const titleResponse =
+    //                     await openai.chat.completions.create({
+    //                         model: "gpt-4.1-mini",
+    //                         messages: [
+    //                             {
+    //                                 role: "system",
+    //                                 content: `
+    //                             Generate a very short conversation title.
+    //                             Rules:
+    //                             - Maximum 4 words
+    //                             - Human readable
+    //                             - No quotes
+    //                             - No emojis
+    //                             - Summarize the user's message
+    //                             - Keep it emotionally meaningful
+    //                             `,
+    //                         },
+    //                         {
+    //                             role: "user",
+    //                             content: message,
+    //                         },
+    //                     ],
+    //                     max_tokens: 12,
+    //                     temperature: 0.7,
+    //                 });
+    //                 shortTitle =
+    //                     titleResponse.choices?.[0]?.message?.content
+    //                         ?.trim()
+    //                         ?.replace(/["']/g, "") || "New Chat";
+    //             } catch (err) {
+    //                 console.log(err, "TITLE_GENERATION_ERROR");
+    //             }
+    //             const translatedTitle: any = {};
+    //             await Promise.all(
+    //                 langs.map(async (lang: string) => {
+    //                     translatedTitle[lang] =await translateText(shortTitle,lang);
+    //                 })
+    //             );
+    //             const createConversation = await userAichatConversation.create({user_id:convertToObjectId(user_id),title: translatedTitle,});
+    //             finalConversationId =createConversation._id;
+    //             console.log(createConversation,"createConversation---------------------------");
+    //         }
+    //         // =========================================
+    //         // FIND LAST SEQUENCE
+    //         // =========================================
+    //         const lastMessage =await messageModel.findOne({conversation_id:convertToObjectId(finalConversationId),}).sort({sequence: -1,});
+    //         const nextSequence =lastMessage?.sequence ? lastMessage.sequence + 1 : 1;
+    //         // =========================================
+    //         // SAVE MESSAGE
+    //         // =========================================
+    //         const createMessage:any = await messageModel.create({
+    //                 conversation_id:convertToObjectId(finalConversationId),
+    //                 user_id:convertToObjectId(user_id),
+    //                 role,
+    //                 message: translatedMessage,
+    //                 unix: `${Date.now()}`,
+    //                 sequence: nextSequence,
+    //             });
+    //         console.log(createMessage,"createMessage---------------------------");
+    //         if (!createMessage) {
+    //             return showResponse(false,responseMessage.common.save_failed,null,statusCodes.API_ERROR);
+    //         }
+    //         // =========================================
+    //         // RESPONSE MESSAGE
+    //         // =========================================
+    //         const responseData = {
+    //             _id: createMessage._id,
+    //             conversation_id:createMessage.conversation_id,
+    //             role: createMessage.role,
+    //             message:createMessage?.message?.[userLanguage] || createMessage?.message?.en,
+    //             unix: createMessage.unix,
+    //             sequence:createMessage.sequence,
+    //             createdAt:createMessage.createdAt,
+    //         };
+    //         return showResponse(true,responseMessage.common.data_save,{conversation_id:finalConversationId,message: responseData},statusCodes.SUCCESS);
+    //     } catch (error) {
+    //         console.log(error,"SEND_MESSAGE_ERROR");
+    //         return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
+    //     }
+    // },
     sendMessage: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         try {
             const { conversation_id, message, role } = data;
+            if (!(message === null || message === void 0 ? void 0 : message.trim())) {
+                return (0, response_util_1.showResponse)(false, "Message is required", null, statusCodes_1.default.VALIDATION_ERROR);
+            }
             let finalConversationId = conversation_id;
             // =========================================
-            // CREATE CONVERSATION IF NOT EXISTS
+            // USER LANGUAGE
+            // =========================================
+            const user = yield user_auth_model_1.default.findOne({
+                _id: (0, common_helper_1.convertToObjectId)(user_id),
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+            });
+            const userLanguage = (user === null || user === void 0 ? void 0 : user.language) || "en";
+            // =========================================
+            // OPENAI CONFIG
+            // =========================================
+            const openai = new openai_1.default({
+                apiKey: app_constant_1.APP.OPENAI_API_KEY,
+            });
+            // =========================================
+            // TRANSLATE USER MESSAGE
+            // =========================================
+            const translatedMessage = {};
+            const langs = Object.values(workflow_constant_1.languages);
+            yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                translatedMessage[lang] = yield (0, langauge_translate_helper_1.translateText)(message, lang);
+            })));
+            // =========================================
+            // CREATE CONVERSATION
             // =========================================
             if (!conversation_id) {
-                // title from first message
-                const title = message.trim().length > 40 ? `${message.trim().slice(0, 40)}...` : message.trim();
-                const createConversation = yield user_aichat_conversation_model_1.default.create({ user_id: (0, common_helper_1.convertToObjectId)(user_id), title });
+                let shortTitle = "New Chat";
+                try {
+                    const titleResponse = yield openai.chat.completions.create({
+                        model: "gpt-4.1-mini",
+                        messages: [
+                            {
+                                role: "system",
+                                content: `
+                                Generate a very short conversation title.
+                                Rules:
+                                - Maximum 4 words
+                                - Human readable
+                                - No quotes
+                                - No emojis
+                                - Summarize the user's message
+                                `,
+                            },
+                            {
+                                role: "user",
+                                content: message,
+                            },
+                        ],
+                        max_tokens: 12,
+                        temperature: 0.7,
+                    });
+                    shortTitle = ((_e = (_d = (_c = (_b = (_a = titleResponse.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) === null || _d === void 0 ? void 0 : _d.trim()) === null || _e === void 0 ? void 0 : _e.replace(/["']/g, "")) || "New Chat";
+                }
+                catch (err) {
+                    console.log(err, "TITLE_GENERATION_ERROR");
+                }
+                const translatedTitle = {};
+                yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    translatedTitle[lang] = yield (0, langauge_translate_helper_1.translateText)(shortTitle, lang);
+                })));
+                const createConversation = yield user_aichat_conversation_model_1.default.create({ user_id: (0, common_helper_1.convertToObjectId)(user_id), title: translatedTitle, });
                 finalConversationId = createConversation._id;
-                console.log(createConversation, "createConversation---------------------------");
             }
             // =========================================
             // FIND LAST SEQUENCE
             // =========================================
-            const lastMessage = yield user_aichat_message_model_1.default.findOne({ conversation_id: (0, common_helper_1.convertToObjectId)(finalConversationId) }).sort({ sequence: -1 });
+            const lastMessage = yield user_aichat_message_model_1.default.findOne({ conversation_id: (0, common_helper_1.convertToObjectId)(finalConversationId) }).sort({ sequence: -1, });
             const nextSequence = (lastMessage === null || lastMessage === void 0 ? void 0 : lastMessage.sequence) ? lastMessage.sequence + 1 : 1;
             // =========================================
-            // SAVE MESSAGE
+            // SAVE USER MESSAGE
             // =========================================
-            const createMessage = yield user_aichat_message_model_1.default.create({
+            const createUserMessage = yield user_aichat_message_model_1.default.create({
                 conversation_id: (0, common_helper_1.convertToObjectId)(finalConversationId),
                 user_id: (0, common_helper_1.convertToObjectId)(user_id),
-                role,
-                message: message.trim(),
+                role: role || "user",
+                message: translatedMessage,
                 unix: `${Date.now()}`,
                 sequence: nextSequence,
             });
-            console.log(createMessage, "createMessage---------------------------");
-            if (!createMessage) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
-            }
+            // =========================================
+            // SYSTEM PROMPT
+            // =========================================
+            const systemPrompt = `
+            You are an emotionally supportive AI assistant inside a personal growth and emotional wellness app.
+
+            Your tone:
+            - Calm
+            - Supportive
+            - Empathetic
+            - Non-judgmental
+            - Human and conversational
+
+            Rules:
+            - Keep responses concise
+            - Encourage reflection
+            - Never shame users
+            - Avoid diagnosis
+        `;
+            // =========================================
+            // AI RESPONSE
+            // =========================================
+            const aiResponse = yield openai.chat.completions.create({
+                model: "gpt-4.1-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: systemPrompt,
+                    },
+                    {
+                        role: "user",
+                        content: message,
+                    },
+                ],
+                temperature: 0.7,
+                max_tokens: 300,
+            });
+            const aiMessage = ((_h = (_g = (_f = aiResponse === null || aiResponse === void 0 ? void 0 : aiResponse.choices) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.message) === null || _h === void 0 ? void 0 : _h.content) || "";
+            // =========================================
+            // TRANSLATE AI MESSAGE
+            // =========================================
+            const translatedAiMessage = {};
+            yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                translatedAiMessage[lang] = yield (0, langauge_translate_helper_1.translateText)(aiMessage, lang);
+            })));
+            // =========================================
+            // SAVE AI MESSAGE
+            // =========================================
+            const createAiMessage = yield user_aichat_message_model_1.default.create({
+                conversation_id: (0, common_helper_1.convertToObjectId)(finalConversationId),
+                user_id: (0, common_helper_1.convertToObjectId)(user_id),
+                role: "ai",
+                message: translatedAiMessage,
+                unix: `${Date.now()}`,
+                sequence: nextSequence + 1,
+            });
+            // =========================================
+            // UPDATE CONVERSATION
+            // =========================================
+            yield user_aichat_conversation_model_1.default.updateOne({
+                _id: (0, common_helper_1.convertToObjectId)(finalConversationId),
+            }, {
+                $set: {
+                    updatedAt: new Date(),
+                },
+                $inc: {
+                    total_messages: 2,
+                },
+            });
+            // =========================================
+            // RESPONSE
+            // =========================================
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, {
-                conversation_id: finalConversationId, message: createMessage
+                conversation_id: finalConversationId,
+                user_message: {
+                    _id: createUserMessage._id,
+                    role: createUserMessage.role,
+                    message: ((_j = createUserMessage === null || createUserMessage === void 0 ? void 0 : createUserMessage.message) === null || _j === void 0 ? void 0 : _j[userLanguage]) || ((_k = createUserMessage === null || createUserMessage === void 0 ? void 0 : createUserMessage.message) === null || _k === void 0 ? void 0 : _k.en),
+                    sequence: createUserMessage.sequence,
+                },
+                ai_message: {
+                    _id: createAiMessage._id,
+                    role: createAiMessage.role,
+                    message: ((_l = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _l === void 0 ? void 0 : _l[userLanguage]) || ((_m = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _m === void 0 ? void 0 : _m.en),
+                    sequence: createAiMessage.sequence,
+                },
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
@@ -97,45 +352,28 @@ const UserCommonHandler = {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
         }
     }),
-    getRandomQuestions: () => __awaiter(void 0, void 0, void 0, function* () {
+    getRandomQuestions: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const questions = [
-                "How have you been feeling lately?",
-                "What’s been on your mind?",
-                "What’s hurting you right now?",
-                "What makes you feel safe?",
-                "What are you avoiding?",
-                "What do you miss most?",
-                "When do you feel alone?",
-                "What drains your energy?",
-                "What brings you peace?",
-                "What scares you lately?",
-                "What are you holding in?",
-                "What do you need most?",
-                "Who understands you best?",
-                "What keeps you going?",
-                "What are you overthinking?",
-                "What makes you feel loved?",
-                "What are you afraid to lose?",
-                "What do you want to change?",
-                "What are you struggling with?",
-                "What makes you feel seen?",
-                "What do you regret most?",
-                "What motivates you lately?",
-                "What are you grateful for?",
-                "What feels heavy today?",
-                "What do you hide from others?",
-                "What helps you heal?",
-                "What are you searching for?",
-                "What do you fear most?",
-                "What makes you feel alive?",
-                "What does your heart need?"
-            ];
-            // shuffle
-            const shuffled = questions.sort(() => 0.5 - Math.random());
-            // pick random 5
+            // =========================================
+            // USER LANGUAGE
+            // =========================================
+            const user = yield user_auth_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE });
+            const userLanguage = (user === null || user === void 0 ? void 0 : user.language) || "en";
+            // =========================================
+            // QUESTIONS
+            // =========================================
+            // const questions = workflowConstant.questions;
+            const finalQuestion = workflow_constant_1.questions;
+            // =========================================
+            // RANDOM 5
+            // =========================================
+            const shuffled = finalQuestion.sort(() => 0.5 - Math.random());
             const randomQuestions = shuffled.slice(0, 5);
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, randomQuestions, statusCodes_1.default.SUCCESS);
+            // =========================================
+            // LANGUAGE RESPONSE
+            // =========================================
+            const finalQuestions = randomQuestions.map((item) => item[userLanguage] || item.en);
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, finalQuestions, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
             console.log(error, "GET_RANDOM_QUESTIONS_ERROR");
@@ -156,6 +394,8 @@ const UserCommonHandler = {
             if (!conversation) {
                 return (0, response_util_1.showResponse)(false, "Conversation not found", null, statusCodes_1.default.NOT_FOUND);
             }
+            const user = yield user_auth_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE });
+            const userLanguage = (user === null || user === void 0 ? void 0 : user.language) || "en";
             // =========================================
             // AGGREGATE
             // =========================================
@@ -174,7 +414,12 @@ const UserCommonHandler = {
                         _id: 1,
                         conversation_id: 1,
                         role: 1,
-                        message: 1,
+                        message: {
+                            $ifNull: [
+                                `$message.${userLanguage}`,
+                                "$message.en"
+                            ]
+                        },
                         unix: 1,
                         sequence: 1,
                         createdAt: 1,
@@ -193,6 +438,209 @@ const UserCommonHandler = {
         }
         catch (error) {
             console.log(error, "GET_CONVERSATION_MESSAGES_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    aiSupportResponse: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b, _c;
+        try {
+            const { message } = data;
+            // =========================
+            // OPENAI CONFIG
+            // =========================
+            const openai = new openai_1.default({
+                apiKey: app_constant_1.APP.OPENAI_API_KEY,
+            });
+            // =========================
+            // SYSTEM PROMPT
+            // =========================
+            const systemPrompt = `
+You are an emotionally supportive AI assistant inside a personal growth and emotional wellness app.
+
+About the app:
+- The app helps users improve emotional well-being and personal growth
+- Users work through guided self-development modules
+- Users journal their thoughts and emotions
+- Users complete daily and weekly challenges
+- Users receive affirmations and reflective guidance
+- Your role is to support, encourage, and help users reflect safely
+
+Your tone:
+- Calm
+- Supportive
+- Empathetic
+- Non-judgmental
+- Human and conversational
+- Encouraging but not overly dramatic
+
+Rules:
+- Keep responses concise and meaningful
+- Encourage reflection and emotional awareness
+- Never shame or criticize users
+- Avoid toxic positivity
+- Avoid medical diagnosis
+- Do not claim to be a therapist
+- Help users feel heard and supported
+`;
+            // =========================
+            // OPENAI RESPONSE
+            // =========================
+            const response = yield openai.chat.completions.create({
+                model: "gpt-4.1-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: systemPrompt,
+                    },
+                    {
+                        role: "user",
+                        content: message,
+                    },
+                ],
+                temperature: 0.7,
+                max_tokens: 300,
+            });
+            const aiMessage = ((_c = (_b = (_a = response === null || response === void 0 ? void 0 : response.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) || "";
+            // =========================
+            // RETURN
+            // =========================
+            return (0, response_util_1.showResponse)(true, "AI response generated successfully", {
+                response: aiMessage,
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "AI_SUPPORT_RESPONSE_ERROR");
+            return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) ||
+                "Failed to generate AI response", null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    getConversationListing: (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (page = 1, limit = 10, search = "", sort_column = "updatedAt", sort_direction = "desc", user_id) {
+        try {
+            // =========================
+            // USER
+            // =========================
+            console.log(page, "page");
+            const userData = yield user_auth_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE });
+            if (!userData) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            const userLanguage = (userData === null || userData === void 0 ? void 0 : userData.language) || "en";
+            // =========================
+            // MATCH
+            // =========================
+            const matchQuery = { user_id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE };
+            // =========================
+            // AGGREGATE
+            // =========================
+            const aggregate = [
+                {
+                    $match: matchQuery,
+                },
+                {
+                    $addFields: {
+                        title: {
+                            $ifNull: [
+                                `$title.${userLanguage}`,
+                                "$title.en",
+                            ],
+                        },
+                    },
+                },
+                // search
+                ...(search
+                    ? [
+                        {
+                            $match: {
+                                title: {
+                                    $regex: search,
+                                    $options: "i",
+                                },
+                            },
+                        },
+                    ]
+                    : []),
+                // latest message
+                // {
+                //     $lookup: {
+                //         from: "user_messages",
+                //         let: {
+                //             conversationId: "$_id",
+                //         },
+                //         pipeline: [
+                //             {
+                //                 $match: {
+                //                     $expr: {
+                //                         $eq: [
+                //                             "$conversation_id",
+                //                             "$$conversationId",
+                //                         ],
+                //                     },
+                //                 },
+                //             },
+                //             {
+                //                 $sort: {
+                //                     sequence: -1,
+                //                 },
+                //             },
+                //             {
+                //                 $limit: 1,
+                //             },
+                //             {
+                //                 $project: {
+                //                     _id: 0,
+                //                     message: {
+                //                         $ifNull: [
+                //                             `$message.${userLanguage}`,
+                //                             "$message.en",
+                //                         ],
+                //                     },
+                //                     role: 1,
+                //                     createdAt: 1,
+                //                 },
+                //             },
+                //         ],
+                //         as: "lastMessage",
+                //     },
+                // },
+                // {
+                //     $unwind: {
+                //         path: "$lastMessage",
+                //         preserveNullAndEmptyArrays: true,
+                //     },
+                // },
+                {
+                    $sort: {
+                        [sort_column]: sort_direction === "asc"
+                            ? 1
+                            : -1,
+                    },
+                },
+                {
+                    $project: {
+                        _id: 1,
+                        title: 1,
+                        createdAt: 1,
+                        updatedAt: 1,
+                        // lastMessage: 1,
+                    },
+                },
+            ];
+            // =========================
+            // PAGINATION
+            // =========================
+            const { totalCount, aggregation, } = yield commonHelper.getCountAndPagination(user_aichat_conversation_model_1.default, aggregate, page, limit);
+            const result = yield user_aichat_conversation_model_1.default.aggregate(aggregation);
+            // =========================
+            // RESPONSE
+            // =========================
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common
+                .data_retreive_sucess, {
+                result,
+                totalCount,
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "GET_CONVERSATION_LISTING_ERROR");
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
         }
     }),

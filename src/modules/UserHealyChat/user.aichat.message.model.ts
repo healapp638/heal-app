@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 
+const langSchema = {
+    en: { type: String, default: '' },
+    zh: { type: String, default: '' },
+    hi: { type: String, default: '' },
+    es: { type: String, default: '' },
+    fr: { type: String, default: '' },
+    de: { type: String, default: '' },
+    ru: { type: String, default: '' },
+    pt: { type: String, default: '' },
+    it: { type: String, default: '' },
+    ro: { type: String, default: '' },
+};
+
 const messageSchema = new mongoose.Schema(
     {
         conversation_id: {
@@ -20,10 +33,7 @@ const messageSchema = new mongoose.Schema(
             enum: ["user", "ai"],
             required: true,
         },
-        message: {
-            type: String,
-            required: true,
-        },
+        message: langSchema,
         unix: {
             type: String,
             required: true

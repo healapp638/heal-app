@@ -22,44 +22,87 @@ const path_1 = __importDefault(require("path"));
 const responseMessages_1 = __importDefault(require("../constants/responseMessages"));
 const statusCodes_1 = __importDefault(require("../constants/statusCodes"));
 const mail_1 = __importDefault(require("@sendgrid/mail"));
+// const nodemail = async (to: string, subject: string, body: any, attachments: any = []): Promise<ApiResponse> => {
+//     const EMAIL_HOST = await EMAIL_CREDENTIAL.EMAIL_HOST
+//     const SMTP_EMAIL = await EMAIL_CREDENTIAL.SMTP_EMAIL
+//     const SMTP_API_KEY = await EMAIL_CREDENTIAL.SMTP_API_KEY
+//     console.log(EMAIL_HOST,"EMAIL_HOST")
+//     console.log(SMTP_EMAIL,"SMTP_EMAIL")
+//     console.log(SMTP_API_KEY,"SMTP_API_KEY")
+//     return new Promise((resolve) => {
+//         try {
+//             const transporter = nodemailer.createTransport({
+//                 host: EMAIL_HOST,
+//                 port: 465,
+//                 secure: true,
+//                 auth: {
+//                     user: SMTP_EMAIL,
+//                     pass: SMTP_API_KEY
+//                 }
+//             });
+//              console.log("before verify");
+//         console.log("after verify");
+//             const mailOptions = {
+//                 from: SMTP_EMAIL,
+//                 to,
+//                 subject,
+//                 html: body,
+//                 attachments
+//             }
+//                 console.log("before send");
+//              transporter.sendMail(mailOptions, (error: any, data: any) => {
+//                 if (error) {
+//                     return resolve(showResponse(false, responseMessages.common.email_sent_error, error, statusCodes.API_ERROR));
+//                 }
+//                 return resolve(showResponse(true, responseMessages.common.email_sent_success, data, statusCodes.SUCCESS));
+//             })
+//         } catch (err) {
+//             return resolve(showResponse(false, responseMessages.common.email_sent_error, err, statusCodes.API_ERROR));
+//         }
+//     });
+// }//ends
 const nodemail = (to_1, subject_1, body_1, ...args_1) => __awaiter(void 0, [to_1, subject_1, body_1, ...args_1], void 0, function* (to, subject, body, attachments = []) {
-    const EMAIL_HOST = yield app_constant_1.EMAIL_CREDENTIAL.EMAIL_HOST;
-    const SMTP_EMAIL = yield app_constant_1.EMAIL_CREDENTIAL.SMTP_EMAIL;
-    const SMTP_API_KEY = yield app_constant_1.EMAIL_CREDENTIAL.SMTP_API_KEY;
-    return new Promise((resolve) => {
-        try {
-            const transporter = nodemailer_1.default.createTransport({
-                host: EMAIL_HOST,
-                port: 465,
-                secure: true,
-                auth: {
-                    user: SMTP_EMAIL,
-                    pass: SMTP_API_KEY
-                }
-            });
-            const mailOptions = {
-                from: EMAIL_HOST,
-                to,
-                subject,
-                html: body,
-                attachments
-            };
-            transporter.sendMail(mailOptions, (error, data) => {
-                if (error) {
-                    return resolve((0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, error, statusCodes_1.default.API_ERROR));
-                }
-                return resolve((0, response_util_1.showResponse)(true, responseMessages_1.default.common.email_sent_success, data, statusCodes_1.default.SUCCESS));
-            });
-        }
-        catch (err) {
-            return resolve((0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, err, statusCodes_1.default.API_ERROR));
-        }
-    });
-}); //ends
+    try {
+        const EMAIL_HOST = app_constant_1.EMAIL_CREDENTIAL.EMAIL_HOST;
+        const SMTP_EMAIL = app_constant_1.EMAIL_CREDENTIAL.SMTP_EMAIL;
+        const SMTP_API_KEY = app_constant_1.EMAIL_CREDENTIAL.SMTP_API_KEY;
+        // console.log(EMAIL_HOST, "EMAIL_HOST");
+        // console.log(SMTP_EMAIL, "SMTP_EMAIL");
+        const transporter = nodemailer_1.default.createTransport({
+            host: EMAIL_HOST,
+            port: 465,
+            secure: true,
+            auth: {
+                user: SMTP_EMAIL,
+                pass: SMTP_API_KEY
+            }
+        });
+        // console.log("before verify");
+        yield transporter.verify();
+        // console.log("after verify");
+        const mailOptions = {
+            from: SMTP_EMAIL,
+            to,
+            subject,
+            html: body,
+            attachments
+        };
+        // console.log("before send");
+        const data = yield transporter.sendMail(mailOptions);
+        // console.log(data, "mail success");
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.email_sent_success, data, statusCodes_1.default.SUCCESS);
+    }
+    catch (err) {
+        console.log(err, "mail error");
+        return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, err, statusCodes_1.default.API_ERROR);
+    }
+});
 const sendgridMail = (to_1, subject_1, body_1, ...args_1) => __awaiter(void 0, [to_1, subject_1, body_1, ...args_1], void 0, function* (to, subject, body, attachments = []) {
     const SENDGRID_FROM_EMAIL = yield app_constant_1.EMAIL_CREDENTIAL.SMTP_EMAIL;
     const SENDGRID_API_KEY = yield app_constant_1.EMAIL_CREDENTIAL.SMTP_API_KEY;
     mail_1.default.setApiKey(SENDGRID_API_KEY);
+    // console.log(SENDGRID_FROM_EMAIL,"SENDGRID_FROM_EMAIL")
+    // console.log(SENDGRID_API_KEY,"SENDGRID_API_KEY")
     return new Promise((resolve) => {
         try {
             const mailOptions = {
@@ -128,6 +171,7 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
         const emailSent = transportMethod === 'sendgrid'
             ? yield sendgridMail(to, subject, template)
             : yield nodemail(to, subject, template, attachments);
+        console.log(emailSent, "emailSent");
         if (!emailSent.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, null, statusCodes_1.default.API_ERROR);
         }
@@ -136,7 +180,7 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
     catch (error) {
         return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, error, statusCodes_1.default.API_ERROR);
     }
-}); //
+});
 const sendEmailViaSendGrid = (emailType, recipientEmail, body) => sendEmail(emailType, recipientEmail, body, 'sendgrid');
 exports.sendEmailViaSendGrid = sendEmailViaSendGrid;
 const sendEmailViaNodemail = (emailType, recipientEmail, body, useLocalLogo = true) => sendEmail(emailType, recipientEmail, body, 'nodemailer', useLocalLogo);

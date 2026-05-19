@@ -11,21 +11,24 @@ import adminSubmodulesModel from "../AdminSubModules/admin.submodules.model";
 const phaseHandler = {
 
     createPhase: async (data: any): Promise<ApiResponse> => {
-        const { title, points, subModuleId } = data;
+        const { title,reflection, points, subModuleId } = data;
 
         const obj: any = {
-            title: {}
+            title: {},
+            reflection: {}
         };
 
         const langs = Object.values(languages);
 
         await Promise.all(
             langs.map(async (lang: string) => {
-                const [translatedTitle] = await Promise.all([
-                    translateText(title, lang)
+                const [translatedTitle,translatedReflection] = await Promise.all([
+                    translateText(title, lang),
+                    translateText(reflection, lang),
                 ]);
 
                 obj.title[lang] = translatedTitle;
+                obj.reflection[lang] = translatedReflection;
             })
         );
         const createPhase = await adminPhasesModel.create({
@@ -41,13 +44,14 @@ const phaseHandler = {
     },
 
     updatePhase: async (data: any): Promise<ApiResponse> => {
-        const { title, points, lang, phaseId } = data
+        const { title,reflection, points, lang, phaseId } = data
         const isModuleExist = await adminPhasesModel.findOne({ _id: phaseId, status: USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return showResponse(false, responseMessage.common.phase_not_found, null, statusCodes.API_ERROR)
         }
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
+            ...(reflection && { [`reflection.${lang}`]: reflection }),
             ...(points && { points: points }),
         };
         const updatePhase = await adminPhasesModel.findByIdAndUpdate(
@@ -76,8 +80,7 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
-                    description: `$description.${lang}`,
-
+                    reflection: `$reflection.${lang}`
                 }
             }
         ]);
@@ -86,6 +89,7 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    reflection: `$reflection.${lang}`
                 }
             },
             {
@@ -107,6 +111,7 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    reflection: `$reflection.${lang}`
                 }
             }
         ])

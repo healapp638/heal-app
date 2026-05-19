@@ -22,16 +22,19 @@ const admin_phases_model_1 = __importDefault(require("./admin.phases.model"));
 const admin_submodules_model_1 = __importDefault(require("../AdminSubModules/admin.submodules.model"));
 const phaseHandler = {
     createPhase: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, points, subModuleId } = data;
+        const { title, reflection, points, subModuleId } = data;
         const obj = {
-            title: {}
+            title: {},
+            reflection: {}
         };
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-            const [translatedTitle] = yield Promise.all([
-                (0, langauge_translate_helper_1.translateText)(title, lang)
+            const [translatedTitle, translatedReflection] = yield Promise.all([
+                (0, langauge_translate_helper_1.translateText)(title, lang),
+                (0, langauge_translate_helper_1.translateText)(reflection, lang),
             ]);
             obj.title[lang] = translatedTitle;
+            obj.reflection[lang] = translatedReflection;
         })));
         const createPhase = yield admin_phases_model_1.default.create({
             title: obj.title,
@@ -44,12 +47,12 @@ const phaseHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, null, statusCodes_1.default.SUCCESS);
     }),
     updatePhase: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { title, points, lang, phaseId } = data;
+        const { title, reflection, points, lang, phaseId } = data;
         const isModuleExist = yield admin_phases_model_1.default.findOne({ _id: phaseId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.phase_not_found, null, statusCodes_1.default.API_ERROR);
         }
-        const obj = Object.assign(Object.assign({}, (title && { [`title.${lang}`]: title })), (points && { points: points }));
+        const obj = Object.assign(Object.assign(Object.assign({}, (title && { [`title.${lang}`]: title })), (reflection && { [`reflection.${lang}`]: reflection })), (points && { points: points }));
         const updatePhase = yield admin_phases_model_1.default.findByIdAndUpdate(phaseId, { $set: obj }, { new: true });
         if (!updatePhase) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);
@@ -70,7 +73,7 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
-                    description: `$description.${lang}`,
+                    reflection: `$reflection.${lang}`
                 }
             }
         ]);
@@ -79,6 +82,7 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    reflection: `$reflection.${lang}`
                 }
             },
             {
@@ -99,6 +103,7 @@ const phaseHandler = {
             {
                 $addFields: {
                     title: `$title.${lang}`,
+                    reflection: `$reflection.${lang}`
                 }
             }
         ]);

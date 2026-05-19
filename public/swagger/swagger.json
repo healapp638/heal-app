@@ -412,9 +412,6 @@
 									"phase_id": {
 										"type": "string"
 									},
-									"exercise_details_id": {
-										"type": "string"
-									},
 									"exercise_id": {
 										"type": "string"
 									}
@@ -422,7 +419,6 @@
 								"required": [
 									"reflection",
 									"phase_id",
-									"exercise_details_id",
 									"exercise_id"
 								],
 								"type": "object"
@@ -1019,6 +1015,255 @@
 					}
 				],
 				"parameters": []
+			}
+		},
+		"/user/healyChat/sendMessage": {
+			"post": {
+				"operationId": "SendMessage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "send message",
+				"tags": [
+					"User Healy Chat Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"role": {
+										"type": "string"
+									},
+									"conversation_id": {
+										"type": "string"
+									},
+									"message": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"role",
+									"message"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/healyChat/getRandomQuestions": {
+			"get": {
+				"operationId": "GetRandomQuestions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "get random questions",
+				"tags": [
+					"User Healy Chat Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/user/healyChat/getMessageList": {
+			"post": {
+				"operationId": "GetMessageList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "get message List",
+				"tags": [
+					"User Healy Chat Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"limit": {
+										"type": "number",
+										"format": "double"
+									},
+									"page": {
+										"type": "number",
+										"format": "double"
+									},
+									"conversation_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"limit",
+									"page",
+									"conversation_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/healyChat/aiSupportResponse": {
+			"post": {
+				"operationId": "AiSupportResponse",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "ai support response",
+				"tags": [
+					"User Healy Chat Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"message": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"message"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/healyChat/getConversationList": {
+			"get": {
+				"operationId": "GetConversationList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "get conversations list",
+				"tags": [
+					"User Healy Chat Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort_column",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sort_direction",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/user/common/contactus/fill": {
@@ -3300,6 +3545,9 @@
 										"type": "number",
 										"format": "double"
 									},
+									"reflection": {
+										"type": "string"
+									},
 									"title": {
 										"type": "string"
 									}
@@ -3307,6 +3555,7 @@
 								"required": [
 									"subModuleId",
 									"points",
+									"reflection",
 									"title"
 								],
 								"type": "object"
@@ -3356,6 +3605,9 @@
 										"type": "number",
 										"format": "double"
 									},
+									"reflection": {
+										"type": "string"
+									},
 									"title": {
 										"type": "string"
 									}
@@ -3364,6 +3616,7 @@
 									"phaseId",
 									"lang",
 									"points",
+									"reflection",
 									"title"
 								],
 								"type": "object"
@@ -4825,6 +5078,288 @@
 					{
 						"in": "query",
 						"name": "exercise_id",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lang",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/exercise/create_mcq_exercise": {
+			"post": {
+				"operationId": "CreateMcqExercise",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Exercise"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"phase_id": {
+										"type": "string"
+									},
+									"mcq": {
+										"items": {
+											"type": "string"
+										},
+										"type": "array"
+									},
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"phase_id",
+									"mcq",
+									"description",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/exercise/update_mcq_exercise": {
+			"post": {
+				"operationId": "UpdateMcqExercise",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Exercise"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"lang": {
+										"type": "string"
+									},
+									"mcqexercise_id": {
+										"type": "string"
+									},
+									"mcq": {
+										"items": {
+											"type": "string"
+										},
+										"type": "array"
+									},
+									"description": {
+										"type": "string"
+									},
+									"title": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"lang",
+									"mcqexercise_id",
+									"mcq",
+									"description",
+									"title"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/exercise/delete_mcq_exercise": {
+			"delete": {
+				"operationId": "DeleteMcqExercise",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Exercise"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"status": {
+										"type": "string"
+									},
+									"mcqexercise_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"status",
+									"mcqexercise_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/admin/exercise/list_mcq_exercise": {
+			"get": {
+				"operationId": "ListMcqExercise",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Exercise"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "lang",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "phase_id",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/admin/exercise/single_mcq_exercise": {
+			"get": {
+				"operationId": "SingleMcqExercise",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Admin Exercise"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "mcqexercise_id",
 						"required": false,
 						"schema": {
 							"type": "string"

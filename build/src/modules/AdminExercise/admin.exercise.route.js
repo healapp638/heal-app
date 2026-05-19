@@ -79,4 +79,34 @@ router.get('/single_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0,
     const result = yield controller.singleExercise(exercise_id, lang);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/create_mcq_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, description, mcq, phase_id } = req.body;
+    const controller = new admin_exercise_controller_1.default(req, res);
+    const result = yield controller.createMcqExercise({ title, description, mcq, phase_id });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/update_mcq_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, description, mcq, mcqexercise_id, lang } = req.body;
+    const controller = new admin_exercise_controller_1.default(req, res);
+    const result = yield controller.updateMcqExercise({ title, description, mcq, mcqexercise_id, lang });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.delete('/delete_mcq_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { mcqexercise_id, status } = req.body;
+    const controller = new admin_exercise_controller_1.default(req, res);
+    const result = yield controller.deleteMcqExercise({ mcqexercise_id, status });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/list_mcq_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { page, limit, search, lang, phase_id } = req.query;
+    const controller = new admin_exercise_controller_1.default(req, res);
+    const result = yield controller.listMcqExercise(page, limit, search, lang, phase_id);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/single_mcq_exercise', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { mcqexercise_id, lang } = req.query;
+    const controller = new admin_exercise_controller_1.default(req, res);
+    const result = yield controller.singleMcqExercise(mcqexercise_id, lang);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;
