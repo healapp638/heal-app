@@ -72,7 +72,7 @@ const ThemeMixesHeader = ({
             resizeMode="contain"
           />
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             triggerHaptic('impactMedium');
             return setShowCreditsModal(true);
@@ -82,7 +82,7 @@ const ThemeMixesHeader = ({
           <SolidText style={styles.unlockText}>
             {localization.appkeys.unlockAll}
           </SolidText>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       <SolidText style={styles.title}>{localization.appkeys.themes}</SolidText>

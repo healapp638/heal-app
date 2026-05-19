@@ -115,8 +115,8 @@ const HomeHeader = ({
             source={images.crown}
             tintColor={colors.brown}
             style={{
-              height: 19,
-              width: 19,
+              height: 21,
+              width: 21,
             }} // Reusing same icon size constraints
             resizeMode="contain"
           />

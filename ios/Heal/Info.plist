@@ -95,6 +95,7 @@
 		<string>Recoleta Alt Thin.otf</string>
 		<string>Recoleta Black.otf</string>
 		<string>Recoleta Alt SemiBold.otf</string>
+		<string>SregsSerifDisplay-SemiBold.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

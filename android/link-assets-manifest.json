@@ -124,6 +124,10 @@
     {
       "path": "assets/fonts/Recoleta SemiBold.otf",
       "sha1": "88b512b805c461e8705b67f1a82e2b1ca9ef76d0"
+    },
+    {
+      "path": "assets/fonts/SregsSerifDisplay-SemiBold.otf",
+      "sha1": "5ad08107027f1f2da692053735d44dad76137850"
     }
   ]
 }

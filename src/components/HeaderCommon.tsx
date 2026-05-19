@@ -118,8 +118,8 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
               source={rightIcon}
               tintColor={activeTintColor}
               style={{
-                height: 19,
-                width: 19,
+                height: 21,
+                width: 21,
               }} // Reusing same icon size constraints
               resizeMode="contain"
             />
@@ -153,8 +153,8 @@ const useStyles = (colors: any) =>
       alignItems: 'center',
     },
     backIcon: {
-      width: 14,
-      height: 14,
+      width: 16,
+      height: 16,
     },
     title: {
       fontFamily: AppFonts.medium,

@@ -98,7 +98,7 @@ const QuoteItem = ({
                   height: 1,
                 },
                 textShadowRadius: 10,
-                fontFamily: AppFonts.recoBold,
+                fontFamily: AppFonts.sregsSerifDisplaySemiBold,
               },
             ]}
           >

@@ -19,8 +19,8 @@ const style = (colors: any) =>
       paddingHorizontal: 20,
     },
     backIcon: {
-      width: 14,
-      height: 14,
+      width: 16,
+      height: 16,
       tintColor: colors.brown,
     },
     unlockBtn: {

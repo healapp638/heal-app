@@ -4,7 +4,7 @@ import SolidView from '../../../../components/SolidView';
 import HomeHeader from '../../../../components/HomeHeader';
 import { LocalizationContext } from '../../../../localization/localization';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useTheme, useFocusEffect } from '@react-navigation/native';
 import ProgressTrackerCard from '../../../../components/ProgressTrackerCard';
 import DailyWeeklyToggle from '../../../../components/DailyWeeklyToggle';
 import ChallengeList from '../../../../components/ChallengeList';
@@ -19,7 +19,6 @@ import SolidText from '../../../../components/SolidText';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import moment from 'moment';
-import { useTheme } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 const Challenges = () => {
   const navigation = useNavigation();
@@ -45,6 +44,12 @@ const Challenges = () => {
   } = useGetApi(endpoints.challenge_list, ['challenge_list', activeTab], {
     challenge_type: activeTab,
   });
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+    }, [refetch])
+  );
   const formatRemainingTime = (endDateUnix: number) => {
     const now = moment();
     const end = moment.unix(endDateUnix);
@@ -69,16 +74,18 @@ const Challenges = () => {
   };
 
   // Unified data array passed to the list component
-  const allChallenges =
-    challengeResponse?.data?.map((item: any) => ({
-      id: item._id,
-      title: item.title,
-      description: item.description,
-      points: `${item.points} Pts`,
-      badge: formatRemainingTime(item.end_date_unix),
-      isCompleted: item.isCompleted,
-      category: item.challenge_type, // 'daily' or 'weekly'
-    })) || [];
+  const challengeData = challengeResponse && challengeResponse.data;
+  const allChallenges = Array.isArray(challengeData)
+    ? challengeData.map((item: any) => ({
+        id: item._id,
+        title: item.title,
+        description: item.description,
+        points: `${item.points} Pts`,
+        badge: formatRemainingTime(item.end_date_unix),
+        isCompleted: item.isCompleted,
+        category: item.challenge_type, // 'daily' or 'weekly'
+      }))
+    : [];
   return (
     <SolidView
       isScrollEnabled={false}

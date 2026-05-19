@@ -5,7 +5,6 @@ const AppFonts = {
   recoMedium: Platform.OS === 'ios' ? 'Recoleta-Medium' : 'Recoleta Medium',
   recoSemiBold: Platform.OS === 'ios' ? 'Recoleta-SemiBold' : 'Recoleta SemiBold',
   recoBold: Platform.OS === 'ios' ? 'Recoleta-Bold' : 'Recoleta Bold',
-
   semiBold: 'Poppins-SemiBold',
   regular: 'Poppins-Regular',
   italic: 'Poppins-Italic',
@@ -13,6 +12,7 @@ const AppFonts = {
   medium: 'Poppins-Medium',
   light: 'Poppins-Light',
   bold: 'Poppins-Bold',
+  sregsSerifDisplaySemiBold: 'SregsSerifDisplay-SemiBold',
 
   // font name example : Bold:'SFUIText-Bold' ,  Regular:'SFUIText-Regular',
 };
