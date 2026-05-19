@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateStartSubModuleList = exports.validateStartLesson = exports.validateCompletePhase = exports.validateCompleteLesson = exports.validateExerciseList = exports.validateExerciseDetailList = exports.validatePhaseList = exports.validateModuleList = void 0;
+exports.validateStartSubModuleList = exports.validateStartLesson = exports.validateCompletePhase = exports.validateCompleteLesson = exports.validateExerciseList = exports.validateExerciseDetailList = exports.validateExcerciseMcqAnswerList = exports.validateExerciseMcqList = exports.validateAddMcqAnswer = exports.validatePhaseList = exports.validateModuleList = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validateModuleList = (data) => {
     const schema = joi_1.default.object({
@@ -23,6 +23,33 @@ const validatePhaseList = (data) => {
     return schema.validate(data);
 };
 exports.validatePhaseList = validatePhaseList;
+const validateAddMcqAnswer = (data) => {
+    const schema = joi_1.default.object({
+        mcq_exercise_id: joi_1.default.string().required(),
+        mcq_id: joi_1.default.string().required(),
+        phase_id: joi_1.default.string().required(),
+    });
+    return schema.validate(data);
+};
+exports.validateAddMcqAnswer = validateAddMcqAnswer;
+const validateExerciseMcqList = (data) => {
+    const schema = joi_1.default.object({
+        phase_id: joi_1.default.string().required(),
+        cursor: joi_1.default.string().optional(),
+        limit: joi_1.default.number().optional(),
+    });
+    return schema.validate(data);
+};
+exports.validateExerciseMcqList = validateExerciseMcqList;
+const validateExcerciseMcqAnswerList = (data) => {
+    const schema = joi_1.default.object({
+        phase_id: joi_1.default.string().required(),
+        cursor: joi_1.default.string().optional(),
+        limit: joi_1.default.number().optional(),
+    });
+    return schema.validate(data);
+};
+exports.validateExcerciseMcqAnswerList = validateExcerciseMcqAnswerList;
 const validateExerciseDetailList = (data) => {
     const schema = joi_1.default.object({
         phase_id: joi_1.default.string().required(),

@@ -63,6 +63,36 @@ let UserModulesController = class UserModulesController extends tsoa_1.Controlle
             return wrappedFunc({ sub_module_id, cursor, limit }, this.userId); // Invoking the wrapped function 
         });
     }
+    addMcqAnswer(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateAddMcqAnswer)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.addMcqAnswer);
+            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+        });
+    }
+    excerciseMcqList(phase_id, cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateExerciseMcqList)({ phase_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.excerciseMcqList);
+            return wrappedFunc({ phase_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
+    excerciseMcqAnswerList(phase_id, cursor, limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateExcerciseMcqAnswerList)({ phase_id, cursor, limit });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.excerciseMcqAnswerList);
+            return wrappedFunc({ phase_id, cursor, limit }, this.userId); // Invoking the wrapped function 
+        });
+    }
     exerciseDetailList(phase_id, cursor, limit) {
         return __awaiter(this, void 0, void 0, function* () {
             const validate = (0, user_modules_validator_1.validateExerciseDetailList)({ phase_id });
@@ -153,6 +183,34 @@ __decorate([
     __metadata("design:paramtypes", [String, String, Number]),
     __metadata("design:returntype", Promise)
 ], UserModulesController.prototype, "phaseList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/add_mcq_answer"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "addMcqAnswer", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/exercise_mcq_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "excerciseMcqList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Get)("/exercise_answer_list"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, Number]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "excerciseMcqAnswerList", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("/exercise_detail_list"),

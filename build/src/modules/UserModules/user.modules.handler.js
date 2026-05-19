@@ -243,6 +243,7 @@ const UserCommonHandler = {
             {
                 $addFields: {
                     title: `$title.${userLang}`,
+                    reflection: `$reflection.${userLang}`
                 }
             },
             {
@@ -307,7 +308,7 @@ const UserCommonHandler = {
     }),
     addMcqAnswer: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { mcq_exercise_id, mcq_id } = data;
+            const { mcq_exercise_id, mcq_id, phase_id } = data;
             // ======================================================
             // CHECK EXERCISE EXISTS
             // ======================================================
@@ -346,7 +347,8 @@ const UserCommonHandler = {
             const createAnswer = yield user_mcqanswer_exercise_model_1.default.create({
                 user_id: (0, common_helper_1.convertToObjectId)(user_id),
                 mcq_exercise_id: (0, common_helper_1.convertToObjectId)(mcq_exercise_id),
-                mcq_id: (0, common_helper_1.convertToObjectId)(mcq_id)
+                mcq_id: (0, common_helper_1.convertToObjectId)(mcq_id),
+                phase_id: (0, common_helper_1.convertToObjectId)(phase_id)
             });
             if (!createAnswer) {
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
@@ -382,14 +384,14 @@ const UserCommonHandler = {
             },
             {
                 $addFields: {
-                    question: `$question.${userLang}`,
+                    title: `$title.${userLang}`,
                     description: `$description.${userLang}`,
                     mcq: { $map: { input: "$mcq", as: "mcq", in: { _id: "$$mcq._id", option: `$$mcq.option.${userLang}` } } }
                 }
             },
             {
                 $sort: {
-                    createdAt: -1,
+                    createdAt: 1,
                     _id: -1
                 }
             },
@@ -398,7 +400,7 @@ const UserCommonHandler = {
             },
             {
                 $project: {
-                    question: 1,
+                    title: 1,
                     description: 1,
                     mcq: 1
                 }
@@ -535,7 +537,7 @@ const UserCommonHandler = {
                 },
                 {
                     $sort: {
-                        createdAt: -1,
+                        createdAt: 1,
                         _id: -1,
                     },
                 },

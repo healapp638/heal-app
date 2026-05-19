@@ -20,6 +20,10 @@ const mcqAnswerSchema = new mongoose_1.default.Schema({
         type: mongoose_1.default.Schema.Types.ObjectId,
         required: true,
     },
+    phase_id: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        required: true,
+    },
     status: { type: Number, default: workflow_constant_1.USER_STATUS.ACTIVE },
 }, {
     timestamps: true,

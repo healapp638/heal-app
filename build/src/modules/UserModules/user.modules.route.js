@@ -36,6 +36,24 @@ router.get('/phase_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 
     const result = yield controller.phaseList(sub_module_id, cursor, limit);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/add_mcq_answer', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { mcq_exercise_id, mcq_id, phase_id } = req.body;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.addMcqAnswer({ mcq_exercise_id, mcq_id, phase_id });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/exercise_mcq_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { phase_id, cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.excerciseMcqList(phase_id, cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/exercise_answer_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { phase_id, cursor, limit } = req.query;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.excerciseMcqAnswerList(phase_id, cursor, limit);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.get('/exercise_detail_list', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { phase_id, cursor, limit } = req.query;
     const controller = new user_modules_controller_1.default(req, res);

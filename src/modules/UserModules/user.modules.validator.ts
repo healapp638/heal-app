@@ -18,6 +18,33 @@ export const validatePhaseList = (data: any) => {
     return schema.validate(data);
 }
 
+export const validateAddMcqAnswer = (data: any) => {
+    const schema = Joi.object({
+        mcq_exercise_id: Joi.string().required(),
+        mcq_id: Joi.string().required(),
+        phase_id: Joi.string().required(),
+    });
+    return schema.validate(data);
+}
+
+export const validateExerciseMcqList = (data: any) => {
+    const schema = Joi.object({
+        phase_id: Joi.string().required(),
+        cursor: Joi.string().optional(),
+        limit: Joi.number().optional(),
+    });
+    return schema.validate(data);
+}
+
+export const validateExcerciseMcqAnswerList = (data: any) => {
+    const schema = Joi.object({
+        phase_id: Joi.string().required(),
+        cursor: Joi.string().optional(),
+        limit: Joi.number().optional(),
+    });
+    return schema.validate(data);
+}
+
 export const validateExerciseDetailList = (data: any) => {
     const schema = Joi.object({
         phase_id: Joi.string().required(),

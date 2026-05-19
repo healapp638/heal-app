@@ -28,6 +28,27 @@ router.get('/phase_list', verifyTokenUser, async (req: Request | any, res: Respo
     return showOutput(res, result, result.code)
 });
 
+router.post('/add_mcq_answer', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { mcq_exercise_id, mcq_id, phase_id } = req.body;
+    const controller = new UserModulesController(req, res)
+    const result: ApiResponse = await controller.addMcqAnswer({ mcq_exercise_id, mcq_id, phase_id });
+    return showOutput(res, result, result.code)
+});
+
+router.get('/exercise_mcq_list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { phase_id, cursor, limit } = req.query;
+    const controller = new UserModulesController(req, res)
+    const result: ApiResponse = await controller.excerciseMcqList(phase_id, cursor, limit);
+    return showOutput(res, result, result.code)
+});
+
+router.get('/exercise_answer_list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { phase_id, cursor, limit } = req.query;
+    const controller = new UserModulesController(req, res)
+    const result: ApiResponse = await controller.excerciseMcqAnswerList(phase_id, cursor, limit);
+    return showOutput(res, result, result.code)
+});
+
 router.get('/exercise_detail_list', verifyTokenUser, async (req: Request | any, res: Response) => {
     const { phase_id, cursor, limit } = req.query;
     const controller = new UserModulesController(req, res)

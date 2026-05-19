@@ -20,6 +20,10 @@ const mcqAnswerSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
+        phase_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            required: true,
+        },
         status: { type: Number, default: USER_STATUS.ACTIVE },
     },
     {

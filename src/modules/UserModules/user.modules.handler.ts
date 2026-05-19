@@ -251,6 +251,7 @@ const UserCommonHandler = {
             {
                 $addFields: {
                     title: `$title.${userLang}`,
+                    reflection: `$reflection.${userLang}`
                 }
             },
             {
@@ -323,7 +324,7 @@ const UserCommonHandler = {
 
 addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
     try {
-        const {mcq_exercise_id,mcq_id} = data;
+        const {mcq_exercise_id,mcq_id,phase_id} = data;
 
         // ======================================================
         // CHECK EXERCISE EXISTS
@@ -374,7 +375,8 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
         const createAnswer = await userMcqanswerExerciseModel.create({
                 user_id:convertToObjectId(user_id),
                 mcq_exercise_id:convertToObjectId(mcq_exercise_id),
-                mcq_id:convertToObjectId(mcq_id)
+                mcq_id:convertToObjectId(mcq_id),
+                phase_id:convertToObjectId(phase_id)
             });
 
         if (!createAnswer) {
@@ -416,14 +418,14 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
             },
             {
                 $addFields: {
-                    question: `$question.${userLang}`,
+                    title: `$title.${userLang}`,
                     description: `$description.${userLang}`,
                     mcq: { $map: { input: "$mcq", as: "mcq", in: { _id: "$$mcq._id", option: `$$mcq.option.${userLang}` } } }
                 }
             },
             {
                 $sort: {
-                    createdAt: -1,
+                    createdAt: 1,
                     _id: -1
                 }
             },
@@ -432,7 +434,7 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
             },
             {
                 $project: {
-                    question: 1,
+                    title: 1,
                     description: 1,
                     mcq: 1
                 }
@@ -613,7 +615,7 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
                 {
                     $sort: {
 
-                        createdAt: -1,
+                        createdAt: 1,
                         _id: -1,
                     },
                 },
