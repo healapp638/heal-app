@@ -469,6 +469,17 @@ deleteMcqExercise: async (data: any): Promise<ApiResponse> => {
 listMcqExercise: async (page:number, limit:number, search:string, lang:string, phase_id:string):Promise<ApiResponse> => {
 
     try {
+        const phaseDetails = await adminPhasesModel.aggregate([
+            { $match: { _id: convertToObjectId(phase_id), status: { $ne: USER_STATUS.DELETED } } },
+            {
+                $addFields: {
+                    title: `$title.${lang}`,
+                    description: `$description.${lang}`,
+                    reflection: `$reflection.${lang}`,
+                }
+            }
+        ]);
+
 
         const aggregate:any[] = [
             { $match: { status: USER_STATUS.ACTIVE, phase_id: convertToObjectId(phase_id), }, },
@@ -509,7 +520,7 @@ listMcqExercise: async (page:number, limit:number, search:string, lang:string, p
         return showResponse(
             true,
             responseMessage.common.data_retreive_sucess,
-            { result, totalCount },
+            { phase_details:phaseDetails[0],result, totalCount },
             statusCodes.SUCCESS
         );
 

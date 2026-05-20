@@ -341,6 +341,16 @@ const exerciseHandler = {
     }),
     listMcqExercise: (page, limit, search, lang, phase_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
+            const phaseDetails = yield admin_phases_model_1.default.aggregate([
+                { $match: { _id: (0, common_helper_1.convertToObjectId)(phase_id), status: { $ne: workflow_constant_1.USER_STATUS.DELETED } } },
+                {
+                    $addFields: {
+                        title: `$title.${lang}`,
+                        description: `$description.${lang}`,
+                        reflection: `$reflection.${lang}`,
+                    }
+                }
+            ]);
             const aggregate = [
                 { $match: { status: workflow_constant_1.USER_STATUS.ACTIVE, phase_id: (0, common_helper_1.convertToObjectId)(phase_id), }, },
                 {
@@ -371,7 +381,7 @@ const exerciseHandler = {
             ];
             const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_mcqexercise_model_1.default, aggregate, page, limit);
             const result = yield admin_mcqexercise_model_1.default.aggregate(aggregation);
-            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { phase_details: phaseDetails[0], result, totalCount }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
             console.log(error, "LIST_MCQ_EXERCISE_ERROR");
