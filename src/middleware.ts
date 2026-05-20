@@ -37,6 +37,7 @@ export function middleware(req: NextRequest) {
     ROUTES.PRIVATE.ADDLESSONS,
     ROUTES.PRIVATE.ADDEXERCISE,
     ROUTES.PRIVATE.ABOUTUS,
+    ROUTES.PRIVATE.ADDMCQEXERCISE,
 
   ];
 
@@ -90,6 +91,7 @@ export const config = {
     "/affirmation",
     "/category",
     "/category/theme",
+    "/module/addMcqExercise",
 
   ],
 };

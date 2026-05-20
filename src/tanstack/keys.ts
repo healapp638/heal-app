@@ -75,6 +75,11 @@ const MUTATION_KEYS = {
     HOMETHEME_DELETE: "delete-hometheme",
     HOMETHEME_LIST: "list-hometheme",
     HOMETHEME_DETAIL: "hometheme-detail",
+    MCQ_EXERCISE_LIST:"mcq-exercise-list",
+    MCQ_EXERCISE_DETAIL:"mcq-exercise-detail",
+    MCQ_EXERCISE_CREATE:"mcq-exercise-create",
+    MCQ_EXERCISE_UPDATE:"mcq-exercise-update",
+    MCQ_EXERCISE_DELETE:"mcq-exercise-delete",
 }
 
 export { QUERY_KEYS, MUTATION_KEYS }

@@ -116,7 +116,7 @@ export default function AddPhase() {
     };
 
     const handleAddLesson = (phaseId: string) => {
-        route.push(`${ROUTES.PRIVATE.ADDLESSONS}/${phaseId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}&subModuleTitle=${SubModuleData?.title}&subModuleId=${subModuleId}`)
+        route.push(`${ROUTES.PRIVATE.ADDMCQEXERCISE}/${phaseId}?themeTitle=${themeTitle}&themeId=${themeId}&moduleTitle=${moduleTitle}&moduleID=${moduleID}&subModuleTitle=${SubModuleData?.title}&subModuleId=${subModuleId}`)
     };
 
     const { mutateAsync: DeletePhase, isPending: isDeleting } = useAppMutate({
@@ -240,7 +240,7 @@ export default function AddPhase() {
             align: "center",
             render: (_text: any, record: any) => (
                 <div className="flex gap-2  justify-center">
-                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation(); handleAddLesson(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
+                    <IconButton icon={<FaPlus size={20} />} onClick={(e) => { e.stopPropagation();handleAddLesson(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
                     <IconButton icon={<FaEye size={20} />} onClick={(e) => { e.stopPropagation(); setOpenPhaseViewModal(true); setSelectPhase(record?._id) }} className="" />
                     <IconButton icon={<FiEdit size={20} />} onClick={(e) => { e.stopPropagation(); setOpenPhaseUpdateModal(true); setSelectPhase(record?._id) }} className="text-maincolor! hover:text-maincolor!" />
                     <IconButton icon={<FiTrash2 size={20} />} onClick={(e) => { e.stopPropagation(); setOpenDeletePhaseModal(true); setSelectPhase(record?._id) }} className="" />

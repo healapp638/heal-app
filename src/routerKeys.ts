@@ -32,6 +32,7 @@ export const ROUTES = {
         AFFIRMATION:"/affirmation",
         CATEGORY:"/category",
         HOMETHEME:"/category/theme",
+        ADDMCQEXERCISE:"/module/addMcqExercise",
         
     },
 

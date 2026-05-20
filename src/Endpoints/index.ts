@@ -76,6 +76,11 @@ export const ENDPOINTS = {
         HOMETHEME_UPDATE:"admin/homeTheme/updateHomeTheme",
         HOMETHEME_DELETE:"admin/homeTheme/deleteHomeTheme",
         HOMETHEME_LIST:"admin/homeTheme/listHomeTheme",
-        HOMETHEME_DETAIL:"admin/homeTheme/homeThemeDetails"
+        HOMETHEME_DETAIL:"admin/homeTheme/homeThemeDetails",
+        MCQ_EXERCISE_LIST:"admin/exercise/list_mcq_exercise",
+        MCQ_EXERCISE_CREATE:"admin/exercise/create_mcq_exercise",
+        MCQ_EXERCISE_UPDATE:"admin/exercise/update_mcq_exercise",
+        MCQ_EXERCISE_DELETE:"admin/exercise/delete_mcq_exercise",
+        MCQ_EXERCISE_DETAIL:"admin/exercise/single_mcq_exercise",
     }
 }
