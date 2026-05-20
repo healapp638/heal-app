@@ -7,7 +7,6 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import ReactNativeBiometrics from 'react-native-biometrics';
 import useBiometric from '../../../../hooks/useBiometric';
 import SolidView from '../../../../components/SolidView';
 import { useNavigation, useTheme } from '@react-navigation/native';

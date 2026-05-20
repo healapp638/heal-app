@@ -148,10 +148,13 @@ const useSocialLogin = () => {
         nonce,
       );
       const res = await auth().signInWithCredential(appleCredential);
-      const email = res?.additionalUserInfo?.profile?.email;
+      const email =
+        res?.additionalUserInfo?.profile?.email || res?.user?.email || '';
       const name =
         res.user?.displayName ||
-        appleAuthRequestResponse?.fullName?.givenName ||
+        (appleAuthRequestResponse?.fullName?.givenName
+          ? `${appleAuthRequestResponse.fullName.givenName || ''} ${appleAuthRequestResponse.fullName.familyName || ''}`.trim()
+          : '') ||
         '';
       const uID = res.user?.uid ?? '';
 

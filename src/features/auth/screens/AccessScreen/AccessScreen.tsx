@@ -8,8 +8,6 @@ import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import auth from '@react-native-firebase/auth';
 import useSocialLogin from '../../../../hooks/useSocialLogin';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import useBiometric from '../../../../hooks/useBiometric';

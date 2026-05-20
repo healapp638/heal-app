@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { cloneElement, useContext, useState } from 'react';
 import { Platform, View, ScrollView } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import HomeHeader from '../../../../components/HomeHeader';
@@ -77,14 +77,14 @@ const Challenges = () => {
   const challengeData = challengeResponse && challengeResponse.data;
   const allChallenges = Array.isArray(challengeData)
     ? challengeData.map((item: any) => ({
-        id: item._id,
-        title: item.title,
-        description: item.description,
-        points: `${item.points} Pts`,
-        badge: formatRemainingTime(item.end_date_unix),
-        isCompleted: item.isCompleted,
-        category: item.challenge_type, // 'daily' or 'weekly'
-      }))
+      id: item._id,
+      title: item.title,
+      description: item.description,
+      points: `${item.points} Pts`,
+      badge: formatRemainingTime(item.end_date_unix),
+      isCompleted: item.isCompleted,
+      category: item.challenge_type, // 'daily' or 'weekly'
+    }))
     : [];
   return (
     <SolidView
@@ -142,7 +142,7 @@ const Challenges = () => {
               weeklyLabel={localization.appkeys?.weekly || 'Weekly'}
             />
 
-            {isLoading ? (
+            {isLoading || !challengeData || allChallenges.length === 0 ? (
               <View
                 style={{
                   marginTop: 60,

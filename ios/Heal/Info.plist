@@ -27,7 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.81341323740-mortdk1sobcndmfb4omb5660i2e9r6p7</string>
+				<string>com.googleusercontent.apps.81341323740-orqqm3dk6msrqgsohpird5nr5ap7qtt6</string>
 			</array>
 		</dict>
 	</array>
@@ -48,6 +48,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Need camera permission to add/update user profile image &amp; gallery</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Allow Heal to use FaceID for secure authentication</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Need permission to fetch nearby users</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -58,8 +60,6 @@
 	<string>Need photo library permission to add/update user profile image &amp; gallery</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>Heal uses speech recognition to transcribe your journal entries</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Allow Heal to use FaceID for secure authentication</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UIAppFonts</key>

@@ -156,7 +156,7 @@ const Modules = () => {
           <HorizontalModuleList
             data={startedModules.filter(
               (item: any) =>
-                item.completed_phase_count < item.total_phase_count,
+                item?.completed_phase_count < item?.total_phase_count,
             )}
             isLoading={isStartedLoading}
             localization={localization}
@@ -302,7 +302,7 @@ const Modules = () => {
               safeSpaceLabel={
                 localization.appkeys?.modulesSubtitle || 'Choose guided support'
               }
-              onStreakPress={() => {}}
+              onStreakPress={() => { }}
             />
           </View>
           <FlatList
