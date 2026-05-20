@@ -927,26 +927,29 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
             return showResponse(false, getMessage(userLang || 'en', 'error_while_completing_lesson'), null, statusCodes.API_ERROR);
         }
 
-        const totalLessonInPhase = await adminMcqexerciseModel.countDocuments({
-            phase_id: convertToObjectId(phase_id),
-            status: USER_STATUS.ACTIVE
-        })
+        // const totalLessonInPhase = await adminMcqexerciseModel.countDocuments({
+        //     phase_id: convertToObjectId(phase_id),
+        //     status: USER_STATUS.ACTIVE
+        // })
+        // console.log(totalLessonInPhase, "totalLessonInPhase")
 
-        const completedLessonCount = await userModulesCompleteLessonModel.countDocuments({
-            user_id: convertToObjectId(userId),
-            phase_id: convertToObjectId(phase_id),
-            status: USER_STATUS.ACTIVE
-        });
+        // const completedLessonCount = await userModulesCompleteLessonModel.countDocuments({
+        //     user_id: convertToObjectId(userId),
+        //     phase_id: convertToObjectId(phase_id),
+        //     status: USER_STATUS.ACTIVE
+        // });
+        // console.log(completedLessonCount, "completedLessonCount")
 
         const submodule = await adminPhasesModel.findOne({
             _id: convertToObjectId(phase_id),
             status: USER_STATUS.ACTIVE
         });
+        console.log(submodule, "submodule")
 
         const subModuleId: any = submodule?.subModuleId;
         console.log(subModuleId, "subModuleId")
 
-        if (totalLessonInPhase === completedLessonCount) {
+        if (completedLessonData) {
             await userModulesCompletePhaseModel.create({
                 user_id: convertToObjectId(userId),
                 phase_id: convertToObjectId(phase_id),
@@ -955,17 +958,18 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
             });
         }
 
-
         const totalPhaseInSubModule = await adminPhasesModel.countDocuments({
             subModuleId: convertToObjectId(subModuleId),
             status: USER_STATUS.ACTIVE
         })
+        console.log(totalPhaseInSubModule, "totalPhaseInSubModule")
 
         const completedPhaseInSubModule = await userModulesCompletePhaseModel.countDocuments({
             user_id: convertToObjectId(userId),
             sub_module_id: convertToObjectId(subModuleId),
             status: USER_STATUS.ACTIVE
         })
+        console.log(completedPhaseInSubModule, "completedPhaseInSubModule")
 
         if (totalPhaseInSubModule === completedPhaseInSubModule) {
             await userModuleStartLessonModel.updateOne({

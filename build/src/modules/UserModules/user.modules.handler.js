@@ -805,22 +805,25 @@ const UserCommonHandler = {
         if (!completedLessonData) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(userLang || 'en', 'error_while_completing_lesson'), null, statusCodes_1.default.API_ERROR);
         }
-        const totalLessonInPhase = yield admin_mcqexercise_model_1.default.countDocuments({
-            phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
-            status: workflow_constant_1.USER_STATUS.ACTIVE
-        });
-        const completedLessonCount = yield user_modules_complete_lesson_model_1.default.countDocuments({
-            user_id: (0, common_helper_1.convertToObjectId)(userId),
-            phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
-            status: workflow_constant_1.USER_STATUS.ACTIVE
-        });
+        // const totalLessonInPhase = await adminMcqexerciseModel.countDocuments({
+        //     phase_id: convertToObjectId(phase_id),
+        //     status: USER_STATUS.ACTIVE
+        // })
+        // console.log(totalLessonInPhase, "totalLessonInPhase")
+        // const completedLessonCount = await userModulesCompleteLessonModel.countDocuments({
+        //     user_id: convertToObjectId(userId),
+        //     phase_id: convertToObjectId(phase_id),
+        //     status: USER_STATUS.ACTIVE
+        // });
+        // console.log(completedLessonCount, "completedLessonCount")
         const submodule = yield admin_phases_model_1.default.findOne({
             _id: (0, common_helper_1.convertToObjectId)(phase_id),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
+        console.log(submodule, "submodule");
         const subModuleId = submodule === null || submodule === void 0 ? void 0 : submodule.subModuleId;
         console.log(subModuleId, "subModuleId");
-        if (totalLessonInPhase === completedLessonCount) {
+        if (completedLessonData) {
             yield user_modules_complete_phase_model_1.default.create({
                 user_id: (0, common_helper_1.convertToObjectId)(userId),
                 phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
@@ -832,11 +835,13 @@ const UserCommonHandler = {
             subModuleId: (0, common_helper_1.convertToObjectId)(subModuleId),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
+        console.log(totalPhaseInSubModule, "totalPhaseInSubModule");
         const completedPhaseInSubModule = yield user_modules_complete_phase_model_1.default.countDocuments({
             user_id: (0, common_helper_1.convertToObjectId)(userId),
             sub_module_id: (0, common_helper_1.convertToObjectId)(subModuleId),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
+        console.log(completedPhaseInSubModule, "completedPhaseInSubModule");
         if (totalPhaseInSubModule === completedPhaseInSubModule) {
             yield user_module_start_lesson_model_1.default.updateOne({
                 user_id: (0, common_helper_1.convertToObjectId)(userId),
