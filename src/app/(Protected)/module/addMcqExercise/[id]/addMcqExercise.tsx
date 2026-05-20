@@ -18,6 +18,25 @@ import AddMcqExerciseModal from "@/components/ui/modals/addMcqExerciseModal";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 
+interface McqExerciseData {
+    _id: string;
+    title: string;
+    description?: string;
+    mcq: Array<any>;
+    status: number;
+}
+
+interface McqExerciseResult {
+    result: McqExerciseData[];
+    phase_details: {
+        title: string;
+    };
+    page: number;
+    limit: number;
+    total: number;
+    totalCount?: number;
+}
+
 export default function AddMcqExercise() {
 
     const params = useParams();
@@ -61,7 +80,7 @@ export default function AddMcqExercise() {
     };
 
 
-    const { data: mcqExerciseList } = useAppQuery<any>({
+    const { data: mcqExerciseList } = useAppQuery<McqExerciseResult>({
         queryKey: [MUTATION_KEYS.MCQ_EXERCISE_LIST, pagination, phaseId, selectedLanguage],
         url: ENDPOINTS.PRIVATE.MCQ_EXERCISE_LIST,
         options: {
@@ -159,7 +178,7 @@ export default function AddMcqExercise() {
     //     );
     // }
 
-    const columns: ColumnsType<any> = [
+    const columns: ColumnsType<McqExerciseData> = [
         {
             title: 'Sr. No.',
             key: 'number',
