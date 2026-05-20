@@ -347,95 +347,151 @@ updateMcqExercise: async (data: any): Promise<ApiResponse> => {
 
     try {
 
-        const { mcqexercise_id, title, description, phase_id, mcq = [] } = data;
+        const {
+            mcqexercise_id,
+            title,
+            description,
+            phase_id,
+            mcq
+        } = data;
 
-        const existingExercise = await adminMcqexerciseModel.findOne({ _id: convertToObjectId(mcqexercise_id), status: USER_STATUS.ACTIVE, });
+        // =====================================================
+        // CHECK EXISTING
+        // =====================================================
+
+        const existingExercise =
+            await adminMcqexerciseModel.findOne({
+                _id: convertToObjectId(mcqexercise_id),
+                status: USER_STATUS.ACTIVE,
+            });
 
         if (!existingExercise) {
 
-            return showResponse(false,responseMessage.common.not_exist,null,statusCodes.NOT_FOUND);
+            return showResponse(
+                false,
+                responseMessage.common.not_exist,
+                null,
+                statusCodes.NOT_FOUND
+            );
         }
 
         const langs = Object.values(languages);
 
-        const obj: any = {
-            title: {},
-            description: {},
-        };
+        const updateData: any = {};
 
-        // ================= TRANSLATE =================
-        await Promise.all(
+        // =====================================================
+        // TITLE
+        // =====================================================
 
-            langs.map(
-                async (lang: string) => {
+        if (title) {
 
-                    const [translatedTitle,translatedDescription] = await Promise.all([
-
-                        translateText(title,lang),
-
-                        translateText(description,lang),
-                    ]);
-
-                    obj.title[lang] = translatedTitle;
-
-                    obj.description[lang] = translatedDescription;
-                }
-            )
-        );
-
-        // ================= MCQ =================
-        const translatedMcqs: any[] = [];
-
-        for (const optionText of mcq) {
-
-            const optionObj: any = {
-                option: {},
-            };
+            const translatedTitle: any = {};
 
             await Promise.all(
+                langs.map(async (lang: string) => {
 
-                langs.map(
-                    async (lang: string) => {
-
-                        const translatedOption = await translateText(optionText, lang);
-
-                        optionObj.option[lang] = translatedOption;
-                    }
-                )
+                    translatedTitle[lang] =
+                        await translateText(title, lang);
+                })
             );
 
-            translatedMcqs.push(optionObj);
+            updateData.title = translatedTitle;
         }
 
-        // ================= UPDATE =================
-        const updatedExercise = await adminMcqexerciseModel.findOneAndUpdate(
-                { _id: convertToObjectId(mcqexercise_id), },
+        // =====================================================
+        // DESCRIPTION
+        // =====================================================
+
+        if (description) {
+
+            const translatedDescription: any = {};
+
+            await Promise.all(
+                langs.map(async (lang: string) => {
+
+                    translatedDescription[lang] =
+                        await translateText(description, lang);
+                })
+            );
+
+            updateData.description = translatedDescription;
+        }
+
+        // =====================================================
+        // MCQ OPTIONS
+        // =====================================================
+
+        if (mcq && Array.isArray(mcq)) {
+
+            const translatedMcqs: any[] = [];
+
+            for (const optionText of mcq) {
+
+                const optionObj: any = {
+                    option: {},
+                };
+
+                await Promise.all(
+                    langs.map(async (lang: string) => {
+
+                        optionObj.option[lang] =
+                            await translateText(optionText, lang);
+                    })
+                );
+
+                translatedMcqs.push(optionObj);
+            }
+
+            updateData.mcq = translatedMcqs;
+        }
+
+        // =====================================================
+        // PHASE
+        // =====================================================
+
+        if (phase_id) {
+
+            updateData.phase_id =
+                convertToObjectId(phase_id);
+        }
+
+        // =====================================================
+        // UPDATE
+        // =====================================================
+
+        const updatedExercise =
+            await adminMcqexerciseModel.findOneAndUpdate(
                 {
-                    $set: {
-                        title: obj.title,
-                        description: obj.description,
-                        phase_id: convertToObjectId(
-                            phase_id
-                            ),
-
-                        mcq: translatedMcqs,
-                    },
+                    _id: convertToObjectId(mcqexercise_id),
                 },
-
+                {
+                    $set: updateData,
+                },
                 {
                     new: true,
                 }
             );
 
-        return showResponse(true, responseMessage.common.updated_sucessfully, updatedExercise, statusCodes.SUCCESS);
+        return showResponse(
+            true,
+            responseMessage.common.updated_sucessfully,
+            updatedExercise,
+            statusCodes.SUCCESS
+        );
 
     } catch (error) {
 
-        console.log(error,
+        console.log(
+            error,
             "UPDATE_MCQ_EXERCISE_ERROR"
         );
 
-        return showResponse(false, responseMessage.common.server_error, null, statusCodes.API_ERROR);
+        return showResponse(
+            false,
+            responseMessage.common.server_error,
+            null,
+            statusCodes.API_ERROR
+        );
     }
 },
 deleteMcqExercise: async (data: any): Promise<ApiResponse> => {

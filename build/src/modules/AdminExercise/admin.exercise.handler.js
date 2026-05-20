@@ -275,45 +275,72 @@ const exerciseHandler = {
     }),
     updateMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { mcqexercise_id, title, description, phase_id, mcq = [] } = data;
-            const existingExercise = yield admin_mcqexercise_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), status: workflow_constant_1.USER_STATUS.ACTIVE, });
+            const { mcqexercise_id, title, description, phase_id, mcq } = data;
+            // =====================================================
+            // CHECK EXISTING
+            // =====================================================
+            const existingExercise = yield admin_mcqexercise_model_1.default.findOne({
+                _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id),
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+            });
             if (!existingExercise) {
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
             }
             const langs = Object.values(workflow_constant_1.languages);
-            const obj = {
-                title: {},
-                description: {},
-            };
-            // ================= TRANSLATE =================
-            yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                const [translatedTitle, translatedDescription] = yield Promise.all([
-                    (0, langauge_translate_helper_1.translateText)(title, lang),
-                    (0, langauge_translate_helper_1.translateText)(description, lang),
-                ]);
-                obj.title[lang] = translatedTitle;
-                obj.description[lang] = translatedDescription;
-            })));
-            // ================= MCQ =================
-            const translatedMcqs = [];
-            for (const optionText of mcq) {
-                const optionObj = {
-                    option: {},
-                };
+            const updateData = {};
+            // =====================================================
+            // TITLE
+            // =====================================================
+            if (title) {
+                const translatedTitle = {};
                 yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                    const translatedOption = yield (0, langauge_translate_helper_1.translateText)(optionText, lang);
-                    optionObj.option[lang] = translatedOption;
+                    translatedTitle[lang] =
+                        yield (0, langauge_translate_helper_1.translateText)(title, lang);
                 })));
-                translatedMcqs.push(optionObj);
+                updateData.title = translatedTitle;
             }
-            // ================= UPDATE =================
-            const updatedExercise = yield admin_mcqexercise_model_1.default.findOneAndUpdate({ _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id), }, {
-                $set: {
-                    title: obj.title,
-                    description: obj.description,
-                    phase_id: (0, common_helper_1.convertToObjectId)(phase_id),
-                    mcq: translatedMcqs,
-                },
+            // =====================================================
+            // DESCRIPTION
+            // =====================================================
+            if (description) {
+                const translatedDescription = {};
+                yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    translatedDescription[lang] =
+                        yield (0, langauge_translate_helper_1.translateText)(description, lang);
+                })));
+                updateData.description = translatedDescription;
+            }
+            // =====================================================
+            // MCQ OPTIONS
+            // =====================================================
+            if (mcq && Array.isArray(mcq)) {
+                const translatedMcqs = [];
+                for (const optionText of mcq) {
+                    const optionObj = {
+                        option: {},
+                    };
+                    yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                        optionObj.option[lang] =
+                            yield (0, langauge_translate_helper_1.translateText)(optionText, lang);
+                    })));
+                    translatedMcqs.push(optionObj);
+                }
+                updateData.mcq = translatedMcqs;
+            }
+            // =====================================================
+            // PHASE
+            // =====================================================
+            if (phase_id) {
+                updateData.phase_id =
+                    (0, common_helper_1.convertToObjectId)(phase_id);
+            }
+            // =====================================================
+            // UPDATE
+            // =====================================================
+            const updatedExercise = yield admin_mcqexercise_model_1.default.findOneAndUpdate({
+                _id: (0, common_helper_1.convertToObjectId)(mcqexercise_id),
+            }, {
+                $set: updateData,
             }, {
                 new: true,
             });
