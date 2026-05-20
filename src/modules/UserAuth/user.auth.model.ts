@@ -54,6 +54,8 @@ const UserSchema = new Schema(
         timeZone: { type: String, default: "" },
         lastDailyChallengeGeneratedDate: { type: Date, default: null },
         lastWeeklyChallengeGeneratedDate: { type: Date, default: null },
+        isDailyChallengeInProgress: { type: Boolean, default: false },
+        isWeeklyChallengeInProgress: { type: Boolean, default: false },
 
     },
     {

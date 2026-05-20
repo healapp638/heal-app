@@ -26,9 +26,6 @@ const daily_challenges = new mongoose_1.default.Schema({
     title: {
         type: langSchema
     },
-    description: {
-        type: langSchema,
-    },
     status: {
         type: Number,
         default: workflow_constant_1.USER_STATUS.ACTIVE
@@ -36,15 +33,6 @@ const daily_challenges = new mongoose_1.default.Schema({
     points: {
         type: Number,
         default: 0
-    },
-    concept_title: {
-        type: langSchema
-    },
-    concept_description: {
-        type: langSchema
-    },
-    about_challenge: {
-        type: langSchema
     },
     exercises: [
         {

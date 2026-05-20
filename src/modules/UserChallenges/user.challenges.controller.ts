@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Security, Get, Post,  Body, Query } from 'tsoa'
+import { Route, Controller, Tags, Security, Get, Post, Body, Query } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserChallenges/user.challenges.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
@@ -37,7 +37,7 @@ export default class UserChallengesController extends Controller {
     @Security('Bearer')
     @Get("/challenge_details")
     public async challengeDetails(@Query() challenge_type: string, @Query() challenge_id: string): Promise<ApiResponse> {
-        const validate = validateChallengesDetails({challenge_type, challenge_id})
+        const validate = validateChallengesDetails({ challenge_type, challenge_id })
         if (validate.error) {
             return showResponse(false, validate.error.message, {}, statusCodes.VALIDATION_ERROR)
         }

@@ -119,27 +119,6 @@ const UserAuthHandler = {
             removeOnComplete: true,
             jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString(),
         });
-        // const challengesDetails = await commonHelper.challengsFn(userData);
-        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-        // const payload: any = challengesDetails?.payload;
-        // if (isOnBoardingComplete && !isDailyChallengeExist) {
-        //     const res = await generateUserChallengesDaily(payload, userData?._id);
-        //     console.log(res, 'res')
-        //     const result = await userDailyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-        //     const res = await generateUserChallengesWeekly(payload, userData?._id)
-        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        // end
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
@@ -829,26 +808,6 @@ const UserAuthHandler = {
             removeOnComplete: true,
             jobId: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString(),
         });
-        // const challengesDetails = await commonHelper.challengsFn(userDetails);
-        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-        // const payload: any = challengesDetails?.payload;
-        // if (isOnBoardingComplete && !isDailyChallengeExist) {
-        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
-        //     const result = await userDailyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
-        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        //end
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "user_onboarding_complete"), null, statusCodes_1.default.SUCCESS);
     }),
 };

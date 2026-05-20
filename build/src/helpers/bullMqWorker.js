@@ -20,6 +20,8 @@ const user_daily_challenges_model_1 = __importDefault(require("../modules/UserCh
 const user_auth_model_1 = __importDefault(require("../modules/UserAuth/user.auth.model"));
 const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
 const mongoose_config_1 = require("../configs/mongoose.config");
+const langauge_translate_helper_1 = require("./langauge.translate.helper");
+const workflow_constant_1 = require("../constants/workflow.constant");
 exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     connection: {
         port: 6379,
@@ -28,6 +30,7 @@ exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     }
 });
 exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
         yield (0, mongoose_config_1.connection)();
         console.log("BullMQ Worker Started...");
@@ -38,17 +41,68 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
         const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
         const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
         if (isOnBoardingComplete && !isDailyChallengeExist) {
+            yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { isDailyChallengeInProgress: true } });
             const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
-            const result = yield user_daily_challenges_model_1.default.insertMany(res.data);
+            const languagess = Object.values(workflow_constant_1.languages);
+            const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+                const titleObj = {};
+                yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
+                })));
+                const exercises = yield Promise.all(challenge.exercises.map((exercise) => __awaiter(void 0, void 0, void 0, function* () {
+                    const exerciseTitleObj = {};
+                    yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                        exerciseTitleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(exercise.title, lang);
+                    })));
+                    return {
+                        title: exerciseTitleObj,
+                        step_number: exercise.step_number,
+                    };
+                })));
+                return {
+                    user_id: challenge.user_id,
+                    challenge_type: challenge.challenge_type,
+                    points: challenge.points,
+                    title: titleObj,
+                    exercises,
+                };
+            })));
+            const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
             if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } });
             }
         }
         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+            yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { isWeeklyChallengeInProgress: true } });
             const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
-            const result = yield user_weekly_challenges_model_1.default.insertMany(res.data);
+            const languagess = Object.values(workflow_constant_1.languages);
+            const formattedChallenges = yield Promise.all((_b = res === null || res === void 0 ? void 0 : res.data) === null || _b === void 0 ? void 0 : _b.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+                const titleObj = {};
+                yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                    titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
+                })));
+                // multilingual exercises
+                const exercises = yield Promise.all(challenge.exercises.map((exercise) => __awaiter(void 0, void 0, void 0, function* () {
+                    const exerciseTitleObj = {};
+                    yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                        exerciseTitleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(exercise.title, lang);
+                    })));
+                    return {
+                        title: exerciseTitleObj,
+                        step_number: exercise.step_number,
+                    };
+                })));
+                return {
+                    user_id: challenge.user_id,
+                    challenge_type: challenge.challenge_type,
+                    points: challenge.points,
+                    title: titleObj,
+                    exercises,
+                };
+            })));
+            const result = yield user_weekly_challenges_model_1.default.insertMany(formattedChallenges);
             if (result) {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } });
             }
         }
     }

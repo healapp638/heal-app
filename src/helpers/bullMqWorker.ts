@@ -5,6 +5,8 @@ import userDailyChallengesModel from "../modules/UserChallenges/user.daily.chall
 import userAuthModel from "../modules/UserAuth/user.auth.model";
 import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.challenges.model";
 import { connection as connectDB } from "../configs/mongoose.config";
+import { translateText } from "./langauge.translate.helper";
+import { languages } from "../constants/workflow.constant";
 
 export const ChallengesQueue = new Queue('challenges', {
     connection: {
@@ -25,18 +27,103 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
         const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
         const payload: any = challengesDetails?.payload;
         if (isOnBoardingComplete && !isDailyChallengeExist) {
+            await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isDailyChallengeInProgress: true } })
             const res = await generateUserChallengesDaily(payload, userData?._id);
-            const result = await userDailyChallengesModel.insertMany(res.data)
+            const languagess = Object.values(languages);
+            const formattedChallenges = await Promise.all(
+                res?.data?.map(async (challenge: any) => {
+                    const titleObj: any = {};
+                    await Promise.all(
+                        languagess.map(async (lang) => {
+                            titleObj[lang] = await translateText(
+                                challenge.title,
+                                lang
+                            );
+                        })
+                    );
+
+                    const exercises = await Promise.all(
+                        challenge.exercises.map(async (exercise: any) => {
+                            const exerciseTitleObj: any = {};
+                            await Promise.all(
+                                languagess.map(async (lang) => {
+                                    exerciseTitleObj[lang] = await translateText(
+                                        exercise.title,
+                                        lang
+                                    );
+                                })
+                            );
+                            return {
+                                title: exerciseTitleObj,
+                                step_number: exercise.step_number,
+                            };
+                        })
+                    );
+
+                    return {
+                        user_id: challenge.user_id,
+                        challenge_type: challenge.challenge_type,
+                        points: challenge.points,
+                        title: titleObj,
+                        exercises,
+                    };
+                })
+            );
+            const result = await userDailyChallengesModel.insertMany(
+                formattedChallenges
+            );
             if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } })
             }
 
         }
         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+            await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isWeeklyChallengeInProgress: true } })
             const res = await generateUserChallengesWeekly(payload, userData?._id)
-            const result = await userWeeklyChallengesModel.insertMany(res.data)
+            const languagess = Object.values(languages);
+            const formattedChallenges = await Promise.all(
+                res?.data?.map(async (challenge: any) => {
+                    const titleObj: any = {};
+                    await Promise.all(
+                        languagess.map(async (lang) => {
+                            titleObj[lang] = await translateText(
+                                challenge.title,
+                                lang
+                            );
+                        })
+                    );
+                    // multilingual exercises
+                    const exercises = await Promise.all(
+                        challenge.exercises.map(async (exercise: any) => {
+                            const exerciseTitleObj: any = {};
+                            await Promise.all(
+                                languagess.map(async (lang) => {
+                                    exerciseTitleObj[lang] = await translateText(
+                                        exercise.title,
+                                        lang
+                                    );
+                                })
+                            );
+                            return {
+                                title: exerciseTitleObj,
+                                step_number: exercise.step_number,
+                            };
+                        })
+                    );
+                    return {
+                        user_id: challenge.user_id,
+                        challenge_type: challenge.challenge_type,
+                        points: challenge.points,
+                        title: titleObj,
+                        exercises,
+                    };
+                })
+            );
+            const result = await userWeeklyChallengesModel.insertMany(
+                formattedChallenges
+            );
             if (result) {
-                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
+                await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } })
             }
         }
     } catch (error) {
