@@ -14,6 +14,8 @@ import { useTheme, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   KeyboardAvoidingView,
+} from 'react-native';
+import {
   KeyboardAwareScrollView,
 } from 'react-native-keyboard-controller';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
@@ -74,9 +76,13 @@ const SolidView: React.FC<SolidViewProps> = ({
           style={{
             flex: 1,
           }}
-          behavior={isChatScreen ? 'translate-with-padding' : 'padding'}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           keyboardVerticalOffset={
-            keyboardVerticalOffset ?? Platform.OS === 'ios' ? 40 : 0
+            keyboardVerticalOffset !== undefined
+              ? keyboardVerticalOffset
+              : Platform.OS === 'ios'
+              ? 40
+              : 0
           }
           enabled={true}
         >

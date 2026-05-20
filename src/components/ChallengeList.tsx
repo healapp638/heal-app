@@ -55,7 +55,7 @@ const ChallengeList = ({ activeTab, data }: ChallengeListProps) => {
             isCompleted={item.isCompleted}
             onPress={() => {
               triggerHaptic('impactMedium');
-              return navigation.navigate(AppRoutes.ChallengeDetail as never, {
+              return navigation.navigate(AppRoutes.Exercise as never, {
                 challenge_id: item.id,
                 challenge_type: activeTab,
               } as never);

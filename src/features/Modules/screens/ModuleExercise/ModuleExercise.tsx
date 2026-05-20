@@ -1,6 +1,6 @@
 import React, { cloneElement, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { View, TextInput, BackHandler, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, TextInput, BackHandler, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import useGetApi from '../../../../hooks/useGetApi';
 import {
   CommonActions,
@@ -223,19 +223,22 @@ const ModuleExercise = () => {
       isScrollEnabled={false}
       view={
         <View style={styles.mainContainer}>
-          <HeaderCommon
-            title={localization.appkeys?.exercise || 'Exercise'}
-            onBackPress={handleBack}
-            viewStyle={{ marginBottom: -2 }}
-          />
-
           <View style={styles.contentContainer}>
             {currentStepData.type !== 'reflection' ? (
               <ScrollView
                 style={{ width: '100%', flex: 1 }}
-                contentContainerStyle={styles.scrollContent}
+                contentContainerStyle={[
+                  styles.scrollContent,
+                  currentStepData.type === 'text' && { paddingBottom: 120 }
+                ]}
                 showsVerticalScrollIndicator={false}
               >
+                <HeaderCommon
+                  title={localization.appkeys?.exercise || 'Exercise'}
+                  onBackPress={handleBack}
+                  viewStyle={{ marginBottom: -2, width: '100%' }}
+                />
+
                 {/* Step Number */}
                 <SolidText style={styles.numberText}>
                   {currentStep + 1}
@@ -291,45 +294,103 @@ const ModuleExercise = () => {
                     })}
                   </View>
                 )}
+
+                {/* Button inside ScrollView for MCQ so the whole screen scrolls */}
+                {currentStepData.type === 'mcq' && (
+                  <SolidBtn
+                    titleTxt={
+                      currentStep === steps.length - 1
+                        ? localization.appkeys?.completed || 'Completed'
+                        : localization.appkeys?.next || 'Next'
+                    }
+                    onPress={(...args: any) => {
+                      return (handleNext as any)(...args);
+                    }}
+                    btnStyle={styles.nextButton}
+                    isLoading={isCompleting || isSavingAnswer}
+                  />
+                )}
               </ScrollView>
             ) : (
-              <View style={styles.reflectionCard}>
-
-                <SolidText style={styles.reflectionQuestion}>
-                  {currentStepData.question}
-                </SolidText>
-                <SolidText style={styles.reflectionInstruction}>
-                  {currentStepData.instruction}
-                </SolidText>
-                <TextInput
-                  style={styles.textInput}
-                  multiline
-                  placeholder={isFocused ? '' : currentStepData.placeholder}
-                  placeholderTextColor="grey"
-                  value={reflectionText}
-                  onChangeText={setReflectionText}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  maxFontSizeMultiplier={1.4}
-                  textAlignVertical="top"
+              <ScrollView
+                style={{ width: '100%', flex: 1 }}
+                contentContainerStyle={{
+                  flexGrow: 1,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  paddingBottom: 20,
+                  paddingTop: 10,
+                }}
+                showsVerticalScrollIndicator={false}
+              >
+                <HeaderCommon
+                  title={localization.appkeys?.exercise || 'Exercise'}
+                  onBackPress={handleBack}
+                  viewStyle={{ marginBottom: -2, width: '100%' }}
                 />
-              </View>
+
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    width: '100%',
+                  }}
+                >
+                  <View style={styles.reflectionCard}>
+                    <SolidText style={styles.reflectionQuestion}>
+                      {currentStepData.question}
+                    </SolidText>
+                    <SolidText style={styles.reflectionInstruction}>
+                      {currentStepData.instruction}
+                    </SolidText>
+                    <TextInput
+                      style={styles.textInput}
+                      multiline
+                      placeholder={isFocused ? '' : currentStepData.placeholder}
+                      placeholderTextColor="grey"
+                      value={reflectionText}
+                      onChangeText={setReflectionText}
+                      onFocus={() => setIsFocused(true)}
+                      onBlur={() => setIsFocused(false)}
+                      maxFontSizeMultiplier={1.4}
+                      textAlignVertical="top"
+                    />
+                  </View>
+                </View>
+
+                {/* Button inside ScrollView for reflection so it scrolls natively when keyboard is open */}
+                <SolidBtn
+                  titleTxt={
+                    currentStep === steps.length - 1
+                      ? localization.appkeys?.completed || 'Completed'
+                      : localization.appkeys?.next || 'Next'
+                  }
+                  onPress={(...args: any) => {
+                    return (handleNext as any)(...args);
+                  }}
+                  btnStyle={styles.nextButton}
+                  isLoading={isCompleting || isSavingAnswer}
+                />
+              </ScrollView>
             )}
           </View>
 
-          <SolidBtn
-            titleTxt={
-              currentStep === steps.length - 1
-                ? localization.appkeys?.completed || 'Completed'
-                : localization.appkeys?.next || 'Next'
-            }
-            onPress={(...args: any) => {
-              //
-              return (handleNext as any)(...args);
-            }}
-            btnStyle={styles.nextButton}
-            isLoading={isCompleting || isSavingAnswer}
-          />
+          {/* Button outside ScrollView (floating) only for text description screen */}
+          {currentStepData.type === 'text' && (
+            <SolidBtn
+              titleTxt={
+                currentStep === steps.length - 1
+                  ? localization.appkeys?.completed || 'Completed'
+                  : localization.appkeys?.next || 'Next'
+              }
+              onPress={(...args: any) => {
+                return (handleNext as any)(...args);
+              }}
+              btnStyle={styles.floatingNextButton}
+              isLoading={isCompleting || isSavingAnswer}
+            />
+          )}
 
           <SuccessModal
             visible={showModal}

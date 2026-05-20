@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, ActivityIndicator } from 'react-native';
 import { useNavigation, useTheme, useRoute } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -12,17 +12,49 @@ import { triggerHaptic } from '../../../../hooks/useHaptic';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { useQueryClient } from '@tanstack/react-query';
+import useGetApi from '../../../../hooks/useGetApi';
+
 const Exercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
   const route = useRoute() as any;
-  const { exercises, challenge_id, challenge_type } = route.params || {};
+  const { exercises: routeExercises, challenge_id, challenge_type } = route.params || {};
   const { mutate: completeChallengeApi } = usePostApi();
   const queryClient = useQueryClient();
 
+  const { data: detailResponse, isLoading } = useGetApi(
+    endpoints.challenge_details,
+    ['challenge_details', challenge_id],
+    {
+      challenge_id,
+      challenge_type,
+    },
+  );
+
+  const challengeData = detailResponse?.data?.[0] || {};
+  const exercises = routeExercises || challengeData.exercises;
+
   const { localization } = useContext(LocalizationContext) as any;
   const [currentStep, setCurrentStep] = useState(0);
+
+  if (isLoading) {
+    return (
+      <SolidView
+        view={
+          <View style={styles.mainContainer}>
+            <HeaderCommon
+              title={localization.appkeys?.exercise || 'Exercise'}
+              onBackPress={() => navigation.goBack()}
+            />
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <ActivityIndicator size="large" color={colors.brown} />
+            </View>
+          </View>
+        }
+      />
+    );
+  }
   const steps =
     exercises?.length > 0
       ? exercises.map((item: any) => ({

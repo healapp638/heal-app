@@ -131,7 +131,7 @@ const Home = () => {
             <ChallengeCard
               onPress={() => {
                 triggerHaptic('impactMedium');
-                navigation.navigate(AppRoutes.ChallengeDetail as never);
+                navigation.navigate(AppRoutes.Exercise as never);
               }}
               title={
                 localization.appkeys?.challengeCompletedTitle ||

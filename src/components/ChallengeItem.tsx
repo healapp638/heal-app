@@ -58,11 +58,11 @@ const ChallengeItem = ({
 
           <View style={styles.textContainer}>
             <SolidText style={styles.titleText}>{title}</SolidText>
-            {description && (
+            {/* {description && (
               <SolidText style={styles.descriptionText}>
                 {description}
               </SolidText>
-            )}
+            )} */}
           </View>
         </View>
 
@@ -139,14 +139,15 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   textContainer: {
-    flex: 1,
     paddingRight: 12,
     width: '90%',
+    justifyContent: 'center',
   },
   titleText: {
     fontSize: AppUtils.fontSize(14),
     fontFamily: AppFonts.semiBold,
     color: '#3A2110',
+    includeFontPadding: false,
   },
   descriptionText: {
     fontSize: AppUtils.fontSize(12),

@@ -37,6 +37,8 @@ const style = (colors: any) =>
       backgroundColor: 'white',
       borderRadius: 16,
       padding: 14,
+      marginTop: 16,
+      marginBottom: 16,
       // iOS shadow
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
@@ -84,6 +86,14 @@ const style = (colors: any) =>
     nextButton: {
       width: '90%',
       marginBottom: 40,
+    },
+    floatingNextButton: {
+      position: 'absolute',
+      bottom: Platform.OS === 'ios' ? 20 : 10,
+      alignSelf: 'center',
+      width: '90%',
+      marginTop: 0,
+      marginBottom: 0,
     },
     scrollContent: {
       width: '100%',
