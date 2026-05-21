@@ -215,7 +215,7 @@ const generateUserChallengesWeekly = (payload, userId) => __awaiter(void 0, void
                                 {
                                     "challenge_type": "daily",
                                     "title": "",
-                                    "points": 10,
+                                    "points": 25,
                                     "exercises": [
                                         {
                                             "title":"",

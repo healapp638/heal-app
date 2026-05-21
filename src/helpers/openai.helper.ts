@@ -224,7 +224,7 @@ export const generateUserChallengesWeekly = async (payload: GenerateChallengePay
                                 {
                                     "challenge_type": "daily",
                                     "title": "",
-                                    "points": 10,
+                                    "points": 25,
                                     "exercises": [
                                         {
                                             "title":"",

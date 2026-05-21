@@ -63,7 +63,8 @@ const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges
 const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
 const user_recentHomeTheme_model_1 = __importDefault(require("../UserHomeTheme/user.recentHomeTheme.model"));
 const bullMqWorker_1 = require("../../helpers/bullMqWorker");
-const moment_1 = __importDefault(require("moment"));
+const user_journel_model_1 = __importDefault(require("../UserJournel/user.journel.model"));
+const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -512,7 +513,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
     }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
@@ -523,7 +524,7 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const language = ((_b = result === null || result === void 0 ? void 0 : result.data) === null || _b === void 0 ? void 0 : _b.language) || 'en';
-        //calculate progress
+        //calculate progress start
         const Allpahses = yield admin_phases_model_1.default.aggregate([
             {
                 $match: {
@@ -570,7 +571,7 @@ const UserAuthHandler = {
         ]);
         console.log(dailyChallengesTotalpoints, 'allChallengesTotalpoints');
         // const total_points = Allpahses[0]?.total_points + weeklyChallengesTotalpoints[0]?.total_points + dailyChallengesTotalpoints[0]?.total_points;
-        const total_points = 500;
+        // const total_points = 500
         const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
             {
                 $match: {
@@ -627,10 +628,27 @@ const UserAuthHandler = {
                 }
             }
         ]);
+        const startOfDay = (0, moment_timezone_1.default)().tz(userData === null || userData === void 0 ? void 0 : userData.timezone).startOf('day').toDate();
+        const endOfDay = (0, moment_timezone_1.default)().tz(userData === null || userData === void 0 ? void 0 : userData.timezone).endOf('day').toDate();
+        const totalJournels = yield user_journel_model_1.default.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const totalJournelEarnedPoints = (totalJournels * 10) + 25 || 0;
         console.log((_c = completedWeeklyChallenges[0]) === null || _c === void 0 ? void 0 : _c.total_points, 'completedWeeklyChallenges');
         console.log((_d = completedDailyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points, 'completedDailyChallenges');
         console.log((_e = CompletedPhases[0]) === null || _e === void 0 ? void 0 : _e.total_points, 'CompletedPhases');
-        const total_earned_points = (((_f = CompletedPhases[0]) === null || _f === void 0 ? void 0 : _f.total_points) || 0) + (((_g = completedWeeklyChallenges[0]) === null || _g === void 0 ? void 0 : _g.total_points) || 0) + (((_h = completedDailyChallenges[0]) === null || _h === void 0 ? void 0 : _h.total_points) || 0);
+        console.log(totalJournelEarnedPoints, 'totalJournelEarnedPoints');
+        const total_earned_points = (((_f = CompletedPhases[0]) === null || _f === void 0 ? void 0 : _f.total_points) || 0) + (((_g = completedWeeklyChallenges[0]) === null || _g === void 0 ? void 0 : _g.total_points) || 0) + (((_h = completedDailyChallenges[0]) === null || _h === void 0 ? void 0 : _h.total_points) || 0) + totalJournelEarnedPoints;
+        const pointThresholds = [
+            99, 235, 460, 740, 1070, 1450, 1875, 2345,
+            2860, 3415, 4015, 4650, 5325, 6040, 6795,
+            7590, 8420, 9290, 10195, 11140, 12120,
+            13135, 14185, 15270, 16390, 17545,
+            18730, 19955, 21215, 22505
+        ];
+        const total_points = (_j = pointThresholds.find((curelem) => total_earned_points < curelem)) !== null && _j !== void 0 ? _j : 22505;
         const completedPercentage = total_points > 0
             ? (total_earned_points / total_points) * 100
             : 0;
@@ -642,6 +660,7 @@ const UserAuthHandler = {
             currentLevel = 1;
         if (currentLevel > totalLevels)
             currentLevel = totalLevels;
+        //calculating progress end
         const homeThemeAggregate = [
             {
                 $match: {
@@ -689,16 +708,16 @@ const UserAuthHandler = {
             user_id: commonHelper.convertToObjectId(userId),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
             createdAt: {
-                $gte: (0, moment_1.default)().startOf('day').toDate(),
-                $lte: (0, moment_1.default)().endOf('day').toDate()
+                $gte: (0, moment_timezone_1.default)().startOf('day').toDate(),
+                $lte: (0, moment_timezone_1.default)().endOf('day').toDate()
             }
         });
         const totalWeeklyChallanges = yield user_weekly_challenges_model_1.default.countDocuments({
             user_id: commonHelper.convertToObjectId(userId),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
             createdAt: {
-                $gte: (0, moment_1.default)().startOf('week').toDate(),
-                $lte: (0, moment_1.default)().endOf('week').toDate()
+                $gte: (0, moment_timezone_1.default)().startOf('week').toDate(),
+                $lte: (0, moment_timezone_1.default)().endOf('week').toDate()
             }
         });
         let isUnderProgress = false;

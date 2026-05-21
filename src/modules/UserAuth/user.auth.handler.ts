@@ -17,7 +17,8 @@ import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.
 
 import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.model";
 import { ChallengesQueue } from "../../helpers/bullMqWorker";
-import moment from "moment";
+import userJournalModel from "../UserJournel/user.journel.model";
+import moment from "moment-timezone";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -80,7 +81,7 @@ const UserAuthHandler = {
             jobId: userData?._id.toString(),
 
         });
-      
+
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
@@ -350,7 +351,7 @@ const UserAuthHandler = {
         const otp = commonHelper.generateRandomOtp(6)
         obj.otp = otp
         const emailPayload = { user_name: fullName, otp }
-        console.log(emailPayload,"emailPayload")
+        console.log(emailPayload, "emailPayload")
         // const payload = { ...data, account_source: 'email', password: hashed, otp }
 
 
@@ -360,18 +361,18 @@ const UserAuthHandler = {
         if (findUser.status && findUser?.data?.account_source == 'email' && findUser?.data?.isVerified) {
             return showResponse(false, getMessage(language || 'en', "email_already_exists"), null, statusCodes.API_ERROR);
         }
-        console.log(findUser,"findUser")
+        console.log(findUser, "findUser")
 
         //if exist with different source (through google apple login) then update details and account source else insert new account entry
         const result = await findOneAndUpdate(userAuthModel, queryObject, obj, true);
         if (!result.status) {
             return showResponse(false, getMessage(language || 'en', "err_while_register"), null, statusCodes.API_ERROR);
         }
-        console.log(result,"result")
+        console.log(result, "result")
         console.log(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll")
 
         const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
-        console.log(sendEmail,"sendEmail")
+        console.log(sendEmail, "sendEmail")
         if (!sendEmail.status) {
             return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
         }
@@ -555,7 +556,7 @@ const UserAuthHandler = {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
         }
         const language = result?.data?.language || 'en';
-        //calculate progress
+        //calculate progress start
         const Allpahses = await adminPhasesModel.aggregate([
             {
                 $match: {
@@ -604,7 +605,7 @@ const UserAuthHandler = {
         ]);
         console.log(dailyChallengesTotalpoints, 'allChallengesTotalpoints')
         // const total_points = Allpahses[0]?.total_points + weeklyChallengesTotalpoints[0]?.total_points + dailyChallengesTotalpoints[0]?.total_points;
-        const total_points = 500
+        // const total_points = 500
         const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
             {
                 $match: {
@@ -661,10 +662,29 @@ const UserAuthHandler = {
                 }
             }
         ]);
+        const startOfDay = moment().tz(userData?.timezone).startOf('day').toDate();
+        const endOfDay = moment().tz(userData?.timezone).endOf('day').toDate();
+
+        const totalJournels = await userJournalModel.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: USER_STATUS.ACTIVE,
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const totalJournelEarnedPoints = (totalJournels * 10) + 25 || 0
         console.log(completedWeeklyChallenges[0]?.total_points, 'completedWeeklyChallenges')
         console.log(completedDailyChallenges[0]?.total_points, 'completedDailyChallenges')
         console.log(CompletedPhases[0]?.total_points, 'CompletedPhases')
-        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0);
+        console.log(totalJournelEarnedPoints, 'totalJournelEarnedPoints')
+        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0) + totalJournelEarnedPoints;
+        const pointThresholds = [
+            99, 235, 460, 740, 1070, 1450, 1875, 2345,
+            2860, 3415, 4015, 4650, 5325, 6040, 6795,
+            7590, 8420, 9290, 10195, 11140, 12120,
+            13135, 14185, 15270, 16390, 17545,
+            18730, 19955, 21215, 22505
+        ];
+        const total_points = pointThresholds.find((curelem) => total_earned_points < curelem) ?? 22505
+
         const completedPercentage = total_points > 0
             ? (total_earned_points / total_points) * 100
             : 0;
@@ -677,6 +697,8 @@ const UserAuthHandler = {
         // Edge case fix
         if (currentLevel === 0) currentLevel = 1;
         if (currentLevel > totalLevels) currentLevel = totalLevels;
+
+        //calculating progress end
 
         const homeThemeAggregate: any = [
 
@@ -874,7 +896,7 @@ const UserAuthHandler = {
             removeOnComplete: true,
             jobId: userDetails?._id.toString(),
         })
-       
+
         return showResponse(true, getMessage(user_language || 'en', "user_onboarding_complete"), null, statusCodes.SUCCESS)
     },
 }
