@@ -10,24 +10,25 @@ import {
   useNavigation,
   useTheme,
 } from '@react-navigation/native';
+import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-import style from './style';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-import { triggerHaptic } from '../../../../hooks/useHaptic';
-const FeelMore = () => {
+
+const StopsFeelingBetter = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { triggerHaptic } = useHaptic();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+
   const savedSelection = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.likeToFellMore,
+    (state: any) => state.userData?.onboarding?.answers?.stopFeelBetter,
   );
 
   const selectedList = typeof savedSelection === 'string'
@@ -40,59 +41,66 @@ const FeelMore = () => {
 
   useFocusEffect(
     useCallback(() => {
-      dispatch(setOnboardingCurrentScreen(AppRoutes.FeelMore));
+      dispatch(setOnboardingCurrentScreen(AppRoutes.StopsFeelingBetter));
     }, [dispatch]),
   );
 
   const handleBackPress = () => {
-    const routes = (navigation as any)?.getState?.()?.routes || [];
-    const previousRouteName =
-      routes.length > 1 ? routes[routes.length - 2]?.name : null;
-    if (previousRouteName === AppRoutes.BringYouHere) {
-      navigation.goBack();
-      return;
-    }
-    navigation.navigate(AppRoutes.BringYouHere as never);
+    navigation.goBack();
   };
 
   const options = [
     {
-      id: '1',
-      label: localization.appkeys?.optionPeaceOfMind,
+      id: 'overthink',
+      label: localization.appkeys?.optOverthink || 'I overthink things',
     },
     {
-      id: '2',
-      label: localization.appkeys?.optionConfidence,
+      id: 'loseMotivation',
+      label: localization.appkeys?.optLoseMotivation || 'I lose motivation',
     },
     {
-      id: '3',
-      label: localization.appkeys?.optionEmotionalStrength,
+      id: 'stuckHead',
+      label: localization.appkeys?.optStuckHead || 'I get stuck in my head',
     },
     {
-      id: '4',
-      label: localization.appkeys?.optionLifeClarity,
+      id: 'isolate',
+      label: localization.appkeys?.optIsolate || 'I isolate myself',
     },
     {
-      id: '5',
-      label: localization.appkeys?.optionBalance,
+      id: 'dontKnow',
+      label: localization.appkeys?.optDontKnow || "I don't know what helps",
     },
     {
-      id: '6',
-      label: localization.appkeys?.optionMotivation,
+      id: 'unhealthyPatterns',
+      label: localization.appkeys?.optUnhealthyPatterns || 'Falling into unhealthy patterns',
     },
   ];
 
-  const handleOptionPress = (optionLabel: string) => {
+  const handleOptionPress = (optionId: string, optionLabel: string) => {
     triggerHaptic('impactMedium');
     let updatedSelection: string[];
-    if (selectedList.includes(optionLabel)) {
-      updatedSelection = selectedList.filter(item => item !== optionLabel);
+    const dontKnowLabel = localization.appkeys?.optDontKnow || "I don't know what helps";
+
+    if (optionId === 'dontKnow') {
+      if (selectedList.includes(optionLabel)) {
+        updatedSelection = [];
+      } else {
+        updatedSelection = [optionLabel];
+      }
     } else {
-      updatedSelection = [...selectedList, optionLabel];
+      if (selectedList.includes(optionLabel)) {
+        updatedSelection = selectedList.filter(item => item !== optionLabel);
+      } else {
+        updatedSelection = [
+          ...selectedList.filter(item => item !== dontKnowLabel),
+          optionLabel,
+        ];
+      }
     }
+
     dispatch(
       setOnboardingAnswer({
-        key: 'likeToFellMore',
+        key: 'stopFeelBetter',
         value: updatedSelection.join(', '),
       }),
     );
@@ -110,7 +118,7 @@ const FeelMore = () => {
             flex: 1,
           }}
         >
-          <HeaderProgress progress={0.65} onBackPress={handleBackPress} />
+          <HeaderProgress progress={0.9} onBackPress={handleBackPress} />
 
           <Image
             source={images.heartRope}
@@ -119,50 +127,61 @@ const FeelMore = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              {localization.appkeys?.feelMoreTitle}
+              {localization.appkeys?.stopsFeelingBetterTitle ||
+                'What usually stops you from feeling better?'}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              {localization.appkeys?.safeSpaceSub}
+              {localization.appkeys?.stopsFeelingBetterSub ||
+                'You can select more than one option.'}
             </SolidText>
 
             <View style={styles.listContainer}>
               {options.map(option => {
-                const isSelected =
-                  selectedList.includes(option.label) || selectedList.includes(option.id);
+                const isCurrentSelected = selectedList.includes(option.label);
+
                 return (
                   <TouchableOpacity
                     key={option.id}
                     style={[
                       styles.optionCard,
-                      isSelected && styles.optionCardSelected,
+                      isCurrentSelected && styles.optionCardSelected,
                     ]}
-                    onPress={() => handleOptionPress(option.label)}
+                    onPress={() => handleOptionPress(option.id, option.label)}
                     activeOpacity={0.7}
                   >
-                    <SolidText
-                      style={[
-                        styles.optionText,
-                        isSelected && styles.optionTextSelected,
-                      ]}
-                    >
-                      {option.label}
-                    </SolidText>
+                    <View style={styles.optionContent}>
+                      <SolidText
+                        style={[
+                          styles.optionText,
+                          isCurrentSelected && styles.optionTextSelected,
+                        ]}
+                      >
+                        {option.label}
+                      </SolidText>
+                    </View>
+                    {/* {isCurrentSelected && (
+                      <Image
+                        source={images.tick}
+                        style={styles.tickIcon}
+                        resizeMode="contain"
+                      />
+                    )} */}
                   </TouchableOpacity>
                 );
               })}
             </View>
-
             <View
               style={{
                 flex: 1,
+                minHeight: 20,
               }}
             />
             <SolidBtn
-              titleTxt={localization.appkeys?.continue}
+              titleTxt={localization.appkeys?.continue || 'Continue'}
               btnStyle={styles.btn}
               disabled={selectedList.length === 0}
               onPress={() => {
-                return navigation.navigate(AppRoutes.RightPlace as never);
+                return navigation.navigate(AppRoutes.UnderstandYourself as never);
               }}
             />
           </View>
@@ -171,4 +190,5 @@ const FeelMore = () => {
     />
   );
 };
-export default FeelMore;
+
+export default StopsFeelingBetter;

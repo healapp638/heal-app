@@ -27,7 +27,7 @@ const TimeCommitment = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedSelection = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.timeCommitment ?? null,
+    (state: any) => state.userData?.onboarding?.answers?.timeYouCommit ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
   useEffect(() => {
@@ -42,11 +42,11 @@ const TimeCommitment = () => {
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-    if (previousRouteName === AppRoutes.FeelMore) {
+    if (previousRouteName === AppRoutes.UnderstandYourself) {
       navigation.goBack();
       return;
     }
-    navigation.navigate(AppRoutes.FeelMore as never);
+    navigation.navigate(AppRoutes.UnderstandYourself as never);
   };
   const options = [
     {
@@ -109,7 +109,7 @@ const TimeCommitment = () => {
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({
-                          key: 'timeCommitment',
+                          key: 'timeYouCommit',
                           value: option.label,
                         }),
                       );
@@ -138,7 +138,7 @@ const TimeCommitment = () => {
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() => {
-                return navigation.navigate(AppRoutes.ReadyToStart as never);
+                return navigation.navigate(AppRoutes.StartGoal as never);
               }}
             />
           </View>

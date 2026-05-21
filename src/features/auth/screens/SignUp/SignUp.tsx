@@ -40,6 +40,8 @@ const SignUp = () => {
   const answers = useSelector(
     (state: any) => state?.userData?.onboarding?.answers,
   );
+
+
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   // console.log('onboarding answers in sign up', answers);
   const styles = style(colors);
@@ -110,12 +112,12 @@ const SignUp = () => {
       password,
       country: selectedCountry?.name || '',
       dob: formattedDob,
-      bringsYouHere: answers?.bringYouHere || '',
-      likeToFellMore: answers?.feelMore || '',
-      howFellingLately: answers?.feelingsLately || '',
+      bringsYouHere: Array.isArray(answers?.feelThatWay) ? answers.feelThatWay.join(', ') : (answers?.feelThatWay || ''),
+      likeToFellMore: Array.isArray(answers?.likeToFellMore) ? answers.likeToFellMore.join(', ') : (answers?.likeToFellMore || ''),
+      howFellingLately: Array.isArray(answers?.howFellingLately) ? answers.howFellingLately.join(', ') : (answers?.howFellingLately || ''),
       hearAboutUs: answers?.hearAboutUs || '',
       startShowingOfYourSelf: answers?.readyToStart || '',
-      timeYouCommit: answers?.timeCommitment || '',
+      timeYouCommit: answers?.timeYouCommit || '',
       language: AppUtils.getLanguageCode(appLanguage),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };

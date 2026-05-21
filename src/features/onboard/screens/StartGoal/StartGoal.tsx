@@ -18,8 +18,8 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
-import { triggerHaptic } from '../../../../hooks/useHaptic';
-const ReadyToStart = () => {
+
+const StartGoal = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -27,41 +27,46 @@ const ReadyToStart = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedSelection = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.readyToStart ?? null,
+    (state: any) => state.userData?.onboarding?.answers?.goalStartWith ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
+
   useEffect(() => {
     setSelected(savedSelection);
   }, [savedSelection]);
+
   useFocusEffect(
     useCallback(() => {
-      dispatch(setOnboardingCurrentScreen(AppRoutes.ReadyToStart));
+      dispatch(setOnboardingCurrentScreen(AppRoutes.StartGoal));
     }, [dispatch]),
   );
+
   const handleBackPress = () => {
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-    if (previousRouteName === AppRoutes.StreakGrounded) {
+    if (previousRouteName === AppRoutes.TimeCommitment) {
       navigation.goBack();
       return;
     }
-    navigation.navigate(AppRoutes.StreakGrounded as never);
+    navigation.navigate(AppRoutes.TimeCommitment as never);
   };
+
   const options = [
     {
       id: '1',
-      label: localization.appkeys?.optionExploring,
+      label: localization.appkeys?.opt3Days,
     },
     {
       id: '2',
-      label: localization.appkeys?.optionWilling,
+      label: localization.appkeys?.opt7Days,
     },
     {
       id: '3',
-      label: localization.appkeys?.optionReady,
+      label: localization.appkeys?.opt21Days,
     },
   ];
+
   return (
     <SolidView
       isScrollEnabled
@@ -83,10 +88,10 @@ const ReadyToStart = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              {localization.appkeys?.readyToStartTitle}
+              {localization.appkeys?.startGoalTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              {localization.appkeys?.safeSpaceSub}
+              {localization.appkeys?.startGoalSub}
             </SolidText>
 
             <View style={styles.listContainer}>
@@ -105,7 +110,7 @@ const ReadyToStart = () => {
                       setSelected(option.label);
                       dispatch(
                         setOnboardingAnswer({
-                          key: 'readyToStart',
+                          key: 'goalStartWith',
                           value: option.label,
                         }),
                       );
@@ -134,7 +139,7 @@ const ReadyToStart = () => {
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() => {
-                return navigation.navigate(AppRoutes.RightPlace as never);
+                return navigation.navigate(AppRoutes.StreakGrounded as never);
               }}
             />
           </View>
@@ -143,4 +148,5 @@ const ReadyToStart = () => {
     />
   );
 };
-export default ReadyToStart;
+
+export default StartGoal;

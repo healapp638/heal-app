@@ -106,7 +106,7 @@ const ThemeMixes = () => {
       localization.appkeys.forYou;
   const forYouResult =
     forYouDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
-  console.log('forYouResult', forYouResult);
+
   const handleCategoryChange = (catId: string) => {
     if (catId === activeTab) return;
     triggerHaptic('impactMedium');

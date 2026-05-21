@@ -6,9 +6,10 @@ import {
   View,
 } from 'react-native';
 import React from 'react';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useNavigation, useTheme, useRoute } from '@react-navigation/native';
 import ReactNativeHapticFeedback from 'react-native-haptic-feedback';
 import { triggerHaptic } from '../hooks/useHaptic';
+import { PROGRESS_BAR_SCREENS } from '../features/onboard/utils/onboardingProgress';
 const options = {
   enableVibrateFallback: true,
   ignoreAndroidSystemSettings: false,
@@ -17,14 +18,27 @@ interface HeaderProgressProps {
   progress?: number; // 0 to 1
   showBack?: boolean;
   onBackPress?: () => void;
+  showBar?: any
 }
 const HeaderProgress: React.FC<HeaderProgressProps> = ({
-  progress = 0.5,
+  progress,
   showBack = true,
   onBackPress,
+  showBar = true
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const route = useRoute();
+  const currentRouteName = route?.name;
+
+  let displayProgress = progress ?? 0.5;
+  if (currentRouteName) {
+    const routeIndex = PROGRESS_BAR_SCREENS.indexOf(currentRouteName);
+    if (routeIndex !== -1) {
+      displayProgress = (routeIndex + 1) / PROGRESS_BAR_SCREENS.length;
+    }
+  }
+
   return (
     <View style={styles.container}>
       {showBack ? (
@@ -51,7 +65,7 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
       ) : (
         <View style={styles.backButtonPlaceholder} />
       )}
-      <View
+      {showBar && <View
         style={[
           styles.progressBackground,
           {
@@ -64,11 +78,11 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
             styles.progressFill,
             {
               backgroundColor: '#DF9D83',
-              width: `${progress * 100}%`,
+              width: `${displayProgress * 100}%`,
             }, // Light peach/brown from screenshot
           ]}
         />
-      </View>
+      </View>}
       <View style={styles.rightPlaceholder} />
     </View>
   );

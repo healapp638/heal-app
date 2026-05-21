@@ -1,14 +1,19 @@
 import AppRoutes from '../../../routes/RouteKeys/appRoutes';
 
-const ONBOARDING_ROUTE_SEQUENCE = [
+export const ONBOARDING_ROUTE_SEQUENCE = [
   AppRoutes.GetStarted,
   AppRoutes.HearAboutUs,
-  AppRoutes.BringYouHere,
   AppRoutes.FeelingsLately,
+  AppRoutes.BringYouHere,
   AppRoutes.FeelMore,
-  AppRoutes.TimeCommitment,
-  AppRoutes.ReadyToStart,
   AppRoutes.RightPlace,
+  AppRoutes.EnterName,
+  AppRoutes.HelpsFeelBetter,
+  AppRoutes.StopsFeelingBetter,
+  AppRoutes.UnderstandYourself,
+  AppRoutes.TimeCommitment,
+  AppRoutes.StartGoal,
+  AppRoutes.StreakGrounded,
   AppRoutes.PrivacyMatters,
   AppRoutes.Warning,
   AppRoutes.CreatingSpace,
@@ -18,6 +23,16 @@ export const RESUMABLE_ONBOARDING_ROUTES = [
   ...ONBOARDING_ROUTE_SEQUENCE,
 ];
 
+export const PROGRESS_BAR_SCREENS = [
+  AppRoutes.FeelingsLately,
+  AppRoutes.BringYouHere,
+  AppRoutes.FeelMore,
+  AppRoutes.HelpsFeelBetter,
+  AppRoutes.StopsFeelingBetter,
+  AppRoutes.TimeCommitment,
+  AppRoutes.StartGoal,
+];
+
 export const isOnboardingAnswersComplete = (answers: any) => {
   if (!answers) {
     return false;
@@ -25,15 +40,19 @@ export const isOnboardingAnswersComplete = (answers: any) => {
 
   const requiredTextFields = [
     'hearAboutUs',
-    'bringYouHere',
-    'feelingsLately',
-    'feelMore',
-    'timeCommitment',
+    'feelThatWay',
+    'howFellingLately',
+    'likeToFellMore',
+    'timeYouCommit',
+    'goalStartWith',
     'readyToStart',
   ];
 
   const hasAllTextAnswers = requiredTextFields.every(key => {
     const value = answers[key];
+    if (Array.isArray(value)) {
+      return value.length > 0;
+    }
     return typeof value === 'string' && value.trim().length > 0;
   });
 

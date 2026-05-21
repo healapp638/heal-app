@@ -18,6 +18,7 @@ import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
+import HeaderCommon from '../../../../components/HeaderCommon';
 
 const HearAboutUs = () => {
   const { colors, images } = useTheme() as any;
@@ -91,7 +92,7 @@ const HearAboutUs = () => {
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
-          <HeaderProgress progress={0.2} />
+          <HeaderProgress showBar={false} />
 
           <Image
             source={images.heartRope}
@@ -198,7 +199,7 @@ const HearAboutUs = () => {
               btnStyle={styles.btn}
               disabled={!selected}
               onPress={() =>
-                navigation.navigate(AppRoutes.BringYouHere as never)
+                navigation.navigate(AppRoutes.FeelingsLately as never)
               }
             />
           </View>

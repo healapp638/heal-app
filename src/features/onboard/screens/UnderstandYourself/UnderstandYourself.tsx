@@ -15,17 +15,20 @@ import { useDispatch } from 'react-redux';
 import { setOnboardingCurrentScreen } from '../../../../redux/Reducers/userData';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-const RightPlace = () => {
+
+const UnderstandYourself = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+
   useFocusEffect(
     useCallback(() => {
-      dispatch(setOnboardingCurrentScreen(AppRoutes.RightPlace));
+      dispatch(setOnboardingCurrentScreen(AppRoutes.UnderstandYourself));
     }, [dispatch]),
   );
+
   return (
     <SolidView
       isScrollEnabled
@@ -54,18 +57,16 @@ const RightPlace = () => {
             resizeMode="stretch"
           />
           <View style={styles.mainContainer}>
-
             <SolidText style={styles.title}>
-              {localization.appkeys?.rightPlaceTitle}
+              {localization.appkeys?.understandYourselfText}
             </SolidText>
 
-
             <SolidBtn
-              titleTxt={localization.appkeys?.next}
+              titleTxt={localization.appkeys?.next || 'Next'}
               btnStyle={styles.btn}
               onPress={() => {
                 triggerHaptic();
-                return navigation.navigate(AppRoutes.EnterName as never);
+                return navigation.navigate(AppRoutes.TimeCommitment as never);
               }}
             />
           </View>
@@ -74,4 +75,5 @@ const RightPlace = () => {
     />
   );
 };
-export default RightPlace;
+
+export default UnderstandYourself;

@@ -1,6 +1,7 @@
 import { Platform, StyleSheet } from 'react-native';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
+import { hp } from '../../../../utils/dimension';
 
 const style = (colors: any) =>
   StyleSheet.create({
@@ -26,7 +27,9 @@ const style = (colors: any) =>
       fontSize: AppUtils.fontSize(22),
       color: colors.brown,
       textAlign: 'center',
-      marginBottom: 12,
+
+      marginTop: hp(24),
+
     },
     subtitle: {
       fontFamily: AppFonts.regular,

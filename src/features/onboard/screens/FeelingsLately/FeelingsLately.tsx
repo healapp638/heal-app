@@ -27,27 +27,34 @@ const FeelingsLately = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedSelection = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.feelingsLately ?? null,
+    (state: any) => state.userData?.onboarding?.answers?.howFellingLately,
   );
-  const [selected, setSelected] = useState<string | null>(savedSelection);
-  useEffect(() => {
-    setSelected(savedSelection);
-  }, [savedSelection]);
+
+  const selectedList = typeof savedSelection === 'string'
+    ? savedSelection.split(', ').filter(Boolean)
+    : Array.isArray(savedSelection)
+      ? savedSelection
+      : savedSelection
+        ? [savedSelection]
+        : [];
+
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.FeelingsLately));
     }, [dispatch]),
   );
+
   const handleBackPress = () => {
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-    if (previousRouteName === AppRoutes.BringYouHere) {
+    if (previousRouteName === AppRoutes.HearAboutUs) {
       navigation.goBack();
       return;
     }
-    navigation.navigate(AppRoutes.BringYouHere as never);
+    navigation.navigate(AppRoutes.HearAboutUs as never);
   };
+
   const options = [
     {
       id: 'calm',
@@ -84,6 +91,23 @@ const FeelingsLately = () => {
       label: localization.appkeys?.optionOther || 'Other',
     },
   ];
+
+  const handleOptionPress = (optionLabel: string) => {
+    triggerHaptic('impactMedium');
+    let updatedSelection: string[];
+    if (selectedList.includes(optionLabel)) {
+      updatedSelection = selectedList.filter(item => item !== optionLabel);
+    } else {
+      updatedSelection = [...selectedList, optionLabel];
+    }
+    dispatch(
+      setOnboardingAnswer({
+        key: 'howFellingLately',
+        value: updatedSelection.join(', '),
+      }),
+    );
+  };
+
   return (
     <SolidView
       isScrollEnabled
@@ -96,7 +120,7 @@ const FeelingsLately = () => {
             flex: 1,
           }}
         >
-          <HeaderProgress progress={0.5} onBackPress={handleBackPress} />
+          <HeaderProgress progress={0.2} onBackPress={handleBackPress} />
 
           <Image
             source={images.heartRope}
@@ -113,10 +137,8 @@ const FeelingsLately = () => {
 
             <View style={styles.listContainer}>
               {options.map(option => {
-                const isSelected = selected === option.id;
-                const isSelectedByText = selected === option.label;
+                const isCurrentSelected = selectedList.includes(option.label) || selectedList.includes(option.id);
                 const isOther = option.id === 'other';
-                const isCurrentSelected = isSelected || isSelectedByText;
 
                 return (
                   <TouchableOpacity
@@ -125,16 +147,7 @@ const FeelingsLately = () => {
                       styles.optionCard,
                       isCurrentSelected && styles.optionCardSelected,
                     ]}
-                    onPress={() => {
-                      triggerHaptic('impactMedium');
-                      setSelected(option.label);
-                      dispatch(
-                        setOnboardingAnswer({
-                          key: 'feelingsLately',
-                          value: option.label,
-                        }),
-                      );
-                    }}
+                    onPress={() => handleOptionPress(option.label)}
                     activeOpacity={0.7}
                   >
                     {!isOther ? (
@@ -157,13 +170,6 @@ const FeelingsLately = () => {
                             {option.label}
                           </SolidText>
                         </View>
-                        {isCurrentSelected && (
-                          <Image
-                            source={images.tick}
-                            style={styles.tickIcon}
-                            resizeMode="contain"
-                          />
-                        )}
                       </>
                     ) : (
                       <>
@@ -177,13 +183,13 @@ const FeelingsLately = () => {
                             {option.label}
                           </SolidText>
                         </View>
-                        {isCurrentSelected && (
+                        {/* {isCurrentSelected && (
                           <Image
                             source={images.tick}
                             style={[styles.tickIcon, { position: 'absolute', right: 16 }]}
                             resizeMode="contain"
                           />
-                        )}
+                        )} */}
                       </>
                     )}
                   </TouchableOpacity>
@@ -198,9 +204,9 @@ const FeelingsLately = () => {
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
-              disabled={!selected}
+              disabled={selectedList.length === 0}
               onPress={() => {
-                return navigation.navigate(AppRoutes.FeelMore as never);
+                return navigation.navigate(AppRoutes.BringYouHere as never);
               }}
             />
           </View>

@@ -10,8 +10,14 @@ import BringYouHere from '../../features/onboard/screens/BringYouHere/BringYouHe
 import FeelingsLately from '../../features/onboard/screens/FeelingsLately/FeelingsLately';
 import FeelMore from '../../features/onboard/screens/FeelMore/FeelMore';
 import TimeCommitment from '../../features/onboard/screens/TimeCommitment/TimeCommitment';
+import StartGoal from '../../features/onboard/screens/StartGoal/StartGoal';
+import StreakGrounded from '../../features/onboard/screens/StreakGrounded/StreakGrounded';
 import ReadyToStart from '../../features/onboard/screens/ReadyToStart/ReadyToStart';
 import RightPlace from '../../features/onboard/screens/RightPlace/RightPlace';
+import EnterName from '../../features/onboard/screens/EnterName/EnterName';
+import HelpsFeelBetter from '../../features/onboard/screens/HelpsFeelBetter/HelpsFeelBetter';
+import StopsFeelingBetter from '../../features/onboard/screens/StopsFeelingBetter/StopsFeelingBetter';
+import UnderstandYourself from '../../features/onboard/screens/UnderstandYourself/UnderstandYourself';
 import PrivacyMatters from '../../features/onboard/screens/PrivacyMatters/PrivacyMatters';
 import Warning from '../../features/onboard/screens/Warning/Warning';
 import CreatingSpace from '../../features/onboard/screens/CreatingSpace/CreatingSpace';
@@ -46,8 +52,29 @@ export default function AuthStack() {
         name={AppRoutes.TimeCommitment}
         component={TimeCommitment}
       />
+      <Stack.Screen
+        name={AppRoutes.StartGoal}
+        component={StartGoal}
+      />
+      <Stack.Screen
+        name={AppRoutes.StreakGrounded}
+        component={StreakGrounded}
+      />
       <Stack.Screen name={AppRoutes.ReadyToStart} component={ReadyToStart} />
       <Stack.Screen name={AppRoutes.RightPlace} component={RightPlace} />
+      <Stack.Screen name={AppRoutes.EnterName} component={EnterName} />
+      <Stack.Screen
+        name={AppRoutes.HelpsFeelBetter}
+        component={HelpsFeelBetter}
+      />
+      <Stack.Screen
+        name={AppRoutes.StopsFeelingBetter}
+        component={StopsFeelingBetter}
+      />
+      <Stack.Screen
+        name={AppRoutes.UnderstandYourself}
+        component={UnderstandYourself}
+      />
       <Stack.Screen
         name={AppRoutes.PrivacyMatters}
         component={PrivacyMatters}

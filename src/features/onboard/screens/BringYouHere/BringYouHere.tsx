@@ -27,27 +27,34 @@ const BringYouHere = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const savedSelection = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.bringYouHere ?? null,
+    (state: any) => state.userData?.onboarding?.answers?.feelThatWay,
   );
-  const [selected, setSelected] = useState<string | null>(savedSelection);
+
+  const selectedList = typeof savedSelection === 'string'
+    ? savedSelection.split(', ').filter(Boolean)
+    : Array.isArray(savedSelection)
+    ? savedSelection
+    : savedSelection
+    ? [savedSelection]
+    : [];
+
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.BringYouHere));
     }, [dispatch]),
   );
+
   const handleBackPress = () => {
     const routes = (navigation as any)?.getState?.()?.routes || [];
     const previousRouteName =
       routes.length > 1 ? routes[routes.length - 2]?.name : null;
-    if (previousRouteName === AppRoutes.HearAboutUs) {
+    if (previousRouteName === AppRoutes.FeelingsLately) {
       navigation.goBack();
       return;
     }
-    navigation.navigate(AppRoutes.HearAboutUs as never);
+    navigation.navigate(AppRoutes.FeelingsLately as never);
   };
-  useEffect(() => {
-    setSelected(savedSelection);
-  }, [savedSelection]);
+
   const options = [
     {
       id: 'romantic',
@@ -80,6 +87,23 @@ const BringYouHere = () => {
       icon: images.needtotalk,
     },
   ];
+
+  const handleOptionPress = (optionLabel: string) => {
+    triggerHaptic('impactMedium');
+    let updatedSelection: string[];
+    if (selectedList.includes(optionLabel)) {
+      updatedSelection = selectedList.filter(item => item !== optionLabel);
+    } else {
+      updatedSelection = [...selectedList, optionLabel];
+    }
+    dispatch(
+      setOnboardingAnswer({
+        key: 'feelThatWay',
+        value: updatedSelection.join(', '),
+      }),
+    );
+  };
+
   return (
     <SolidView
       isScrollEnabled
@@ -110,7 +134,7 @@ const BringYouHere = () => {
             <View style={styles.listContainer}>
               {options.map(option => {
                 const isSelected =
-                  selected === option.id || selected === option.label;
+                  selectedList.includes(option.label) || selectedList.includes(option.id);
                 return (
                   <TouchableOpacity
                     key={option.id}
@@ -118,16 +142,7 @@ const BringYouHere = () => {
                       styles.optionCard,
                       isSelected && styles.optionCardSelected,
                     ]}
-                    onPress={() => {
-                      triggerHaptic('impactMedium');
-                      setSelected(option.label);
-                      dispatch(
-                        setOnboardingAnswer({
-                          key: 'bringYouHere',
-                          value: option.label,
-                        }),
-                      );
-                    }}
+                    onPress={() => handleOptionPress(option.label)}
                     activeOpacity={0.7}
                   >
                     <Image
@@ -159,9 +174,9 @@ const BringYouHere = () => {
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
-              disabled={!selected}
+              disabled={selectedList.length === 0}
               onPress={() => {
-                return navigation.navigate(AppRoutes.FeelingsLately as never);
+                return navigation.navigate(AppRoutes.FeelMore as never);
               }}
             />
           </View>
