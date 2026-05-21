@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, cloneElement } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -74,9 +74,9 @@ const SignUp = () => {
   const localizedMonths = getLocalizedMonths(localization);
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
-        selectedDate.month,
-        localization,
-      )} - ${selectedDate.year}`
+      selectedDate.month,
+      localization,
+    )} - ${selectedDate.year}`
     : localization.appkeys?.selectBirthDate;
   const handleSignUp = () => {
     const validation = validateSignUpForm({
@@ -102,9 +102,8 @@ const SignUp = () => {
       }
       return;
     }
-    const formattedDob = `${selectedDate.year}-${
-      monthToNumber[selectedDate.month]
-    }-${selectedDate.day}`;
+    const formattedDob = `${selectedDate.year}-${monthToNumber[selectedDate.month]
+      }-${selectedDate.day}`;
     const registrationData = {
       fullName,
       email: email?.trim()?.toLowerCase(),
@@ -120,6 +119,7 @@ const SignUp = () => {
       language: AppUtils.getLanguageCode(appLanguage),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
+
     registerUser(
       {
         endpoint: endpoints.register,

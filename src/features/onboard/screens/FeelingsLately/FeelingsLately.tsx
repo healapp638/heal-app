@@ -50,28 +50,38 @@ const FeelingsLately = () => {
   };
   const options = [
     {
-      id: '1',
-      label: localization.appkeys?.optionOverwhelmed,
+      id: 'calm',
+      label: localization.appkeys?.feelingCalm || 'Calm',
+      icon: images.calmS,
     },
     {
-      id: '2',
-      label: localization.appkeys?.optionDrained,
+      id: 'sad',
+      label: localization.appkeys?.feelingSad || 'Sad',
+      icon: images.sadS,
     },
     {
-      id: '3',
-      label: localization.appkeys?.optionOverthinking,
+      id: 'happy',
+      label: localization.appkeys?.feelingHappy || 'Happy',
+      icon: images.happyS,
     },
     {
-      id: '4',
-      label: localization.appkeys?.optionStuck,
+      id: 'sorrow',
+      label: localization.appkeys?.feelingSorrow || 'Sorrow',
+      icon: images.sorrowS,
     },
     {
-      id: '5',
-      label: localization.appkeys?.optionLost,
+      id: 'thoughtful',
+      label: localization.appkeys?.feelingThoughtful || 'Thoughtful',
+      icon: images.thoughtfulS,
     },
     {
-      id: '6',
-      label: localization.appkeys?.optionClarity,
+      id: 'hopeful',
+      label: localization.appkeys?.feelingHopeful || 'Hopeful',
+      icon: images.hopeS,
+    },
+    {
+      id: 'other',
+      label: localization.appkeys?.optionOther || 'Other',
     },
   ];
   return (
@@ -98,20 +108,22 @@ const FeelingsLately = () => {
               {localization.appkeys?.feelingsTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              {localization.appkeys?.safeSpaceSub}
+              {localization.appkeys?.chooseMood || "Choose a mood that suits you."}
             </SolidText>
 
             <View style={styles.listContainer}>
               {options.map(option => {
                 const isSelected = selected === option.id;
                 const isSelectedByText = selected === option.label;
+                const isOther = option.id === 'other';
+                const isCurrentSelected = isSelected || isSelectedByText;
+
                 return (
                   <TouchableOpacity
                     key={option.id}
                     style={[
                       styles.optionCard,
-                      (isSelected || isSelectedByText) &&
-                        styles.optionCardSelected,
+                      isCurrentSelected && styles.optionCardSelected,
                     ]}
                     onPress={() => {
                       triggerHaptic('impactMedium');
@@ -125,15 +137,55 @@ const FeelingsLately = () => {
                     }}
                     activeOpacity={0.7}
                   >
-                    <SolidText
-                      style={[
-                        styles.optionText,
-                        (isSelected || isSelectedByText) &&
-                          styles.optionTextSelected,
-                      ]}
-                    >
-                      {option.label}
-                    </SolidText>
+                    {!isOther ? (
+                      <>
+                        <View style={styles.optionContentLeft}>
+                          {option.icon && (
+                            <Image
+                              source={option.icon}
+                              style={styles.icon}
+                              resizeMode="contain"
+                            />
+                          )}
+                          <SolidText
+                            style={[
+                              styles.optionText,
+                              styles.optionTextLeft,
+                              isCurrentSelected && styles.optionTextSelected,
+                            ]}
+                          >
+                            {option.label}
+                          </SolidText>
+                        </View>
+                        {isCurrentSelected && (
+                          <Image
+                            source={images.tick}
+                            style={styles.tickIcon}
+                            resizeMode="contain"
+                          />
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                          <SolidText
+                            style={[
+                              styles.optionText,
+                              isCurrentSelected && styles.optionTextSelected,
+                            ]}
+                          >
+                            {option.label}
+                          </SolidText>
+                        </View>
+                        {isCurrentSelected && (
+                          <Image
+                            source={images.tick}
+                            style={[styles.tickIcon, { position: 'absolute', right: 16 }]}
+                            resizeMode="contain"
+                          />
+                        )}
+                      </>
+                    )}
                   </TouchableOpacity>
                 );
               })}

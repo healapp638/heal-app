@@ -34,11 +34,11 @@ const style = (colors: any) =>
     },
     optionCard: {
       width: '100%',
-      height: 60,
+      height: 70,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 10,
+      justifyContent: 'space-between',
+      paddingHorizontal: 16,
       marginBottom: 10,
       borderRadius: 16,
       backgroundColor: colors.white,
@@ -53,12 +53,29 @@ const style = (colors: any) =>
     optionCardSelected: {
       borderColor: colors.brown,
     },
+    optionContentLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    icon: {
+      width: 64,
+      height: 64,
+      marginRight: 10,
+    },
+    tickIcon: {
+      width: 24,
+      height: 24,
+    },
     optionText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(15),
       color: colors.brown,
       textAlign: 'center',
       includeFontPadding: false,
+    },
+    optionTextLeft: {
+      textAlign: 'left',
     },
     optionTextSelected: {},
     btn: {

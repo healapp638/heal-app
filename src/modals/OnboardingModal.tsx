@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, cloneElement } from 'react';
 import {
   View,
   StyleSheet,
@@ -141,15 +141,18 @@ const OnboardingModal = ({
           <>
             <View style={styles.iconWrap}>
               {option.icon ? (
-                <Image
-                  source={option.icon}
-                  style={
-                    option?.id === 'group'
-                      ? { height: 44, width: 44, marginLeft: -4 }
-                      : styles.icon
-                  }
-                  resizeMode="contain"
-                />
+                <View style={{ overflow: "hidden", zIndex: -999 }}>
+
+                  <Image
+                    source={option.icon}
+                    style={
+                      option?.id === 'group'
+                        ? { height: 44, width: 44, marginLeft: -4 }
+                        : (key === 'hearAboutUs' ? styles.smallIcon : styles.icon)
+                    }
+                    resizeMode="contain"
+                  />
+                </View>
               ) : (
                 <View style={styles.iconPlaceholder} />
               )}
@@ -163,13 +166,29 @@ const OnboardingModal = ({
             </View>
             <SolidText style={styles.optionText}>{option.label}</SolidText>
           </>
+        ) : isOther ? (
+          <>
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+              <SolidText style={styles.optionText}>{option.label}</SolidText>
+            </View>
+            {isSelected && (
+              <Image
+                source={images.tick}
+                style={[styles.tickIcon, { position: 'absolute', right: 16 }]}
+                resizeMode="contain"
+              />
+            )}
+          </>
         ) : (
           <>
             <View style={styles.optionCardFullLeft}>
               {option.icon && (
                 <Image
                   source={option.icon}
-                  style={[styles.icon, { marginRight: 15 }]}
+                  style={[
+                    key === 'howFellingLately' ? styles.smallIcon : styles.icon,
+                    { marginRight: 15 },
+                  ]}
                   resizeMode="contain"
                 />
               )}
@@ -313,22 +332,44 @@ const OnboardingModal = ({
               {localization.appkeys?.feelingsTitle}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              {localization.appkeys?.safeSpaceSub}
+              {localization.appkeys?.chooseMood || "Choose a mood that suits you."}
             </SolidText>
             <View style={styles.optionsList}>
               {[
                 {
-                  id: 'overwhelmed',
-                  label: localization.appkeys?.optionOverwhelmed,
+                  id: 'calm',
+                  label: localization.appkeys?.feelingCalm || 'Calm',
+                  icon: images.calmS,
                 },
-                { id: 'drained', label: localization.appkeys?.optionDrained },
                 {
-                  id: 'overthinking',
-                  label: localization.appkeys?.optionOverthinking,
+                  id: 'sad',
+                  label: localization.appkeys?.feelingSad || 'Sad',
+                  icon: images.sadS,
                 },
-                { id: 'stuck', label: localization.appkeys?.optionStuck },
-                { id: 'lost', label: localization.appkeys?.optionLost },
-                { id: 'clarity', label: localization.appkeys?.optionClarity },
+                {
+                  id: 'happy',
+                  label: localization.appkeys?.feelingHappy || 'Happy',
+                  icon: images.happyS,
+                },
+                {
+                  id: 'sorrow',
+                  label: localization.appkeys?.feelingSorrow || 'Sorrow',
+                  icon: images.sorrowS,
+                },
+                {
+                  id: 'thoughtful',
+                  label: localization.appkeys?.feelingThoughtful || 'Thoughtful',
+                  icon: images.thoughtfulS,
+                },
+                {
+                  id: 'hopeful',
+                  label: localization.appkeys?.feelingHopeful || 'Hopeful',
+                  icon: images.hopeS,
+                },
+                {
+                  id: 'other',
+                  label: localization.appkeys?.optionOther || 'Other',
+                },
               ].map(opt => renderOption('howFellingLately', opt, true))}
             </View>
           </View>
@@ -438,7 +479,7 @@ const OnboardingModal = ({
           <HeaderProgress
             progress={(step + 1) / totalSteps}
             onBackPress={step > 0 ? handleBack : onBack}
-            // showBack={step > 0}
+          // showBack={step > 0}
           />
           <TouchableOpacity
             style={[styles.closeBtn, { top: insets.top + 10 }]}
@@ -512,7 +553,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 20,
+    paddingBottom: Platform.OS === 'ios' ? 120 : 100,
   },
   stepContainer: {
     paddingHorizontal: 20,
@@ -581,10 +622,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
+    overflow: "hidden",
   },
   icon: {
-    width: 32,
-    height: 32,
+    width: 64,
+    height: 64,
+  },
+  smallIcon: {
+    width: 30,
+    height: 30,
   },
   iconPlaceholder: {
     width: 32,
@@ -599,6 +645,10 @@ const styles = StyleSheet.create({
     color: '#3A2110',
   },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
     paddingHorizontal: 20,
     paddingBottom: Platform.OS === 'ios' ? 40 : 20,
     paddingTop: 10,

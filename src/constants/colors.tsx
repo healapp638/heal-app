@@ -174,6 +174,12 @@ const LightTheme = {
     whiteHeart: require('../assets/whiteHeart.png'),
     iosBio: require('../assets/iosBio.png'),
     andBio: require('../assets/andBio.png'),
+    calmS: require('../assets/calmS.png'),
+    happyS: require('../assets/happyS.png'),
+    sorrowS: require('../assets/sorrowS.png'),
+    thoughtfulS: require('../assets/thoughtfulS.png'),
+    sadS: require('../assets/sadS.png'),
+    hopeS: require('../assets/hopeS.png'),
   },
 };
 
@@ -352,6 +358,12 @@ const DarkTheme = {
     whiteHeart: require('../assets/whiteHeart.png'),
     iosBio: require('../assets/iosBio.png'),
     andBio: require('../assets/andBio.png'),
+    calmS: require('../assets/calmS.png'),
+    happyS: require('../assets/happyS.png'),
+    sorrowS: require('../assets/sorrowS.png'),
+    thoughtfulS: require('../assets/thoughtfulS.png'),
+    sadS: require('../assets/sadS.png'),
+    hopeS: require('../assets/hopeS.png'),
   },
 };
 export { LightTheme, DarkTheme };
