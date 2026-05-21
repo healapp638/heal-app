@@ -30,6 +30,7 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const cronjob_func_1 = require("./helpers/cronjob.func");
 const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation/user.deeplink.model"));
 const perf_hooks_1 = require("perf_hooks");
+const langauge_translate_helper_1 = require("./helpers/langauge.translate.helper");
 // import blocked from "blocked-at";
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
@@ -52,6 +53,11 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 init();
+const a = () => __awaiter(void 0, void 0, void 0, function* () {
+    const a = yield (0, langauge_translate_helper_1.translateText)("hello", "hi");
+    console.log(a, "a a a a");
+});
+a();
 const h = (0, perf_hooks_1.monitorEventLoopDelay)();
 h.enable();
 setInterval(() => {

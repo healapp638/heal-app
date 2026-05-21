@@ -13,6 +13,7 @@ import { challengsFn } from "./common.helper";
 import { generateUserChallengesDaily, generateUserChallengesWeekly } from "./openai.helper";
 import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.challenges.model";
 import nodeCron from "node-cron";
+import { connection as connectDB } from "../configs/mongoose.config";
 
 
 const openai = new OpenAI({
@@ -248,10 +249,13 @@ Return JSON:
 
 const generateChallenges = async () => {
   try {
-
+    console.log('start')
+    await connectDB()
     //daily logic 
     const startOfDay = moment().startOf('day').toDate();
+    console.log(startOfDay, 'startOfDay')
     const findUser = await userAuthModel.find({ lastDailyChallengeGeneratedDate: { $lt: startOfDay }, isVerified: true })
+    console.log(findUser, 'findUser')
     if (findUser.length > 0) {
       await Promise.all(findUser.map(async (curelem: any) => {
         //challenges logic start
@@ -260,10 +264,57 @@ const generateChallenges = async () => {
         const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
         const payload: any = challengesDetails?.payload;
         if (isOnBoardingComplete && !isDailyChallengeExist) {
+          //
+          console.log('inside')
+          await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { isDailyChallengeInProgress: true } })
           const res = await generateUserChallengesDaily(payload, curelem?._id.toString());
-          const result = await userDailyChallengesModel.insertMany(res.data)
+          console.log(res, 'res')
+          const languagess = Object.values(languages);
+          const formattedChallenges = await Promise.all(
+            res?.data?.map(async (challenge: any) => {
+              const titleObj: any = {};
+              await Promise.all(
+                languagess.map(async (lang) => {
+                  titleObj[lang] = await translateText(
+                    challenge.title,
+                    lang
+                  );
+                })
+              );
+
+              const exercises = await Promise.all(
+                challenge.exercises.map(async (exercise: any) => {
+                  const exerciseTitleObj: any = {};
+                  await Promise.all(
+                    languagess.map(async (lang) => {
+                      exerciseTitleObj[lang] = await translateText(
+                        exercise.title,
+                        lang
+                      );
+                    })
+                  );
+                  return {
+                    title: exerciseTitleObj,
+                    step_number: exercise.step_number,
+                  };
+                })
+              );
+
+              return {
+                user_id: challenge.user_id,
+                challenge_type: challenge.challenge_type,
+                points: challenge.points,
+                title: titleObj,
+                exercises,
+              };
+            })
+          );
+          console.log(formattedChallenges, 'formattedChallenges')
+          const result = await userDailyChallengesModel.insertMany(
+            formattedChallenges
+          );
           if (result) {
-            await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+            await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } })
           }
         }
         //end
@@ -281,10 +332,53 @@ const generateChallenges = async () => {
         const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
         const payload: any = challengesDetails?.payload;
         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+          await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { isWeeklyChallengeInProgress: true } })
           const res = await generateUserChallengesWeekly(payload, curelem?._id.toString())
-          const result = await userWeeklyChallengesModel.insertMany(res.data)
+          const languagess = Object.values(languages);
+          const formattedChallenges = await Promise.all(
+            res?.data?.map(async (challenge: any) => {
+              const titleObj: any = {};
+              await Promise.all(
+                languagess.map(async (lang) => {
+                  titleObj[lang] = await translateText(
+                    challenge.title,
+                    lang
+                  );
+                })
+              );
+              // multilingual exercises
+              const exercises = await Promise.all(
+                challenge.exercises.map(async (exercise: any) => {
+                  const exerciseTitleObj: any = {};
+                  await Promise.all(
+                    languagess.map(async (lang) => {
+                      exerciseTitleObj[lang] = await translateText(
+                        exercise.title,
+                        lang
+                      );
+                    })
+                  );
+                  return {
+                    title: exerciseTitleObj,
+                    step_number: exercise.step_number,
+                  };
+                })
+              );
+              return {
+                user_id: challenge.user_id,
+                challenge_type: challenge.challenge_type,
+                points: challenge.points,
+                title: titleObj,
+                exercises,
+              };
+            })
+          );
+          console.log(formattedChallenges, 'formattedChallenges')
+          const result = await userWeeklyChallengesModel.insertMany(
+            formattedChallenges
+          );
           if (result) {
-            await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
+            await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } })
           }
         }
         //end

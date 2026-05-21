@@ -72,6 +72,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             const result = await userDailyChallengesModel.insertMany(
                 formattedChallenges
             );
+            console.log(result, 'result')
             if (result) {
                 await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } })
             }
