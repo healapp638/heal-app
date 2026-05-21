@@ -16,7 +16,6 @@ import cron from "node-cron";
 import { generateAffirmation, scheduleCroneJOb } from "./helpers/cronjob.func";
 import userDeeplinkModel from "./modules/UserAffirmation/user.deeplink.model";
 import { monitorEventLoopDelay } from "perf_hooks";
-import { translateText } from "./helpers/langauge.translate.helper";
 // import blocked from "blocked-at";
 
 
@@ -47,11 +46,7 @@ const init = async () => {
     });
 }
 init();
-const a = async () => {
-  const a = await translateText("hello", "hi")
-  console.log(a, "a a a a")
-}
-a()
+
 
 const h = monitorEventLoopDelay();
 h.enable();
