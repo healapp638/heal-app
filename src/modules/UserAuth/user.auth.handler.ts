@@ -864,7 +864,8 @@ const UserAuthHandler = {
         }
         await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj)
         //challenges logic start
-        await ChallengesQueue.add('challenges', { userData: userDetails }, {
+        const newDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId) })
+        await ChallengesQueue.add('challenges', { userData: newDetails }, {
             attempts: 3,
             backoff: {
                 type: 'exponential',

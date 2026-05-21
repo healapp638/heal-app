@@ -799,7 +799,8 @@ const UserAuthHandler = {
         const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (bringsYouHere && { bringsYouHere })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (startShowingOfYourSelf && { startShowingOfYourSelf }));
         yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj);
         //challenges logic start
-        yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: userDetails }, {
+        const newDetails = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId) });
+        yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: newDetails }, {
             attempts: 3,
             backoff: {
                 type: 'exponential',
