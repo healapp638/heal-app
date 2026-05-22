@@ -32,6 +32,8 @@ const AppRoutes = {
   CompleteProfile: 'CompleteProfile',
   Offer: 'Offer',
   SelectLanguage: 'SelectLanguage',
+  EmailSignIn: 'EmailSignIn',
+  CheckEmail: 'CheckEmail',
   Reminder: 'Reminder',
   Premium: 'Premium',
   BottomTab: 'BottomTab',

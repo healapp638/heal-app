@@ -6,13 +6,20 @@ import NonAuthStack from '../NoAuth/NonAuthStack';
 import { LocalizationContext } from '../../localization/localization';
 import { strings } from '../../constants/variables';
 import Loader from '../../modals/Loader';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { Text, Animated, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ Use this SafeAreaView
+import { Linking } from 'react-native';
+import {
+  setEmail,
+  setOnboardingAnswer,
+  SetAppLanguage,
+} from '../../redux/Reducers/userData';
 
 export default function MainStack() {
   const Stack = createNativeStackNavigator();
+  const dispatch = useDispatch();
   const { initializeAppLanguage, setAppLanguage } =
     useContext(LocalizationContext);
   const loading = useSelector((state: any) => state.tempData.loader);
@@ -63,6 +70,111 @@ export default function MainStack() {
       }
     }
   }, [netInfo.isConnected]);
+
+
+
+  useEffect(() => {
+    // Handle deep link
+    const handleUrl = (url: string) => {
+      console.log('Deep link received:', url);
+
+      // Extract query parameters safely
+      const params: { [key: string]: string } = {};
+      const queryString = url.split('?')[1];
+      if (queryString) {
+        const pairs = queryString.split('&');
+        pairs.forEach((pair) => {
+          const [key, value] = pair.split('=');
+          if (key) {
+            params[decodeURIComponent(key)] = decodeURIComponent(value || '');
+          }
+        });
+      }
+
+      console.log('Parsed query params:', params);
+
+      const {
+        language,
+        email,
+        fullName,
+        goalStartWith,
+        timeYouCommit,
+        stopFeelBetter,
+        helpFeelBetter,
+        likeToFellMore,
+        feelThatWay,
+        howFellingLately,
+        hearAboutUs,
+        ref,
+      } = params;
+
+      if (ref) {
+        console.log('Referral:', ref);
+      }
+
+      // Handle language mapping and setting
+      if (language) {
+        const languageMap: { [key: string]: string } = {
+          en: 'English',
+          es: 'Spanish',
+          fr: 'French',
+          de: 'German',
+          ru: 'Russian',
+          pt: 'Portuguese',
+          it: 'Italian',
+        };
+        const mappedLanguage = languageMap[language.toLowerCase()];
+        if (mappedLanguage) {
+          dispatch(SetAppLanguage(mappedLanguage));
+          setAppLanguage(mappedLanguage);
+        }
+      }
+
+      // Handle email setting
+      if (email) {
+        dispatch(setEmail(email));
+      }
+
+      // Handle onboarding answers
+      const answersMap: { [key: string]: string | undefined } = {
+        fullName,
+        goalStartWith,
+        timeYouCommit,
+        stopFeelBetter,
+        helpFeelBetter,
+        likeToFellMore,
+        feelThatWay,
+        howFellingLately,
+        hearAboutUs,
+      };
+
+      Object.entries(answersMap).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          dispatch(setOnboardingAnswer({ key, value }));
+        }
+      });
+    };
+
+    // Cold start
+    Linking.getInitialURL().then((url) => {
+      if (url) {
+        handleUrl(url);
+      }
+    });
+
+    // Runtime deep links
+    const subscription = Linking.addEventListener('url', ({ url }) => {
+      handleUrl(url);
+    });
+
+    // Cleanup
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+
+
+
 
   return (
     <>

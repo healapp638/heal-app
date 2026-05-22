@@ -62,6 +62,10 @@
 	<string>Heal uses speech recognition to transcribe your journal entries</string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
+	<key>NSUserActivityTypes</key>
+<array>
+<string>NSUserActivityTypeBrowsingWeb</string>
+</array>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Poppins-ExtraLight.ttf</string>

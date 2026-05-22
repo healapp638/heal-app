@@ -63,8 +63,7 @@ const style = (colors: any) =>
     socialIcon: {
       width: 25,
       height: 25,
-      position: 'absolute',
-      left: 15,
+      marginRight: 10,
     },
     socialBtnTxt: {
       fontFamily: AppFonts.medium,

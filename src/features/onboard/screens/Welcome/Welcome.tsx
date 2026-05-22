@@ -19,6 +19,7 @@ import {
   RESUMABLE_ONBOARDING_ROUTES,
 } from '../../utils/onboardingProgress';
 import ResumeModal from '../../../../modals/ResumeModal';
+import SignInModal from '../../../../modals/SignInModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 const Welcome = () => {
   const navigation = useNavigation();
@@ -29,6 +30,7 @@ const Welcome = () => {
   const onboarding = useSelector((state: any) => state.userData?.onboarding);
   const hasPromptedOnFocus = useRef(false);
   const [resumeModalVisible, setResumeModalVisible] = React.useState(false);
+  const [signInModalVisible, setSignInModalVisible] = React.useState(false);
   const handleResumeFlow = useCallback(() => {
     const currentScreen = onboarding?.currentScreen;
     if (!currentScreen) return;
@@ -168,7 +170,7 @@ const Welcome = () => {
           />
           <SolidText
             onPress={() => {
-              navigation.navigate(AppRoutes.AccessScreen as never);
+              setSignInModalVisible(true);
             }}
             style={styles.footerText}
           >
@@ -183,6 +185,10 @@ const Welcome = () => {
             onClose={() => setResumeModalVisible(false)}
             onConfirm={handleResumeFlow}
             onStartOver={handleStartOver}
+          />
+          <SignInModal
+            visible={signInModalVisible}
+            onClose={() => setSignInModalVisible(false)}
           />
         </View>
       }

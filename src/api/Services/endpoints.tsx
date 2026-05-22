@@ -3,6 +3,7 @@ export const endpoints = {
   verifyOtp: '/user/auth/verify_otp',
   resendOtp: '/user/auth/resend_otp',
   forgot_password: '/user/auth/forgot_password',
+  sendMagicLink: '/user/auth/sendMagicLink',
   reset_password: '/user/auth/reset_password',
   login: '/user/auth/login',
   social_login: '/user/auth/social_login',

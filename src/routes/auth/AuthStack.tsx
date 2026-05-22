@@ -31,6 +31,8 @@ import ForgotPassword from '../../features/auth/screens/ForgotPassword/ForgotPas
 import ResetPassword from '../../features/auth/screens/ResetPassword/ResetPassword';
 import SelectLanguage from '../../features/auth/screens/SelectLanguage/SelectLanguage';
 import CompleteProfile from '../../features/auth/screens/CompleteProfile/CompleteProfile';
+import EmailSignIn from '../../features/auth/screens/EmailSignIn/EmailSignIn';
+import CheckEmail from '../../features/auth/screens/CheckEmail/CheckEmail';
 
 export default function AuthStack() {
   const Stack = createNativeStackNavigator();
@@ -99,6 +101,14 @@ export default function AuthStack() {
       <Stack.Screen
         name={AppRoutes.CompleteProfile}
         component={CompleteProfile}
+      />
+      <Stack.Screen
+        name={AppRoutes.EmailSignIn}
+        component={EmailSignIn}
+      />
+      <Stack.Screen
+        name={AppRoutes.CheckEmail}
+        component={CheckEmail}
       />
     </Stack.Navigator>
   );
