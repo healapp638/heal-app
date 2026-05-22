@@ -27,8 +27,9 @@ const style = (colors: any) =>
       fontSize: AppUtils.fontSize(22),
       color: colors.brown,
       textAlign: 'center',
-
+      paddingHorizontal: 40,
       marginTop: hp(24),
+      lineHeight: 30
 
     },
     subtitle: {

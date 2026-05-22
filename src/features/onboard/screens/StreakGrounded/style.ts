@@ -66,11 +66,7 @@ const style = (colors: any) =>
 
       width: '100%',
 
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.02,
-      shadowRadius: 8,
-      elevation: 1,
+
       marginTop: 8
     },
     daysRow: {
