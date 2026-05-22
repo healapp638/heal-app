@@ -628,8 +628,8 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const startOfDay = (0, moment_timezone_1.default)().tz(userData === null || userData === void 0 ? void 0 : userData.timezone).startOf('day').toDate();
-        const endOfDay = (0, moment_timezone_1.default)().tz(userData === null || userData === void 0 ? void 0 : userData.timezone).endOf('day').toDate();
+        const startOfDay = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timezone) || 'America/New_York').startOf('day').toDate();
+        const endOfDay = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timezone) || 'America/New_York').endOf('day').toDate();
         const totalJournels = yield user_journel_model_1.default.countDocuments({
             user_id: commonHelper.convertToObjectId(userId),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
@@ -640,7 +640,7 @@ const UserAuthHandler = {
         console.log((_d = completedDailyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points, 'completedDailyChallenges');
         console.log((_e = CompletedPhases[0]) === null || _e === void 0 ? void 0 : _e.total_points, 'CompletedPhases');
         console.log(totalJournelEarnedPoints, 'totalJournelEarnedPoints');
-        const total_earned_points = (((_f = CompletedPhases[0]) === null || _f === void 0 ? void 0 : _f.total_points) || 0) + (((_g = completedWeeklyChallenges[0]) === null || _g === void 0 ? void 0 : _g.total_points) || 0) + (((_h = completedDailyChallenges[0]) === null || _h === void 0 ? void 0 : _h.total_points) || 0) + totalJournelEarnedPoints;
+        const total_earned_points = (((_f = CompletedPhases[0]) === null || _f === void 0 ? void 0 : _f.total_points) || 0) + (((_g = completedWeeklyChallenges[0]) === null || _g === void 0 ? void 0 : _g.total_points) || 0) + (((_h = completedDailyChallenges[0]) === null || _h === void 0 ? void 0 : _h.total_points) || 0) + totalJournelEarnedPoints || 0;
         const pointThresholds = [
             99, 235, 460, 740, 1070, 1450, 1875, 2345,
             2860, 3415, 4015, 4650, 5325, 6040, 6795,

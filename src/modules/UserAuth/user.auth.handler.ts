@@ -662,8 +662,9 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const startOfDay = moment().tz(userData?.timezone).startOf('day').toDate();
-        const endOfDay = moment().tz(userData?.timezone).endOf('day').toDate();
+        const startOfDay = moment().tz(userData?.timezone || 'America/New_York').startOf('day').toDate();
+        console
+        const endOfDay = moment().tz(userData?.timezone || 'America/New_York').endOf('day').toDate();
 
         const totalJournels = await userJournalModel.countDocuments({
             user_id: commonHelper.convertToObjectId(userId),
@@ -675,7 +676,7 @@ const UserAuthHandler = {
         console.log(completedDailyChallenges[0]?.total_points, 'completedDailyChallenges')
         console.log(CompletedPhases[0]?.total_points, 'CompletedPhases')
         console.log(totalJournelEarnedPoints, 'totalJournelEarnedPoints')
-        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0) + totalJournelEarnedPoints;
+        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0) + totalJournelEarnedPoints || 0;
         const pointThresholds = [
             99, 235, 460, 740, 1070, 1450, 1875, 2345,
             2860, 3415, 4015, 4650, 5325, 6040, 6795,
