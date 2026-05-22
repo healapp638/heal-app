@@ -662,9 +662,10 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const startOfDay = moment().tz(userData?.timezone || 'America/New_York').startOf('day').toDate();
-        console
-        const endOfDay = moment().tz(userData?.timezone || 'America/New_York').endOf('day').toDate();
+        const startOfDay = moment().tz(userData?.timeZone || 'America/New_York').startOf('day').toDate();
+        console.log(startOfDay, 'startOfDay')
+        const endOfDay = moment().tz(userData?.timeZone || 'America/New_York').endOf('day').toDate();
+        console.log(endOfDay, 'endOfDay')
 
         const totalJournels = await userJournalModel.countDocuments({
             user_id: commonHelper.convertToObjectId(userId),

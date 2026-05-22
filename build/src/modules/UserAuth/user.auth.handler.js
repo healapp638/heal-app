@@ -628,8 +628,10 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        const startOfDay = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timezone) || 'America/New_York').startOf('day').toDate();
-        const endOfDay = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timezone) || 'America/New_York').endOf('day').toDate();
+        const startOfDay = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || 'America/New_York').startOf('day').toDate();
+        console.log(startOfDay, 'startOfDay');
+        const endOfDay = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || 'America/New_York').endOf('day').toDate();
+        console.log(endOfDay, 'endOfDay');
         const totalJournels = yield user_journel_model_1.default.countDocuments({
             user_id: commonHelper.convertToObjectId(userId),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
