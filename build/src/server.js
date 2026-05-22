@@ -212,11 +212,11 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const codeParam = encodeURIComponent(code || "");
     // const idParam = encodeURIComponent(affirmation_id || "");
     if (/iPhone|iPad|iPod/.test(ua)) {
-        // console.log("📱 iOS user detected");
+        console.log("📱 iOS user detected");
         storeUrl = iosStore;
         // deepLink = `myapp://open?code=${code}`;
         deepLink = `myapp://open?code=${codeParam}`;
-        // console.log(deepLink, "deepLink ioss")
+        console.log(deepLink, "deepLink ioss");
     }
     else if (/Android/.test(ua)) {
         console.log("🤖 Android user detected");
