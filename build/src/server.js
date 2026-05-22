@@ -197,8 +197,9 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
 }));
 app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { code } = req.params;
-    //console.log(req.params, "req.params")
+    console.log(req.params, "req.params");
     const doc = yield user_deeplink_model_1.default.findOne({ code });
+    console.log(doc, "doc");
     if (!doc) {
         return res.redirect("https://myapp.com/notfound");
     }
@@ -211,6 +212,7 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
     let storeUrl = fallbackWeb;
     const codeParam = encodeURIComponent(code || "");
     // const idParam = encodeURIComponent(affirmation_id || "");
+    console.log("deeplink");
     if (/iPhone|iPad|iPod/.test(ua)) {
         console.log("📱 iOS user detected");
         storeUrl = iosStore;
