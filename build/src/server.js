@@ -222,7 +222,7 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.log("🤖 Android user detected");
         storeUrl = playStore;
         // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
-        deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=pollture;package=com.heal;end`;
+        deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=heal;package=com.heal;end`;
         // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
         console.log(deepLink, "deepLink android");
     }
