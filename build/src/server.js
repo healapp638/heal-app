@@ -195,6 +195,82 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
       </html>
     `);
 }));
+app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { code } = req.params;
+    //console.log(req.params, "req.params")
+    const doc = yield user_deeplink_model_1.default.findOne({ code });
+    if (!doc) {
+        return res.redirect("https://myapp.com/notfound");
+    }
+    let deepLink = `myapp://open?code=${code}`;
+    const ua = req.headers["user-agent"] || "";
+    // const iosStore = `https://apps.apple.com/us/app`;
+    const iosStore = `https://apps.apple.com/us/app/heal-emotional-companion/id6771270384`;
+    const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
+    const fallbackWeb = "https://apidev.heal-app.com/";
+    let storeUrl = fallbackWeb;
+    const codeParam = encodeURIComponent(code || "");
+    // const idParam = encodeURIComponent(affirmation_id || "");
+    if (/iPhone|iPad|iPod/.test(ua)) {
+        // console.log("📱 iOS user detected");
+        storeUrl = iosStore;
+        // deepLink = `myapp://open?code=${code}`;
+        deepLink = `myapp://open?code=${codeParam}`;
+        // console.log(deepLink, "deepLink ioss")
+    }
+    else if (/Android/.test(ua)) {
+        console.log("🤖 Android user detected");
+        storeUrl = playStore;
+        // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
+        deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=pollture;package=com.heal;end`;
+        // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
+        console.log(deepLink, "deepLink android");
+    }
+    // Use a strong random nonce instead of hardcoding in production
+    const nonce = "123456";
+    res.setHeader("Content-Security-Policy", `script-src 'self' 'nonce-${nonce}';`);
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+          <title>Opening App</title>
+          <script nonce="${nonce}">
+              function attemptDeepLink() {
+                  const deepLink = "${deepLink}";
+                  const storeUrl = "${storeUrl}";
+                  
+                  try {
+                      const iframe = document.createElement('iframe');
+                      iframe.style.display = 'none';
+                      iframe.src = deepLink;
+                      document.body.appendChild(iframe);
+                      
+                      setTimeout(() => {
+                          try {
+                              window.location = deepLink;
+                          } catch (e) {
+                               // console.log('Deep link failed:', e);
+                          }
+                      }, 100);
+                      
+                  } catch (error) {
+                     // console.log('Deep link attempt failed:', error);
+                  }
+                  
+                  setTimeout(() => {
+                      window.location.href = storeUrl;
+                  }, 2000);
+              }
+              
+              attemptDeepLink();
+          </script>
+      </head>
+      <body>
+          <p>Opening application...</p>
+      </body>
+      </html>
+    `);
+}));
 app.use("/api/v1", index_1.default);
 app.use(config_util_1.handleFileSize);
 app.listen(app_constant_1.APP.PORT, () => {

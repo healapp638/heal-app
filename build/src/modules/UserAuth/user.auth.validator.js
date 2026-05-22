@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateDeleteOrDeactivation = exports.validateRefreshToken = exports.validateSocialLogin = exports.validateUpdateProfile = exports.validateChangePassword = exports.validateResetPassword = exports.validateForgotPassword = exports.validateResendOtp = exports.validateVerifyOtp = exports.validateRegister = exports.validateLoginUser = void 0;
+exports.validateCompleteOnboarding = exports.validateDeleteOrDeactivation = exports.validateRefreshToken = exports.validateSocialLogin = exports.validateUpdateProfile = exports.validateChangePassword = exports.validateResetPassword = exports.validateForgotPassword = exports.validateResendOtp = exports.validateVerifyOtp = exports.validateSendMagicLinkLogin = exports.validateSendMagicLink = exports.validateRegister = exports.validateLoginUser = void 0;
 const joi_1 = __importDefault(require("joi"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const validateLoginUser = (user) => {
@@ -19,7 +19,7 @@ const validateRegister = (user) => {
     return joi_1.default.object({
         hearAboutUs: joi_1.default.string().optional().allow(''),
         bringsYouHere: joi_1.default.string().optional().allow(''),
-        howFellingLately: joi_1.default.string().optional().allow(''),
+        howFeelingLately: joi_1.default.string().optional().allow(''),
         likeToFellMore: joi_1.default.string().optional().allow(''),
         timeYouCommit: joi_1.default.string().optional().allow(''),
         startShowingOfYourSelf: joi_1.default.string().optional().allow(''),
@@ -32,6 +32,39 @@ const validateRegister = (user) => {
     }).validate(user);
 };
 exports.validateRegister = validateRegister;
+const validateSendMagicLink = (user) => {
+    return joi_1.default.object({
+        hearAboutUs: joi_1.default.string().optional().allow(''),
+        howFellingLately: joi_1.default.string().optional().allow(''),
+        feelThatWay: joi_1.default.string().optional().allow(''),
+        likeToFellMore: joi_1.default.string().optional().allow(''),
+        helpFeelBetter: joi_1.default.string().optional().allow(''),
+        stopFeelBetter: joi_1.default.string().optional().allow(''),
+        timeYouCommit: joi_1.default.string().optional().allow(''),
+        goalStartWith: joi_1.default.string().optional().allow(''),
+        fullName: joi_1.default.string().required(),
+        email: joi_1.default.string().trim().email().required(),
+        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+    }).validate(user);
+};
+exports.validateSendMagicLink = validateSendMagicLink;
+const validateSendMagicLinkLogin = (user) => {
+    return joi_1.default.object({
+        hearAboutUs: joi_1.default.string().optional().allow(''),
+        howFellingLately: joi_1.default.string().optional().allow(''),
+        feelThatWay: joi_1.default.string().optional().allow(''),
+        likeToFellMore: joi_1.default.string().optional().allow(''),
+        helpFeelBetter: joi_1.default.string().optional().allow(''),
+        stopFeelBetter: joi_1.default.string().optional().allow(''),
+        timeYouCommit: joi_1.default.string().optional().allow(''),
+        goalStartWith: joi_1.default.string().optional().allow(''),
+        fullName: joi_1.default.string().required(),
+        email: joi_1.default.string().trim().email().required(),
+        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+        timeZone: joi_1.default.string().optional().allow(''),
+    }).validate(user);
+};
+exports.validateSendMagicLinkLogin = validateSendMagicLinkLogin;
 const validateVerifyOtp = (user) => {
     return joi_1.default.object({
         email: joi_1.default.string().trim().email().min(4).max(35).required(),
@@ -102,3 +135,18 @@ const validateDeleteOrDeactivation = (user) => {
     }).validate(user);
 };
 exports.validateDeleteOrDeactivation = validateDeleteOrDeactivation;
+const validateCompleteOnboarding = (user) => {
+    return joi_1.default.object({
+        hearAboutUs: joi_1.default.string().optional(),
+        howFellingLately: joi_1.default.string().optional(),
+        feelThatWay: joi_1.default.string().optional(),
+        likeToFellMore: joi_1.default.string().optional(),
+        helpFeelBetter: joi_1.default.string().optional(),
+        stopFeelBetter: joi_1.default.string().optional(),
+        timeYouCommit: joi_1.default.string().optional(),
+        goalStartWith: joi_1.default.string().optional(),
+        fullName: joi_1.default.string().optional(),
+        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+    }).validate(user);
+};
+exports.validateCompleteOnboarding = validateCompleteOnboarding;

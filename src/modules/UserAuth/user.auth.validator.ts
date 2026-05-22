@@ -14,7 +14,7 @@ export const validateRegister = (user: any) => {
     return joi.object({
         hearAboutUs: joi.string().optional().allow(''),
         bringsYouHere: joi.string().optional().allow(''),
-        howFellingLately: joi.string().optional().allow(''),
+        howFeelingLately: joi.string().optional().allow(''),
         likeToFellMore: joi.string().optional().allow(''),
         timeYouCommit: joi.string().optional().allow(''),
         startShowingOfYourSelf: joi.string().optional().allow(''),
@@ -24,6 +24,39 @@ export const validateRegister = (user: any) => {
         dob: joi.string().required(),
         password: joi.string().min(4).required(),
         language: joi.string().optional().allow(...Object.values(languages)),
+    }).validate(user)
+}
+
+export const validateSendMagicLink = (user: any) => {
+    return joi.object({
+        hearAboutUs: joi.string().optional().allow(''),
+        howFellingLately: joi.string().optional().allow(''),
+        feelThatWay: joi.string().optional().allow(''),
+        likeToFellMore: joi.string().optional().allow(''),
+        helpFeelBetter: joi.string().optional().allow(''),
+        stopFeelBetter: joi.string().optional().allow(''),
+        timeYouCommit: joi.string().optional().allow(''),
+        goalStartWith: joi.string().optional().allow(''),
+        fullName: joi.string().required(),
+        email: joi.string().trim().email().required(),
+        language: joi.string().optional().allow(...Object.values(languages)),
+    }).validate(user)
+}
+
+export const validateSendMagicLinkLogin = (user: any) => {
+    return joi.object({
+        hearAboutUs: joi.string().optional().allow(''),
+        howFellingLately: joi.string().optional().allow(''),
+        feelThatWay: joi.string().optional().allow(''),
+        likeToFellMore: joi.string().optional().allow(''),
+        helpFeelBetter: joi.string().optional().allow(''),
+        stopFeelBetter: joi.string().optional().allow(''),
+        timeYouCommit: joi.string().optional().allow(''),
+        goalStartWith: joi.string().optional().allow(''),
+        fullName: joi.string().required(),
+        email: joi.string().trim().email().required(),
+        language: joi.string().optional().allow(...Object.values(languages)),
+        timeZone: joi.string().optional().allow(''),
     }).validate(user)
 }
 
@@ -99,3 +132,19 @@ export const validateDeleteOrDeactivation = (user: any) => {
         status: joi.number().valid(USER_STATUS.DEACTIVATED, USER_STATUS.DELETED).error(new Error('only use 2 for delete 3 for deactivate')).required(),
     }).validate(user)
 }
+
+export const validateCompleteOnboarding = (user: any) => {
+    return joi.object({
+        hearAboutUs: joi.string().optional(),
+        howFellingLately: joi.string().optional(),
+        feelThatWay: joi.string().optional(),
+        likeToFellMore: joi.string().optional(),
+        helpFeelBetter: joi.string().optional(),
+        stopFeelBetter: joi.string().optional(),
+        timeYouCommit: joi.string().optional(),
+        goalStartWith: joi.string().optional(),
+        fullName: joi.string().optional(),
+        language: joi.string().optional().allow(...Object.values(languages)),
+    }).validate(user)
+}
+

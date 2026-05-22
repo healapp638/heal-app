@@ -19,6 +19,8 @@ import userRecentHomeThemeModel from "../UserHomeTheme/user.recentHomeTheme.mode
 import { ChallengesQueue } from "../../helpers/bullMqWorker";
 import userJournalModel from "../UserJournel/user.journel.model";
 import moment from "moment-timezone";
+// import moment from "moment";
+import userDeeplinkModel from "../UserAffirmation/user.deeplink.model";
 
 const UserAuthHandler = {
     update_social_info: async (findUser: any, model: any, data: any) => {
@@ -379,6 +381,180 @@ const UserAuthHandler = {
 
         return showResponse(true, getMessage(language || 'en', "verification_email_sent"), null, statusCodes.SUCCESS);
     },
+
+
+    sendMagicLink: async (data: any): Promise<ApiResponse> => {
+    try {
+
+        const {hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,email,language} = data;
+
+        // =========================================
+        // GENERATE DEEPLINK CODE
+        // =========================================
+
+        const code = commonHelper.generateRandomAlphanumeric(8);
+
+        // save deeplink data
+        await userDeeplinkModel.create({
+            code,
+            createdAt: new Date(),
+        });
+
+        // =========================================
+        // DEEPLINK URL
+        // =========================================
+
+        const deeplink = `https://apidev.heal-app.com/link/${code}/${email}/${hearAboutUs}/${howFellingLately}/${feelThatWay}/${likeToFellMore}/${helpFeelBetter}/${stopFeelBetter}/${timeYouCommit}/${goalStartWith}/${language}/${fullName}`;
+
+        // =========================================
+        // EMAIL PAYLOAD
+        // =========================================
+
+        const emailPayload = {
+            user_name: fullName,
+            magic_link: deeplink,
+        };
+
+        console.log(emailPayload, "emailPayload");
+
+        // =========================================
+        // SEND EMAIL
+        // =========================================
+
+        const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.MAGIC_LINK, email, emailPayload);
+
+        console.log(sendEmail, "sendEmail");
+
+        if (!sendEmail.status) {
+
+            return showResponse(
+                false,
+                getMessage(language || 'en', "err_while_sending_email"),
+                null,
+                statusCodes.API_ERROR
+            );
+        }
+
+        return showResponse(
+            true,
+            getMessage(language || 'en', "verification_email_sent"),
+            null,
+            statusCodes.SUCCESS
+        );
+
+    } catch (err) {
+
+        console.log(err, "register err");
+
+        return showResponse(
+            false,
+            responseMessage.common.error_while_create_acc,
+            null,
+            statusCodes.API_ERROR
+        );
+    }
+},
+
+    magicLinkLogin: async (data: any): Promise<ApiResponse> => {
+        const {email,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone} = data;
+
+        const lowercaseEmail = email ? email.toLowerCase().trim() : '';
+
+        const queryObject = { email: lowercaseEmail, status: { $ne: USER_STATUS.DELETED } };
+        const findUser = await findOne(userAuthModel, queryObject);
+
+        let userData: any;
+
+        const updateData: any = {
+            email: lowercaseEmail,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,
+            timeYouCommit,goalStartWith,fullName,language: language || 'en',timeZone,isVerified: true
+        };
+
+        if (findUser.status) {
+            const existingUser = findUser.data;
+            if (!existingUser?.profilePic || existingUser?.profilePic === '') {
+                updateData.profilePic = 'file/file-1777357630130.webp';
+            }
+            const updateRes = await findOneAndUpdate(userAuthModel, { _id: existingUser._id }, updateData);
+            if (!updateRes.status) {
+                return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR);
+            }
+            userData = updateRes.data;
+        } else {
+            updateData.profilePic = 'file/file-1777357630130.webp';
+            const newObj = new userAuthModel(updateData);
+            const createResult = await createOne(newObj);
+            if (!createResult.status) {
+                return showResponse(false, getMessage(language || 'en', "err_while_register"), null, statusCodes.API_ERROR);
+            }
+            userData = createResult.data;
+        }
+
+        console.log(timeZone, 'timeZone');
+
+        // challenges logic start
+        await ChallengesQueue.add('challenges', { userData }, {
+            attempts: 3,
+            backoff: {
+                type: 'exponential',
+                delay: 1000
+            },
+            removeOnComplete: true,
+            jobId: userData?._id.toString(),
+        });
+
+        const is_user_social_login = !!userData.social_account?.length;
+        const is_simple_login = !!userData.password;
+        const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        const is_profile_completed = !!userData.dob && !!userData.country;
+
+        //if account deactivated by admin then throw error 
+        if (userData?.status == USER_STATUS.DEACTIVATED && userData?.deactivateBy === DEACTIVATE_BY.ADMIN) {
+            return showResponse(false, getMessage(language || 'en', "deactivated_account"), null, statusCodes.API_ERROR);
+        }
+
+        commonHelper.keysDeleteFromObject(userData); //delete password & other keys from response
+        const { access_token, refresh_token } = await generateAccessRefreshToken(userData?._id, userData?.user_type, tokenUserTypeInterface.USER);
+
+        //if account deactivated by user then reactivate account
+        if (userData?.status == USER_STATUS.DEACTIVATED && userData?.deactivateBy === DEACTIVATE_BY.USER) {
+            await findOneAndUpdate(userAuthModel, { _id: userData?._id }, { status: USER_STATUS.ACTIVE, deactivateBy: '' });   //activate user again
+        }
+
+        // =========================================
+        // CHECK ONBOARDING STATUS
+        // =========================================
+        const is_onboarding = [
+            userData?.email,
+            userData?.hearAboutUs,
+            userData?.howFellingLately,
+            userData?.feelThatWay,
+            userData?.likeToFellMore,
+            userData?.helpFeelBetter,
+            userData?.stopFeelBetter,
+            userData?.timeYouCommit,
+            userData?.goalStartWith,
+            userData?.fullName
+        ].every(
+            value =>
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ''
+        );
+        console.log(userData?.is_onboarding, is_onboarding, "data")
+
+        if (userData?.is_onboarding !== is_onboarding) {
+            console.log("first")
+            await findOneAndUpdate(userAuthModel, { _id: userData._id }, { 'is_onboarding': is_onboarding });
+            userData.is_onboarding = is_onboarding;
+        }
+
+        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed,is_onboarding, ...userData, access_token, refresh_token }, statusCodes.SUCCESS);
+    },//ends
+
+
+
+
     //ends
     toggleBiometric: async (userId: string): Promise<ApiResponse> => {
         try {
@@ -871,7 +1047,7 @@ const UserAuthHandler = {
     },
 
     completeOnboarding: async (data: any, userId: string): Promise<ApiResponse> => {
-        const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = data;
+        const { hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language } = data;
         const userDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId), status: USER_STATUS.ACTIVE })
         if (!userDetails) {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
@@ -880,13 +1056,16 @@ const UserAuthHandler = {
         const updateObj: any = {
             ...(language && { language }),
             ...(hearAboutUs && { hearAboutUs }),
-            ...(bringsYouHere && { bringsYouHere }),
+            ...(feelThatWay && { feelThatWay }),
             ...(howFellingLately && { howFellingLately }),
             ...(likeToFellMore && { likeToFellMore }),
             ...(timeYouCommit && { timeYouCommit }),
-            ...(startShowingOfYourSelf && { startShowingOfYourSelf }),
+            ...(helpFeelBetter && { helpFeelBetter }),
+            ...(stopFeelBetter && { stopFeelBetter }),
+            ...(goalStartWith && { goalStartWith }),
+            ...(fullName && { fullName }),
         }
-        await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj)
+        const userOnboarding:any = await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj)
         //challenges logic start
         const newDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId) })
         await ChallengesQueue.add('challenges', { userData: newDetails }, {
@@ -898,7 +1077,50 @@ const UserAuthHandler = {
             removeOnComplete: true,
             jobId: userDetails?._id.toString(),
         })
+        // const challengesDetails = await commonHelper.challengsFn(userDetails);
+        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+        // const payload: any = challengesDetails?.payload;
+        // if (isOnBoardingComplete && !isDailyChallengeExist) {
+        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
+        //     const result = await userDailyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
+        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
+        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
+        //end
+        const is_onboarding = [
+            userOnboarding?.email,
+            userOnboarding?.hearAboutUs,
+            userOnboarding?.howFellingLately,
+            userOnboarding?.feelThatWay,
+            userOnboarding?.likeToFellMore,
+            userOnboarding?.helpFeelBetter,
+            userOnboarding?.stopFeelBetter,
+            userOnboarding?.timeYouCommit,
+            userOnboarding?.goalStartWith,
+            userOnboarding?.fullName
+        ].every(
+            value =>
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ''
+        );
+        console.log(userOnboarding?.is_onboarding, is_onboarding, "data")
 
+        if (userOnboarding?.is_onboarding !== is_onboarding) {
+            // console.log("first")
+            await findOneAndUpdate(userAuthModel, { _id: userOnboarding._id }, { 'is_onboarding': is_onboarding });
+            userOnboarding.is_onboarding = is_onboarding;
+        }
         return showResponse(true, getMessage(user_language || 'en', "user_onboarding_complete"), null, statusCodes.SUCCESS)
     },
 }

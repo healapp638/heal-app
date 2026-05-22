@@ -125,7 +125,7 @@ const sendgridMail = (to_1, subject_1, body_1, ...args_1) => __awaiter(void 0, [
 }); //ends
 const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...args_1) => __awaiter(void 0, [emailType_1, recipientEmail_1, body_1, transportMethod_1, ...args_1], void 0, function* (emailType, recipientEmail, body, transportMethod, useLocalLogo = true) {
     try {
-        const { user_name, otp, html } = body;
+        const { user_name, otp, html, magic_link } = body;
         const to = recipientEmail;
         let template = '';
         let subject = '';
@@ -138,11 +138,13 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
                 path: logoPath,
                 cid: 'unique@Logo',
             }] : [];
+        console.log(magic_link, "magic_link");
         const email_payload = {
             project_name: app_constant_1.APP.PROJECT_NAME,
             user_name,
             project_logo: useLocalLogo ? null : logoPath,
             cidLogo: useLocalLogo ? 'unique@Logo' : '',
+            magic_link: magic_link
         };
         switch (emailType) {
             case workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL:
@@ -164,6 +166,11 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
                 email_payload.reply = html;
                 template = yield ejs_1.default.renderFile(path_1.default.join(process.cwd(), './src/templates', 'contactUs.ejs'), email_payload);
                 subject = 'Reply To Your Query';
+                break;
+            case workflow_constant_1.EMAIL_SEND_TYPE.MAGIC_LINK:
+                email_payload.magic_link = magic_link;
+                template = yield ejs_1.default.renderFile(path_1.default.join(process.cwd(), './src/templates', 'magicLink.ejs'), email_payload);
+                subject = 'Verify Your Email';
                 break;
             default:
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.invalid_type, null, statusCodes_1.default.API_ERROR);

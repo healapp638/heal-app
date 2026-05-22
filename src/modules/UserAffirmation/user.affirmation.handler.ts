@@ -29,9 +29,11 @@ const affirmationHandler = {
         statusCodes.NOT_FOUND,
       );
     }
+    // console.log(userdata,"userdata")
 
     // user selected language
     const language = userdata?.data?.language || "en";
+    // console.log(language,"language")
 
     // latest AI affirmation
     const aiAffirmation: any = await userAffirmationModel
@@ -49,6 +51,7 @@ const affirmationHandler = {
         statusCodes.NOT_FOUND,
       );
     }
+    console.log(aiAffirmation,"aiAffirmation")
 
     // return only user's language
     const responseData = {
@@ -67,6 +70,7 @@ const affirmationHandler = {
       statusCodes.SUCCESS,
     );
   },
+ 
   addView: async (data: any, user_id: any): Promise<ApiResponse> => {
     const { affirmation_id } = data;
 

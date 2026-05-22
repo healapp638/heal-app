@@ -88,6 +88,7 @@ export enum EmailSendType {
     FORGOT_PASSWORD_EMAIL = 'forgot_password',
     SEND_OTP_EMAIL = 'resend_otp',
     REPLY_CONTACTUS_EMAIL = 'reply_contactus',
+    MAGIC_LINK = 'magic_link',
 }
 
 

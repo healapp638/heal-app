@@ -1797,6 +1797,170 @@
 				}
 			}
 		},
+		"/user/auth/sendMagicLink": {
+			"post": {
+				"operationId": "SendMagicLink",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"language": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									},
+									"fullName": {
+										"type": "string"
+									},
+									"goalStartWith": {
+										"type": "string"
+									},
+									"timeYouCommit": {
+										"type": "string"
+									},
+									"stopFeelBetter": {
+										"type": "string"
+									},
+									"helpFeelBetter": {
+										"type": "string"
+									},
+									"likeToFellMore": {
+										"type": "string"
+									},
+									"feelThatWay": {
+										"type": "string"
+									},
+									"howFellingLately": {
+										"type": "string"
+									},
+									"hearAboutUs": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"language",
+									"email",
+									"fullName",
+									"goalStartWith",
+									"timeYouCommit",
+									"stopFeelBetter",
+									"helpFeelBetter",
+									"likeToFellMore",
+									"feelThatWay",
+									"howFellingLately",
+									"hearAboutUs"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/auth/magicLinkLogin": {
+			"post": {
+				"operationId": "MagicLinkLogin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"timeZone": {
+										"type": "string"
+									},
+									"language": {
+										"type": "string"
+									},
+									"fullName": {
+										"type": "string"
+									},
+									"goalStartWith": {
+										"type": "string"
+									},
+									"timeYouCommit": {
+										"type": "string"
+									},
+									"stopFeelBetter": {
+										"type": "string"
+									},
+									"helpFeelBetter": {
+										"type": "string"
+									},
+									"likeToFellMore": {
+										"type": "string"
+									},
+									"feelThatWay": {
+										"type": "string"
+									},
+									"howFellingLately": {
+										"type": "string"
+									},
+									"hearAboutUs": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"timeZone",
+									"language",
+									"fullName",
+									"goalStartWith",
+									"timeYouCommit",
+									"stopFeelBetter",
+									"helpFeelBetter",
+									"likeToFellMore",
+									"feelThatWay",
+									"howFellingLately",
+									"hearAboutUs",
+									"email"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/auth/toggle_biometric": {
 			"post": {
 				"operationId": "ToggleBiometric",
@@ -2345,25 +2509,34 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"startShowingOfYourSelf": {
+									"language": {
+										"type": "string"
+									},
+									"fullName": {
+										"type": "string"
+									},
+									"goalStartWith": {
 										"type": "string"
 									},
 									"timeYouCommit": {
 										"type": "string"
 									},
+									"stopFeelBetter": {
+										"type": "string"
+									},
+									"helpFeelBetter": {
+										"type": "string"
+									},
 									"likeToFellMore": {
+										"type": "string"
+									},
+									"feelThatWay": {
 										"type": "string"
 									},
 									"howFellingLately": {
 										"type": "string"
 									},
-									"bringsYouHere": {
-										"type": "string"
-									},
 									"hearAboutUs": {
-										"type": "string"
-									},
-									"language": {
 										"type": "string"
 									}
 								},

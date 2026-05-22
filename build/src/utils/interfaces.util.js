@@ -8,6 +8,7 @@ var EmailSendType;
     EmailSendType["FORGOT_PASSWORD_EMAIL"] = "forgot_password";
     EmailSendType["SEND_OTP_EMAIL"] = "resend_otp";
     EmailSendType["REPLY_CONTACTUS_EMAIL"] = "reply_contactus";
+    EmailSendType["MAGIC_LINK"] = "magic_link";
 })(EmailSendType || (exports.EmailSendType = EmailSendType = {}));
 var tokenUserTypeInterface;
 (function (tokenUserTypeInterface) {

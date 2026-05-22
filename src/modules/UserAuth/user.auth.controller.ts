@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Get, Security, UploadedFile, FormField, Delete } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
-import { validateChangePassword, validateForgotPassword, validateRefreshToken, validateDeleteOrDeactivation, validateUpdateProfile, validateRegister, validateResetPassword, validateResendOtp, validateVerifyOtp, validateLoginUser, validateSocialLogin } from '../UserAuth/user.auth.validator';
+import { validateChangePassword, validateForgotPassword, validateRefreshToken, validateDeleteOrDeactivation, validateUpdateProfile, validateRegister, validateResetPassword, validateResendOtp, validateVerifyOtp, validateLoginUser, validateSocialLogin, validateSendMagicLink, validateSendMagicLinkLogin, validateCompleteOnboarding } from '../UserAuth/user.auth.validator';
 import handler from '../UserAuth/user.auth.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
@@ -72,7 +72,31 @@ export default class UserAuthController extends Controller {
 
     }
     //ends
-    
+
+    @Post("/sendMagicLink")
+    public async sendMagicLink(@Body() request: { hearAboutUs: string, howFellingLately: string, feelThatWay: string, likeToFellMore: string, helpFeelBetter: string, stopFeelBetter: string, timeYouCommit: string, goalStartWith: string, fullName: string, email: string, language: string }): Promise<ApiResponse> {
+        request.email = request.email.toLocaleLowerCase().trim()
+        const validate = validateSendMagicLink(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.sendMagicLink);
+        return wrappedFunc(request);
+    }
+    //ends
+
+    @Post("/magicLinkLogin")
+    public async magicLinkLogin(@Body() request: { email: string, hearAboutUs: string, howFellingLately: string, feelThatWay: string, likeToFellMore: string, helpFeelBetter: string, stopFeelBetter: string, timeYouCommit: string, goalStartWith: string, fullName: string, language: string, timeZone: string }): Promise<ApiResponse> {
+        request.email = request.email.toLocaleLowerCase().trim()
+        const validate = validateSendMagicLinkLogin(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.magicLinkLogin);
+        return wrappedFunc(request);
+    }
+    //ends
+
     @Security('Bearer')
     @Post("/toggle_biometric")
     public async toggleBiometric(): Promise<ApiResponse> {
@@ -262,7 +286,11 @@ export default class UserAuthController extends Controller {
 */
     @Security('Bearer')
     @Post("/complete_onboarding")
-    public async completeOnboarding(@Body() request: { language?: string, hearAboutUs?: string, bringsYouHere?: string, howFellingLately?: string, likeToFellMore?: string, timeYouCommit?: string, startShowingOfYourSelf?: string }): Promise<ApiResponse> {
+    public async completeOnboarding(@Body() request: { hearAboutUs?: string, howFellingLately?: string, feelThatWay?: string, likeToFellMore?: string, helpFeelBetter?: string, stopFeelBetter?: string, timeYouCommit?: string, goalStartWith?: string, fullName?: string, language?: string }): Promise<ApiResponse> {
+        const validate = validateCompleteOnboarding(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
         const wrappedFunc = tryCatchWrapper(handler.completeOnboarding);
         return wrappedFunc(request, this.userId); // Invoking the wrapped function 
     }

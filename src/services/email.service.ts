@@ -155,7 +155,7 @@ const sendgridMail = async (to: string, subject: string, body: any, attachments:
 
 const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body: any, transportMethod: string, useLocalLogo = true) => {
     try {
-        const { user_name, otp, html } = body;
+        const { user_name, otp, html, magic_link } = body;
         const to = recipientEmail;
         let template = '';
         let subject = '';
@@ -170,12 +170,14 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
             path: logoPath,
             cid: 'unique@Logo',
         }] : [];
+        console.log(magic_link,"magic_link")
 
         const email_payload: any = {
             project_name: APP.PROJECT_NAME,
             user_name,
             project_logo: useLocalLogo ? null : logoPath,
             cidLogo: useLocalLogo ? 'unique@Logo' : '',
+            magic_link: magic_link
         };
 
         switch (emailType) {
@@ -198,6 +200,11 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
                 email_payload.reply = html;
                 template = await ejs.renderFile(path.join(process.cwd(), './src/templates', 'contactUs.ejs'), email_payload);
                 subject = 'Reply To Your Query';
+                break;
+            case EMAIL_SEND_TYPE.MAGIC_LINK:
+                email_payload.magic_link = magic_link;
+                template = await ejs.renderFile(path.join(process.cwd(), './src/templates', 'magicLink.ejs'), email_payload);
+                subject = 'Verify Your Email';
                 break;
             default:
                 return showResponse(false, responseMessages.common.invalid_type, null, statusCodes.API_ERROR);

@@ -26,6 +26,18 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
     const result = yield controller.register({ hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/sendMagicLink', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, email, language } = req.body;
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.sendMagicLink({ hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, email, language });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.post('/magicLinkLogin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone } = req.body;
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.post('/toggle_biometric', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const controller = new user_auth_controller_1.default(req, res);
     const result = yield controller.toggleBiometric();
@@ -112,9 +124,9 @@ router.get('/details_user', verifyTokenUser, (req, res) => __awaiter(void 0, voi
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/complete_onboarding', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = req.body;
+    const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.completeOnboarding({ language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf });
+    const result = yield controller.completeOnboarding({ hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;

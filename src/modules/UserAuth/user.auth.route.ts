@@ -17,6 +17,20 @@ router.post('/register', async (req: Request | any, res: Response) => {
     return showOutput(res, result, result.code)
 })
 
+router.post('/sendMagicLink', async (req: Request | any, res: Response) => {
+    const { hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,email,language } = req.body;
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.sendMagicLink({ hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,email,language });
+    return showOutput(res, result, result.code)
+})
+
+router.post('/magicLinkLogin', async (req: Request | any, res: Response) => {
+    const { email, hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone } = req.body;
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone });
+    return showOutput(res, result, result.code)
+})
+
 router.post('/toggle_biometric', verifyTokenUser, async (req: Request | any, res: Response) => {
     const controller = new UserAuthController(req, res)
     const result: ApiResponse = await controller.toggleBiometric();
@@ -121,9 +135,9 @@ router.get('/details_user', verifyTokenUser, async (req: Request | any, res: Res
 });
 
 router.post('/complete_onboarding', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = req.body;
+    const { hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.completeOnboarding({ language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf });
+    const result: ApiResponse = await controller.completeOnboarding({ hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language });
     return showOutput(res, result, result.code)
 })
 

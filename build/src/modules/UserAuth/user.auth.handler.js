@@ -65,6 +65,8 @@ const user_recentHomeTheme_model_1 = __importDefault(require("../UserHomeTheme/u
 const bullMqWorker_1 = require("../../helpers/bullMqWorker");
 const user_journel_model_1 = __importDefault(require("../UserJournel/user.journel.model"));
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
+// import moment from "moment";
+const user_deeplink_model_1 = __importDefault(require("../UserAffirmation/user.deeplink.model"));
 const UserAuthHandler = {
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c;
@@ -383,6 +385,126 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), null, statusCodes_1.default.SUCCESS);
         });
     },
+    sendMagicLink: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, email, language } = data;
+            // =========================================
+            // GENERATE DEEPLINK CODE
+            // =========================================
+            const code = commonHelper.generateRandomAlphanumeric(8);
+            // save deeplink data
+            yield user_deeplink_model_1.default.create({
+                code,
+                createdAt: new Date(),
+            });
+            // =========================================
+            // DEEPLINK URL
+            // =========================================
+            const deeplink = `https://apidev.heal-app.com/link/${code}/${email}/${hearAboutUs}/${howFellingLately}/${feelThatWay}/${likeToFellMore}/${helpFeelBetter}/${stopFeelBetter}/${timeYouCommit}/${goalStartWith}/${language}/${fullName}`;
+            // =========================================
+            // EMAIL PAYLOAD
+            // =========================================
+            const emailPayload = {
+                user_name: fullName,
+                magic_link: deeplink,
+            };
+            console.log(emailPayload, "emailPayload");
+            // =========================================
+            // SEND EMAIL
+            // =========================================
+            const sendEmail = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.MAGIC_LINK, email, emailPayload);
+            console.log(sendEmail, "sendEmail");
+            if (!sendEmail.status) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
+            }
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), null, statusCodes_1.default.SUCCESS);
+        }
+        catch (err) {
+            console.log(err, "register err");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.error_while_create_acc, null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    magicLinkLogin: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a;
+        const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone } = data;
+        const lowercaseEmail = email ? email.toLowerCase().trim() : '';
+        const queryObject = { email: lowercaseEmail, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
+        const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
+        let userData;
+        const updateData = {
+            email: lowercaseEmail, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter,
+            timeYouCommit, goalStartWith, fullName, language: language || 'en', timeZone, isVerified: true
+        };
+        if (findUser.status) {
+            const existingUser = findUser.data;
+            if (!(existingUser === null || existingUser === void 0 ? void 0 : existingUser.profilePic) || (existingUser === null || existingUser === void 0 ? void 0 : existingUser.profilePic) === '') {
+                updateData.profilePic = 'file/file-1777357630130.webp';
+            }
+            const updateRes = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: existingUser._id }, updateData);
+            if (!updateRes.status) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
+            }
+            userData = updateRes.data;
+        }
+        else {
+            updateData.profilePic = 'file/file-1777357630130.webp';
+            const newObj = new user_auth_model_1.default(updateData);
+            const createResult = yield (0, db_helpers_1.createOne)(newObj);
+            if (!createResult.status) {
+                return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_register"), null, statusCodes_1.default.API_ERROR);
+            }
+            userData = createResult.data;
+        }
+        console.log(timeZone, 'timeZone');
+        // challenges logic start
+        yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData }, {
+            attempts: 3,
+            backoff: {
+                type: 'exponential',
+                delay: 1000
+            },
+            removeOnComplete: true,
+            jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString(),
+        });
+        const is_user_social_login = !!((_a = userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
+        const is_simple_login = !!userData.password;
+        const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
+        const is_profile_completed = !!userData.dob && !!userData.country;
+        //if account deactivated by admin then throw error 
+        if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
+            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "deactivated_account"), null, statusCodes_1.default.API_ERROR);
+        }
+        commonHelper.keysDeleteFromObject(userData); //delete password & other keys from response
+        const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)(userData === null || userData === void 0 ? void 0 : userData._id, userData === null || userData === void 0 ? void 0 : userData.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+        //if account deactivated by user then reactivate account
+        if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
+            yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' }); //activate user again
+        }
+        // =========================================
+        // CHECK ONBOARDING STATUS
+        // =========================================
+        const is_onboarding = [
+            userData === null || userData === void 0 ? void 0 : userData.email,
+            userData === null || userData === void 0 ? void 0 : userData.hearAboutUs,
+            userData === null || userData === void 0 ? void 0 : userData.howFellingLately,
+            userData === null || userData === void 0 ? void 0 : userData.feelThatWay,
+            userData === null || userData === void 0 ? void 0 : userData.likeToFellMore,
+            userData === null || userData === void 0 ? void 0 : userData.helpFeelBetter,
+            userData === null || userData === void 0 ? void 0 : userData.stopFeelBetter,
+            userData === null || userData === void 0 ? void 0 : userData.timeYouCommit,
+            userData === null || userData === void 0 ? void 0 : userData.goalStartWith,
+            userData === null || userData === void 0 ? void 0 : userData.fullName
+        ].every(value => value !== undefined &&
+            value !== null &&
+            String(value).trim() !== '');
+        console.log(userData === null || userData === void 0 ? void 0 : userData.is_onboarding, is_onboarding, "data");
+        if ((userData === null || userData === void 0 ? void 0 : userData.is_onboarding) !== is_onboarding) {
+            console.log("first");
+            yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData._id }, { 'is_onboarding': is_onboarding });
+            userData.is_onboarding = is_onboarding;
+        }
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed, is_onboarding }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
+    }), //ends
     //ends
     toggleBiometric: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         try {
@@ -811,14 +933,14 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), result.data, statusCodes_1.default.SUCCESS);
     }),
     completeOnboarding: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
-        const { language, hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf } = data;
+        const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language } = data;
         const userDetails = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId), status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!userDetails) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const user_language = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en';
-        const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (bringsYouHere && { bringsYouHere })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (startShowingOfYourSelf && { startShowingOfYourSelf }));
-        yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj);
+        const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (feelThatWay && { feelThatWay })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (helpFeelBetter && { helpFeelBetter })), (stopFeelBetter && { stopFeelBetter })), (goalStartWith && { goalStartWith })), (fullName && { fullName }));
+        const userOnboarding = yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj);
         //challenges logic start
         const newDetails = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId) });
         yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: newDetails }, {
@@ -830,6 +952,46 @@ const UserAuthHandler = {
             removeOnComplete: true,
             jobId: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString(),
         });
+        // const challengesDetails = await commonHelper.challengsFn(userDetails);
+        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+        // const payload: any = challengesDetails?.payload;
+        // if (isOnBoardingComplete && !isDailyChallengeExist) {
+        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
+        //     const result = await userDailyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
+        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
+        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
+        //     if (result) {
+        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
+        //     }
+        // }
+        //end
+        const is_onboarding = [
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.email,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.hearAboutUs,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.howFellingLately,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.feelThatWay,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.likeToFellMore,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.helpFeelBetter,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.stopFeelBetter,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.timeYouCommit,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.goalStartWith,
+            userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.fullName
+        ].every(value => value !== undefined &&
+            value !== null &&
+            String(value).trim() !== '');
+        console.log(userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.is_onboarding, is_onboarding, "data");
+        if ((userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.is_onboarding) !== is_onboarding) {
+            // console.log("first")
+            yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userOnboarding._id }, { 'is_onboarding': is_onboarding });
+            userOnboarding.is_onboarding = is_onboarding;
+        }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "user_onboarding_complete"), null, statusCodes_1.default.SUCCESS);
     }),
 };

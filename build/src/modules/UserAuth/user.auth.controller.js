@@ -83,6 +83,30 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
         });
     }
     //ends
+    sendMagicLink(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            request.email = request.email.toLocaleLowerCase().trim();
+            const validate = (0, user_auth_validator_1.validateSendMagicLink)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.sendMagicLink);
+            return wrappedFunc(request);
+        });
+    }
+    //ends
+    magicLinkLogin(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            request.email = request.email.toLocaleLowerCase().trim();
+            const validate = (0, user_auth_validator_1.validateSendMagicLinkLogin)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.magicLinkLogin);
+            return wrappedFunc(request);
+        });
+    }
+    //ends
     toggleBiometric() {
         return __awaiter(this, void 0, void 0, function* () {
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.toggleBiometric);
@@ -249,6 +273,10 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
 */
     completeOnboarding(request) {
         return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_auth_validator_1.validateCompleteOnboarding)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.completeOnboarding);
             return wrappedFunc(request, this.userId); // Invoking the wrapped function 
         });
@@ -281,6 +309,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "register", null);
+__decorate([
+    (0, tsoa_1.Post)("/sendMagicLink"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "sendMagicLink", null);
+__decorate([
+    (0, tsoa_1.Post)("/magicLinkLogin"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "magicLinkLogin", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Post)("/toggle_biometric"),

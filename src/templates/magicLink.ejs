@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body
+  style="
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  "
+>
+  <div
+    style="
+      width: 600px;
+      text-align: center;
+      margin: 0 auto;
+      padding: 30px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    "
+  >
+    <div style="text-align: center; padding: 10px">
+      <% if (project_logo) { %>
+        <img
+          src="<%= project_logo %>"
+          alt="logo"
+          style="max-height: 75px; max-width: 75px;"
+        />
+      <% } else { %>
+        <img
+          src="cid:<%= cidLogo %>"
+          alt="logo"
+          style="max-height: 75px; max-width: 75px;"
+        />
+      <% } %>
+    </div>
+
+    <h2
+      style="
+        font-size: 24px;
+        font-weight: 700;
+        color: #333333;
+        margin-top: 20px;
+      "
+    >
+      Hi, <%= user_name %>
+    </h2>
+
+    <p
+      style="
+        font-size: 16px;
+        color: #555555;
+        line-height: 1.6;
+        margin-top: 20px;
+      "
+    >
+      Welcome to <strong><%= project_name %></strong>.
+      To verify your email address,
+      please click the button below.
+    </p>
+
+    <div style="margin: 35px 0;">
+      <a
+        href="<%= magic_link %>"
+        style="
+          display: inline-block;
+          padding: 14px 32px;
+          background-color: #4f46e5;
+          color: #ffffff;
+          text-decoration: none;
+          border-radius: 8px;
+          font-size: 16px;
+          font-weight: bold;
+        "
+      >
+        Verify Email
+      </a>
+    </div>
+
+
+    <br />
+
+    <p
+      style="
+        font-size: 14px;
+        color: #555555;
+      "
+    >
+      Thanks & Regards<br />
+      <strong><%= project_name %> Community</strong>
+    </p>
+  </div>
+</body>
+</html>
+```

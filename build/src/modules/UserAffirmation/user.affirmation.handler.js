@@ -69,8 +69,10 @@ const affirmationHandler = {
         if (!userdata) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
         }
+        // console.log(userdata,"userdata")
         // user selected language
         const language = ((_a = userdata === null || userdata === void 0 ? void 0 : userdata.data) === null || _a === void 0 ? void 0 : _a.language) || "en";
+        // console.log(language,"language")
         // latest AI affirmation
         const aiAffirmation = yield user_affirmation_model_1.default
             .findOne({
@@ -81,6 +83,7 @@ const affirmationHandler = {
         if (!aiAffirmation) {
             return (0, response_util_1.showResponse)(false, "No AI affirmation found", null, statusCodes_1.default.NOT_FOUND);
         }
+        console.log(aiAffirmation, "aiAffirmation");
         // return only user's language
         const responseData = {
             _id: aiAffirmation._id,
