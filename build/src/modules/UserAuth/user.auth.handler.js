@@ -400,7 +400,7 @@ const UserAuthHandler = {
             // =========================================
             // DEEPLINK URL
             // =========================================
-            const deeplink = `https://apidev.heal-app.com/link/${code}/${email}/${hearAboutUs}/${howFellingLately}/${feelThatWay}/${likeToFellMore}/${helpFeelBetter}/${stopFeelBetter}/${timeYouCommit}/${goalStartWith}/${language}/${fullName}`;
+            const deeplink = `https://apidev.heal-app.com/link/${code}?email=${email}&hearAboutUs=${hearAboutUs}&howFellingLately=${howFellingLately}&feelThatWay=${feelThatWay}&likeToFellMore=${likeToFellMore}&helpFeelBetter=${helpFeelBetter}&stopFeelBetter=${stopFeelBetter}&timeYouCommit=${timeYouCommit}&goalStartWith=${goalStartWith}&language=${language}&fullName=${fullName}`;
             // =========================================
             // EMAIL PAYLOAD
             // =========================================

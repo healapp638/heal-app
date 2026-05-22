@@ -232,7 +232,8 @@ app.get("/link/:code/:affirmation_id", async (req, res) => {
 
 app.get("/link/:code", async (req, res) => {
   const { code } = req.params;
-  console.log(req.params, "req.params")
+  
+  console.log(req.params, "req.params")  
 
   const doc = await userDeeplinkModel.findOne({ code });
 console.log(doc, "doc")
