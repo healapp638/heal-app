@@ -1903,6 +1903,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"code": {
+										"type": "string"
+									},
 									"timeZone": {
 										"type": "string"
 									},
@@ -1941,6 +1944,7 @@
 									}
 								},
 								"required": [
+									"code",
 									"timeZone",
 									"language",
 									"fullName",

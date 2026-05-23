@@ -86,7 +86,7 @@ export default class UserAuthController extends Controller {
     //ends
 
     @Post("/magicLinkLogin")
-    public async magicLinkLogin(@Body() request: { email: string, hearAboutUs: string, howFellingLately: string, feelThatWay: string, likeToFellMore: string, helpFeelBetter: string, stopFeelBetter: string, timeYouCommit: string, goalStartWith: string, fullName: string, language: string, timeZone: string }): Promise<ApiResponse> {
+    public async magicLinkLogin(@Body() request: { email: string, hearAboutUs: string, howFellingLately: string, feelThatWay: string, likeToFellMore: string, helpFeelBetter: string, stopFeelBetter: string, timeYouCommit: string, goalStartWith: string, fullName: string, language: string, timeZone: string ,code:string}): Promise<ApiResponse> {
         request.email = request.email.toLocaleLowerCase().trim()
         const validate = validateSendMagicLinkLogin(request);
         if (validate.error) {

@@ -62,6 +62,7 @@ const validateSendMagicLinkLogin = (user) => {
         email: joi_1.default.string().trim().email().required(),
         language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)).allow(''),
         timeZone: joi_1.default.string().optional().allow(''),
+        code: joi_1.default.string().optional().allow(''),
     }).validate(user);
 };
 exports.validateSendMagicLinkLogin = validateSendMagicLinkLogin;

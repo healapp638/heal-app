@@ -57,6 +57,7 @@ export const validateSendMagicLinkLogin = (user: any) => {
         email: joi.string().trim().email().required(),
         language: joi.string().optional().allow(...Object.values(languages)).allow(''),
         timeZone: joi.string().optional().allow(''),
+        code: joi.string().optional().allow(''),
     }).validate(user)
 }
 

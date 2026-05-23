@@ -396,6 +396,7 @@ const UserAuthHandler = {
             yield user_deeplink_model_1.default.create({
                 code,
                 createdAt: new Date(),
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
             });
             // =========================================
             // DEEPLINK URL
@@ -426,15 +427,32 @@ const UserAuthHandler = {
     }),
     magicLinkLogin: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
-        const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone } = data;
+        const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code } = data;
         const lowercaseEmail = email ? email.toLowerCase().trim() : '';
         const queryObject = { email: lowercaseEmail, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
+        const deepLink = yield user_deeplink_model_1.default.findOneAndUpdate({
+            code,
+            isUsed: false,
+            expiresAt: { $gt: new Date() },
+            status: workflow_constant_1.USER_STATUS.ACTIVE
+        }, {
+            $set: {
+                isUsed: true,
+                usedAt: new Date()
+            }
+        }, {
+            new: true
+        });
+        if (!deepLink) {
+            return (0, response_util_1.showResponse)(false, "Magic link is invalid, expired, or already used", null, statusCodes_1.default.API_ERROR);
+        }
         let userData;
-        const updateData = {
-            email: lowercaseEmail, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter,
-            timeYouCommit, goalStartWith, fullName, language: language || 'en', timeZone, isVerified: true
-        };
+        // const updateData: any = {
+        //     email: lowercaseEmail,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,
+        //     timeYouCommit,goalStartWith,fullName,language: language || 'en',timeZone,isVerified: true
+        // };
+        const updateData = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({ email: lowercaseEmail, isVerified: true }, ((hearAboutUs === null || hearAboutUs === void 0 ? void 0 : hearAboutUs.trim()) && { hearAboutUs })), ((howFellingLately === null || howFellingLately === void 0 ? void 0 : howFellingLately.trim()) && { howFellingLately })), ((feelThatWay === null || feelThatWay === void 0 ? void 0 : feelThatWay.trim()) && { feelThatWay })), ((likeToFellMore === null || likeToFellMore === void 0 ? void 0 : likeToFellMore.trim()) && { likeToFellMore })), ((helpFeelBetter === null || helpFeelBetter === void 0 ? void 0 : helpFeelBetter.trim()) && { helpFeelBetter })), ((stopFeelBetter === null || stopFeelBetter === void 0 ? void 0 : stopFeelBetter.trim()) && { stopFeelBetter })), ((timeYouCommit === null || timeYouCommit === void 0 ? void 0 : timeYouCommit.trim()) && { timeYouCommit })), ((goalStartWith === null || goalStartWith === void 0 ? void 0 : goalStartWith.trim()) && { goalStartWith })), ((fullName === null || fullName === void 0 ? void 0 : fullName.trim()) && { fullName })), ((language === null || language === void 0 ? void 0 : language.trim()) && { language })), ((timeZone === null || timeZone === void 0 ? void 0 : timeZone.trim()) && { timeZone }));
         if (findUser.status) {
             const existingUser = findUser.data;
             if (!(existingUser === null || existingUser === void 0 ? void 0 : existingUser.profilePic) || (existingUser === null || existingUser === void 0 ? void 0 : existingUser.profilePic) === '') {
@@ -939,7 +957,7 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const user_language = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en';
-        const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (feelThatWay && { feelThatWay })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (helpFeelBetter && { helpFeelBetter })), (stopFeelBetter && { stopFeelBetter })), (goalStartWith && { goalStartWith })), (fullName && { fullName }));
+        const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, ((language === null || language === void 0 ? void 0 : language.trim()) && { language })), ((hearAboutUs === null || hearAboutUs === void 0 ? void 0 : hearAboutUs.trim()) && { hearAboutUs })), ((feelThatWay === null || feelThatWay === void 0 ? void 0 : feelThatWay.trim()) && { feelThatWay })), ((howFellingLately === null || howFellingLately === void 0 ? void 0 : howFellingLately.trim()) && { howFellingLately })), ((likeToFellMore === null || likeToFellMore === void 0 ? void 0 : likeToFellMore.trim()) && { likeToFellMore })), ((timeYouCommit === null || timeYouCommit === void 0 ? void 0 : timeYouCommit.trim()) && { timeYouCommit })), ((helpFeelBetter === null || helpFeelBetter === void 0 ? void 0 : helpFeelBetter.trim()) && { helpFeelBetter })), ((stopFeelBetter === null || stopFeelBetter === void 0 ? void 0 : stopFeelBetter.trim()) && { stopFeelBetter })), ((goalStartWith === null || goalStartWith === void 0 ? void 0 : goalStartWith.trim()) && { goalStartWith })), ((fullName === null || fullName === void 0 ? void 0 : fullName.trim()) && { fullName }));
         const userOnboarding = yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj, { new: true });
         //challenges logic start
         const newDetails = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId) });

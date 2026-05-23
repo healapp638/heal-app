@@ -25,9 +25,9 @@ router.post('/sendMagicLink', async (req: Request | any, res: Response) => {
 })
 
 router.post('/magicLinkLogin', async (req: Request | any, res: Response) => {
-    const { email, hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone } = req.body;
+    const { email, hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone,code } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone });
+    const result: ApiResponse = await controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone,code });
     return showOutput(res, result, result.code)
 })
 

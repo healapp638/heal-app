@@ -9,6 +9,19 @@ const deeplinkmodel = new Schema({
     affirmation_id:{
         type:Schema.Types.ObjectId,
     },
+    // magic link status
+    isUsed: {
+        type: Boolean,
+        default: false
+    },
+    usedAt: {
+        type: Date,
+        default: null
+    },
+    expiresAt: {
+        type: Date,
+        required: true
+    },
     status: {
         type: Number,
         default: USER_STATUS.ACTIVE

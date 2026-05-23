@@ -398,6 +398,7 @@ const UserAuthHandler = {
         await userDeeplinkModel.create({
             code,
             createdAt: new Date(),
+            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
         });
 
         // =========================================
@@ -456,18 +457,62 @@ const UserAuthHandler = {
 },
 
     magicLinkLogin: async (data: any): Promise<ApiResponse> => {
-        const {email,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone} = data;
+        const {email,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone,code} = data;
 
         const lowercaseEmail = email ? email.toLowerCase().trim() : '';
 
         const queryObject = { email: lowercaseEmail, status: { $ne: USER_STATUS.DELETED } };
         const findUser = await findOne(userAuthModel, queryObject);
 
+        
+    const deepLink = await userDeeplinkModel.findOneAndUpdate(
+        {
+            code,
+            isUsed: false,
+            expiresAt: { $gt: new Date() },
+            status: USER_STATUS.ACTIVE
+        },
+        {
+            $set: {
+                isUsed: true,
+                usedAt: new Date()
+            }
+        },
+        {
+            new: true
+        }
+    );
+
+    if (!deepLink) {
+        return showResponse(
+            false,
+            "Magic link is invalid, expired, or already used",
+            null,
+            statusCodes.API_ERROR
+        );
+    }
+
         let userData: any;
 
+        // const updateData: any = {
+        //     email: lowercaseEmail,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,
+        //     timeYouCommit,goalStartWith,fullName,language: language || 'en',timeZone,isVerified: true
+        // };
+
         const updateData: any = {
-            email: lowercaseEmail,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,
-            timeYouCommit,goalStartWith,fullName,language: language || 'en',timeZone,isVerified: true
+            email: lowercaseEmail,
+            isVerified: true,
+            ...(hearAboutUs?.trim() && { hearAboutUs }),
+            ...(howFellingLately?.trim() && { howFellingLately }),
+            ...(feelThatWay?.trim() && { feelThatWay }),
+            ...(likeToFellMore?.trim() && { likeToFellMore }),
+            ...(helpFeelBetter?.trim() && { helpFeelBetter }),
+            ...(stopFeelBetter?.trim() && { stopFeelBetter }),
+            ...(timeYouCommit?.trim() && { timeYouCommit }),
+            ...(goalStartWith?.trim() && { goalStartWith }),
+            ...(fullName?.trim() && { fullName }),
+            ...(language?.trim() && { language }),
+            ...(timeZone?.trim() && { timeZone }),
         };
 
         if (findUser.status) {
@@ -1054,16 +1099,16 @@ const UserAuthHandler = {
         }
         const user_language = userDetails?.language || 'en';
         const updateObj: any = {
-            ...(language && { language }),
-            ...(hearAboutUs && { hearAboutUs }),
-            ...(feelThatWay && { feelThatWay }),
-            ...(howFellingLately && { howFellingLately }),
-            ...(likeToFellMore && { likeToFellMore }),
-            ...(timeYouCommit && { timeYouCommit }),
-            ...(helpFeelBetter && { helpFeelBetter }),
-            ...(stopFeelBetter && { stopFeelBetter }),
-            ...(goalStartWith && { goalStartWith }),
-            ...(fullName && { fullName }),
+            ...(language?.trim() && { language }),
+            ...(hearAboutUs?.trim() && { hearAboutUs }),
+            ...(feelThatWay?.trim() && { feelThatWay }),
+            ...(howFellingLately?.trim() && { howFellingLately }),
+            ...(likeToFellMore?.trim() && { likeToFellMore }),
+            ...(timeYouCommit?.trim() && { timeYouCommit }),
+            ...(helpFeelBetter?.trim() && { helpFeelBetter }),
+            ...(stopFeelBetter?.trim() && { stopFeelBetter }),
+            ...(goalStartWith?.trim() && { goalStartWith }),
+            ...(fullName?.trim() && { fullName }),
         }
         const userOnboarding:any = await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj,{ new: true })
         //challenges logic start

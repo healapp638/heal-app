@@ -33,9 +33,9 @@ router.post('/sendMagicLink', (req, res) => __awaiter(void 0, void 0, void 0, fu
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/magicLinkLogin', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone } = req.body;
+    const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone });
+    const result = yield controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/toggle_biometric', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

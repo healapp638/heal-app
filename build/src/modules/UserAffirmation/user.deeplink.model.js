@@ -10,6 +10,19 @@ const deeplinkmodel = new mongoose_1.Schema({
     affirmation_id: {
         type: mongoose_1.Schema.Types.ObjectId,
     },
+    // magic link status
+    isUsed: {
+        type: Boolean,
+        default: false
+    },
+    usedAt: {
+        type: Date,
+        default: null
+    },
+    expiresAt: {
+        type: Date,
+        required: true
+    },
     status: {
         type: Number,
         default: workflow_constant_1.USER_STATUS.ACTIVE
