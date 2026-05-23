@@ -940,7 +940,7 @@ const UserAuthHandler = {
         }
         const user_language = (userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en';
         const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (language && { language })), (hearAboutUs && { hearAboutUs })), (feelThatWay && { feelThatWay })), (howFellingLately && { howFellingLately })), (likeToFellMore && { likeToFellMore })), (timeYouCommit && { timeYouCommit })), (helpFeelBetter && { helpFeelBetter })), (stopFeelBetter && { stopFeelBetter })), (goalStartWith && { goalStartWith })), (fullName && { fullName }));
-        const userOnboarding = yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj);
+        const userOnboarding = yield user_auth_model_1.default.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj, { new: true });
         //challenges logic start
         const newDetails = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId) });
         yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: newDetails }, {

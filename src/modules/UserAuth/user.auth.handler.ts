@@ -1065,7 +1065,7 @@ const UserAuthHandler = {
             ...(goalStartWith && { goalStartWith }),
             ...(fullName && { fullName }),
         }
-        const userOnboarding:any = await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj)
+        const userOnboarding:any = await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj,{ new: true })
         //challenges logic start
         const newDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId) })
         await ChallengesQueue.add('challenges', { userData: newDetails }, {
