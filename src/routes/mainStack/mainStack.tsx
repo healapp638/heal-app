@@ -8,13 +8,22 @@ import { strings } from '../../constants/variables';
 import Loader from '../../modals/Loader';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { Text, Animated, StyleSheet } from 'react-native';
+import { Text, Animated, StyleSheet, Linking, AppState } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ Use this SafeAreaView
-import { Linking } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import usePostApi from '../../hooks/usePostApi';
+import { endpoints } from '../../api/Services/endpoints';
+import { setLoader } from '../../redux/Reducers/tempData';
+import AppUtils from '../../utils/appUtils';
 import {
   setEmail,
   setOnboardingAnswer,
   SetAppLanguage,
+  setUser,
+  setToken,
+  setRefreshToken,
+  setAuth,
+  getUserDetail,
 } from '../../redux/Reducers/userData';
 
 export default function MainStack() {
@@ -23,6 +32,8 @@ export default function MainStack() {
   const { initializeAppLanguage, setAppLanguage } =
     useContext(LocalizationContext);
   const loading = useSelector((state: any) => state.tempData.loader);
+  const { mutate: loginMagicLink } = usePostApi();
+  const navigation = useNavigation();
   const netInfo = useNetInfo();
 
   const [showBanner, setShowBanner] = useState(false);
@@ -30,6 +41,7 @@ export default function MainStack() {
   const slideAnim = useRef(new Animated.Value(0)).current; // slightly more height to fully hide
   const isFirstLoad = useRef(true);
   const prevConnection = useRef<boolean | null>(null);
+  const lastProcessedUrl = useRef<string | null>(null);
 
   useEffect(() => {
     initializeAppLanguage();
@@ -73,10 +85,45 @@ export default function MainStack() {
 
 
 
+  // Use refs for values needed inside handleUrl to avoid stale closures
+  const loginMagicLinkRef = useRef(loginMagicLink);
+  const dispatchRef = useRef(dispatch);
+  const navigationRef = useRef(navigation);
+  const appStateRef = useRef(AppState.currentState);
+
+  useEffect(() => {
+    loginMagicLinkRef.current = loginMagicLink;
+  }, [loginMagicLink]);
+
+  useEffect(() => {
+    dispatchRef.current = dispatch;
+  }, [dispatch]);
+
+  useEffect(() => {
+    navigationRef.current = navigation;
+  }, [navigation]);
+
   useEffect(() => {
     // Handle deep link
     const handleUrl = (url: string) => {
+      if (!url) return;
+
+      // Deduplicate: skip if same URL was processed recently (within 5 seconds)
+      if (lastProcessedUrl.current === url) {
+        console.log('Deep link already processed:', url);
+        return;
+      }
+      lastProcessedUrl.current = url;
       console.log('Deep link received:', url);
+
+      // Extract code dynamically (part after 'link/' and before '?')
+      let code = '';
+      const linkIndex = url.indexOf('/link/');
+      if (linkIndex !== -1) {
+        const afterLink = url.substring(linkIndex + 6);
+        code = afterLink.split('?')[0];
+      }
+      console.log('Extracted code:', code);
 
       // Extract query parameters safely
       const params: { [key: string]: string } = {};
@@ -112,6 +159,11 @@ export default function MainStack() {
         console.log('Referral:', ref);
       }
 
+      // Use refs to get fresh dispatch/navigation/mutate
+      const currentDispatch = dispatchRef.current;
+      const currentNavigation = navigationRef.current;
+      const currentLoginMagicLink = loginMagicLinkRef.current;
+
       // Handle language mapping and setting
       if (language) {
         const languageMap: { [key: string]: string } = {
@@ -125,14 +177,9 @@ export default function MainStack() {
         };
         const mappedLanguage = languageMap[language.toLowerCase()];
         if (mappedLanguage) {
-          dispatch(SetAppLanguage(mappedLanguage));
+          currentDispatch(SetAppLanguage(mappedLanguage));
           setAppLanguage(mappedLanguage);
         }
-      }
-
-      // Handle email setting
-      if (email) {
-        dispatch(setEmail(email));
       }
 
       // Handle onboarding answers
@@ -150,22 +197,117 @@ export default function MainStack() {
 
       Object.entries(answersMap).forEach(([key, value]) => {
         if (value !== undefined && value !== null) {
-          dispatch(setOnboardingAnswer({ key, value }));
+          currentDispatch(setOnboardingAnswer({ key, value }));
         }
       });
+
+      // Handle magic link login if email exists
+      if (email) {
+        currentDispatch(setEmail(email));
+
+
+        currentLoginMagicLink(
+          {
+            endpoint: endpoints.magicLinkLogin,
+            data: {
+              code: code,
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              language: language || 'en',
+              fullName: fullName || '',
+              goalStartWith: goalStartWith || '',
+              timeYouCommit: timeYouCommit || '',
+              stopFeelBetter: stopFeelBetter || '',
+              helpFeelBetter: helpFeelBetter || '',
+              likeToFellMore: likeToFellMore || '',
+              feelThatWay: feelThatWay || '',
+              howFellingLately: howFellingLately || '',
+              hearAboutUs: hearAboutUs || '',
+              email: email.trim().toLowerCase(),
+            },
+          },
+          {
+            onSuccess: async (response: any) => {
+              currentDispatch(setLoader(false));
+              console.log('Magic link login response:', response);
+
+              currentDispatch(setUser(response?.data));
+              currentDispatch(setToken(response?.data?.access_token));
+              currentDispatch(setRefreshToken(response?.data?.refresh_token));
+              currentDispatch(setAuth(true));
+              currentDispatch(getUserDetail() as any);
+              currentDispatch(setEmail(email));
+
+              if (response?.data?.is_onboarding === false) {
+                // Navigate to onboard flow starting from Welcome screen
+                currentNavigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: AppRoutes.AuthStack,
+                      params: {
+                        screen: AppRoutes.HearAboutUs,
+                        params: { from: 'link' },
+                      },
+                    } as never,
+                  ],
+                });
+              } else {
+                // Navigate/Reset to NonAuthStack Offer screen
+                currentNavigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: AppRoutes.NonAuthStack,
+                      params: {
+                        screen: AppRoutes.Offer,
+                      },
+                    } as never,
+                  ],
+                });
+              }
+            },
+            onError: (error: any) => {
+              currentDispatch(setLoader(false));
+              console.log('Magic link login error:', error);
+              AppUtils.showToast(error.message || 'Magic link login failed');
+
+              currentNavigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.AuthStack,
+                    params: {
+                      screen: AppRoutes.Welcome,
+                    },
+                  } as never,
+                ],
+              });
+            },
+          }
+        );
+      }
     };
 
-    // Cold start
+    // Cold start: only fires once when the app is launched from a killed state
     Linking.getInitialURL().then((url) => {
       if (url) {
         handleUrl(url);
       }
     });
 
-    // Runtime deep links
+    // Runtime deep links: fires when the app is already running (foreground or background)
+    // On iOS, this is the ONLY reliable way to get the URL when app resumes from background
     const subscription = Linking.addEventListener('url', ({ url }) => {
+      // Clear lastProcessedUrl so the new link always gets processed
+      lastProcessedUrl.current = null;
       handleUrl(url);
     });
+
+    // NOTE: We intentionally do NOT call Linking.getInitialURL() inside AppState listener.
+    // On iOS, getInitialURL() always returns the URL that LAUNCHED the app (cold start),
+    // NOT the URL that brought it from background. This was causing stale/previous link
+    // codes to be sent to the API on iOS. The Linking 'url' event above handles
+    // background-to-foreground links correctly.
 
     // Cleanup
     return () => {

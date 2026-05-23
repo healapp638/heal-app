@@ -26,13 +26,8 @@ const Challenges = () => {
   const [activeTab, setActiveTab] = useState<'daily' | 'weekly'>('daily');
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const user = useSelector((state: any) => state.userData.user);
-  const [showOnboardingModal, setShowOnboardingModal] = useState(false);
 
-  React.useEffect(() => {
-    if (user && user.isOnBoardingComplete === false) {
-      setShowOnboardingModal(true);
-    }
-  }, [user]);
+
 
   const { colors } = useTheme() as any;
 
@@ -190,17 +185,7 @@ const Challenges = () => {
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />
-          <OnboardingModal
-            visible={showOnboardingModal}
-            onClose={() => {
-              setShowOnboardingModal(false);
-              refetch();
-            }}
-            onBack={() => {
-              setShowOnboardingModal(false);
-              navigation.navigate(AppRoutes.Home as never);
-            }}
-          />
+
         </View>
       }
     />

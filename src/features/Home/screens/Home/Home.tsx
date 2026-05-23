@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ImageBackground,
 } from 'react-native';
 import {
   useFocusEffect,
@@ -131,7 +132,7 @@ const Home = () => {
             <ChallengeCard
               onPress={() => {
                 triggerHaptic('impactMedium');
-                navigation.navigate(AppRoutes.Exercise as never);
+                navigation.navigate(AppRoutes.Challenges as never);
               }}
               title={
                 localization.appkeys?.challengeCompletedTitle ||
@@ -139,64 +140,115 @@ const Home = () => {
               }
               duration={localization.appkeys?.challengeDuration || '1 MIN'}
             />
-            {startedModules?.length > 0 && (
-              <SectionHeader
-                title={localization.appkeys?.startedModule || 'Started Modules'}
-                actionLabel={localization.appkeys?.seeAll || 'See All'}
-                onActionPress={() => {
-                  navigation.navigate(
-                    AppRoutes.AllModules as never,
-                    {
-                      type: 'started',
-                    } as never,
-                  );
-                }}
-                containerStyle={{
-                  marginTop: 10,
-                }}
-              />
-            )}
-            <FlatList
-              data={startedModules.slice(0, 2)}
-              numColumns={2}
-              scrollEnabled={false}
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={item => item._id}
-              style={{
-                marginTop: 10,
-              }}
-              renderItem={({ item, index }) => (
-                <ModuleCard
-                  onPress={() => {
-                    triggerHaptic('impactMedium');
-                    return navigation.navigate(
-                      AppRoutes.StartedModule as never,
+            {startedModules?.length > 0 ? (
+              <>
+                <SectionHeader
+                  title={localization.appkeys?.startedModule || 'Started Modules'}
+                  actionLabel={localization.appkeys?.seeAll || 'See All'}
+                  onActionPress={() => {
+                    navigation.navigate(
+                      AppRoutes.AllModules as never,
                       {
-                        module: item.module,
-                        subModule: {
-                          ...item,
-                          _id: item.sub_module_id,
-                        },
+                        type: 'started',
                       } as never,
                     );
                   }}
-                  background={
-                    index === 0 ? images.moduleBack1 : images.moduleBack2
-                  }
-                  progress={`${item.completed_phase_count}/${item.total_phase_count}`}
-                  title={item.title}
-                  category={
-                    item.theme_title ||
-                    localization.appkeys?.moduleRelationshipBasics ||
-                    'RELATIONSHIP BASICS'
-                  }
+                  containerStyle={{
+                    marginTop: 10,
+                  }}
                 />
-              )}
-            />
+                <FlatList
+                  data={startedModules.slice(0, 2)}
+                  numColumns={2}
+                  scrollEnabled={false}
+                  showsHorizontalScrollIndicator={false}
+                  keyExtractor={item => item._id}
+                  style={{
+                    marginTop: 10,
+                  }}
+                  renderItem={({ item, index }) => (
+                    <ModuleCard
+                      onPress={() => {
+                        triggerHaptic('impactMedium');
+                        return navigation.navigate(
+                          AppRoutes.StartedModule as never,
+                          {
+                            module: item.module,
+                            subModule: {
+                              ...item,
+                              _id: item.sub_module_id,
+                            },
+                          } as never,
+                        );
+                      }}
+                      background={
+                        index === 0 ? images.moduleBack1 : images.moduleBack2
+                      }
+                      progress={`${item.completed_phase_count}/${item.total_phase_count}`}
+                      title={item.title}
+                      category={
+                        item.theme_title ||
+                        localization.appkeys?.moduleRelationshipBasics ||
+                        'RELATIONSHIP BASICS'
+                      }
+                    />
+                  )}
+                />
+              </>
+            ) : (
+              <>
+                <SectionHeader
+                  title={localization.appkeys?.startedModule || 'Started Modules'}
+                  containerStyle={{
+                    marginTop: 10,
+                  }}
+                />
+                <TouchableOpacity
+                  activeOpacity={0.9}
+                  onPress={() => {
+                    triggerHaptic('impactMedium');
+                    navigation.navigate(AppRoutes.Modules as never);
+                  }}
+                  style={styles.startModuleCardContainer}
+                >
+                  <ImageBackground
+                    source={images.moduleBack1}
+                    style={styles.startModuleBackgroundImage}
+                    imageStyle={{
+                      borderRadius: 14,
+                    }}
+                  >
+                    <View style={styles.startModuleOverlay}>
+                      <View style={styles.startModuleLeft}>
+                        <Image
+                          source={images.book}
+                          style={styles.startModuleIcon}
+                          resizeMode="contain"
+                        />
+
+                        <View style={styles.startModuleTextContainer}>
+                          <SolidText style={styles.startModuleTitle}>
+                            {localization.appkeys?.startNewModule || 'Start a new module'}
+                          </SolidText>
+                          <SolidText style={styles.startModuleSubtitle}>
+                            {localization.appkeys?.exploreVarietyGuided || 'EXPLORE A VARIETY OF GUIDED PROGRAMS'}
+                          </SolidText>
+                        </View>
+                      </View>
+                      <Image
+                        source={images.forward}
+                        style={styles.startModuleForward}
+                        resizeMode="contain"
+                      />
+                    </View>
+                  </ImageBackground>
+                </TouchableOpacity>
+              </>
+            )}
 
             <SectionHeader
               title={localization.appkeys?.todayJournal || 'Today Journal'}
-              onActionPress={() => {}}
+              onActionPress={() => { }}
               containerStyle={{
                 marginTop: 20,
               }}

@@ -81,8 +81,8 @@ const SolidView: React.FC<SolidViewProps> = ({
             keyboardVerticalOffset !== undefined
               ? keyboardVerticalOffset
               : Platform.OS === 'ios'
-              ? 40
-              : 0
+                ? 40
+                : 0
           }
           enabled={true}
         >

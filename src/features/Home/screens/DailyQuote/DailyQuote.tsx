@@ -151,9 +151,9 @@ const DailyQuote = () => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                    ...quote,
-                    is_liked: !isLiked,
-                  }
+                  ...quote,
+                  is_liked: !isLiked,
+                }
                 : quote,
             ),
           },
@@ -420,7 +420,7 @@ const DailyQuote = () => {
                           width: 0,
                           height: 1,
                         },
-                        textShadowRadius: 10,
+
                       },
                     ]}
                   >

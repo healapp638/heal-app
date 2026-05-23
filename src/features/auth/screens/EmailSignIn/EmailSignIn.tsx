@@ -5,6 +5,7 @@ import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import SolidText from '../../../../components/SolidText';
 import SolidInput from '../../../../components/SolidInput';
+import SolidBtn from '../../../../components/SolidBtn';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
@@ -13,9 +14,11 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearOnboardingProgress } from '../../../../redux/Reducers/userData';
 
 const EmailSignIn = () => {
+  const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
@@ -68,6 +71,7 @@ const EmailSignIn = () => {
       },
       {
         onSuccess: () => {
+          dispatch(clearOnboardingProgress());
           navigation.navigate(
             AppRoutes.CheckEmail as never,
             {
@@ -84,12 +88,11 @@ const EmailSignIn = () => {
 
   return (
     <SolidView
-      isScrollEnabled={false}
-      containerStyle={{ backgroundColor: '#F7F4EB' }}
+      isScrollEnabled
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
-            title="Email"
+            title={localization.appkeys?.email || 'Email'}
             onBackPress={() => {
               triggerHaptic('impactMedium');
               navigation.goBack();
@@ -98,14 +101,14 @@ const EmailSignIn = () => {
 
           <View style={styles.content}>
             <SolidText style={styles.title}>
-              What’s your email?
+              {localization.appkeys?.whatsYourEmail || 'What’s your email?'}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              We’ll email you a link to sign in.
+              {localization.appkeys?.weWillEmailLink || 'We’ll email you a link to sign in.'}
             </SolidText>
 
             <SolidInput
-              label="Email"
+              label={localization.appkeys?.email || 'Email'}
               placeholder="Johnsmith911@gmail.com"
               value={email}
               onChangeText={setEmail}
@@ -120,20 +123,14 @@ const EmailSignIn = () => {
           </View>
 
           <View style={styles.footerContainer}>
-            <TouchableOpacity
-              style={[styles.submitBtn, isPending && { opacity: 0.7 }]}
+            <SolidBtn
+              titleTxt={localization.appkeys?.emailMeMagicLink || 'Email me a magic link'}
+              btnStyle={styles.submitBtn}
+              txtStyle={styles.submitBtnText}
               onPress={handleSendLink}
+              isLoading={isPending}
               disabled={isPending}
-              activeOpacity={0.8}
-            >
-              {isPending ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <SolidText style={styles.submitBtnText}>
-                  Email me a magic link
-                </SolidText>
-              )}
-            </TouchableOpacity>
+            />
           </View>
         </View>
       }

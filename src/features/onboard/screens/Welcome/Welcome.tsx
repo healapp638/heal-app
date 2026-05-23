@@ -28,6 +28,7 @@ const Welcome = () => {
   const { images, colors } = useTheme() as any;
   const { appLanguage, localization } = useContext(LocalizationContext) as any;
   const onboarding = useSelector((state: any) => state.userData?.onboarding);
+  const auth = useSelector((state: any) => state.userData?.auth);
   const hasPromptedOnFocus = useRef(false);
   const [resumeModalVisible, setResumeModalVisible] = React.useState(false);
   const [signInModalVisible, setSignInModalVisible] = React.useState(false);
@@ -37,12 +38,14 @@ const Welcome = () => {
     const stackRoutes = getResumeStackRoutes(currentScreen);
     if (!stackRoutes.length) return;
     setResumeModalVisible(false);
-    (navigation as any).reset({
-      index: stackRoutes.length - 1,
-      routes: stackRoutes.map(name => ({
-        name,
-      })),
-    });
+    setTimeout(() => {
+      (navigation as any).reset({
+        index: stackRoutes.length - 1,
+        routes: stackRoutes.map(name => ({
+          name,
+        })),
+      });
+    }, 150);
   }, [navigation, onboarding?.currentScreen]);
   const handleStartOver = useCallback(() => {
     dispatch(clearOnboardingProgress());
@@ -66,6 +69,7 @@ const Welcome = () => {
         };
       }
       const canResume =
+        !auth &&
         onboarding?.hasStarted &&
         !onboarding?.isCompleted &&
         RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
@@ -84,6 +88,7 @@ const Welcome = () => {
       onboarding?.currentScreen,
       onboarding?.isCompleted,
       onboarding?.hasStarted,
+      auth,
     ]),
   );
   const getLangData = () => {
@@ -157,6 +162,9 @@ const Welcome = () => {
             source={images.phone}
             resizeMode="contain"
             style={styles.phoneImage}
+          />
+          <View
+            style={{ flex: 1 }}
           />
           <SolidText style={styles.title}>
             {localization.appkeys?.healingStarts}

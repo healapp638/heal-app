@@ -14,6 +14,7 @@ const Splash = () => {
   const styles = style(colors);
   const auth = useSelector((state: any) => state.userData?.auth);
   const user = useSelector((state: any) => state.userData?.user);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -30,7 +31,21 @@ const Splash = () => {
           routes: [{ name: AppRoutes.Welcome } as never],
         });
       } else {
-        if (user?.is_profile_completed == false) {
+        if (user?.is_onboarding == false) {
+          // If in between the onboarding flow, navigate to HearAboutUs and show ResumeModal
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: AppRoutes.AuthStack,
+                params: {
+                  screen: AppRoutes.HearAboutUs,
+                  params: { showResumeModal: true },
+                },
+              } as never,
+            ],
+          });
+        } else if (user?.is_profile_completed == false) {
           navigation.reset({
             index: 0,
             routes: [

@@ -19,11 +19,15 @@ import {
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
+  getUserDetail,
   setOnboardingCompleted,
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 const CHAR_INTERVAL_MS = 28;
 const SENTENCE_PAUSE_MS = 700;
@@ -31,6 +35,10 @@ const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const answers = useSelector((state: any) => state.userData?.onboarding?.answers);
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+  const token = useSelector((state: any) => state.userData?.token);
+  const { mutate: completeOnboardingApi } = usePostApi();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const sentences = useMemo(
@@ -108,7 +116,58 @@ const CreatingSpace = () => {
   }, [activeSentence, activeChar, allDone, buttonOpacity, sentences]);
   const handleContinue = () => {
     dispatch(setOnboardingCompleted(true));
-    navigation.navigate(AppRoutes.AccessScreen as never);
+    if (token) {
+      completeOnboardingApi(
+        {
+          endpoint: endpoints.complete_onboarding,
+          data: {
+            language: AppUtils.getLanguageCode(appLanguage) || 'en',
+            fullName: answers?.fullName || '',
+            goalStartWith: answers?.goalStartWith || '',
+            timeYouCommit: answers?.timeYouCommit || '',
+            stopFeelBetter: answers?.stopFeelBetter || '',
+            helpFeelBetter: answers?.helpFeelBetter || '',
+            likeToFellMore: answers?.likeToFellMore || '',
+            feelThatWay: answers?.feelThatWay || '',
+            howFellingLately: answers?.howFellingLately || '',
+            hearAboutUs: answers?.hearAboutUs || '',
+          },
+        },
+        {
+          onSuccess: (res: any) => {
+            console.log('complete_onboarding response:', res);
+            dispatch(getUserDetail({}))
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: AppRoutes.NonAuthStack,
+                  params: {
+                    screen: AppRoutes.Offer,
+                  },
+                } as never,
+              ],
+            });
+          },
+          onError: (err: any) => {
+            console.log('complete_onboarding error:', err);
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: AppRoutes.NonAuthStack,
+                  params: {
+                    screen: AppRoutes.Offer,
+                  },
+                } as never,
+              ],
+            });
+          },
+        }
+      );
+    } else {
+      navigation.navigate(AppRoutes.AccessScreen as never);
+    }
   };
   return (
     <SolidView

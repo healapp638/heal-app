@@ -7,6 +7,8 @@ import {
   RefreshControl,
   Platform,
   TouchableOpacity,
+  Alert,
+  Dimensions,
 } from 'react-native';
 import {
   useNavigation,
@@ -112,6 +114,122 @@ const Modules = () => {
       setCursor(nextCursor);
     }
   };
+  const [activeIndex, setActiveIndex] = useState(0);
+  const { width: screenWidth } = Dimensions.get('window');
+  const carouselCardWidth = screenWidth - 40;
+
+  const activeStarted = startedModules.filter(
+    (item: any) =>
+      item?.completed_phase_count < item?.total_phase_count,
+  );
+  const finishedList = finishedModulesData?.data?.subModules || [];
+
+  const latestStartedItem = activeStarted.length > 0 ? activeStarted[0] : null;
+  const latestFinishedItem = finishedList.length > 0 ? finishedList[0] : null;
+
+  const carouselData = [
+    latestStartedItem
+      ? { ...latestStartedItem, group: 'started', isEmpty: false }
+      : { group: 'started', isEmpty: true },
+    latestFinishedItem
+      ? { ...latestFinishedItem, group: 'finished', isEmpty: false }
+      : { group: 'finished', isEmpty: true },
+  ];
+
+  const currentItem = carouselData[activeIndex];
+  const currentGroup = currentItem?.group || 'started';
+  const isCurrentEmpty = currentItem?.isEmpty;
+
+  const carouselTitle =
+    currentGroup === 'finished'
+      ? localization.appkeys?.finishedModules || 'Finished Modules'
+      : localization.appkeys?.startedModules || 'Started Modules';
+
+  const handleSeeAll = () => {
+    triggerHaptic('impactMedium');
+    return navigation.navigate(
+      AppRoutes.AllModules as never,
+      {
+        type: currentGroup,
+      } as never,
+    );
+  };
+
+  const handleScrollEnd = useCallback(
+    (event: any) => {
+      const contentOffsetX = event.nativeEvent.contentOffset.x;
+      const index = Math.round(contentOffsetX / carouselCardWidth);
+      if (index >= 0 && index < carouselData.length && index !== activeIndex) {
+        setActiveIndex(index);
+      }
+    },
+    [carouselData.length, activeIndex, carouselCardWidth],
+  );
+
+  const renderCarouselItem = useCallback(
+    ({ item }: { item: any }) => {
+      const isFinished = item.group === 'finished';
+      if (item.isEmpty) {
+        return (
+          <StartedModuleCard
+            title={
+              item.group === 'started'
+                ? localization.appkeys?.noModuleStartedYet || 'No module started yet'
+                : localization.appkeys?.noModuleFinishedYet || 'No module finished yet'
+            }
+            subtitle={
+              item.group === 'started'
+                ? 'CHOOSE A THEME BELOW TO BEGIN'
+                : 'COMPLETED MODULES WILL APPEAR HERE'
+            }
+            progressText="0/0"
+            isFinished={isFinished}
+            disabled={true}
+            containerStyle={{
+              width: carouselCardWidth - 16,
+              marginLeft: 8,
+              marginRight: 8,
+              opacity: 0.8,
+            }}
+            onPress={() => {}}
+          />
+        );
+      }
+      return (
+        <StartedModuleCard
+          title={item.title}
+          subtitle={
+            item.description ||
+            localization.appkeys?.moduleRelationshipBasics ||
+            'RELATIONSHIP BASICS'
+          }
+          progressText={`${item.completed_phase_count}/${item.total_phase_count}`}
+          isFinished={isFinished}
+          containerStyle={{
+            width: carouselCardWidth - 16,
+            marginLeft: 8,
+            marginRight: 8,
+          }}
+          onPress={() => {
+            triggerHaptic('impactMedium');
+            navigation.navigate(
+              AppRoutes.StartedModule as never,
+              {
+                module: item.module,
+                subModule: {
+                  ...item,
+                  _id: item.sub_module_id,
+                },
+                source: 'dashboard',
+              } as never,
+            );
+          }}
+        />
+      );
+    },
+    [localization.appkeys, navigation, carouselCardWidth],
+  );
+
   const renderHeader = () => (
     <View>
       {/* Progress Tracker Card */}
@@ -124,60 +242,69 @@ const Modules = () => {
         }}
       />
 
-      {startedModules.length > 0 && (
-        <>
-          <View style={styles.sectionHeader}>
-            <SolidText
-              style={[
-                styles.sectionTitle,
-                {
-                  color: colors.brown,
-                },
-              ]}
-            >
-              {localization.appkeys?.startedModules || 'Started Modules'}
-            </SolidText>
-            <TouchableOpacity
-              onPress={() => {
-                triggerHaptic('impactMedium');
-                return navigation.navigate(
-                  AppRoutes.AllModules as never,
+      {(isStartedLoading || isFinishedLoading) && carouselData.length === 0 ? (
+        <ActivityIndicator
+          size="small"
+          color={colors.brown}
+          style={{ marginVertical: 20 }}
+        />
+      ) : (
+        carouselData?.length > 0 && (
+          <>
+            <View style={styles.sectionHeader}>
+              <SolidText
+                style={[
+                  styles.sectionTitle,
                   {
-                    type: 'started',
-                  } as never,
-                );
-              }}
-            >
-              <SolidText style={styles.seeAllText}>
-                {localization.appkeys?.seeAll || 'See All'}
-              </SolidText>
-            </TouchableOpacity>
-          </View>
-          <HorizontalModuleList
-            data={startedModules.filter(
-              (item: any) =>
-                item?.completed_phase_count < item?.total_phase_count,
-            )}
-            isLoading={isStartedLoading}
-            localization={localization}
-            style={styles.horizontalList}
-            contentContainerStyle={styles.horizontalListContent}
-            onPress={item => {
-              //
-              navigation.navigate(
-                AppRoutes.StartedModule as never,
-                {
-                  module: item.module,
-                  subModule: {
-                    ...item,
-                    _id: item.sub_module_id,
+                    color: colors.brown,
                   },
-                  source: 'dashboard',
-                } as never,
-              );
-            }}
-          />
-        </>
+                ]}
+              >
+                {carouselTitle}
+              </SolidText>
+              {!isCurrentEmpty && (
+                <TouchableOpacity onPress={handleSeeAll}>
+                  <SolidText style={styles.seeAllText}>
+                    {localization.appkeys?.seeAll || 'See All'}
+                  </SolidText>
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <FlatList
+              data={carouselData}
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              renderItem={renderCarouselItem}
+              keyExtractor={(item, index) =>
+                (item._id || item.sub_module_id || index).toString()
+              }
+              onMomentumScrollEnd={handleScrollEnd}
+              onScrollEndDrag={handleScrollEnd}
+              decelerationRate="fast"
+              style={{ width: carouselCardWidth, overflow: 'hidden' }}
+              contentContainerStyle={{ paddingVertical: 8 }}
+            />
+
+            {carouselData.length > 1 && (
+              <View style={styles.paginationContainer}>
+                {carouselData.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.paginationDot,
+                      {
+                        backgroundColor:
+                          index === activeIndex ? colors.brown : '#EBE0D0',
+                      },
+                    ]}
+                  />
+                ))}
+              </View>
+            )}
+          </>
+        )
       )}
 
       {/* Modules Themes Title */}
@@ -194,6 +321,7 @@ const Modules = () => {
       </SolidText>
     </View>
   );
+
   const renderFooter = () => (
     <View
       style={{
@@ -210,61 +338,6 @@ const Modules = () => {
           }}
         />
       )}
-
-      {/* Finished Modules */}
-      {(finishedModulesData?.data?.subModules || []).length > 0 && (
-        <>
-          <View style={styles.sectionHeader}>
-            <SolidText
-              style={[
-                styles.sectionTitle,
-                {
-                  color: colors.brown,
-                },
-              ]}
-            >
-              {localization.appkeys?.finishedModules || 'Finished Modules'}
-            </SolidText>
-            <TouchableOpacity
-              onPress={() => {
-                triggerHaptic('impactMedium');
-                return navigation.navigate(
-                  AppRoutes.AllModules as never,
-                  {
-                    type: 'finished',
-                  } as never,
-                );
-              }}
-            >
-              <SolidText style={styles.seeAllText}>
-                {localization.appkeys?.seeAll || 'See All'}
-              </SolidText>
-            </TouchableOpacity>
-          </View>
-          <HorizontalModuleList
-            data={finishedModulesData?.data?.subModules || []}
-            isLoading={isFinishedLoading}
-            localization={localization}
-            isFinished={true}
-            style={styles.horizontalList}
-            contentContainerStyle={styles.horizontalListContent}
-            onPress={item => {
-              //
-              navigation.navigate(
-                AppRoutes.StartedModule as never,
-                {
-                  module: item.module,
-                  subModule: {
-                    ...item,
-                    _id: item.sub_module_id,
-                  },
-                  source: 'dashboard',
-                } as never,
-              );
-            }}
-          />
-        </>
-      )}
     </View>
   );
   const renderItem = useCallback(
@@ -272,6 +345,7 @@ const Modules = () => {
       <ModuleThemeCard
         item={item}
         onPress={() => {
+
           return navigation.navigate(
             AppRoutes.ModuleThemeDetail as never,
             {
@@ -313,8 +387,8 @@ const Modules = () => {
             maxToRenderPerBatch={10}
             windowSize={10}
             removeClippedSubviews={true}
-            ListHeaderComponent={renderHeader}
-            ListFooterComponent={renderFooter}
+            ListHeaderComponent={renderHeader()}
+            ListFooterComponent={renderFooter()}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={

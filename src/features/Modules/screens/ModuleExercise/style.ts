@@ -89,7 +89,7 @@ const style = (colors: any) =>
     },
     floatingNextButton: {
       position: 'absolute',
-      bottom: Platform.OS === 'ios' ? 20 : 10,
+      bottom: Platform.OS === 'ios' ? 30 : 30,
       alignSelf: 'center',
       width: '90%',
       marginTop: 0,

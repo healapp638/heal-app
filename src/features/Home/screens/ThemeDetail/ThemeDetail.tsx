@@ -184,7 +184,7 @@ const ThemeDetail = () => {
                         opacity: 0.5,
                       }}
                     >
-                      No themes found
+                      {localization.appkeys?.noThemesFound || 'No themes found'}
                     </SolidText>
                   </View>
                 ) : null

@@ -10,6 +10,7 @@ import {
 import ViewShot from 'react-native-view-shot';
 import SolidText from '../../../../components/SolidText';
 import AppFonts from '../../../../constants/fonts';
+import AppUtils from '../../../../utils/appUtils';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 
@@ -97,8 +98,9 @@ const QuoteItem = ({
                   width: 0,
                   height: 1,
                 },
-                textShadowRadius: 10,
-                fontFamily: AppFonts.sregsSerifDisplaySemiBold,
+
+                fontFamily: AppFonts.recoMedium,
+
               },
             ]}
           >

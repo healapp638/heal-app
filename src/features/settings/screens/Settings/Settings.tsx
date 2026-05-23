@@ -20,6 +20,7 @@ import {
   setUser,
   setBiometric,
   getUserDetail,
+  clearOnboardingProgress,
 } from '../../../../redux/Reducers/userData';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
@@ -50,7 +51,7 @@ const Settings = () => {
 
   const settingItems = [
     localization.appkeys?.personalInfo || 'Personal Information',
-    !isSocialUser && (localization.appkeys?.biometricAuth || 'Biometric'),
+    // !isSocialUser && (localization.appkeys?.biometricAuth || 'Biometric'),
     localization.appkeys?.language || 'Language',
     localization.appkeys?.contactUs || 'Contact Us',
     localization.appkeys?.logout || 'Logout',
@@ -82,7 +83,7 @@ const Settings = () => {
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ paddingBottom: 150 }}
+            contentContainerStyle={{ paddingBottom: 20 }}
           >
             <View
               style={{
@@ -233,7 +234,7 @@ const Settings = () => {
 
             <View style={styles.footer}>
               <SolidText style={styles.footerText}>
-                HEAL - Safe Place v1.0.0
+                HEAL - Safe Place {localization.appkeys?.versionText || 'Version'} 1.0.0
               </SolidText>
               <PremiumFooter
                 localization={localization}
@@ -248,6 +249,7 @@ const Settings = () => {
           <LogoutModal
             visible={visible}
             onConfirm={() => {
+              dispatch(clearOnboardingProgress());
               dispatch(setAuth(false));
               dispatch(setUser({}));
               dispatch(setToken(null));

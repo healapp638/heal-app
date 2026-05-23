@@ -241,9 +241,9 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                 style={styles.backIcon}
                 resizeMode="contain"
               />
-              <SolidText style={styles.backTxt}>Back</SolidText>
+              <SolidText style={styles.backTxt}>{localization.appkeys?.backText || 'Back'}</SolidText>
             </TouchableOpacity>
-            <SolidText style={styles.title}>Favorites</SolidText>
+            <SolidText style={styles.title}>{localization.appkeys?.favoritesTitle || 'Favorites'}</SolidText>
             <View style={styles.headerRight} />
           </View>
 
@@ -254,7 +254,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
               resizeMode="contain"
             />
             <TextInput
-              placeholder="Search"
+              placeholder={localization.appkeys?.searchHint || 'Search'}
               placeholderTextColor="#A08E83"
               style={styles.searchInput}
               value={searchText}
@@ -263,7 +263,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           </View>
 
           <SolidBtn
-            titleTxt="Show all in feed"
+            titleTxt={localization.appkeys?.showAllInFeed || 'Show all in feed'}
             onPress={() => {
               // triggerHaptic('impactMedium');
               onClose();
@@ -315,7 +315,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                       color: '#A08E83',
                     }}
                   >
-                    No favorites found
+                    {localization.appkeys?.noFavoritesFound || 'No favorites found'}
                   </SolidText>
                 </View>
               )}

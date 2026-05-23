@@ -163,7 +163,7 @@ const AccessScreen = () => {
                 style={styles.socialBtn}
                 onPress={() => {
                   triggerHaptic('impactMedium');
-                  navigation.navigate(AppRoutes.SignIn as never);
+                  navigation.navigate(AppRoutes.EmailSignIn as never);
                 }}
               >
                 <Image
@@ -202,7 +202,7 @@ const AccessScreen = () => {
                 flex: 1,
               }}
             />
-
+            {/* 
             <View style={styles.bottomButtonsContainer}>
               <SolidBtn
                 titleTxt={localization.appkeys?.logInBtn}
@@ -218,7 +218,7 @@ const AccessScreen = () => {
                   return navigation.navigate(AppRoutes.SignUp as never);
                 }}
               />
-            </View>
+            </View> */}
 
             <View style={styles.footer}>
               <TouchableOpacity

@@ -28,7 +28,7 @@ const style = (colors: any) =>
       textAlign: 'center',
       lineHeight: 22,
       opacity: 0.8,
-      marginBottom: 40,
+      marginBottom: 20,
       includeFontPadding: false,
     },
     inputLabel: {

@@ -43,6 +43,19 @@ const style = (colors: any) =>
     themesList: {
       marginBottom: Platform.OS === 'ios' ? 10 : 8,
     },
+    paginationContainer: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 10,
+      marginBottom: Platform.OS === 'ios' ? 20 : 18,
+    },
+    paginationDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      marginHorizontal: 4,
+    },
   });
 
 export default style;

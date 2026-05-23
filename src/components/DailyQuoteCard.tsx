@@ -119,7 +119,7 @@ const DailyQuoteCard = ({
                       width: 0,
                       height: 1,
                     },
-                    textShadowRadius: 4,
+
                   },
                 ]}
               >

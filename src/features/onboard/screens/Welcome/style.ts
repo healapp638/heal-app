@@ -61,6 +61,7 @@ const style = (colors: any) =>
       fontFamily: AppFonts.regular,
       color: colors.brown,
       includeFontPadding: false,
+      marginBottom: 30
     },
     signInText: {
       color: colors.brown,

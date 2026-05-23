@@ -5,12 +5,14 @@ import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import SolidText from '../../../../components/SolidText';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+import SolidBtn from '../../../../components/SolidBtn';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { useSelector } from 'react-redux';
 
 const CheckEmail = () => {
   const { colors } = useTheme() as any;
@@ -75,12 +77,11 @@ const CheckEmail = () => {
 
   return (
     <SolidView
-      isScrollEnabled={false}
-      containerStyle={{ backgroundColor: '#F7F4EB' }}
+      isScrollEnabled
       view={
         <View style={styles.mainContainer}>
           <HeaderCommon
-            title="Check Email"
+            title={localization.appkeys?.checkEmail || 'Check Email'}
             onBackPress={() => {
               triggerHaptic('impactMedium');
               navigation.goBack();
@@ -89,28 +90,25 @@ const CheckEmail = () => {
 
           <View style={styles.content}>
             <SolidText style={styles.title}>
-              We’ve sent you an email
+              {localization.appkeys?.weHaveSentEmail || 'We’ve sent you an email'}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              Tap the link sent <SolidText style={styles.boldText}>{email}</SolidText>
-              {'\n'}Check spam or junk if you can’t find it.
+              {localization.appkeys?.tapLinkSent || 'Tap the link sent to'} <SolidText style={styles.boldText}>{email}</SolidText>
+              {'\n'}{localization.appkeys?.checkSpamJunk || 'Check spam or junk if you can’t find it.'}
             </SolidText>
           </View>
 
           <View style={styles.footerContainer}>
-            <TouchableOpacity
-              style={styles.submitBtn}
+            <SolidBtn
+              titleTxt={localization.appkeys?.openEmailApp || 'Open email app'}
+              btnStyle={styles.submitBtn}
+              txtStyle={styles.submitBtnText}
               onPress={handleOpenEmailApp}
-              activeOpacity={0.8}
-            >
-              <SolidText style={styles.submitBtnText}>
-                Open email app
-              </SolidText>
-            </TouchableOpacity>
+            />
 
             {timer > 0 ? (
               <SolidText style={styles.timerText}>
-                Resend in 0:{timer < 10 ? '0' : ''}{timer}
+                {localization.appkeys?.resendIn || 'Resend in'} 0:{timer < 10 ? '0' : ''}{timer}
               </SolidText>
             ) : (
               <TouchableOpacity onPress={handleResend} disabled={isPending}>
@@ -118,7 +116,7 @@ const CheckEmail = () => {
                   <ActivityIndicator color={colors.brown || '#3A2110'} size="small" />
                 ) : (
                   <SolidText style={styles.resendLink}>
-                    Resend link
+                    {localization.appkeys?.resendLink || 'Resend link'}
                   </SolidText>
                 )}
               </TouchableOpacity>

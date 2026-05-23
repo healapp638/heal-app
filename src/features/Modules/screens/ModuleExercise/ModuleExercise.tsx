@@ -1,6 +1,6 @@
 import React, { cloneElement, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { View, TextInput, BackHandler, ScrollView, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
+import { View, TextInput, BackHandler, ScrollView, TouchableOpacity, ActivityIndicator, Platform, Keyboard } from 'react-native';
 import useGetApi from '../../../../hooks/useGetApi';
 import {
   CommonActions,
@@ -23,6 +23,9 @@ import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import AppFonts from '../../../../constants/fonts';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { showPointsToast } from '../../../../components/TopPointsToast';
+
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
@@ -77,19 +80,12 @@ const ModuleExercise = () => {
   ];
 
   const [currentStep, setCurrentStep] = useState(0);
-  const [showModal, setShowModal] = useState(false);
   const [reflectionText, setReflectionText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: string }>({});
 
   const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
   const { mutate: addMcqAnswer, isPending: isSavingAnswer } = usePostApi();
-
-  useEffect(() => {
-    if (showModal) {
-      console.log('Selected item of phase details:', phase);
-    }
-  }, [showModal, phase]);
 
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
@@ -110,6 +106,8 @@ const ModuleExercise = () => {
   };
 
   const handleNext = () => {
+    Keyboard.dismiss();
+    setIsFocused(false);
     if (currentStep < steps.length - 1) {
       if (currentStepData.type === 'mcq') {
         const selectedOptionId = selectedOptions[currentStep];
@@ -179,7 +177,56 @@ const ModuleExercise = () => {
               queryKey: ['theme_list'],
             });
             dispatch(getUserDetail());
-            setShowModal(true);
+            showPointsToast(
+              `${localization.appkeys?.completedPhase || "You've completed"} ${phase?.phase ||
+              `${localization.appkeys?.phase || 'Phase'} ${phase?.phaseNumber || 1
+              }`
+              }`,
+              '+10 pts'
+            );
+            navigation.dispatch(state => {
+              const targetRoute = isLastPhase
+                ? AppRoutes.ModuleThemeDetail
+                : AppRoutes.StartedModule;
+              const index = state.routes.findIndex(
+                (r: any) => r.name === targetRoute,
+              );
+              if (index !== -1) {
+                return CommonActions.reset({
+                  ...state,
+                  routes: state.routes.slice(0, index + 1),
+                  index,
+                });
+              }
+              const source = (route.params as any)?.source;
+              const theme = (route.params as any)?.theme;
+              let actualTargetRoute = targetRoute;
+              if (
+                isLastPhase &&
+                (source === 'all' || source === 'dashboard')
+              ) {
+                actualTargetRoute = AppRoutes.AllModules;
+              }
+              return CommonActions.reset({
+                index: 1,
+                routes: [
+                  {
+                    name: AppRoutes.BottomTab,
+                    params: {
+                      screen: AppRoutes.Modules,
+                    },
+                  },
+                  {
+                    name: actualTargetRoute,
+                    params: {
+                      theme: theme,
+                      subModule: (route.params as any)?.subModule,
+                      type: 'started',
+                    },
+                  },
+                ],
+              });
+            });
           },
           onError: (error) => {
             console.log(error)
@@ -190,6 +237,8 @@ const ModuleExercise = () => {
     }
   };
   const handleBack = () => {
+    Keyboard.dismiss();
+    setIsFocused(false);
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     } else {
@@ -220,7 +269,7 @@ const ModuleExercise = () => {
 
   return (
     <SolidView
-      isScrollEnabled={false}
+      isScrollEnabled={currentStepData?.type === 'reflection'}
       view={
         <View style={styles.mainContainer}>
           <View style={styles.contentContainer}>
@@ -229,7 +278,7 @@ const ModuleExercise = () => {
                 style={{ width: '100%', flex: 1 }}
                 contentContainerStyle={[
                   styles.scrollContent,
-                  currentStepData.type === 'text' && { paddingBottom: 120 }
+                  (currentStepData.type === 'text' || currentStepData.type === 'mcq') && { paddingBottom: 120 }
                 ]}
                 showsVerticalScrollIndicator={false}
               >
@@ -295,33 +344,11 @@ const ModuleExercise = () => {
                   </View>
                 )}
 
-                {/* Button inside ScrollView for MCQ so the whole screen scrolls */}
-                {currentStepData.type === 'mcq' && (
-                  <SolidBtn
-                    titleTxt={
-                      currentStep === steps.length - 1
-                        ? localization.appkeys?.completed || 'Completed'
-                        : localization.appkeys?.next || 'Next'
-                    }
-                    onPress={(...args: any) => {
-                      return (handleNext as any)(...args);
-                    }}
-                    btnStyle={styles.nextButton}
-                    isLoading={isCompleting || isSavingAnswer}
-                  />
-                )}
+
               </ScrollView>
             ) : (
-              <ScrollView
-                style={{ width: '100%', flex: 1 }}
-                contentContainerStyle={{
-                  flexGrow: 1,
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  paddingBottom: 20,
-                  paddingTop: 10,
-                }}
-                showsVerticalScrollIndicator={false}
+              <View
+                style={{ flex: 1, justifyContent: 'space-between', height: '100%', width: '100%' }}
               >
                 <HeaderCommon
                   title={localization.appkeys?.exercise || 'Exercise'}
@@ -341,9 +368,9 @@ const ModuleExercise = () => {
                     <SolidText style={styles.reflectionQuestion}>
                       {currentStepData.question}
                     </SolidText>
-                    <SolidText style={styles.reflectionInstruction}>
+                    {/* <SolidText style={styles.reflectionInstruction}>
                       {currentStepData.instruction}
-                    </SolidText>
+                    </SolidText> */}
                     <TextInput
                       style={styles.textInput}
                       multiline
@@ -359,104 +386,27 @@ const ModuleExercise = () => {
                   </View>
                 </View>
 
-                {/* Button inside ScrollView for reflection so it scrolls natively when keyboard is open */}
-                <SolidBtn
-                  titleTxt={
-                    currentStep === steps.length - 1
-                      ? localization.appkeys?.completed || 'Completed'
-                      : localization.appkeys?.next || 'Next'
-                  }
-                  onPress={(...args: any) => {
-                    return (handleNext as any)(...args);
-                  }}
-                  btnStyle={styles.nextButton}
-                  isLoading={isCompleting || isSavingAnswer}
-                />
-              </ScrollView>
+              </View>
             )}
           </View>
 
-          {/* Button outside ScrollView (floating) only for text description screen */}
-          {currentStepData.type === 'text' && (
-            <SolidBtn
-              titleTxt={
-                currentStep === steps.length - 1
-                  ? localization.appkeys?.completed || 'Completed'
-                  : localization.appkeys?.next || 'Next'
-              }
-              onPress={(...args: any) => {
-                return (handleNext as any)(...args);
-              }}
-              btnStyle={styles.floatingNextButton}
-              isLoading={isCompleting || isSavingAnswer}
-            />
-          )}
-
-          <SuccessModal
-            visible={showModal}
-            onClose={() => setShowModal(false)}
-            title={localization.appkeys?.wellDone || 'Well done'}
-            subtitle={`${localization.appkeys?.completedPhase || "You've completed"
-              } ${phase?.phase ||
-              `${localization.appkeys?.phase || 'Phase'} ${phase?.phaseNumber || 1
-              }`
-              }`}
-            btnLabel={localization.appkeys?.continue || 'Continue'}
-            onPressBtn={() => {
-              setShowModal(false);
-              navigation.dispatch(state => {
-                const targetRoute = isLastPhase
-                  ? AppRoutes.ModuleThemeDetail
-                  : AppRoutes.StartedModule;
-                const index = state.routes.findIndex(
-                  (r: any) => r.name === targetRoute,
-                );
-                if (index !== -1) {
-                  return CommonActions.reset({
-                    ...state,
-                    routes: state.routes.slice(0, index + 1),
-                    index,
-                  });
-                }
-                const source = (route.params as any)?.source;
-                const theme = (route.params as any)?.theme;
-                let actualTargetRoute = targetRoute;
-                if (
-                  isLastPhase &&
-                  (source === 'all' || source === 'dashboard')
-                ) {
-                  actualTargetRoute = AppRoutes.AllModules;
-                }
-                return CommonActions.reset({
-                  index: 1,
-                  routes: [
-                    {
-                      name: AppRoutes.BottomTab,
-                      params: {
-                        screen: AppRoutes.Modules,
-                      },
-                    },
-                    {
-                      name: actualTargetRoute,
-                      params: {
-                        theme: theme,
-                        subModule: (route.params as any)?.subModule,
-                        type: 'started',
-                      },
-                    },
-                  ],
-                });
-              });
+          {/* Button outside ScrollView (floating) for all screens */}
+          <SolidBtn
+            titleTxt={
+              currentStep === steps.length - 1
+                ? localization.appkeys?.completed || 'Completed'
+                : localization.appkeys?.next || 'Next'
+            }
+            onPress={(...args: any) => {
+              return (handleNext as any)(...args);
             }}
-            subStyle={{
-              marginTop: -8,
-              marginBottom: 20,
-            }}
-            btnStyle={{
-              marginTop: 0,
-              marginBottom: -4,
-            }}
+            btnStyle={[
+              styles.floatingNextButton,
+              currentStepData?.type === 'reflection' && { position: 'relative', marginTop: 20, marginBottom: 30, bottom: 0 }
+            ]}
+            isLoading={isCompleting || isSavingAnswer}
           />
+
         </View>
       }
     />

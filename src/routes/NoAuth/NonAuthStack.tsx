@@ -35,13 +35,15 @@ import ChangePassword from '../../features/settings/screens/ChangePassword/Chang
 import HelpAndSupport from '../../features/settings/screens/HelpAndSupport/HelpAndSupport';
 import AboutHeal from '../../features/settings/screens/AboutHeal/AboutHeal';
 import EmergencyResources from '../../features/settings/screens/EmergencyResources/EmergencyResources';
+import TopPointsToast from '../../components/TopPointsToast';
 
 export default function NonAuthStack() {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false, gestureEnabled: false }}
-    >
+    <>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false, gestureEnabled: false }}
+      >
       <Stack.Screen name={AppRoutes.Offer} component={Offer} />
       <Stack.Screen name={AppRoutes.Reminder} component={Reminder} />
       <Stack.Screen name={AppRoutes.Premium} component={Premium} />
@@ -103,6 +105,8 @@ export default function NonAuthStack() {
         name={AppRoutes.EmergencyResources}
         component={EmergencyResources}
       />
-    </Stack.Navigator>
+      </Stack.Navigator>
+      <TopPointsToast />
+    </>
   );
 }

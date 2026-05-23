@@ -35,20 +35,24 @@ const ModuleThemeDetail = () => {
   const [cursor, setCursor] = useState<string | null>(null);
   const [themeDetail, setThemeDetail] = useState<any>(theme);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [themeId] = useState(theme?._id || theme?.id || themeDetail?._id || themeDetail?.id);
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.module_list,
-    ['module_list', theme?._id, cursor],
+    ['module_list', themeId, cursor],
     {
-      theme_id: theme?._id,
+      theme_id: themeId,
       cursor,
       limit: 10,
     },
   );
   useFocusEffect(
     useCallback(() => {
-      setCursor(null);
-      refetch();
-    }, [refetch]),
+      if (cursor !== null) {
+        setCursor(null);
+      } else {
+        refetch();
+      }
+    }, [cursor, refetch]),
   );
   useEffect(() => {
     if (data?.data) {

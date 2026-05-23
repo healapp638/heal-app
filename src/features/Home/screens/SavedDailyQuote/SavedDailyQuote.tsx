@@ -41,6 +41,8 @@ const SavedDailyQuote = () => {
   const queryClient = useQueryClient();
   const { mutate: postApi } = usePostApi();
   const user = useSelector((state: any) => state.userData?.user);
+  const { localization } = useContext(LocalizationContext) as any;
+
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
@@ -155,9 +157,9 @@ const SavedDailyQuote = () => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                    ...quote,
-                    is_liked: false,
-                  }
+                  ...quote,
+                  is_liked: false,
+                }
                 : quote,
             ),
           },
@@ -334,13 +336,13 @@ const SavedDailyQuote = () => {
                     Platform.OS == 'android'
                       ? -10
                       : insets?.top > 0
-                      ? insets.top - 10
-                      : 20,
+                        ? insets.top - 10
+                        : 20,
                 },
               ]}
             >
               <HeaderCommon
-                title="Favourite Quotes"
+                title={localization.appkeys?.favouriteQuotes || 'Favourite Quotes'}
                 showBack={true}
                 rightIcon={images.crown}
                 onRightPress={() => setShowCreditsModal(true)}
@@ -408,7 +410,7 @@ const SavedDailyQuote = () => {
                         color: activeColor,
                       }}
                     >
-                      No favourites quotes found
+                      {localization.appkeys?.noFavouritesFound || 'No favourites quotes found'}
                     </SolidText>
                   </View>
                 )}

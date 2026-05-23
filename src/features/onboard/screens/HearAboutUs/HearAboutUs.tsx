@@ -8,6 +8,7 @@ import {
   useFocusEffect,
   useNavigation,
   useTheme,
+  useRoute,
 } from '@react-navigation/native';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
@@ -17,20 +18,51 @@ import style from './style';
 import {
   setOnboardingAnswer,
   setOnboardingCurrentScreen,
+  setAuth,
+  setToken,
+  setUser,
+  clearOnboardingProgress,
 } from '../../../../redux/Reducers/userData';
 import HeaderCommon from '../../../../components/HeaderCommon';
 
 const HearAboutUs = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
+  const route = useRoute() as any;
   const dispatch = useDispatch();
   const { triggerHaptic } = useHaptic();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+
+  const from = route?.params?.from;
+  const auth = useSelector((state: any) => state.userData?.auth);
+
   const savedSelection = useSelector(
     (state: any) => state.userData?.onboarding?.answers?.hearAboutUs ?? null,
   );
   const [selected, setSelected] = useState<string | null>(savedSelection);
+
+  const handleBackPress = () => {
+    if (auth) {
+      dispatch(clearOnboardingProgress());
+      dispatch(setAuth(false));
+      dispatch(setUser({}));
+      dispatch(setToken(null));
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: AppRoutes.AuthStack,
+            params: {
+              screen: AppRoutes.AccessScreen,
+            },
+          } as never,
+        ],
+      });
+    } else {
+      navigation.goBack();
+    }
+  };
 
   useEffect(() => {
     setSelected(savedSelection);
@@ -92,7 +124,7 @@ const HearAboutUs = () => {
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
-          <HeaderProgress showBar={false} />
+          <HeaderProgress showBar={false} onBackPress={handleBackPress} />
 
           <Image
             source={images.heartRope}

@@ -6,6 +6,7 @@ export const endpoints = {
   sendMagicLink: '/user/auth/sendMagicLink',
   reset_password: '/user/auth/reset_password',
   login: '/user/auth/login',
+  magicLinkLogin: '/user/auth/magicLinkLogin',
   social_login: '/user/auth/social_login',
   update_profile: '/user/auth/profile',
   user_details: '/user/auth/details',

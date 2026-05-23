@@ -53,31 +53,31 @@ const EditProfile = () => {
   } | null>(
     user?.country
       ? {
-          name: user.country,
-          isoCode: '',
-        }
+        name: user.country,
+        isoCode: '',
+      }
       : null,
   );
 
   // Initialize DOB from user data
   const initialDob = user?.dob
     ? (() => {
-        const [year, month, dayWithTime] = user.dob.split('-');
-        const day = dayWithTime ? dayWithTime.split('T')[0] : '01';
-        const monthName = Object.keys(monthToNumber).find(
-          key => monthToNumber[key] === month,
-        );
-        return {
-          year: year || '2000',
-          day: day.padStart(2, '0'),
-          month: monthName || 'January',
-        };
-      })()
-    : {
-        month: 'January',
-        day: '01',
-        year: '2000',
+      const [year, month, dayWithTime] = user.dob.split('-');
+      const day = dayWithTime ? dayWithTime.split('T')[0] : '01';
+      const monthName = Object.keys(monthToNumber).find(
+        key => monthToNumber[key] === month,
+      );
+      return {
+        year: year || '2000',
+        day: day.padStart(2, '0'),
+        month: monthName || 'January',
       };
+    })()
+    : {
+      month: 'January',
+      day: '01',
+      year: '2000',
+    };
   const [selectedDate, setSelectedDate] = useState<DobDateParts>(initialDob);
 
   // Modal State
@@ -90,9 +90,9 @@ const EditProfile = () => {
   const [ageModalVisible, setAgeModalVisible] = useState(false);
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
-        selectedDate.month,
-        localization,
-      )} - ${selectedDate.year}`
+      selectedDate.month,
+      localization,
+    )} - ${selectedDate.year}`
     : localization.appkeys?.selectBirthDate;
   const handleImageSelect = (image: any) => {
     setProfilePic(image.path); // Set local preview immediately
@@ -150,9 +150,8 @@ const EditProfile = () => {
       setAgeModalVisible(true);
       return;
     }
-    const formattedDob = `${selectedDate.year}-${
-      monthToNumber[selectedDate.month]
-    }-${selectedDate.day}`;
+    const formattedDob = `${selectedDate.year}-${monthToNumber[selectedDate.month]
+      }-${selectedDate.day}`;
     const payload = {
       language: AppUtils.getLanguageCode(appLanguage),
       profilePic: profilePicUrl,
@@ -171,7 +170,7 @@ const EditProfile = () => {
           dispatch(getUserDetail());
           AppUtils.showToast(
             localization.appkeys?.profileUpdated ||
-              'Profile updated successfully',
+            'Profile updated successfully',
           );
           dispatch(setUser(response?.data));
           navigation.goBack();
@@ -200,7 +199,7 @@ const EditProfile = () => {
             }}
             showCrown={false}
             showStreak={false}
-            onCrownPress={() => {}}
+            onCrownPress={() => { }}
             userName={
               localization.appkeys?.personalInfo || 'Personal Information'
             }
@@ -219,11 +218,11 @@ const EditProfile = () => {
                 source={
                   profilePic
                     ? {
-                        uri: profilePic,
-                      }
+                      uri: profilePic,
+                    }
                     : {
-                        uri: getEnvVars()?.fileUrl + user?.profilePic,
-                      }
+                      uri: getEnvVars()?.fileUrl + user?.profilePic,
+                    }
                 }
                 style={styles.profileImage}
               />
@@ -270,12 +269,12 @@ const EditProfile = () => {
               autoCapitalize="words"
             />
 
-            <CountryDropdown
+            {/* <CountryDropdown
               label={localization.appkeys?.selectCountry}
               selectedCountry={selectedCountry}
               onSelect={setSelectedCountry}
               onInfoPress={() => setCountryInfoVisible(true)}
-            />
+            /> */}
 
             <SolidInput
               label={localization.appkeys?.email}
@@ -292,7 +291,7 @@ const EditProfile = () => {
               }}
             />
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               activeOpacity={1}
               onPress={() => {
                 triggerHaptic('impactMedium');
@@ -311,9 +310,9 @@ const EditProfile = () => {
                   color: isDobSelected ? colors.brown : '#999',
                 }}
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            {user?.account_type != 'social' && (
+            {/* {user?.account_type != 'social' && (
               <TouchableOpacity
                 activeOpacity={0.8}
                 style={styles.changePassCard}
@@ -343,19 +342,19 @@ const EditProfile = () => {
                   resizeMode="contain"
                 />
               </TouchableOpacity>
-            )}
+            )} */}
 
-            <SolidBtn
-              titleTxt={localization.appkeys?.saveChanges || 'Save changes'}
-              btnStyle={styles.saveBtn}
-              onPress={(...args: any) => {
-                return (handleSave as any)(...args);
-              }}
-              isLoading={isPending || isUploading}
-              disabled={isPending || isUploading}
-            />
           </View>
-
+          <View style={{ flex: 1 }} />
+          <SolidBtn
+            titleTxt={localization.appkeys?.saveChanges || 'Save changes'}
+            btnStyle={styles.saveBtn}
+            onPress={(...args: any) => {
+              return (handleSave as any)(...args);
+            }}
+            isLoading={isPending || isUploading}
+            disabled={isPending || isUploading}
+          />
           <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
