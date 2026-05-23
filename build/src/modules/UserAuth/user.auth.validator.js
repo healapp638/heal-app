@@ -42,9 +42,9 @@ const validateSendMagicLink = (user) => {
         stopFeelBetter: joi_1.default.string().optional().allow(''),
         timeYouCommit: joi_1.default.string().optional().allow(''),
         goalStartWith: joi_1.default.string().optional().allow(''),
-        fullName: joi_1.default.string().required(),
+        fullName: joi_1.default.string().required().allow(''),
         email: joi_1.default.string().trim().email().required(),
-        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)).allow(''),
     }).validate(user);
 };
 exports.validateSendMagicLink = validateSendMagicLink;
@@ -58,9 +58,9 @@ const validateSendMagicLinkLogin = (user) => {
         stopFeelBetter: joi_1.default.string().optional().allow(''),
         timeYouCommit: joi_1.default.string().optional().allow(''),
         goalStartWith: joi_1.default.string().optional().allow(''),
-        fullName: joi_1.default.string().required(),
+        fullName: joi_1.default.string().required().allow(''),
         email: joi_1.default.string().trim().email().required(),
-        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)).allow(''),
         timeZone: joi_1.default.string().optional().allow(''),
     }).validate(user);
 };

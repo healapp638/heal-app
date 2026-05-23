@@ -37,9 +37,9 @@ export const validateSendMagicLink = (user: any) => {
         stopFeelBetter: joi.string().optional().allow(''),
         timeYouCommit: joi.string().optional().allow(''),
         goalStartWith: joi.string().optional().allow(''),
-        fullName: joi.string().required(),
+        fullName: joi.string().required().allow(''),
         email: joi.string().trim().email().required(),
-        language: joi.string().optional().allow(...Object.values(languages)),
+        language: joi.string().optional().allow(...Object.values(languages)).allow(''),
     }).validate(user)
 }
 
@@ -53,9 +53,9 @@ export const validateSendMagicLinkLogin = (user: any) => {
         stopFeelBetter: joi.string().optional().allow(''),
         timeYouCommit: joi.string().optional().allow(''),
         goalStartWith: joi.string().optional().allow(''),
-        fullName: joi.string().required(),
+        fullName: joi.string().required().allow(''),
         email: joi.string().trim().email().required(),
-        language: joi.string().optional().allow(...Object.values(languages)),
+        language: joi.string().optional().allow(...Object.values(languages)).allow(''),
         timeZone: joi.string().optional().allow(''),
     }).validate(user)
 }

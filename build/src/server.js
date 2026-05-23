@@ -199,7 +199,7 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const { code } = req.params;
     console.log(req.params, "req.params");
     const doc = yield user_deeplink_model_1.default.findOne({ code });
-    console.log(doc, "doc");
+    // console.log(doc, "doc")
     if (!doc) {
         return res.redirect("https://myapp.com/notfound");
     }
