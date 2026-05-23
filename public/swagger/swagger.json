@@ -124,6 +124,153 @@
 		}
 	},
 	"paths": {
+		"/user/subscription/ios_subscription_webhook": {
+			"post": {
+				"operationId": "IosSubscriptionWebhook",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Ios webhook url",
+				"tags": [
+					"User Subscription Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"subscription_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"subscription_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/subscription/initial_purchased_ios_subscription": {
+			"post": {
+				"operationId": "InitialPurchasedIosSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "initialPurchasedSubscription for iOS",
+				"tags": [
+					"User Subscription Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"signedPayload": {
+										"type": "string"
+									},
+									"original_transaction_id": {
+										"type": "string"
+									},
+									"package_name": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"signedPayload",
+									"original_transaction_id",
+									"package_name"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/subscription/initial_purchased_android_subscription": {
+			"post": {
+				"operationId": "InitialPurchasedAndroidSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "initialPurchased Android Subscription",
+				"tags": [
+					"User Subscription Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"purchase_token": {
+										"type": "string"
+									},
+									"plan_name": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"purchase_token",
+									"plan_name"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/modules/theme_list": {
 			"get": {
 				"operationId": "ThemeList",

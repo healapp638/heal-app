@@ -398,10 +398,12 @@ const UserAuthHandler = {
                 createdAt: new Date(),
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
             });
+            console.log(code, "code");
             // =========================================
             // DEEPLINK URL
             // =========================================
             const deeplink = `https://apidev.heal-app.com/link/${code}?email=${email}&hearAboutUs=${hearAboutUs}&howFellingLately=${howFellingLately}&feelThatWay=${feelThatWay}&likeToFellMore=${likeToFellMore}&helpFeelBetter=${helpFeelBetter}&stopFeelBetter=${stopFeelBetter}&timeYouCommit=${timeYouCommit}&goalStartWith=${goalStartWith}&language=${language}&fullName=${fullName}`;
+            console.log(deeplink, "deeplink");
             // =========================================
             // EMAIL PAYLOAD
             // =========================================
@@ -431,6 +433,7 @@ const UserAuthHandler = {
         const lowercaseEmail = email ? email.toLowerCase().trim() : '';
         const queryObject = { email: lowercaseEmail, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
+        console.log(code, "codeeee");
         const deepLink = yield user_deeplink_model_1.default.findOneAndUpdate({
             code,
             isUsed: false,
@@ -444,7 +447,9 @@ const UserAuthHandler = {
         }, {
             new: true
         });
+        console.log(deepLink, "deepLink");
         if (!deepLink) {
+            console.log("Magic link is invalid, innnnnnnnnnnnnnn");
             return (0, response_util_1.showResponse)(false, "Magic link is invalid, expired, or already used", null, statusCodes_1.default.API_ERROR);
         }
         let userData;

@@ -30,6 +30,15 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const cronjob_func_1 = require("./helpers/cronjob.func");
 const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation/user.deeplink.model"));
 const perf_hooks_1 = require("perf_hooks");
+// import { PubSub } from "@google-cloud/pubsub";
+// import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
+// const pubsub = new PubSub({
+//   projectId: 'manifestnails',
+//   credentials: {
+//     client_email: ab1AndroidSubscriptionFile.client_email,
+//     private_key: ab1AndroidSubscriptionFile.private_key
+//   }
+// });
 // import blocked from "blocked-at";
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
@@ -280,3 +289,31 @@ app.listen(app_constant_1.APP.PORT, () => {
     console.log("Swagger link:", `http://localhost:${app_constant_1.APP.PORT}/swagger`);
 });
 (0, cronjob_func_1.scheduleCroneJOb)();
+// const messageHandler = async (message:any) => {
+//   try {
+//     // console.log('✅ message=>>>>>>>>>>>>>>>>>.', message);
+//     if (message?.data) {
+//       await handler.decodeAndroidSubscriptionMessage(message?.data);
+//     }
+//     message.ack(); // Acknowledge the message
+//   } catch (err) {
+//     console.error("❌ Error in messageHandler:", err);
+//   }
+// };
+// async function receiveNotifications() {
+//   try {
+//     console.log('✅--- receiveNotifications-1------');
+//     // const subscriptionName = 'projects/mywaymassage-381d3/subscriptions/subscription_webhook-sub'; // Make sure this exists in GCP
+//     // const subscriptionName:any = ANDROID_SUBSCRIPTION_DATA.SUBSCRIPTION_NAME; // Make sure this exists in GCP
+//     // const subscriptionName:any = "projects/ription-demo/subscriptions/subscription_webhook-sub"; // Make sure this exists in GCP
+//     const subscriptionName:any = "projects/manifestnails/subscriptions/manifest-sub"; // Make sure this exists in GCP
+//     const subscription = pubsub.subscription(subscriptionName);
+//     subscription.on('message', messageHandler);
+//     subscription.on('error', (err) => {
+//       console.error("❌ receiveNotifications Subscription Error:", err);
+//     });
+//   } catch (err) {
+//     console.error("❌ receiveNotifications Error:", err);
+//   }
+// }
+// receiveNotifications().catch(console.error);
