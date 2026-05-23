@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserTranslateText = exports.translateText = void 0;
+exports.UserTranslateText = exports.translatePlainText = exports.translateText = void 0;
 const translate_1 = require("@google-cloud/translate");
 const translate = new translate_1.Translate({
     key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
@@ -32,6 +32,24 @@ const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.translateText = translateText;
+const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (targetLanguage == 'en') {
+            return text;
+        }
+        const [translation] = yield translate.translate(text, {
+            from: 'en', // Source language
+            to: targetLanguage, // Target language
+            format: 'text', // Format if necessary
+        });
+        return translation; // Return the translated text
+    }
+    catch (errors) {
+        console.log(errors);
+        return text;
+    }
+});
+exports.translatePlainText = translatePlainText;
 const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(void 0, [text_1, targetLanguage_1, ...args_1], void 0, function* (text, targetLanguage, sourceLanguage = 'en') {
     try {
         if (targetLanguage == sourceLanguage) {

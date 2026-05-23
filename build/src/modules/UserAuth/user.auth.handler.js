@@ -125,7 +125,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dob && !!userData.country;
+        // const is_profile_completed = !!userData.dob && !!userData.country
         if (language) {
             yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { language: language } });
         }
@@ -157,7 +157,7 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_sent"), {
                 is_after_social_login: true,
                 account_type,
-                is_profile_completed,
+                is_profile_completed: true,
                 password: password,
             }, statusCodes_1.default.SUCCESS);
         }
@@ -175,7 +175,7 @@ const UserAuthHandler = {
         if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
             yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData === null || userData === void 0 ? void 0 : userData._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' }); //activate user again
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
@@ -204,7 +204,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
         const is_simple_login = !!(userData === null || userData === void 0 ? void 0 : userData.password);
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
+        // const is_profile_completed = !!userData?.dob && !!userData?.country
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //challenges logic start
@@ -257,7 +257,7 @@ const UserAuthHandler = {
             }
             commonHelper.keysDeleteFromObject(findUser === null || findUser === void 0 ? void 0 : findUser.data);
             const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_k = findUser.data) === null || _k === void 0 ? void 0 : _k._id, (_l = findUser.data) === null || _l === void 0 ? void 0 : _l.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, findUser === null || findUser === void 0 ? void 0 : findUser.data), { access_token, refresh_token });
+            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, findUser === null || findUser === void 0 ? void 0 : findUser.data), { access_token, refresh_token });
             //if account deactivated by user then activate it again 
             if (((_m = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _m === void 0 ? void 0 : _m.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_o = findUser.data) === null || _o === void 0 ? void 0 : _o.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
                 yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: (_p = findUser.data) === null || _p === void 0 ? void 0 : _p._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
@@ -319,7 +319,7 @@ const UserAuthHandler = {
             //end
             commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
             const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_r = result.data) === null || _r === void 0 ? void 0 : _r._id, (_s = result.data) === null || _s === void 0 ? void 0 : _s.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
+            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
     }),
@@ -469,7 +469,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!((_a = userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dob && !!userData.country;
+        // const is_profile_completed = !!userData.dob && !!userData.country;
         //if account deactivated by admin then throw error 
         if ((userData === null || userData === void 0 ? void 0 : userData.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (userData === null || userData === void 0 ? void 0 : userData.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "deactivated_account"), null, statusCodes_1.default.API_ERROR);
@@ -503,7 +503,7 @@ const UserAuthHandler = {
             yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData._id }, { 'is_onboarding': is_onboarding });
             userData.is_onboarding = is_onboarding;
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed, is_onboarding }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true, is_onboarding }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     //ends
     toggleBiometric: (userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -587,9 +587,9 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dob && !!userData.country;
+        // const is_profile_completed = !!userData.dob && !!userData.country
         const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_b = exists === null || exists === void 0 ? void 0 : exists.data) === null || _b === void 0 ? void 0 : _b._id, (_c = exists === null || exists === void 0 ? void 0 : exists.data) === null || _c === void 0 ? void 0 : _c.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed, account_type, is_after_social_login: false }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed: true, account_type, is_after_social_login: false }, statusCodes_1.default.SUCCESS);
     }),
     resendOtp: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email } = data;
@@ -641,7 +641,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
         const is_simple_login = !!(userData === null || userData === void 0 ? void 0 : userData.password);
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!(userData === null || userData === void 0 ? void 0 : userData.dob) && !!(userData === null || userData === void 0 ? void 0 : userData.country);
+        // const is_profile_completed = !!userData?.dob && !!userData?.country
         if (!result.status) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
@@ -848,7 +848,7 @@ const UserAuthHandler = {
         if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
             isUnderProgress = true;
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }), statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result.data), { account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }), statusCodes_1.default.SUCCESS);
     }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;

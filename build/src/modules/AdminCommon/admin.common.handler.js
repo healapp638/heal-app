@@ -20,13 +20,6 @@ const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../../helpers/langauge.translate.helper");
-// import xlsx from 'xlsx';
-// import Theme from '../AdminTheme/admin.theme.model';
-// import Module from '../AdminModules/admin.modules.model';
-// import SubModule from '../AdminSubModules/admin.submodules.model';
-// import Phase from '../AdminPhases/admin.phases.model';
-// import ExerciseDetails from '../AdminExercise/admin.exercise.details..model';
-// import Exercise from '../AdminExercise/admin.excercise.model';
 const queue_1 = require("../../processQueue/queue");
 const admin_exel_model_1 = __importDefault(require("./admin.exel.model"));
 const common_helper_1 = require("../../helpers/common.helper");
@@ -193,7 +186,7 @@ const AdminCommonHandler = {
         // Translate to all other languages in parallel
         yield Promise.all(workflow_constant_1.SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map((lang) => __awaiter(void 0, void 0, void 0, function* () {
             const [translatedQ] = yield Promise.all([
-                (0, langauge_translate_helper_1.translateText)(affirmation, lang),
+                (0, langauge_translate_helper_1.translatePlainText)(affirmation, lang),
             ]);
             affirmationData[lang] = translatedQ;
         })));

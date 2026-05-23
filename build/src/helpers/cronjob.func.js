@@ -184,7 +184,7 @@ Return JSON:
         };
         const langs = Object.values(workflow_constant_1.languages);
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-            const translatedQuote = yield (0, langauge_translate_helper_1.translateText)(generatedQuote, lang);
+            const translatedQuote = yield (0, langauge_translate_helper_1.translatePlainText)(generatedQuote, lang);
             obj.affirmation[lang] = translatedQuote;
         })));
         // Save

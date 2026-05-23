@@ -6,14 +6,7 @@ import responseMessage from '../../constants/responseMessages'
 import faqModel from '../../modules/AdminCommon/faq.model';
 import statusCodes from '../../constants/statusCodes'
 import { SUPPORTED_LANGUAGES } from "../../constants/workflow.constant";
-import { translateText } from "../../helpers/langauge.translate.helper";
-// import xlsx from 'xlsx';
-// import Theme from '../AdminTheme/admin.theme.model';
-// import Module from '../AdminModules/admin.modules.model';
-// import SubModule from '../AdminSubModules/admin.submodules.model';
-// import Phase from '../AdminPhases/admin.phases.model';
-// import ExerciseDetails from '../AdminExercise/admin.exercise.details..model';
-// import Exercise from '../AdminExercise/admin.excercise.model';
+import { translatePlainText, translateText } from "../../helpers/langauge.translate.helper";
 import { affirmationQueue, excelQueue } from "../../processQueue/queue";
 import adminExelModel from "./admin.exel.model";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
@@ -234,14 +227,13 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
         await Promise.all(
             SUPPORTED_LANGUAGES.filter((lang) => lang !== "en").map(async (lang) => {
                 const [translatedQ] = await Promise.all([
-                    translateText(affirmation, lang),
+                    translatePlainText(affirmation, lang),
 
                 ]);
                 affirmationData[lang] = translatedQ;
             })
         );
         const Affirmation = await userAffirmationModel.create({ affirmation: affirmationData });
-
 
         return showResponse(true, responseMessage.admin.question_added, Affirmation, statusCodes.SUCCESS);
     },

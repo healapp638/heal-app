@@ -2,7 +2,7 @@ import { Worker } from "bullmq";
 import IORedis from "ioredis";
 import xlsx from "xlsx";
 import { languages, USER_STATUS } from "../constants/workflow.constant";
-import { translateText } from "./langauge.translate.helper";
+import { translatePlainText } from "./langauge.translate.helper";
 import adminThemeModel from "../modules/AdminTheme/admin.theme.model";
 import adminModulesModel from "../modules/AdminModules/admin.modules.model";
 import adminSubmodulesModel from "../modules/AdminSubModules/admin.submodules.model";
@@ -68,7 +68,7 @@ const getTranslatedObj = async (text: string) => {
 
     await Promise.all(
         langs.map(async (lang) => {
-            obj[lang] = await translateText(text, lang);
+            obj[lang] = await translatePlainText(text, lang);
         })
     );
 

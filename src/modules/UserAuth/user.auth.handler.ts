@@ -87,7 +87,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dob && !!userData.country
+        // const is_profile_completed = !!userData.dob && !!userData.country
 
         if (language) {
             await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { language: language } })
@@ -122,7 +122,7 @@ const UserAuthHandler = {
             return showResponse(true, getMessage(language || 'en', "otp_sent"), {
                 is_after_social_login: true,
                 account_type,
-                is_profile_completed,
+                is_profile_completed:true,
                 password: password,
             }, statusCodes.SUCCESS);
         }
@@ -145,7 +145,7 @@ const UserAuthHandler = {
             await findOneAndUpdate(userAuthModel, { _id: userData?._id }, { status: USER_STATUS.ACTIVE, deactivateBy: '' })   //activate user again
         }
 
-        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed, ...userData, access_token, refresh_token }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed:true, ...userData, access_token, refresh_token }, statusCodes.SUCCESS)
     },//ends
 
     social_login: async (data: any) => {
@@ -178,7 +178,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData?.social_account?.length;
         const is_simple_login = !!userData?.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData?.dob && !!userData?.country
+        // const is_profile_completed = !!userData?.dob && !!userData?.country
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //challenges logic start
@@ -239,7 +239,7 @@ const UserAuthHandler = {
             commonHelper.keysDeleteFromObject(findUser?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(findUser.data?._id, findUser.data?.user_type, tokenUserTypeInterface.USER)
 
-            const userData = { is_after_social_login: false, account_type, is_profile_completed, ...findUser?.data, access_token, refresh_token }
+            const userData = { is_after_social_login: false, account_type, is_profile_completed:true, ...findUser?.data, access_token, refresh_token }
 
             //if account deactivated by user then activate it again 
             if (findUser?.data?.status == USER_STATUS.DEACTIVATED && findUser.data?.deactivateBy === DEACTIVATE_BY.USER) {
@@ -308,7 +308,7 @@ const UserAuthHandler = {
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
 
-            const userData = { is_after_social_login: false, account_type, is_profile_completed, ...result?.data, access_token, refresh_token }
+            const userData = { is_after_social_login: false, account_type, is_profile_completed:true, ...result?.data, access_token, refresh_token }
 
             return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
         }
@@ -506,7 +506,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData.social_account?.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dob && !!userData.country;
+        // const is_profile_completed = !!userData.dob && !!userData.country;
 
         //if account deactivated by admin then throw error 
         if (userData?.status == USER_STATUS.DEACTIVATED && userData?.deactivateBy === DEACTIVATE_BY.ADMIN) {
@@ -549,7 +549,7 @@ const UserAuthHandler = {
             userData.is_onboarding = is_onboarding;
         }
 
-        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed,is_onboarding, ...userData, access_token, refresh_token }, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed:true,is_onboarding, ...userData, access_token, refresh_token }, statusCodes.SUCCESS);
     },//ends
 
 
@@ -664,10 +664,10 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData.dob && !!userData.country
+        // const is_profile_completed = !!userData.dob && !!userData.country
 
         const { access_token, refresh_token } = await generateAccessRefreshToken(exists?.data?._id, exists?.data?.user_type, tokenUserTypeInterface.USER)
-        return showResponse(true, getMessage(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed, account_type, is_after_social_login: false }, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed:true, account_type, is_after_social_login: false }, statusCodes.SUCCESS);
     },
 
     resendOtp: async (data: any): Promise<ApiResponse> => {
@@ -727,7 +727,7 @@ const UserAuthHandler = {
         const is_user_social_login = !!userData?.social_account?.length;
         const is_simple_login = !!userData?.password;
         const account_type = is_user_social_login && is_simple_login ? "both" : is_user_social_login ? "social" : "simple";
-        const is_profile_completed = !!userData?.dob && !!userData?.country
+        // const is_profile_completed = !!userData?.dob && !!userData?.country
         if (!result.status) {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
         }
@@ -953,7 +953,7 @@ const UserAuthHandler = {
         if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
             isUnderProgress = true
         }
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed:true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {

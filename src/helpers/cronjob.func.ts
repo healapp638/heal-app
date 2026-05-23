@@ -2,7 +2,7 @@ import { showResponse } from "../utils/response.util";
 import responseMessage from "../constants/responseMessages";
 import statusCodes from "../constants/statusCodes";
 import { languages, USER_STATUS } from "../constants/workflow.constant";
-import { translateText } from "../helpers/langauge.translate.helper";
+import { translatePlainText, translateText } from "../helpers/langauge.translate.helper";
 import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.model";
 import OpenAI from "openai";
 import { APP } from "../constants/app.constant";
@@ -208,7 +208,7 @@ Return JSON:
 
     await Promise.all(
       langs.map(async (lang: string) => {
-        const translatedQuote = await translateText(generatedQuote, lang);
+        const translatedQuote = await translatePlainText(generatedQuote, lang);
 
         obj.affirmation[lang] = translatedQuote;
       }),

@@ -69,7 +69,7 @@ const getTranslatedObj = (text) => __awaiter(void 0, void 0, void 0, function* (
     const langs = Object.values(workflow_constant_1.languages);
     const obj = {};
     yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-        obj[lang] = yield (0, langauge_translate_helper_1.translateText)(text, lang);
+        obj[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(text, lang);
     })));
     return obj; // ✅ keep original casing
 });
