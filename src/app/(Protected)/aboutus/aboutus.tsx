@@ -44,7 +44,7 @@ export default function AboutUs() {
     });
 
     const { data: CommonContentList } = useAppQuery<CommonApiResponse>({
-        queryKey: [MUTATION_KEYS.COMMON_CONTENT, selectedLanguage],
+        queryKey: [MUTATION_KEYS.COMMON_CONTENT, selectedLanguage, "about"],
         url: ENDPOINTS.COMMON.COMMON_CONTENT,
         options: {
             staleTime: Infinity,

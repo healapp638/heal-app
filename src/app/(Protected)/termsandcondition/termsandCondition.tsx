@@ -51,7 +51,7 @@ export default function TermsAndCondition() {
     });
 
     const { data: CommonContentList } = useAppQuery<CommonApiResponse>({
-        queryKey: [MUTATION_KEYS.COMMON_CONTENT, selectedLanguage],
+        queryKey: [MUTATION_KEYS.COMMON_CONTENT, selectedLanguage, "terms_conditions"],
         url: ENDPOINTS.COMMON.COMMON_CONTENT,
         options: {
             staleTime: Infinity,

@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
     });
 
     const { data: CommonContentList } = useAppQuery<CommonApiResponse>({
-        queryKey: [MUTATION_KEYS.COMMON_CONTENT, selectedLanguage],
+        queryKey: [MUTATION_KEYS.COMMON_CONTENT, selectedLanguage, "privacy_policy"],
         url: ENDPOINTS.COMMON.COMMON_CONTENT,
         options: {
             staleTime: Infinity,
