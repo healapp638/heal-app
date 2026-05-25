@@ -392,8 +392,20 @@ const UserAuthHandler = {
             // GENERATE DEEPLINK CODE
             // =========================================
             const code = commonHelper.generateRandomAlphanumeric(8);
+            yield user_deeplink_model_1.default.updateMany({
+                email: email.toLowerCase().trim(),
+                isUsed: false,
+                expiresAt: { $gt: new Date() }
+            }, {
+                $set: {
+                    isUsed: true,
+                    usedAt: new Date(),
+                    // invalidatedReason: 'NEW_LINK_GENERATED'
+                }
+            });
             // save deeplink data
             yield user_deeplink_model_1.default.create({
+                email: email.toLowerCase().trim(),
                 code,
                 createdAt: new Date(),
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours

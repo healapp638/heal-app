@@ -10,6 +10,10 @@ const deeplinkmodel = new mongoose_1.Schema({
     affirmation_id: {
         type: mongoose_1.Schema.Types.ObjectId,
     },
+    email: {
+        type: String,
+        default: ''
+    },
     // magic link status
     isUsed: {
         type: Boolean,

@@ -6,8 +6,12 @@ const deeplinkmodel = new Schema({
         type: String,
         default: ''
     },
-    affirmation_id:{
-        type:Schema.Types.ObjectId,
+    affirmation_id: {
+        type: Schema.Types.ObjectId,
+    },
+    email: {
+        type: String,
+        default: ''
     },
     // magic link status
     isUsed: {
