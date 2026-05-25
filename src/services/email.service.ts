@@ -65,8 +65,8 @@ const nodemail = async (
     try {
 
         const EMAIL_HOST = EMAIL_CREDENTIAL.EMAIL_HOST;
-        const SMTP_EMAIL = EMAIL_CREDENTIAL.SMTP_EMAIL;
-        const SMTP_API_KEY = EMAIL_CREDENTIAL.SMTP_API_KEY;
+        const SMTP_EMAIL = EMAIL_CREDENTIAL.SMTP_EMAIL ;
+        const SMTP_API_KEY = EMAIL_CREDENTIAL.SMTP_API_KEY ;
 
         // console.log(EMAIL_HOST, "EMAIL_HOST");
         // console.log(SMTP_EMAIL, "SMTP_EMAIL");

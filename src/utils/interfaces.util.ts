@@ -26,7 +26,6 @@ export interface StripeCredential {
     STRIPE_PB_KEY: any;
     STRIPE_SEC_KEY: any;
     STRIPE_VERSION: any;
-
 }
 
 export interface AppConstant {
@@ -45,7 +44,7 @@ export interface AppConstant {
     AWS_REGION: string
     SWAGGER_USER_NAME: any
     SWAGGER_PASSWORD: any
-    OPENAI_API_KEY: any
+    OPENAI_API_KEY: any,
     GOOGLE_TRANSLATE_API_KEY: any
 }
 
