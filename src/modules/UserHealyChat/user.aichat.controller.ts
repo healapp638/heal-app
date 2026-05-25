@@ -52,16 +52,16 @@ export default class UserHealyChatController extends Controller {
      * get message List
      */
     @Security('Bearer')
-    @Post("getMessageList")
-    public async getMessageList(@Body() request: { conversation_id: string ,page:number,limit:number}): Promise<ApiResponse> {
+    @Get("getMessageList")
+    public async getMessageList(@Query() conversation_id: string ,@Query() page?: number,@Query() limit?: number): Promise<ApiResponse> {
 
-        const validate = validateGetMessageList(request);
+        const validate = validateGetMessageList({conversation_id,page,limit});
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }
 
         const wrappedFunc = tryCatchWrapper(handler.getConversationMessages);
-        return wrappedFunc(request,this.userId); // Invoking the wrapped function 
+        return wrappedFunc({conversation_id,page,limit},this.userId); // Invoking the wrapped function 
     }
 
 

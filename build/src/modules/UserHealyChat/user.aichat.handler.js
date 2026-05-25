@@ -386,6 +386,7 @@ const UserCommonHandler = {
             // =========================================
             // CHECK CONVERSATION
             // =========================================
+            console.log(conversation_id, "conversation_id");
             const conversation = yield user_aichat_conversation_model_2.default.findOne({
                 _id: (0, common_helper_1.convertToObjectId)(conversation_id),
                 user_id: (0, common_helper_1.convertToObjectId)(user_id),

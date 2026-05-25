@@ -1400,7 +1400,7 @@
 			}
 		},
 		"/user/healyChat/getMessageList": {
-			"post": {
+			"get": {
 				"operationId": "GetMessageList",
 				"responses": {
 					"200": {
@@ -1423,35 +1423,34 @@
 						"Bearer": []
 					}
 				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"limit": {
-										"type": "number",
-										"format": "double"
-									},
-									"page": {
-										"type": "number",
-										"format": "double"
-									},
-									"conversation_id": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"limit",
-									"page",
-									"conversation_id"
-								],
-								"type": "object"
-							}
+				"parameters": [
+					{
+						"in": "query",
+						"name": "conversation_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "page",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
 						}
 					}
-				}
+				]
 			}
 		},
 		"/user/healyChat/aiSupportResponse": {

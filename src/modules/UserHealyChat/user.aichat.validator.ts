@@ -9,7 +9,7 @@ export const validatesendMessage = (request: { message: string, conversation_id?
     return schema.validate(request)
 }
 
-export const validateGetMessageList = (request: { conversation_id: string, page: number, limit: number }) => {
+export const validateGetMessageList = (request: any) => {
     const schema = Joi.object({
         conversation_id: Joi.string().required(),
         page: Joi.number().optional(),

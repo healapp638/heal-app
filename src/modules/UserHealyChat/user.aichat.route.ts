@@ -19,10 +19,10 @@ router.get('/getRandomQuestions', verifyTokenUser, async (req: Request | any, re
     return showOutput(res, result, result.code)
 })
 
-router.post('/getMessageList',verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { conversation_id, page, limit } = req.body;
+router.get('/getMessageList',verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { conversation_id, page, limit } = req.query;
     const controller = new UserHealyChatController(req, res)
-    const result: ApiResponse = await controller.getMessageList({ conversation_id, page, limit });
+    const result: ApiResponse = await controller.getMessageList(conversation_id, page, limit);
     return showOutput(res, result, result.code)
 })
 

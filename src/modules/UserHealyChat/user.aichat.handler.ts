@@ -464,6 +464,9 @@ getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse>
         // CHECK CONVERSATION
         // =========================================
 
+        console.log(conversation_id,"conversation_id");
+
+
         const conversation = await userAichatConversationModel.findOne({
             _id: convertToObjectId(conversation_id),
             user_id: convertToObjectId(user_id),

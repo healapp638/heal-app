@@ -29,10 +29,10 @@ router.get('/getRandomQuestions', verifyTokenUser, (req, res) => __awaiter(void 
     const result = yield controller.getRandomQuestions();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.post('/getMessageList', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { conversation_id, page, limit } = req.body;
+router.get('/getMessageList', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { conversation_id, page, limit } = req.query;
     const controller = new user_aichat_controller_1.default(req, res);
-    const result = yield controller.getMessageList({ conversation_id, page, limit });
+    const result = yield controller.getMessageList(conversation_id, page, limit);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/aiSupportResponse', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

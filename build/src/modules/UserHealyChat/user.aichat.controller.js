@@ -62,14 +62,14 @@ let UserHealyChatController = class UserHealyChatController extends tsoa_1.Contr
     /**
      * get message List
      */
-    getMessageList(request) {
+    getMessageList(conversation_id, page, limit) {
         return __awaiter(this, void 0, void 0, function* () {
-            const validate = (0, user_aichat_validator_1.validateGetMessageList)(request);
+            const validate = (0, user_aichat_validator_1.validateGetMessageList)({ conversation_id, page, limit });
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_aichat_handler_1.default.getConversationMessages);
-            return wrappedFunc(request, this.userId); // Invoking the wrapped function 
+            return wrappedFunc({ conversation_id, page, limit }, this.userId); // Invoking the wrapped function 
         });
     }
     /**
@@ -116,10 +116,12 @@ __decorate([
 ], UserHealyChatController.prototype, "getRandomQuestions", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("getMessageList"),
-    __param(0, (0, tsoa_1.Body)()),
+    (0, tsoa_1.Get)("getMessageList"),
+    __param(0, (0, tsoa_1.Query)()),
+    __param(1, (0, tsoa_1.Query)()),
+    __param(2, (0, tsoa_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String, Number, Number]),
     __metadata("design:returntype", Promise)
 ], UserHealyChatController.prototype, "getMessageList", null);
 __decorate([
