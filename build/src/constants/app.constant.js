@@ -27,7 +27,7 @@ if (envConfig.error) {
 //3rd parm is project Initial 
 const ENV_PARMAS = (0, config_util_1.getEnvironmentParams)(process.env.ENV_MODE, 'HEAL', 'HL'); //sds
 console.log(ENV_PARMAS, "Parms_For_Aws_Parameter_store");
-const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET, GOOGLE_TRANSLATE_API_KEY } = ENV_PARMAS;
+const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET, GOOGLE_TRANSLATE_API_KEY, STMP_EMAIL, SMTP_API_KEY, } = ENV_PARMAS;
 let AGORA_CREDENTIAL;
 let AWS_CREDENTIAL;
 let STRIPE_CREDENTIAL;
@@ -48,6 +48,7 @@ const APP = {
     SWAGGER_USER_NAME: 'admin',
     SWAGGER_PASSWORD: 'Admin@123',
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
+    GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY || '',
 };
 exports.APP = APP;
 const DATABASE_URI = {
@@ -119,33 +120,15 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
             services_1.default.awsService.getSecretFromAWS("heal_secret"),
             services_1.default.awsService.getParameterFromAWS({ name: BUCKET }),
             services_1.default.awsService.getParameterFromAWS({ name: GOOGLE_TRANSLATE_API_KEY }),
-            // services.awsService.getSecretFromAWS(CLOUDFRONT_URL),
-            // services.awsService.getSecretFromAWS(SWAGGER_USER_NAME),
-            // services.awsService.getSecretFromAWS(SWAGGER_PASSWORD),
-            // services.awsService.getSecretFromAWS(STMP_EMAIL),
-            // services.awsService.getSecretFromAWS(SMTP_API_KEY),
-            // services.awsService.getSecretFromAWS(STRIPE_PB_KEY),
-            // services.awsService.getSecretFromAWS(STRIPE_SEC_KEY),
+            services_1.default.awsService.getSecretFromAWS(STMP_EMAIL),
+            services_1.default.awsService.getSecretFromAWS(SMTP_API_KEY),
         ]);
-        const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName
-        // swaggerUserName,
-        // swaggerPassword,
-        // smtpEmail,
-        // cloudfrontUrl,
-        // smtpApiKey,
-        // stripePbKey,
-        // stripeSecKey,
-        ] = results;
-        // console.log("hhhhhhh", bucketName)
+        const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName, googleTranslateApiKey, smtpEmail, smtpApiKey,] = results;
         DB.MONGODB_URI = mongodbUri;
         APP.JWT_SECRET = jwtSecret;
-        // APP.CLOUDFRONT_URL = cloudfrontUrl;
-        // APP.SWAGGER_USER_NAME = swaggerUserName;
-        // APP.SWAGGER_PASSWORD = swaggerPassword;
-        // EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
-        // EMAIL_CREDENTIAL.SMTP_API_KEY = smtpApiKey;
-        // STRIPE_CREDENTIAL.STRIPE_PB_KEY = stripePbKey;
-        // STRIPE_CREDENTIAL.STRIPE_SEC_KEY = stripeSecKey;
+        APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
+        EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
+        EMAIL_CREDENTIAL.SMTP_API_KEY = smtpApiKey;
         exports.AWS_CREDENTIAL = AWS_CREDENTIAL = {
             ACCESSID: accessId,
             REGION: region,

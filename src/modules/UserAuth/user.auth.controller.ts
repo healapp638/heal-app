@@ -295,6 +295,17 @@ export default class UserAuthController extends Controller {
         return wrappedFunc(request, this.userId); // Invoking the wrapped function 
     }
     //ends
+
+    /**
+   * User Trial Subscription
+   */
+    @Security("Bearer")
+    @Get("/trialSubscription")
+    public async userTrialSubscription(): Promise<ApiResponse> {
+    const wrappedFunc = tryCatchWrapper(handler.userTrialSubscription);
+    return wrappedFunc(this.userId); // Invoking the wrapped function
+  }
+  //ends
 }
 
 

@@ -25,6 +25,9 @@ const UserSchema = new Schema(
         reason: { type: String },
         status: { type: Number, default: USER_STATUS.ACTIVE },
         language: { type: String, default: "en" },
+        trial_package_use:{type:Boolean,default:false},
+        on_trial_period:{type:Boolean,default:false},
+        trial_expire_time:{type:String,default:""},
         // first_name: { type: String, default: "" },
 
 

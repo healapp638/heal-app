@@ -1172,6 +1172,24 @@ const UserAuthHandler = {
         }
         return showResponse(true, getMessage(user_language || 'en', "user_onboarding_complete"), null, statusCodes.SUCCESS)
     },
+
+    userTrialSubscription: async (user_id: any): Promise<ApiResponse> => {
+    const trialExpireTime = moment().add(3, "days").unix();
+
+    //check already take subscription plan
+    const userAlreadyTakeSubscription = await findOne(userAuthModel, {_id: user_id,status: { $ne: 2 },trial_package_use: true,});
+    if (userAlreadyTakeSubscription.status) {
+      return showResponse(false,"You already have a free trial plan going on.",null,statusCodes.API_ERROR);
+    }
+    const updateObj: any = {on_trial_period: true,trial_expire_time: trialExpireTime,trial_package_use: true};
+
+    // Update user auth data with trial subscription information
+    const updatedUserSubscriptionData = await findOneAndUpdate(userAuthModel,{ _id: commonHelper.convertToObjectId(user_id), status: 1 },updateObj);
+    if (!updatedUserSubscriptionData.status) {
+      return showResponse(false,"unable to update",null,statusCodes.API_ERROR);
+    }
+    return showResponse(true,"Free trial plan activated successfully",{on_trial_period: true,trial_expire_time: trialExpireTime,trial_package_use: true},statusCodes.SUCCESS);
+  }, //ends
 }
 
 export default UserAuthHandler 

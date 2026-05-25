@@ -129,4 +129,9 @@ router.post('/complete_onboarding', verifyTokenUser, (req, res) => __awaiter(voi
     const result = yield controller.completeOnboarding({ hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.get('/trialSubscription', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.userTrialSubscription();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

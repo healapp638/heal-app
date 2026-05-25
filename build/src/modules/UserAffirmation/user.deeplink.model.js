@@ -21,7 +21,7 @@ const deeplinkmodel = new mongoose_1.Schema({
     },
     expiresAt: {
         type: Date,
-        required: true
+        // required: true
     },
     status: {
         type: Number,

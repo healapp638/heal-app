@@ -1017,5 +1017,20 @@ const UserAuthHandler = {
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(user_language || 'en', "user_onboarding_complete"), null, statusCodes_1.default.SUCCESS);
     }),
+    userTrialSubscription: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        const trialExpireTime = (0, moment_timezone_1.default)().add(3, "days").unix();
+        //check already take subscription plan
+        const userAlreadyTakeSubscription = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: user_id, status: { $ne: 2 }, trial_package_use: true, });
+        if (userAlreadyTakeSubscription.status) {
+            return (0, response_util_1.showResponse)(false, "You already have a free trial plan going on.", null, statusCodes_1.default.API_ERROR);
+        }
+        const updateObj = { on_trial_period: true, trial_expire_time: trialExpireTime, trial_package_use: true };
+        // Update user auth data with trial subscription information
+        const updatedUserSubscriptionData = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: commonHelper.convertToObjectId(user_id), status: 1 }, updateObj);
+        if (!updatedUserSubscriptionData.status) {
+            return (0, response_util_1.showResponse)(false, "unable to update", null, statusCodes_1.default.API_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, "Free trial plan activated successfully", { on_trial_period: true, trial_expire_time: trialExpireTime, trial_package_use: true }, statusCodes_1.default.SUCCESS);
+    }), //ends
 };
 exports.default = UserAuthHandler;

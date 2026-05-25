@@ -141,4 +141,10 @@ router.post('/complete_onboarding', verifyTokenUser, async (req: Request | any, 
     return showOutput(res, result, result.code)
 })
 
+router.get('/trialSubscription', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.userTrialSubscription();
+    return showOutput(res, result, result.code)
+})
+
 export default router

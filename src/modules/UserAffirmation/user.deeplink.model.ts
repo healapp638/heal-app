@@ -20,7 +20,7 @@ const deeplinkmodel = new Schema({
     },
     expiresAt: {
         type: Date,
-        required: true
+        // required: true
     },
     status: {
         type: Number,

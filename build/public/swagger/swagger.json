@@ -2698,6 +2698,33 @@
 				}
 			}
 		},
+		"/user/auth/trialSubscription": {
+			"get": {
+				"operationId": "UserTrialSubscription",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "User Trial Subscription",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/affirmation/getAIAffirmation": {
 			"get": {
 				"operationId": "GetAIAffirmation",
