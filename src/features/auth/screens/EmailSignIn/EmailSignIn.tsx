@@ -63,7 +63,7 @@ const EmailSignIn = () => {
       howFellingLately: answers?.howFellingLately || '',
       hearAboutUs: answers?.hearAboutUs || '',
     };
-    console.log(payload)
+
     sendMagicLink(
       {
         endpoint: endpoints.sendMagicLink,
@@ -76,6 +76,7 @@ const EmailSignIn = () => {
             AppRoutes.CheckEmail as never,
             {
               email: email?.trim()?.toLowerCase(),
+              payload: payload,
             } as never,
           );
         },

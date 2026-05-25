@@ -79,7 +79,7 @@
     "privacyItem1": "Deine persönlichen Daten werden nur verwendet, um dir personalisierte Unterstützung zu bieten.",
     "privacyItem2": "Wir teilen deine Daten nicht mit Dritten",
     "privacyItem3": "Deine Daten bleiben zwischen dir und uns",
-    "privacyAcceptTerms": "Ich habe die Allgemeinen Geschäftsbedingungen und die Datenschutzrichtlinie gelesen und akzeptiert",
+    "privacyAcceptTerms": "Ich habe die {terms} und die {privacy} gelesen und akzeptiert",
     "continue": "Weiter",
     "privacyPolicy": "Datenschutzrichtlinie",
     "termsOfService": "Nutzungsbedingungen",
@@ -544,6 +544,8 @@
     "backText": "Zurück",
     "searchHint": "Suchen",
     "showAllInFeed": "Alle im Feed anzeigen",
-    "noFavoritesFound": "Keine Favoriten gefunden"
+    "noFavoritesFound": "Keine Favoriten gefunden",
+    "installTheApp": "Installiere die App",
+    "setUpToMatchGoals": "Richte sie passend zu deinen Zielen ein"
   }
 }

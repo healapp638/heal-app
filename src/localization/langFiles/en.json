@@ -77,13 +77,13 @@
     "createAccountBtn": "Create Account",
     "privacyTitle": "Your privacy matters",
     "privacyItem1": "Your personal data is only used to give you personalized guidance.",
-    "privacyItem2": "We do not share your personal data with third parties",
-    "privacyItem3": "Your data stays between you and us",
-    "privacyAcceptTerms": "I have read and accepted the terms and conditions and the privacy policy",
+    "privacyItem2": "We do not sell your personal data",
+    "privacyItem3": "Your data is kept private and secure",
+    "privacyAcceptTerms": "I have read and accepted the {terms} and the {privacy}",
     "continue": "Continue",
     "privacyPolicy": "Privacy Policy",
     "termsOfService": "Terms of Service",
-    "warningHeader": "Warning",
+    "warningHeader": "Reminder",
     "importantNote": "Important note",
     "warningSubtitle": "Heal supports your emotional well-being but is not a replacement for professional medical or mental health care.",
     "understandContinue": "I understand, Continue",
@@ -549,6 +549,8 @@
     "backText": "Back",
     "searchHint": "Search",
     "showAllInFeed": "Show all in feed",
-    "noFavoritesFound": "No favorites found"
+    "noFavoritesFound": "No favorites found",
+    "installTheApp": "Install the app",
+    "setUpToMatchGoals": "Set it up to match your goals"
   }
 }

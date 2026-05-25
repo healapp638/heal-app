@@ -39,7 +39,7 @@ const SavedDailyQuote = () => {
   const { triggerHaptic } = useHaptic();
   const styles = style(colors, insets);
   const queryClient = useQueryClient();
-  const { mutate: postApi } = usePostApi();
+  const { mutate: postApi, mutateAsync: postApiAsync } = usePostApi();
   const user = useSelector((state: any) => state.userData?.user);
   const { localization } = useContext(LocalizationContext) as any;
 
@@ -94,9 +94,27 @@ const SavedDailyQuote = () => {
   const handleShare = async (index: number) => {
     try {
       // triggerHaptic('impactMedium');
+      const item = quotes[index];
+      let shareLink = '';
+
+      try {
+        const response: any = await postApiAsync({
+          endpoint: endpoints.create_link,
+          data: {
+            affirmation_id: item._id,
+          },
+        });
+        const link = response?.data?.link || response?.link || response?.data;
+        if (typeof link === 'string') {
+          shareLink = link;
+        }
+      } catch (apiError) {
+        console.log('Error creating link:', apiError);
+      }
+
       const uri = await viewShotRefs.current[index]?.capture();
-      const quoteContent = quotes[index].affirmation;
-      const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
+      const quoteContent = item.affirmation;
+      const shareMessage = `${quoteContent}\n\nFrom the Heal app:\n${shareLink}`;
       if (uri) {
         await Share.open({
           url: uri,

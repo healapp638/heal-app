@@ -61,4 +61,17 @@ android:pathPrefix="/"/>
 
 
     </application>
+
+    <!-- Required for Android 11+ package visibility (canOpenURL for email apps) -->
+    <queries>
+        <package android:name="com.google.android.gm" />                          <!-- Gmail -->
+        <package android:name="com.microsoft.office.outlook" />                   <!-- Outlook -->
+        <package android:name="com.yahoo.mobile.client.android.mail" />           <!-- Yahoo Mail -->
+        <package android:name="com.samsung.android.email.provider" />             <!-- Samsung Email -->
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.APP_EMAIL" />
+        </intent>
+    </queries>
+
 </manifest>

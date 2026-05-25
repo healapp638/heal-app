@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { View, TouchableOpacity, Linking, Platform, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, Linking, Platform, ActivityIndicator, NativeModules } from 'react-native';
 import { useNavigation, useTheme, useRoute } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -18,7 +18,7 @@ const CheckEmail = () => {
   const { colors } = useTheme() as any;
   const navigation = useNavigation();
   const route = useRoute() as any;
-  const { email } = route.params || {};
+  const { email, payload } = route.params || {};
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
@@ -37,18 +37,32 @@ const CheckEmail = () => {
 
   const handleOpenEmailApp = async () => {
     triggerHaptic('impactMedium');
-    const mailUrl = Platform.OS === 'ios' ? 'message://' : 'mailto:';
+
     try {
-      const supported = await Linking.canOpenURL(mailUrl);
-      if (supported) {
-        await Linking.openURL(mailUrl);
+      if (Platform.OS === 'android') {
+        // Use native module to fire ACTION_MAIN + CATEGORY_APP_EMAIL intent
+        // — the only reliable way to open inbox (not compose) on Android.
+        await NativeModules.EmailInboxModule.openEmailInbox();
       } else {
-        await Linking.openURL('mailto:');
+        // iOS: try known inbox URL schemes in priority order
+        const iosSchemes = [
+          'message://',           // Apple Mail
+          'googlegmail://',       // Gmail
+          'ms-outlook://',        // Outlook
+          'readdle-spark://',     // Spark
+          'ymail://',             // Yahoo Mail
+        ];
+        for (const scheme of iosSchemes) {
+          const supported = await Linking.canOpenURL(scheme);
+          if (supported) {
+            await Linking.openURL(scheme);
+            return;
+          }
+        }
+        console.log('No email app found on this device');
       }
     } catch (err) {
-      console.log('Error opening mail app:', err);
-      // Fallback: try opening standard mailto scheme
-      Linking.openURL('mailto:').catch((e) => console.log('Mailto fallback failed:', e));
+      console.log('Error opening email app:', err);
     }
   };
 
@@ -58,8 +72,8 @@ const CheckEmail = () => {
 
     resendMagicLink(
       {
-        endpoint: endpoints.forgot_password,
-        data: {
+        endpoint: endpoints.sendMagicLink,
+        data: payload || {
           email: email?.trim()?.toLowerCase(),
         },
       },

@@ -43,7 +43,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const [searchText, setSearchText] = useState('');
   const queryClient = useQueryClient();
   const { triggerHaptic } = useHaptic();
-  const { mutate: postApi } = usePostApi();
+  const { mutate: postApi, mutateAsync: postApiAsync } = usePostApi();
   const captureRef = useRef<ViewShot>(null);
   const [sharingItem, setSharingItem] = useState<any>(null);
   const user = useSelector((state: any) => state.userData?.user);
@@ -117,9 +117,9 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                    ...quote,
-                    is_liked: false,
-                  }
+                  ...quote,
+                  is_liked: false,
+                }
                 : quote,
             ),
           },
@@ -146,12 +146,29 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   };
   const handleShare = async (item: any) => {
     setSharingItem(item);
+
+    let shareLink = 'https://www.heal-app.com/';
+    try {
+      const response: any = await postApiAsync({
+        endpoint: endpoints.create_link,
+        data: {
+          affirmation_id: item._id,
+        },
+      });
+      const link = response?.data?.link || response?.link || response?.data;
+      if (typeof link === 'string') {
+        shareLink = link;
+      }
+    } catch (apiError) {
+      console.log('Error creating link:', apiError);
+    }
+
     // Wait for the hidden view to render with the new item
     setTimeout(async () => {
       try {
         // triggerHaptic('impactMedium');
         const uri = await captureRef.current?.capture();
-        const shareMessage = `${item.affirmation}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
+        const shareMessage = `${item.affirmation}\n\nFrom the Heal app:\n${shareLink}`;
         if (uri) {
           await Share.open({
             url: uri,

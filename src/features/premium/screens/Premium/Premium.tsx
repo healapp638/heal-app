@@ -115,11 +115,11 @@ const Premium = () => {
             }}
           />
 
-          <TouchableOpacity style={styles.promoBtn}>
+          {/* <TouchableOpacity style={styles.promoBtn}>
             <SolidText style={styles.promoText}>
               {localization.appkeys?.addPromoCode}
             </SolidText>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <PremiumFooter
             localization={localization}

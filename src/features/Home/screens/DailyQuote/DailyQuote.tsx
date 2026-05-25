@@ -43,9 +43,8 @@ const DailyQuote = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors, insets);
   const queryClient = useQueryClient();
-  const { mutate: postApi } = usePostApi();
+  const { mutate: postApi, mutateAsync: postApiAsync } = usePostApi();
   const user = useSelector((state: any) => state.userData?.user);
-  // console.log('user', user);
 
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
@@ -100,11 +99,29 @@ const DailyQuote = () => {
       triggerHaptic('impactMedium');
       setShareItem(item);
 
+
+      let shareLink = 'https://www.heal-app.com/';
+      try {
+        const response: any = await postApiAsync({
+          endpoint: endpoints.create_link,
+          data: {
+            affirmation_id: item._id,
+          },
+        });
+
+        const link = response?.data?.link || response?.link || response?.data;
+        if (typeof link === 'string') {
+          shareLink = link;
+        }
+      } catch (apiError) {
+        console.log('Error creating link:', apiError);
+      }
+
       // Small delay to ensure the hidden view has rendered with the new item
       setTimeout(async () => {
         const uri = await shareViewShotRef.current?.capture();
         const quoteContent = item.affirmation;
-        const shareMessage = `${quoteContent}\n\nFrom the Heal app:\nhttps://www.heal-app.com/`;
+        const shareMessage = `${quoteContent}\n\nFrom the Heal app:\n${shareLink}`;
 
         if (uri) {
           await Share.open({

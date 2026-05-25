@@ -114,7 +114,7 @@ export default function MainStack() {
         return;
       }
       lastProcessedUrl.current = url;
-      console.log('Deep link received:', url);
+      AppUtils.showLog('Deep link received:', url);
 
       // Extract code dynamically (part after 'link/' and before '?')
       let code = '';
@@ -138,7 +138,7 @@ export default function MainStack() {
         });
       }
 
-      console.log('Parsed query params:', params);
+      AppUtils.showLog('Parsed query params:', params);
 
       const {
         language,
@@ -228,7 +228,7 @@ export default function MainStack() {
           {
             onSuccess: async (response: any) => {
               currentDispatch(setLoader(false));
-              console.log('Magic link login response:', response);
+              AppUtils.showLog('Magic link login response:', response);
 
               currentDispatch(setUser(response?.data));
               currentDispatch(setToken(response?.data?.access_token));

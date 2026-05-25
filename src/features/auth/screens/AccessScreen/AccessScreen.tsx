@@ -30,67 +30,10 @@ const AccessScreen = () => {
   const styles = style(colors);
   const dispatch = useDispatch();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
-  const { handleBiometricAuth, biometric, email, password, lastLoginType } =
-    useBiometric();
-  const { mutate: loginUser } = usePostApi();
 
-  const handleLogin = (ema?: string, pass?: string) => {
-    const payload = {
-      email: ema?.trim()?.toLowerCase(),
-      password: pass,
-      device_token: '123456',
-      device_type: Platform.OS,
-    };
 
-    loginUser(
-      { endpoint: endpoints.login, data: payload },
-      {
-        onSuccess: (response: any) => {
-          if (response?.data?.is_profile_completed == false) {
-            navigation.navigate(
-              AppRoutes.Verification as never,
-              {
-                email: ema?.trim()?.toLowerCase(),
-                password: pass,
-                from: 'SignIn',
-              } as never,
-            );
-          } else {
-            dispatch(setUser(response?.data));
-            dispatch(setToken(response?.data?.access_token));
-            dispatch(setRefreshToken(response?.data?.refresh_token));
-            dispatch(setAuth(true));
-            dispatch(getUserDetail() as any);
-            dispatch(setBiometric(true));
 
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: AppRoutes.NonAuthStack,
-                  params: {
-                    screen: AppRoutes.Offer,
-                  },
-                } as never,
-              ],
-            });
-          }
-        },
-        onError: (error: any) => {
-          AppUtils.showToast(error.message || 'Login failed');
-        },
-      },
-    );
-  };
 
-  const onBiometricSuccess = () => {
-    dispatch(setBiometric(true));
-    if (email && password) {
-      handleLogin(email, password);
-    } else {
-      navigation.navigate(AppRoutes.SignIn as never);
-    }
-  };
   return (
     <SolidView
       isScrollEnabled

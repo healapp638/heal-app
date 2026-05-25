@@ -61,7 +61,7 @@ const style = (colors: any, appLanguage: any) =>
     },
     premiumImage: {
       width: wp(11),
-      height: Platform.OS == 'ios' ? hp(22) : hp(25),
+      height: Platform.OS == 'ios' ? hp(30) : hp(34),
       resizeMode: 'stretch',
     },
     timelineRight: {
@@ -198,8 +198,8 @@ const style = (colors: any, appLanguage: any) =>
         appLanguage == 'Russian'
           ? '30%'
           : appLanguage == 'German'
-          ? '25%'
-          : '40%',
+            ? '25%'
+            : '40%',
       alignSelf: 'center',
     },
     footerLink: {

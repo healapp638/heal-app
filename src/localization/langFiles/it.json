@@ -79,7 +79,7 @@
     "privacyItem1": "I tuoi dati personali sono usati solo per darti una guida personalizzata.",
     "privacyItem2": "Non condividiamo i tuoi dati personali con terze parti",
     "privacyItem3": "I tuoi dati rimangono tra te e noi",
-    "privacyAcceptTerms": "Ho letto e accettato i termini e le condizioni e l'informativa sulla privacy",
+    "privacyAcceptTerms": "Ho letto e accettato i {terms} e l'{privacy}",
     "continue": "Continua",
     "privacyPolicy": "Informativa sulla privacy",
     "termsOfService": "Termini di servizio",
@@ -544,6 +544,8 @@
     "backText": "Indietro",
     "searchHint": "Ricerca",
     "showAllInFeed": "Mostra tutto nel feed",
-    "noFavoritesFound": "Nessun preferito trovato"
+    "noFavoritesFound": "Nessun preferito trovato",
+    "installTheApp": "Installa l'app",
+    "setUpToMatchGoals": "Configurala per soddisfare i tuoi obiettivi"
   }
 }

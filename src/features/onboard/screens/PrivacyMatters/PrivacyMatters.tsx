@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Image, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Pressable, Text, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
@@ -37,6 +37,47 @@ const PrivacyMatters = () => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.PrivacyMatters));
     }, [dispatch]),
   );
+  const renderClickableTerms = () => {
+    const text = localization.appkeys?.privacyAcceptTerms || '';
+    const parts = text.split(/(\{terms\}|\{privacy\})/g);
+    return parts.map((part: string, index: number) => {
+      if (part === '{terms}') {
+        return (
+          <SolidText
+            key={`terms-${index}`}
+            onPress={() => {
+              triggerHaptic('impactMedium');
+              return navigation.navigate(AppRoutes.Terms as never);
+            }}
+            style={{
+              ...styles.checkboxText,
+              textDecorationLine: 'underline',
+            }}
+          >
+            {localization.appkeys?.termsOfService}
+          </SolidText>
+        );
+      }
+      if (part === '{privacy}') {
+        return (
+          <SolidText
+            key={`privacy-${index}`}
+            onPress={() => {
+              triggerHaptic('impactMedium');
+              return navigation.navigate(AppRoutes.PrivacyPolicy as never);
+            }}
+            style={{
+              ...styles.checkboxText,
+              textDecorationLine: 'underline',
+            }}
+          >
+            {localization.appkeys?.privacyPolicy}
+          </SolidText>
+        );
+      }
+      return part;
+    });
+  };
   const privacyItems = [
     {
       id: '1',
@@ -103,29 +144,31 @@ const PrivacyMatters = () => {
               </View>
             ))}
 
-            <TouchableOpacity
-              style={styles.checkboxContainer}
-              onPress={() => {
-                const nextAccepted = !accepted;
-                setAccepted(nextAccepted);
-                dispatch(
-                  setOnboardingAnswer({
-                    key: 'privacyAccepted',
-                    value: nextAccepted,
-                  }),
-                );
-              }}
-              activeOpacity={0.8}
-            >
-              <Image
-                source={accepted ? images.tickbox : images.uncheck}
-                style={styles.checkboxImage}
-                resizeMode="contain"
-              />
+            <View style={styles.checkboxContainer}>
+              <Pressable
+                onPress={() => {
+                  triggerHaptic('impactMedium');
+
+                  const nextAccepted = !accepted;
+                  setAccepted(nextAccepted);
+                  dispatch(
+                    setOnboardingAnswer({
+                      key: 'privacyAccepted',
+                      value: nextAccepted,
+                    }),
+                  );
+                }}
+              >
+                <Image
+                  source={accepted ? images.tickbox : images.uncheck}
+                  style={styles.checkboxImage}
+                  resizeMode="contain"
+                />
+              </Pressable>
               <SolidText style={styles.checkboxText}>
-                {localization.appkeys?.privacyAcceptTerms}
+                {renderClickableTerms()}
               </SolidText>
-            </TouchableOpacity>
+            </View>
 
             <View
               style={{
@@ -145,6 +188,8 @@ const PrivacyMatters = () => {
             <View style={styles.footer}>
               <TouchableOpacity
                 onPress={() => {
+                  triggerHaptic('impactMedium');
+
                   return navigation.navigate(AppRoutes.PrivacyPolicy as never);
                 }}
               >
@@ -155,6 +200,8 @@ const PrivacyMatters = () => {
               <View style={styles.dot} />
               <TouchableOpacity
                 onPress={() => {
+                  triggerHaptic('impactMedium');
+
                   return navigation.navigate(AppRoutes.Terms as never);
                 }}
               >

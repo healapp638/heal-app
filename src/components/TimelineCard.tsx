@@ -35,12 +35,39 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
           }}
         >
           <SolidText maxFontScale={1} style={styles.timelineTitle}>
+            {localization.appkeys?.installTheApp || 'Install the app'}
+          </SolidText>
+          <SolidText maxFontScale={1} style={styles.timelineSub}>
+            {localization.appkeys?.setUpToMatchGoals || 'Set it up to match your goals'}
+          </SolidText>
+        </View>
+
+        <View style={{ ...styles.timelineItemCenter, marginBottom: 0 }}>
+          <SolidText maxFontScale={1} style={styles.timelineTitle}>
             {localization.appkeys?.todayFreeTrialStarts}
           </SolidText>
           <SolidText maxFontScale={1} style={styles.timelineSub}>
             {localization.appkeys?.enjoyFullAccess}
           </SolidText>
         </View>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <View style={styles.timelineItemCenter}>
           <SolidText maxFontScale={1} style={styles.timelineTitle}>

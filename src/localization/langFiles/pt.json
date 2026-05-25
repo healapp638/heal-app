@@ -79,7 +79,7 @@
     "privacyItem1": "Seus dados pessoais só são usados para oferecer orientação personalizada.",
     "privacyItem2": "Não compartilhamos seus dados pessoais com terceiros",
     "privacyItem3": "Seus dados ficam entre você e nós",
-    "privacyAcceptTerms": "Li e aceito os termos e condições e a política de privacidade",
+    "privacyAcceptTerms": "Li e aceito os {terms} e a {privacy}",
     "continue": "Continuar",
     "privacyPolicy": "Política de privacidade",
     "termsOfService": "Termos de serviço",
@@ -544,6 +544,8 @@
     "backText": "Voltar",
     "searchHint": "Procurar",
     "showAllInFeed": "Mostrar tudo no feed",
-    "noFavoritesFound": "Nenhum favorito encontrado"
+    "noFavoritesFound": "Nenhum favorito encontrado",
+    "installTheApp": "Instale o aplicativo",
+    "setUpToMatchGoals": "Configure-o para corresponder aos seus objetivos"
   }
 }

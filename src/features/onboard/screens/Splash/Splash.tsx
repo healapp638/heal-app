@@ -24,51 +24,50 @@ const Splash = () => {
   }, [auth]);
 
   const handleNavigation = () => {
-    const intervalId = setInterval(() => {
-      if (!auth) {
+
+    if (!auth) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: AppRoutes.Welcome } as never],
+      });
+    } else {
+      if (user?.is_onboarding == false) {
+        // If in between the onboarding flow, navigate to HearAboutUs and show ResumeModal
         navigation.reset({
           index: 0,
-          routes: [{ name: AppRoutes.Welcome } as never],
+          routes: [
+            {
+              name: AppRoutes.AuthStack,
+              params: {
+                screen: AppRoutes.HearAboutUs,
+                params: { showResumeModal: true },
+              },
+            } as never,
+          ],
+        });
+      } else if (user?.is_profile_completed == false) {
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: AppRoutes.CompleteProfile,
+              params: { userData: user },
+            } as never,
+          ],
         });
       } else {
-        if (user?.is_onboarding == false) {
-          // If in between the onboarding flow, navigate to HearAboutUs and show ResumeModal
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: AppRoutes.AuthStack,
-                params: {
-                  screen: AppRoutes.HearAboutUs,
-                  params: { showResumeModal: true },
-                },
-              } as never,
-            ],
-          });
-        } else if (user?.is_profile_completed == false) {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: AppRoutes.CompleteProfile,
-                params: { userData: user },
-              } as never,
-            ],
-          });
-        } else {
-          navigation.reset({
-            index: 0,
-            routes: [
-              {
-                name: AppRoutes.NonAuthStack,
-                params: { screen: AppRoutes.BottomTab },
-              } as never,
-            ],
-          });
-        }
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: AppRoutes.NonAuthStack,
+              params: { screen: AppRoutes.BottomTab },
+            } as never,
+          ],
+        });
       }
-      clearInterval(intervalId);
-    }, 2000);
+    }
+
   };
 
   return (

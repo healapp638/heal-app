@@ -47,7 +47,7 @@ const useSocialLogin = () => {
       language: AppUtils.getLanguageCode(appLanguage),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
-    console.log('payload', payload);
+
     socialLoginMutate(
       { endpoint: endpoints.social_login, data: payload },
       {
@@ -63,6 +63,25 @@ const useSocialLogin = () => {
                 {
                   name: AppRoutes.CompleteProfile,
                   params: { userData: response?.data },
+                } as never,
+              ],
+            });
+          } else if (response?.data?.is_onboarding === false) {
+            dispatch(setUser(response?.data));
+            dispatch(setToken(response?.data?.access_token));
+            dispatch(setRefreshToken(response?.data?.refresh_token));
+            dispatch(setAuth(true));
+            dispatch(setLastLoginType(source));
+            dispatch(setSocialEmail(email));
+            dispatch(getUserDetail() as any);
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: AppRoutes.AuthStack,
+                  params: {
+                    screen: AppRoutes.HearAboutUs,
+                  },
                 } as never,
               ],
             });
@@ -153,7 +172,9 @@ const useSocialLogin = () => {
       const name =
         res.user?.displayName ||
         (appleAuthRequestResponse?.fullName?.givenName
-          ? `${appleAuthRequestResponse.fullName.givenName || ''} ${appleAuthRequestResponse.fullName.familyName || ''}`.trim()
+          ? `${appleAuthRequestResponse.fullName.givenName || ''} ${
+              appleAuthRequestResponse.fullName.familyName || ''
+            }`.trim()
           : '') ||
         '';
       const uID = res.user?.uid ?? '';
