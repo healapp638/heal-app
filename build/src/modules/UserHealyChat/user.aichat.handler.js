@@ -199,8 +199,12 @@ const UserCommonHandler = {
             // =========================================
             const translatedMessage = {};
             const langs = Object.values(workflow_constant_1.languages);
+            let detectedMessageLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(message);
+            if (!langs.includes(detectedMessageLanguage)) {
+                detectedMessageLanguage = "en";
+            }
             yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                translatedMessage[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(message, lang);
+                translatedMessage[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(message, detectedMessageLanguage, lang);
             })));
             // =========================================
             // CREATE CONVERSATION
@@ -237,8 +241,12 @@ const UserCommonHandler = {
                     console.log(err, "TITLE_GENERATION_ERROR");
                 }
                 const translatedTitle = {};
+                let detectedTitleLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(shortTitle);
+                if (!langs.includes(detectedTitleLanguage)) {
+                    detectedTitleLanguage = "en";
+                }
                 yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                    translatedTitle[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(shortTitle, lang);
+                    translatedTitle[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(shortTitle, detectedTitleLanguage, lang);
                 })));
                 const createConversation = yield user_aichat_conversation_model_1.default.create({ user_id: (0, common_helper_1.convertToObjectId)(user_id), title: translatedTitle, });
                 finalConversationId = createConversation._id;
@@ -301,8 +309,12 @@ const UserCommonHandler = {
             // TRANSLATE AI MESSAGE
             // =========================================
             const translatedAiMessage = {};
+            let detectedAiMessageLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(aiMessage);
+            if (!langs.includes(detectedAiMessageLanguage)) {
+                detectedAiMessageLanguage = "en";
+            }
             yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                translatedAiMessage[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(aiMessage, lang);
+                translatedAiMessage[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(aiMessage, detectedAiMessageLanguage, lang);
             })));
             // =========================================
             // SAVE AI MESSAGE

@@ -455,7 +455,7 @@ const UserAuthHandler = {
         return showResponse(
             true,
             getMessage(language || 'en', "verification_email_sent"),
-            null,
+            deeplink,
             statusCodes.SUCCESS
         );
 

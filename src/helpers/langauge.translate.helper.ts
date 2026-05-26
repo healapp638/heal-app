@@ -45,6 +45,46 @@ export const translatePlainText = async (text: string, targetLanguage: string) =
     }
 };
 
+export const detectLanguage = async (text: string) => {
+    try {
+        const [detections]: any = await translate.detect(text);
+
+        return Array.isArray(detections)
+            ? detections[0]?.language
+            : detections?.language;
+    } catch (error) {
+        console.log(error);
+        return "en";
+    }
+};
+
+export const translateHealyText = async (
+    text: string,
+    sourceLanguage: string,
+    targetLanguage: string
+) => {
+    try {
+
+        if (sourceLanguage === targetLanguage) {
+            return text;
+        }
+
+        const [translation] = await translate.translate(text, {
+            from: sourceLanguage,
+            to: targetLanguage,
+            format: "text",
+        });
+
+        return translation;
+
+    } catch (error) {
+
+        console.log(error);
+
+        return text;
+    }
+};
+
 export const UserTranslateText = async (text: string, targetLanguage: string, sourceLanguage: string = 'en') => {
     try {
         if (targetLanguage == sourceLanguage) {

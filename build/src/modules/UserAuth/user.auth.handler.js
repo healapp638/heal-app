@@ -432,7 +432,7 @@ const UserAuthHandler = {
             if (!sendEmail.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
             }
-            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), null, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), deeplink, statusCodes_1.default.SUCCESS);
         }
         catch (err) {
             console.log(err, "register err");

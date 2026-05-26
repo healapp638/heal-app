@@ -9,7 +9,7 @@ import userAichatConversationModel from "./user.aichat.conversation.model";
 import * as commonHelper from "../../helpers/common.helper";
 import userAuthModel from "../UserAuth/user.auth.model";
 import { languages, USER_STATUS,questions } from "../../constants/workflow.constant";
-import { translatePlainText } from "../../helpers/langauge.translate.helper";
+import { translateHealyText,detectLanguage } from "../../helpers/langauge.translate.helper";
 import OpenAI from "openai";
 import { APP } from "../../constants/app.constant";
 
@@ -208,9 +208,16 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
         const langs: any =
             Object.values(languages);
 
+        let detectedMessageLanguage =
+         await detectLanguage(message);
+
+        if (!langs.includes(detectedMessageLanguage)) {
+            detectedMessageLanguage = "en";
+        }
+
         await Promise.all(
             langs.map(async (lang: string) => {
-                translatedMessage[lang] = await translatePlainText(message,lang);
+                translatedMessage[lang] = await translateHealyText(message,detectedMessageLanguage,lang);
             })
         );
 
@@ -257,10 +264,16 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
             const translatedTitle: any = {};
 
+            let detectedTitleLanguage = await detectLanguage(shortTitle);
+
+            if (!langs.includes(detectedTitleLanguage)) {
+                detectedTitleLanguage = "en";
+            }
+
             await Promise.all(
                 langs.map(async (lang: string) => {
 
-                    translatedTitle[lang] =await translatePlainText(shortTitle,lang);
+                    translatedTitle[lang] =await translateHealyText(shortTitle,detectedTitleLanguage,lang);
                 })
             );
 
@@ -341,9 +354,15 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
         const translatedAiMessage: any = {};
 
+        let detectedAiMessageLanguage = await detectLanguage(aiMessage);
+
+        if (!langs.includes(detectedAiMessageLanguage)) {
+            detectedAiMessageLanguage = "en";
+        }
+
         await Promise.all(
             langs.map(async (lang: string) => {
-                translatedAiMessage[lang] = await translatePlainText(aiMessage,lang);
+                translatedAiMessage[lang] = await translateHealyText(aiMessage,detectedAiMessageLanguage,lang);
             })
         );
 

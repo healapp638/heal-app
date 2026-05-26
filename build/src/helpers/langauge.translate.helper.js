@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AutoTranslateText = exports.UserTranslateText = exports.translatePlainText = exports.translateText = void 0;
+exports.AutoTranslateText = exports.UserTranslateText = exports.translateHealyText = exports.detectLanguage = exports.translatePlainText = exports.translateText = void 0;
 const translate_1 = require("@google-cloud/translate");
 const translate = new translate_1.Translate({
     key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
@@ -54,6 +54,38 @@ const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, v
     }
 });
 exports.translatePlainText = translatePlainText;
+const detectLanguage = (text) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    try {
+        const [detections] = yield translate.detect(text);
+        return Array.isArray(detections)
+            ? (_a = detections[0]) === null || _a === void 0 ? void 0 : _a.language
+            : detections === null || detections === void 0 ? void 0 : detections.language;
+    }
+    catch (error) {
+        console.log(error);
+        return "en";
+    }
+});
+exports.detectLanguage = detectLanguage;
+const translateHealyText = (text, sourceLanguage, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (sourceLanguage === targetLanguage) {
+            return text;
+        }
+        const [translation] = yield translate.translate(text, {
+            from: sourceLanguage,
+            to: targetLanguage,
+            format: "text",
+        });
+        return translation;
+    }
+    catch (error) {
+        console.log(error);
+        return text;
+    }
+});
+exports.translateHealyText = translateHealyText;
 const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(void 0, [text_1, targetLanguage_1, ...args_1], void 0, function* (text, targetLanguage, sourceLanguage = 'en') {
     try {
         if (targetLanguage == sourceLanguage) {
