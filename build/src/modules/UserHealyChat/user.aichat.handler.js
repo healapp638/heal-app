@@ -200,7 +200,7 @@ const UserCommonHandler = {
             const translatedMessage = {};
             const langs = Object.values(workflow_constant_1.languages);
             yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                translatedMessage[lang] = yield (0, langauge_translate_helper_1.translateText)(message, lang);
+                translatedMessage[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(message, lang);
             })));
             // =========================================
             // CREATE CONVERSATION
@@ -238,7 +238,7 @@ const UserCommonHandler = {
                 }
                 const translatedTitle = {};
                 yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                    translatedTitle[lang] = yield (0, langauge_translate_helper_1.translateText)(shortTitle, lang);
+                    translatedTitle[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(shortTitle, lang);
                 })));
                 const createConversation = yield user_aichat_conversation_model_1.default.create({ user_id: (0, common_helper_1.convertToObjectId)(user_id), title: translatedTitle, });
                 finalConversationId = createConversation._id;
@@ -302,7 +302,7 @@ const UserCommonHandler = {
             // =========================================
             const translatedAiMessage = {};
             yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                translatedAiMessage[lang] = yield (0, langauge_translate_helper_1.translateText)(aiMessage, lang);
+                translatedAiMessage[lang] = yield (0, langauge_translate_helper_1.translatePlainText)(aiMessage, lang);
             })));
             // =========================================
             // SAVE AI MESSAGE

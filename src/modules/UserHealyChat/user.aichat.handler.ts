@@ -9,7 +9,7 @@ import userAichatConversationModel from "./user.aichat.conversation.model";
 import * as commonHelper from "../../helpers/common.helper";
 import userAuthModel from "../UserAuth/user.auth.model";
 import { languages, USER_STATUS,questions } from "../../constants/workflow.constant";
-import { translateText } from "../../helpers/langauge.translate.helper";
+import { translatePlainText } from "../../helpers/langauge.translate.helper";
 import OpenAI from "openai";
 import { APP } from "../../constants/app.constant";
 
@@ -210,7 +210,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
         await Promise.all(
             langs.map(async (lang: string) => {
-                translatedMessage[lang] = await translateText(message,lang);
+                translatedMessage[lang] = await translatePlainText(message,lang);
             })
         );
 
@@ -260,7 +260,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
             await Promise.all(
                 langs.map(async (lang: string) => {
 
-                    translatedTitle[lang] =await translateText(shortTitle,lang);
+                    translatedTitle[lang] =await translatePlainText(shortTitle,lang);
                 })
             );
 
@@ -343,7 +343,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
         await Promise.all(
             langs.map(async (lang: string) => {
-                translatedAiMessage[lang] = await translateText(aiMessage,lang);
+                translatedAiMessage[lang] = await translatePlainText(aiMessage,lang);
             })
         );
 
