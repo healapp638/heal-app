@@ -111,11 +111,11 @@ const style = (colors: any) =>
       borderRadius: 18,
     },
     userBubble: {
-      backgroundColor: '#FCE9D8', // Warm peach tone
+      backgroundColor: colors.brown + '18', // Warm sand tone dynamically blended from theme's brown color
       borderBottomRightRadius: 4, // Chat bubble corner shape
     },
     aiBubble: {
-      backgroundColor: '#FFF0F0', // Soft pinkish/rose cream tone
+      backgroundColor: colors.primary + '18', // Warm light-rose tone dynamically blended from theme's primary color
       borderBottomLeftRadius: 4, // Chat bubble corner shape
     },
     messageText: {
@@ -138,7 +138,7 @@ const style = (colors: any) =>
     },
     typingBubble: {
       alignSelf: 'flex-start',
-      backgroundColor: '#FFF0F0',
+      backgroundColor: colors.primary + '18', // Match bot bubble
       paddingHorizontal: 16,
       paddingVertical: 12,
       borderRadius: 18,
