@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/Manager/manager';
 
-const useGetApi = (endpoint: string, key: any[], params: any = {}) => {
+const useGetApi = (endpoint: string, key: any[], params: any = {}, options: any = {}) => {
   return useQuery({
     queryKey: key,
     queryFn: async () => {
@@ -15,6 +15,7 @@ const useGetApi = (endpoint: string, key: any[], params: any = {}) => {
       }
       return response.data;
     },
+    ...options
   });
 };
 

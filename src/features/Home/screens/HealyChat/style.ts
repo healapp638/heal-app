@@ -26,13 +26,38 @@ const style = (colors: any) =>
       textAlign: 'center',
       lineHeight: 28,
     },
+    questionsContainer: {
+      marginTop: 24,
+      width: '100%',
+      paddingHorizontal: 10,
+      alignItems: 'center',
+    },
+    questionChip: {
+      backgroundColor: 'white',
+      borderWidth: 1,
+      borderColor: 'rgba(58, 33, 16, 0.08)',
+      borderRadius: 20,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      marginVertical: 6,
+      width: '100%',
+      shadowColor: '#000000ff',
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: 0.05,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    questionText: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.medium || 'Outfit-Medium',
+      color: colors.brown,
+      textAlign: 'center',
+    },
     footerContainer: {
-      position: 'absolute',
-      bottom: Platform.OS === 'ios' ? 40 : 20,
-      left: 20,
-      right: 20,
       flexDirection: 'row',
       alignItems: 'center',
+      paddingBottom: Platform.OS === 'ios' ? 28 : 16,
+      paddingTop: 8,
     },
     plusBtn: {},
     plusIcon: {
@@ -89,7 +114,7 @@ const style = (colors: any) =>
       width: '100%',
     },
     chatListContent: {
-      paddingBottom: 110,
+      paddingBottom: 10,
       paddingTop: 10,
       paddingHorizontal: 4,
     },
@@ -109,6 +134,7 @@ const style = (colors: any) =>
       paddingHorizontal: 16,
       paddingVertical: 12,
       borderRadius: 18,
+
     },
     userBubble: {
       backgroundColor: colors.brown + '18', // Warm sand tone dynamically blended from theme's brown color
@@ -144,6 +170,7 @@ const style = (colors: any) =>
       borderRadius: 18,
       borderBottomLeftRadius: 4,
       marginVertical: 6,
+      marginBottom:40
     },
     typingText: {
       fontSize: AppUtils.fontSize(14),
@@ -187,6 +214,119 @@ const style = (colors: any) =>
     inlineLogo: {
       width: 16,
       height: 16,
+    },
+    // Drawer Modal Styles
+    drawerOverlay: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      zIndex: 99999,
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+    },
+    drawerBackdrop: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      left: 0,
+      right: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    },
+    drawerContainer: {
+      width: '78%',
+      height: '100%',
+      backgroundColor: colors.background || '#F9F6F0',
+      borderTopLeftRadius: 24,
+      borderBottomLeftRadius: 24,
+      paddingTop: 20,
+      paddingHorizontal: 20,
+      shadowColor: '#000',
+      shadowOffset: { width: -4, height: 0 },
+      shadowOpacity: 0.15,
+      shadowRadius: 10,
+      elevation: 16,
+    },
+    drawerHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    drawerTitle: {
+      fontSize: AppUtils.fontSize(20),
+      fontFamily: AppFonts.recoMedium || 'Recoleta-Medium',
+      color: colors.brown,
+    },
+    closeBtn: {
+      padding: 6,
+    },
+    closeIcon: {
+      width: 24,
+      height: 24,
+      tintColor: colors.brown,
+    },
+    newChatBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary,
+      borderRadius: 25,
+      paddingVertical: 12,
+      marginBottom: 20,
+      shadowColor: colors.primary,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.2,
+      shadowRadius: 5,
+      elevation: 4,
+    },
+    newChatIcon: {
+      width: 18,
+      height: 18,
+      tintColor: 'white',
+      marginRight: 8,
+    },
+    newChatBtnText: {
+      fontSize: AppUtils.fontSize(15),
+      fontFamily: AppFonts.bold || 'Outfit-Bold',
+      color: 'white',
+    },
+    drawerList: {
+      flex: 1,
+    },
+    drawerListItem: {
+      padding: 16,
+      borderRadius: 14,
+      backgroundColor: 'white',
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: 'rgba(58, 33, 16, 0.05)',
+    },
+    drawerListItemActive: {
+      backgroundColor: colors.primary + '12',
+      borderColor: colors.primary,
+    },
+    drawerListItemText: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.medium || 'Outfit-Medium',
+      color: colors.brown,
+      marginBottom: 4,
+    },
+    drawerListItemDate: {
+      fontSize: AppUtils.fontSize(11),
+      fontFamily: AppFonts.regular || 'Outfit-Regular',
+      color: 'rgba(58, 33, 16, 0.4)',
+    },
+    drawerEmptyText: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.regular || 'Outfit-Regular',
+      color: 'rgba(58, 33, 16, 0.5)',
+      textAlign: 'center',
+      marginTop: 40,
+    },
+    drawerLoader: {
+      marginVertical: 15,
     },
   });
 

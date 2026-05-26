@@ -36,8 +36,12 @@ import HelpAndSupport from '../../features/settings/screens/HelpAndSupport/HelpA
 import AboutHeal from '../../features/settings/screens/AboutHeal/AboutHeal';
 import EmergencyResources from '../../features/settings/screens/EmergencyResources/EmergencyResources';
 import TopPointsToast from '../../components/TopPointsToast';
+import useGetApi from '../../hooks/useGetApi';
+import { endpoints } from '../../api/Services/endpoints';
 
 export default function NonAuthStack() {
+  useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {});
+
   const Stack = createNativeStackNavigator();
   return (
     <>

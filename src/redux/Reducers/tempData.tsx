@@ -2,12 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface TempDataState {
   loader: boolean;
-  conversationId: string;
+  conversationId: any;
 }
 
 const initialState: TempDataState = {
   loader: false,
-  conversationId: '',
+  conversationId: null,
 };
 
 const tempDataSlice = createSlice({

@@ -43,7 +43,7 @@ const GetStarted = () => {
       setCurrentIndex(nextIndex);
       flatListRef.current?.scrollToIndex({
         index: nextIndex,
-        animated: true,
+        animated: false,
       });
     }, 3000);
     return () => clearInterval(timer);

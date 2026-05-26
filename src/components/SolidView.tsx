@@ -31,6 +31,7 @@ interface SolidViewProps {
   keyboardVerticalOffset?: any;
   containerStyle?: ViewStyle;
   edges?: any;
+  behavior?: 'padding' | 'height' | 'position';
 }
 const SolidView: React.FC<SolidViewProps> = ({
   viewStyle,
@@ -45,6 +46,7 @@ const SolidView: React.FC<SolidViewProps> = ({
   keyboardVerticalOffset,
   containerStyle,
   edges = ['top'],
+  behavior,
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -74,13 +76,13 @@ const SolidView: React.FC<SolidViewProps> = ({
           style={{
             flex: 1,
           }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          behavior={behavior !== undefined ? behavior : (Platform.OS === 'ios' ? 'padding' : undefined)}
           keyboardVerticalOffset={
             keyboardVerticalOffset !== undefined
               ? keyboardVerticalOffset
               : Platform.OS === 'ios'
-                ? 40
-                : 0
+              ? 40
+              : 0
           }
           enabled={true}
         >

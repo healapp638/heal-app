@@ -1,299 +1,138 @@
-import React, {
-  useContext,
-  useState,
-  useEffect,
-  useRef,
-  cloneElement,
-} from 'react';
-import {
-  View,
-  Image,
-  TouchableOpacity,
-  TextInput,
-  Keyboard,
-  Platform,
-  FlatList,
-  ActivityIndicator,
-  Animated,
-  Easing,
-} from 'react-native';
-import { useTheme, useNavigation } from '@react-navigation/native';
+import React, { useContext, useRef, useCallback, useState } from 'react';
+import { View, FlatList, ActivityIndicator, Platform } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
-import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
-import { triggerHaptic } from '../../../../hooks/useHaptic';
-import { useSelector, useDispatch } from 'react-redux';
-import { setConversationId as setReduxConversationId } from '../../../../redux/Reducers/tempData';
-import useGetApi from '../../../../hooks/useGetApi';
-import usePostApi from '../../../../hooks/usePostApi';
-import { endpoints } from '../../../../api/Services/endpoints';
-import StreamingMessageText from './components/StreamingMessageText';
+
+// Custom Hooks
+import { useDotAnimation } from './hooks/useDotAnimation';
+import { useKeyboardHeight } from './hooks/useKeyboardHeight';
+import { useHealyChat } from './hooks/useHealyChat';
+
+// Extracted Components
+import { WelcomeView } from './components/WelcomeView';
+import { MessageItem } from './components/MessageItem';
+import { ThinkingBubble } from './components/ThinkingBubble';
+import { ChatInputBar } from './components/ChatInputBar';
+import { ConversationDrawer } from './components/ConversationDrawer';
 
 const HealyChat = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
-  const navigation = useNavigation();
   const styles = style(colors);
-  const dispatch = useDispatch();
-
-  const reduxConversationId = useSelector((state: any) => state.tempData?.conversationId);
-  const [chatText, setChatText] = useState('');
-  const [conversationId, setConversationId] = useState(reduxConversationId || '');
-  const [messages, setMessages] = useState<any[]>([]);
-  const [isSending, setIsSending] = useState(false);
-  const [lastStreamedId, setLastStreamedId] = useState<string | null>(null);
 
   const flatListRef = useRef<FlatList>(null);
-  const token = useSelector((state: any) => state.userData?.token);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  // Animated values for the three loading dots
-  const dot1 = useRef(new Animated.Value(0)).current;
-  const dot2 = useRef(new Animated.Value(0)).current;
-  const dot3 = useRef(new Animated.Value(0)).current;
-
-  // Dot bouncing animation sequence loops (calm, fluid, staggered)
-  useEffect(() => {
-    let animation1: Animated.CompositeAnimation | null = null;
-    let animation2: Animated.CompositeAnimation | null = null;
-    let animation3: Animated.CompositeAnimation | null = null;
-
-    if (isSending) {
-      const animateDot = (value: Animated.Value, delay: number) => {
-        return Animated.loop(
-          Animated.sequence([
-            Animated.delay(delay),
-            Animated.timing(value, {
-              toValue: -4,
-              duration: 300,
-              easing: Easing.inOut(Easing.ease),
-              useNativeDriver: true,
-            }),
-            Animated.timing(value, {
-              toValue: 0,
-              duration: 300,
-              easing: Easing.inOut(Easing.ease),
-              useNativeDriver: true,
-            }),
-            Animated.delay(600 - delay),
-          ]),
-        );
-      };
-
-      animation1 = animateDot(dot1, 0);
-      animation2 = animateDot(dot2, 150);
-      animation3 = animateDot(dot3, 300);
-
-      animation1.start();
-      animation2.start();
-      animation3.start();
-    } else {
-      dot1.setValue(0);
-      dot2.setValue(0);
-      dot3.setValue(0);
-    }
-    return () => {
-      if (animation1) {
-        animation1.stop();
-      }
-      if (animation2) {
-        animation2.stop();
-      }
-      if (animation3) {
-        animation3.stop();
-      }
-    };
-  }, [isSending, dot1, dot2, dot3]);
-  // Fetch Message History
+  // Custom Hooks for business logic, keyboard layout, and bouncing loading dots
   const {
-    data: chatData,
-    refetch,
-    isLoading: isHistoryLoading,
-    error: err,
-  } = useGetApi(endpoints.getMessageList, ['getMessageList', conversationId], {
-    conversation_id: conversationId,
-  });
+    messages,
+    isSending,
+    lastStreamedId,
+    setLastStreamedId,
+    shouldAnimateNext,
+    setShouldAnimateNext,
+    isHistoryLoading,
+    handleSend,
+    conversationId,
+    setConversationId,
+    startNewChat,
+    shouldScrollOnLayout,
+    setShouldScrollOnLayout,
+    randomQuestions,
+    loadMorePastMessages,
+    isPaginationLoading,
+  } = useHealyChat(flatListRef);
 
-  // Send Message Mutation
-  const { mutate: sendMessageMutate } = usePostApi();
+  const keyboardHeight = useKeyboardHeight(flatListRef);
+  const [dot1, dot2, dot3] = useDotAnimation(isSending);
 
-  // Load messages from query response
-  useEffect(() => {
-    if (chatData?.data?.result) {
-      setMessages(chatData.data.result);
-    } else if (chatData?.result) {
-      setMessages(chatData.result);
+  const handleScroll = useCallback(
+    (event: any) => {
+      const { contentOffset } = event.nativeEvent;
+      if (contentOffset.y <= 10) {
+        loadMorePastMessages();
+      }
+    },
+    [loadMorePastMessages],
+  );
+
+  const getDynamicWelcomeText = useCallback(() => {
+    const basePrompt = localization.appkeys.chatWelcomePrompt || '';
+    const morningKey = localization.appkeys.timeMorning || 'morning';
+
+    const hour = new Date().getHours();
+    let timeOfDay = localization.appkeys.timeMorning || 'morning';
+
+    if (hour >= 5 && hour < 12) {
+      timeOfDay = localization.appkeys.timeMorning || 'morning';
+    } else if (hour >= 12 && hour < 17) {
+      timeOfDay = localization.appkeys.timeAfternoon || 'afternoon';
+    } else if (hour >= 17 && hour < 21) {
+      timeOfDay = localization.appkeys.timeEvening || 'evening';
+    } else {
+      timeOfDay = localization.appkeys.timeNight || 'night';
     }
-  }, [chatData]);
 
-  // Synchronize conversation_id if found in history list
-  useEffect(() => {
-    const apiConvId =
-      chatData?.data?.conversation_id || chatData?.conversation_id;
-    if (apiConvId && apiConvId !== conversationId) {
-      setConversationId(apiConvId);
-      dispatch(setReduxConversationId(apiConvId));
-    }
-  }, [chatData, conversationId, dispatch]);
+    return basePrompt.replace(new RegExp(morningKey, 'gi'), timeOfDay);
+  }, [localization.appkeys]);
 
-  // Auto-scroll to the bottom when new messages arrive or when sending
-  useEffect(() => {
-    if (messages.length > 0) {
-      setTimeout(() => {
-        flatListRef.current?.scrollToEnd({ animated: true });
-      }, 150);
-    }
-  }, [messages, isSending]);
+  // Memoized render bubble item to prevent full re-renders of the list cells
+  const renderItem = useCallback(
+    ({ item, index }: { item: any; index: number }) => {
+      const isUser = item.role === 'user';
+      const isLatestAssistant =
+        !isUser &&
+        index === messages.length - 1 &&
+        item._id !== lastStreamedId &&
+        shouldAnimateNext;
 
-  // Handle message submission
-  const handleSend = () => {
-    if (chatText.trim().length === 0) return;
+      return (
+        <MessageItem
+          item={item}
+          isLatestAssistant={isLatestAssistant}
+          styles={styles}
+          logoSource={images.h}
+          tintColor={colors.primary}
+          onComplete={() => {
+            setLastStreamedId(item._id);
+            setShouldAnimateNext(false);
+          }}
+        />
+      );
+    },
+    [
+      messages.length,
+      lastStreamedId,
+      shouldAnimateNext,
+      styles,
+      images.h,
+      colors.primary,
+      setLastStreamedId,
+      setShouldAnimateNext,
+    ],
+  );
 
-    Keyboard.dismiss();
-    triggerHaptic('impactMedium');
-
-    const userMessageContent = chatText.trim();
-    setChatText('');
-
-    // Optimistically add user's message to FlatList for real-time responsiveness
-    const tempUserMsg = {
-      _id: `temp-user-${Date.now()}`,
-      role: 'user',
-      message: userMessageContent,
-      createdAt: new Date().toISOString(),
-    };
-
-    setMessages(prev => [...prev, tempUserMsg]);
-    setIsSending(true);
-
-    sendMessageMutate(
-      {
-        endpoint: endpoints.sendMessage,
-        data: {
-          role: 'user',
-          conversation_id: conversationId, // First message sends empty string
-          message: userMessageContent,
-        },
-      },
-      {
-        onSuccess: (res: any) => {
-          console.log('sendMessage response:', res);
-          // Set conversation id once received from response
-          const newConvId =
-            res?.data?.conversation_id ||
-            res?.conversation_id ||
-            res?.data?.id ||
-            res?.id;
-          if (newConvId) {
-            setConversationId(newConvId);
-            dispatch(setReduxConversationId(newConvId));
-          }
-
-          // Refetch messages to update thread with bot response
-          refetch().finally(() => {
-            setIsSending(false);
-          });
-        },
-        onError: (err: any) => {
-          console.log('sendMessage error:', err);
-          setIsSending(false);
-        },
-      },
-    );
-  };
-
-  // Time formatter matching design layout (11:54 AM, 2:20 PM)
-  const formatTime = (dateString?: string) => {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      if (isNaN(date.getTime())) return '';
-
-      let hours = date.getHours();
-      const minutes = date.getMinutes();
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-      return `${hours}:${minutesStr} ${ampm}`;
-    } catch {
-      return '';
-    }
-  };
-
-  const formatMessageTime = (item: any) => {
-    if (item.time) return item.time;
-    const formatted = formatTime(item.createdAt);
-    if (formatted) return formatted;
-
-    // Default to current time for optimistic messages
-    const date = new Date();
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${minutesStr} ${ampm}`;
-  };
-
-  // Render individual chat bubbles
-  const renderItem = ({ item, index }: { item: any; index: number }) => {
-    const isUser = item.role === 'user';
-    const isLatestAssistant =
-      !isUser && index === messages.length - 1 && item._id !== lastStreamedId;
-
-    return (
-      <View
-        style={[
-          styles.messageContainer,
-          isUser ? styles.userMessageContainer : styles.aiMessageContainer,
-        ]}
-      >
-        <View
-          style={[
-            styles.messageBubble,
-            isUser ? styles.userBubble : styles.aiBubble,
-          ]}
-        >
-          {isUser ? (
-            <SolidText style={styles.messageText}>{item.message}</SolidText>
-          ) : (
-            <StreamingMessageText
-              text={item.message}
-              isLatest={isLatestAssistant}
-              style={styles.messageText}
-              logoSource={images.h}
-              logoStyle={styles.inlineLogo}
-              tintColor={colors.primary}
-              onComplete={() => setLastStreamedId(item._id)}
-            />
-          )}
-          <SolidText
-            style={[
-              styles.timeText,
-              isUser ? styles.userTimeText : styles.aiTimeText,
-            ]}
-          >
-            {formatMessageTime(item)}
-          </SolidText>
-        </View>
-      </View>
-    );
-  };
+  // Stable key extractor to optimize VirtualizedList performance
+  const keyExtractor = useCallback((item: any) => {
+    return item._id || item.id || `msg-${Math.random()}`;
+  }, []);
 
   return (
     <SolidView
       isScrollEnabled={false}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? -20 : 0}
+      behavior="padding"
       view={
         <View style={styles.mainContainer}>
           {/* Custom Header with Sidebar */}
           <HeaderCommon
             title={localization.appkeys.healyChat}
             rightIcon={images.sideBar}
-            onRightPress={() => {}}
+            onRightPress={() => setIsDrawerOpen(true)}
+            viewStyle={{ marginBottom: 0 }}
           />
 
           {/* History loading indicator when screen is loaded */}
@@ -307,63 +146,65 @@ const HealyChat = () => {
 
           {/* Welcome Screen or Message List */}
           {messages.length === 0 && !isHistoryLoading ? (
-            <View style={styles.welcomeContainer}>
-              <Image
-                source={images.h}
-                style={styles.logo}
-                resizeMode="contain"
-                tintColor={colors.primary}
-              />
-              <SolidText style={styles.welcomeText}>
-                {localization.appkeys.chatWelcomePrompt}
-              </SolidText>
-            </View>
+            <WelcomeView
+              logoSource={images.h}
+              logoColor={colors.primary}
+              welcomeText={getDynamicWelcomeText()}
+              styles={styles}
+              questions={randomQuestions}
+              onQuestionPress={handleSend}
+            />
           ) : (
             <FlatList
               ref={flatListRef}
               data={messages}
               renderItem={renderItem}
-              keyExtractor={item =>
-                item._id || item.id || `msg-${Math.random()}`
-              }
+              keyExtractor={keyExtractor}
               style={styles.chatList}
-              contentContainerStyle={styles.chatListContent}
+              contentContainerStyle={[
+                styles.chatListContent,
+                {
+                  paddingBottom: styles.chatListContent.paddingBottom,
+                },
+              ]}
+              onScroll={handleScroll}
+              scrollEventThrottle={16}
+              maintainVisibleContentPosition={{
+                minIndexForVisible: 0,
+                autoscrollToTopThreshold: 0,
+              }}
+              onContentSizeChange={() => {
+                if (isSending || shouldAnimateNext || shouldScrollOnLayout) {
+                  flatListRef.current?.scrollToEnd({ animated: false });
+                }
+              }}
               showsVerticalScrollIndicator={false}
+              // List memory and rendering optimizations
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={5}
+              removeClippedSubviews={Platform.OS === 'android'}
+              ListHeaderComponent={() => {
+                if (isPaginationLoading) {
+                  return (
+                    <ActivityIndicator
+                      size="small"
+                      color={colors.primary}
+                      style={{ marginVertical: 10 }}
+                    />
+                  );
+                }
+                return null;
+              }}
               ListFooterComponent={() => {
                 if (isSending) {
                   return (
-                    <View
-                      style={[
-                        styles.messageContainer,
-                        styles.aiMessageContainer,
-                      ]}
-                    >
-                      <View
-                        style={[
-                          styles.aiBubble,
-                          styles.thinkingBubbleContainer,
-                        ]}
-                      >
-                        <Animated.View
-                          style={[
-                            styles.thinkingDot,
-                            { transform: [{ translateY: dot1 }] },
-                          ]}
-                        />
-                        <Animated.View
-                          style={[
-                            styles.thinkingDot,
-                            { transform: [{ translateY: dot2 }] },
-                          ]}
-                        />
-                        <Animated.View
-                          style={[
-                            styles.thinkingDot,
-                            { transform: [{ translateY: dot3 }] },
-                          ]}
-                        />
-                      </View>
-                    </View>
+                    <ThinkingBubble
+                      dot1={dot1 as any}
+                      dot2={dot2 as any}
+                      dot3={dot3 as any}
+                      styles={styles}
+                    />
                   );
                 }
                 return null;
@@ -372,37 +213,24 @@ const HealyChat = () => {
           )}
 
           {/* Chat Input Bar */}
-          <View style={styles.footerContainer}>
-            {/* Plus Button */}
-            <TouchableOpacity style={styles.plusBtn}>
-              <Image
-                source={images.plus}
-                style={styles.plusIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
+          <ChatInputBar
+            onSend={handleSend}
+            placeholder={localization.appkeys.chatInputPlaceholder}
+            plusIconSource={images.plus}
+            sendIconSource={images.send}
+            micIconSource={images.microPhone}
+            styles={styles}
+          />
 
-            {/* Main Input Box */}
-            <View style={styles.inputWrapper}>
-              <TextInput
-                style={styles.textInput}
-                placeholder={localization.appkeys.chatInputPlaceholder}
-                placeholderTextColor="rgba(58,33,16,0.4)"
-                value={chatText}
-                onChangeText={setChatText}
-                maxFontSizeMultiplier={1.4}
-              />
-              <TouchableOpacity onPress={handleSend}>
-                <Image
-                  source={
-                    chatText.trim().length > 0 ? images.send : images.microPhone
-                  }
-                  style={styles.micIcon}
-                  resizeMode="contain"
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
+          {/* Paginated Conversations History Drawer */}
+          <ConversationDrawer
+            isOpen={isDrawerOpen}
+            onClose={() => setIsDrawerOpen(false)}
+            activeConversationId={conversationId}
+            onSelectConversation={setConversationId}
+            onNewChat={startNewChat}
+            styles={styles}
+          />
         </View>
       }
     />
