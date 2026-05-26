@@ -382,7 +382,7 @@ const UserCommonHandler = {
     }),
     getConversationMessages: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            const { conversation_id, page = 1, limit = 20 } = data;
+            const { conversation_id, page, limit } = data;
             // =========================================
             // CHECK CONVERSATION
             // =========================================

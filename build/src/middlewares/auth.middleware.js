@@ -24,6 +24,7 @@ const verifyTokenUser = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         console.log(decoded, "decoded decoded decoded");
         if (decoded.status && ((_a = decoded === null || decoded === void 0 ? void 0 : decoded.data) === null || _a === void 0 ? void 0 : _a.user_type) == 'user') {
             req.body.user = decoded.data;
+            req.userId = decoded.data.user_id || decoded.data._id;
             next();
         }
         else if (!decoded.status) {
@@ -61,6 +62,7 @@ const verifyTokenBoth = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
         const decoded = yield (0, auth_util_1.verifyToken)(req);
         if (decoded.status && ((_a = decoded === null || decoded === void 0 ? void 0 : decoded.data) === null || _a === void 0 ? void 0 : _a.user_type) == 'user' || ((_b = decoded === null || decoded === void 0 ? void 0 : decoded.data) === null || _b === void 0 ? void 0 : _b.user_type) == 'admin') {
             req.body.user = decoded.data;
+            req.userId = decoded.data.user_id || decoded.data._id;
             next();
         }
         else if (!decoded.status) {

@@ -458,7 +458,7 @@ getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
 getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse> => {
     try {
 
-        const {conversation_id,page = 1,limit = 20} = data;
+        const {conversation_id,page ,limit } = data;
 
 
         // =========================================

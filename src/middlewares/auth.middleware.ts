@@ -12,6 +12,7 @@ export const verifyTokenUser = async (req: Request, res: Response, next: NextFun
 
         if (decoded.status && decoded?.data?.user_type == 'user') {
             req.body.user = decoded.data;
+            (req as any).userId = decoded.data.user_id || decoded.data._id;
             next();
         } else if (!decoded.status) {
             return showOutput(res, { status: decoded.status, message: decoded?.message, data: null, code: decoded?.code }, decoded?.code)
@@ -45,6 +46,7 @@ export const verifyTokenBoth = async (req: Request, res: Response, next: NextFun
 
         if (decoded.status && decoded?.data?.user_type == 'user' || decoded?.data?.user_type == 'admin') {
             req.body.user = decoded.data;
+            (req as any).userId = decoded.data.user_id || decoded.data._id;
             next();
         } else if (!decoded.status) {
             return showOutput(res, { status: decoded.status, message: decoded?.message, data: null, code: decoded?.code }, decoded?.code)
