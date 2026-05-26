@@ -123,7 +123,7 @@ exports.getEnvironmentParams = getEnvironmentParams;
 // Define your tryCatchWrapper function
 const tryCatchWrapper = (func) => {
     return (...args) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         try {
             const result = yield func(...args);
             return result;
@@ -145,12 +145,15 @@ const tryCatchWrapper = (func) => {
             }
             // Log the error
             logger_config_1.default.error(`[tryCatchWrapper] Error in ${(func === null || func === void 0 ? void 0 : func.name) || 'unknown_func'} for user ${userId}: ${errorMessage}`, {
+                type: "error",
+                requestId: (_d = args === null || args === void 0 ? void 0 : args[0]) === null || _d === void 0 ? void 0 : _d.id,
+                // userId: args?.[0]?.userId,
                 error: err,
                 stack: errorStack,
                 userId,
                 payload: args,
             });
-            return (0, response_util_1.showResponse)(false, (_d = err === null || err === void 0 ? void 0 : err.message) !== null && _d !== void 0 ? _d : err, null, statusCodes_1.default.SERVER_TRYCATCH_ERROR);
+            return (0, response_util_1.showResponse)(false, (_e = err === null || err === void 0 ? void 0 : err.message) !== null && _e !== void 0 ? _e : err, null, statusCodes_1.default.SERVER_TRYCATCH_ERROR);
         }
     });
 };

@@ -62,4 +62,32 @@ export const UserTranslateText = async (text: string, targetLanguage: string, so
     }
 };
 
+export const AutoTranslateText = async (text: string, targetLanguage: string, sourceLanguage: string = 'auto') => {
+    try {
+        // Skip if source and target are the same
+        if (sourceLanguage !== 'auto' && targetLanguage === sourceLanguage) {
+            return text;
+        }
+        
+        // For auto-detection, don't specify source
+        const options: any = {
+            to: targetLanguage,
+        };
+        
+        // Only add 'from' if source is not 'auto'
+        if (sourceLanguage !== 'auto') {
+            options.from = sourceLanguage;
+        }
+        
+        // console.log(`Translating "${text}" to ${targetLanguage} with options:`, options);
+        
+        const [translation] = await translate.translate(text, options);
+        return translation;
+        
+    } catch (errors) {
+        console.log(`Translation error for "${text}" to ${targetLanguage}:`, errors);
+        return text;
+    }
+};
+
 

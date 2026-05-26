@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserTranslateText = exports.translatePlainText = exports.translateText = void 0;
+exports.AutoTranslateText = exports.UserTranslateText = exports.translatePlainText = exports.translateText = void 0;
 const translate_1 = require("@google-cloud/translate");
 const translate = new translate_1.Translate({
     key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
@@ -72,3 +72,27 @@ const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(voi
     }
 });
 exports.UserTranslateText = UserTranslateText;
+const AutoTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(void 0, [text_1, targetLanguage_1, ...args_1], void 0, function* (text, targetLanguage, sourceLanguage = 'auto') {
+    try {
+        // Skip if source and target are the same
+        if (sourceLanguage !== 'auto' && targetLanguage === sourceLanguage) {
+            return text;
+        }
+        // For auto-detection, don't specify source
+        const options = {
+            to: targetLanguage,
+        };
+        // Only add 'from' if source is not 'auto'
+        if (sourceLanguage !== 'auto') {
+            options.from = sourceLanguage;
+        }
+        // console.log(`Translating "${text}" to ${targetLanguage} with options:`, options);
+        const [translation] = yield translate.translate(text, options);
+        return translation;
+    }
+    catch (errors) {
+        console.log(`Translation error for "${text}" to ${targetLanguage}:`, errors);
+        return text;
+    }
+});
+exports.AutoTranslateText = AutoTranslateText;

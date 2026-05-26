@@ -35,11 +35,19 @@ const UserCommonHandler = {
             description: {}
         };
         const langs = Object.values(workflow_constant_1.languages);
+        const sourceLanguage = 'en';
         yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            // Skip translation if target is same as source
+            if (lang === sourceLanguage) {
+                obj.feeling[lang] = feeling;
+                obj.title[lang] = title;
+                obj.description[lang] = description;
+                return;
+            }
             const [translatedFeeling, translatedTitle, translatedDescription] = yield Promise.all([
-                (0, langauge_translate_helper_1.UserTranslateText)(feeling, lang, user.language),
-                (0, langauge_translate_helper_1.UserTranslateText)(title, lang, user.language),
-                (0, langauge_translate_helper_1.UserTranslateText)(description, lang, user.language)
+                (0, langauge_translate_helper_1.AutoTranslateText)(feeling, lang, sourceLanguage),
+                (0, langauge_translate_helper_1.AutoTranslateText)(title, lang, sourceLanguage),
+                (0, langauge_translate_helper_1.AutoTranslateText)(description, lang, sourceLanguage)
             ]);
             obj.feeling[lang] = translatedFeeling;
             obj.title[lang] = translatedTitle;

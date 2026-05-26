@@ -107,6 +107,9 @@ export const tryCatchWrapper = (func: any) => {
 
             // Log the error
             logger.error(`[tryCatchWrapper] Error in ${func?.name || 'unknown_func'} for user ${userId}: ${errorMessage}`, {
+                type: "error",
+                requestId: args?.[0]?.id,
+                // userId: args?.[0]?.userId,
                 error: err,
                 stack: errorStack,
                 userId,

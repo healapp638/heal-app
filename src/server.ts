@@ -16,6 +16,7 @@ import cron from "node-cron";
 import { generateAffirmation, scheduleCroneJOb } from "./helpers/cronjob.func";
 import userDeeplinkModel from "./modules/UserAffirmation/user.deeplink.model";
 import { monitorEventLoopDelay } from "perf_hooks";
+import { requestIdMiddleware } from "./middlewares/requestId.middlewear";
 // import { PubSub } from "@google-cloud/pubsub";
 // import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
 // const pubsub = new PubSub({
@@ -65,15 +66,8 @@ setInterval(() => {
   // console.log('mean', h.mean / 1e6);
 }, 50000);
 
-// blocked((time: any, stack: any) => {
-//   console.log(`Blocked for ${time}ms`);
-//   console.log(stack);
-//   console.log('blocked')
-// }, { threshold: 20 })
-
 //  SECURITY MIDDLEWARE
 app.use(helmet());
-
 
 //  CORS CONFIG 
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/"];
@@ -93,11 +87,63 @@ app.use(
   })
 );
 
-
+app.use(requestIdMiddleware); 
 app.use(bodyParser.json());
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
+// morgan.token("userId", (req: any) => req.userId || "anonymous");
+// morgan.token("requestId", (req: any) => req.id || "unknown");
+// // Custom Morgan format for JSON logging
+// const morganFormat = JSON.stringify({    //STEP 3: Morgan logs request
+//   type: "access",
+//   method: ":method",
+//   url: ":url",
+//   status: ":status",
+//   responseTime: ":response-time ms",
+//   requestId: ":requestId",
+//   userId: ":userId",
+//   ip: ":remote-addr",
+//   userAgent: ":user-agent",
+//   // timestamp: ":date[iso]"
+// });
+
+
+// app.use(morgan(morganFormat, {
+//   stream: {
+//     write: (message) => {
+//       try {
+//         const logData = JSON.parse(message);
+//         logger.info("Access Log", logData);   //sends this to logger  Stored in: logs/access.log
+//       } catch {
+//         logger.info("Access Log", {
+//           type: "access",
+//           raw: message.trim(),
+//         });
+//       }
+//     }
+//   }
+// }));
+
+// app.use((req: any, res: any, next: any) => {
+//   const start = Date.now();
+
+//   res.on("finish", () => {
+//     logger.info("API_RESPONSE", {
+//       type: "app",
+//       requestId: req.id,
+//       userId: req.userId ? req.userId.toString() : "anonymous",
+//       method: req.method,
+//       url: req.originalUrl,
+//       status: res.statusCode,
+//       duration: `${Date.now() - start}ms`,
+//       ip: req.ip,
+//       userAgent: req.headers["user-agent"],
+//     });
+//   });
+
+//   next();
+// });
 
 
 app.use(express.static("public"));

@@ -6,7 +6,7 @@ import { languages, USER_STATUS } from "../../constants/workflow.constant";
 import { getMessage } from "../../helpers/messages";
 import userJournalModel from "./user.journel.model";
 import { convertToObjectId, getCountAndPagination } from "../../helpers/common.helper";
-import { UserTranslateText } from "../../helpers/langauge.translate.helper";
+import { AutoTranslateText, UserTranslateText } from "../../helpers/langauge.translate.helper";
 import moment from "moment";
 
 const UserCommonHandler = {
@@ -26,13 +26,20 @@ const UserCommonHandler = {
         };
 
         const langs = Object.values(languages);
-
+        const sourceLanguage = 'en'; 
         await Promise.all(
             langs.map(async (lang: string) => {
+                            // Skip translation if target is same as source
+            if (lang === sourceLanguage) {
+                obj.feeling[lang] = feeling;
+                obj.title[lang] = title;
+                obj.description[lang] = description;
+                return;
+            }
                 const [translatedFeeling, translatedTitle, translatedDescription] = await Promise.all([
-                    UserTranslateText(feeling, lang, user.language),
-                    UserTranslateText(title, lang, user.language),
-                    UserTranslateText(description, lang, user.language)
+                    AutoTranslateText(feeling, lang, sourceLanguage),
+                    AutoTranslateText(title, lang, sourceLanguage),
+                    AutoTranslateText(description, lang, sourceLanguage)
                 ]);
 
                 obj.feeling[lang] = translatedFeeling;

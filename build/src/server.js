@@ -30,6 +30,7 @@ const node_cron_1 = __importDefault(require("node-cron"));
 const cronjob_func_1 = require("./helpers/cronjob.func");
 const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation/user.deeplink.model"));
 const perf_hooks_1 = require("perf_hooks");
+const requestId_middlewear_1 = require("./middlewares/requestId.middlewear");
 // import { PubSub } from "@google-cloud/pubsub";
 // import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
 // const pubsub = new PubSub({
@@ -68,11 +69,6 @@ setInterval(() => {
     // console.log('max', h.max / 1e6);
     // console.log('mean', h.mean / 1e6);
 }, 50000);
-// blocked((time: any, stack: any) => {
-//   console.log(`Blocked for ${time}ms`);
-//   console.log(stack);
-//   console.log('blocked')
-// }, { threshold: 20 })
 //  SECURITY MIDDLEWARE
 app.use((0, helmet_1.default)());
 //  CORS CONFIG 
@@ -86,10 +82,58 @@ app.use((0, compression_1.default)({
     level: 6, // balanced speed vs compression
     threshold: 1024 //  best default 1kB
 }));
+app.use(requestId_middlewear_1.requestIdMiddleware);
 app.use(body_parser_1.default.json());
 app.use(express_1.default.json({ limit: "50mb" }));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, morgan_1.default)("tiny"));
+// morgan.token("userId", (req: any) => req.userId || "anonymous");
+// morgan.token("requestId", (req: any) => req.id || "unknown");
+// // Custom Morgan format for JSON logging
+// const morganFormat = JSON.stringify({    //STEP 3: Morgan logs request
+//   type: "access",
+//   method: ":method",
+//   url: ":url",
+//   status: ":status",
+//   responseTime: ":response-time ms",
+//   requestId: ":requestId",
+//   userId: ":userId",
+//   ip: ":remote-addr",
+//   userAgent: ":user-agent",
+//   // timestamp: ":date[iso]"
+// });
+// app.use(morgan(morganFormat, {
+//   stream: {
+//     write: (message) => {
+//       try {
+//         const logData = JSON.parse(message);
+//         logger.info("Access Log", logData);   //sends this to logger  Stored in: logs/access.log
+//       } catch {
+//         logger.info("Access Log", {
+//           type: "access",
+//           raw: message.trim(),
+//         });
+//       }
+//     }
+//   }
+// }));
+// app.use((req: any, res: any, next: any) => {
+//   const start = Date.now();
+//   res.on("finish", () => {
+//     logger.info("API_RESPONSE", {
+//       type: "app",
+//       requestId: req.id,
+//       userId: req.userId ? req.userId.toString() : "anonymous",
+//       method: req.method,
+//       url: req.originalUrl,
+//       status: res.statusCode,
+//       duration: `${Date.now() - start}ms`,
+//       ip: req.ip,
+//       userAgent: req.headers["user-agent"],
+//     });
+//   });
+//   next();
+// });
 app.use(express_1.default.static("public"));
 app.use(express_1.default.static(path_1.default.join(__dirname, "/public")));
 app.use("/files", express_1.default.static(path_1.default.join(__dirname, "/public/uploads")));
