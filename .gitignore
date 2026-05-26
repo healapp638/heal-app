@@ -75,4 +75,4 @@ buck-out/
 /node_modules/*
 Source Control - fastlane docs
 #  git-crypt private key
- my-secret-key
+my-secret-key
