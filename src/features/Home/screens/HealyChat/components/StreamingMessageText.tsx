@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { Image } from 'react-native';
 import SolidText from '../../../../../components/SolidText';
 
 interface StreamingMessageTextProps {
   text: string;
   isLatest: boolean;
   style: any;
-  logoHStyle: any;
-  logoDotStyle: any;
+  logoSource: any;
+  logoStyle: any;
+  tintColor?: string;
   onComplete?: () => void;
 }
 
@@ -14,8 +16,9 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   text,
   isLatest,
   style,
-  logoHStyle,
-  logoDotStyle,
+  logoSource,
+  logoStyle,
+  tintColor,
   onComplete,
 }) => {
   const [displayedText, setDisplayedText] = useState('');
@@ -34,7 +37,7 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
             onComplete();
           }
         }
-      }, 15); // 15ms character rate for fluid, premium typing transitions
+      }, 15); // Fluid typing transition
       return () => clearInterval(interval);
     } else {
       setDisplayedText(text);
@@ -43,9 +46,13 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
 
   return (
     <SolidText style={style}>
-      {displayedText}
-      <SolidText style={logoHStyle}> h</SolidText>
-      <SolidText style={logoDotStyle}>.</SolidText>
+      {displayedText}{'  '}
+      <Image
+        source={logoSource}
+        style={logoStyle}
+        tintColor={tintColor}
+        resizeMode="contain"
+      />
     </SolidText>
   );
 };

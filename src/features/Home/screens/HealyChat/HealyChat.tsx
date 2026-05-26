@@ -229,8 +229,9 @@ const HealyChat = () => {
               text={item.message}
               isLatest={isLatestAssistant}
               style={styles.messageText}
-              logoHStyle={styles.inlineLogoH}
-              logoDotStyle={styles.inlineLogoDot}
+              logoSource={images.h}
+              logoStyle={styles.inlineLogo}
+              tintColor={colors.primary}
               onComplete={() => setLastStreamedId(item._id)}
             />
           )}
@@ -302,19 +303,16 @@ const HealyChat = () => {
                         styles.aiMessageContainer,
                       ]}
                     >
-                      <View
-                        style={[styles.aiBubble, styles.thinkingBubbleContainer]}
-                      >
-                        <View style={styles.logoContainer}>
-                          <SolidText style={styles.thinkingLogoH}>h</SolidText>
-                          <Animated.View
-                            style={{ transform: [{ translateY: dotAnim }] }}
-                          >
-                            <SolidText style={styles.thinkingLogoDot}>
-                              .
-                            </SolidText>
-                          </Animated.View>
-                        </View>
+                        <Animated.View
+                          style={{ transform: [{ translateY: dotAnim }] }}
+                        >
+                          <Image
+                            source={images.h}
+                            style={styles.thinkingLogoImage}
+                            tintColor={colors.primary}
+                            resizeMode="contain"
+                          />
+                        </Animated.View>
                       </View>
                     </View>
                   );

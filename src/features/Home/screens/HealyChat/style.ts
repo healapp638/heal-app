@@ -165,29 +165,13 @@ const style = (colors: any) =>
       paddingHorizontal: 0,
       paddingVertical: 0,
     },
-    thinkingLogoH: {
-      fontSize: AppUtils.fontSize(18),
-      fontFamily: AppFonts.recoMedium, // Use Recoleta font for logo
-      color: colors.primary,
-      includeFontPadding: false,
+    thinkingLogoImage: {
+      width: 24,
+      height: 24,
     },
-    thinkingLogoDot: {
-      fontSize: AppUtils.fontSize(22),
-      fontFamily: AppFonts.bold,
-      color: colors.primary,
-      lineHeight: 18,
-      marginLeft: 1,
-      includeFontPadding: false,
-    },
-    inlineLogoH: {
-      fontSize: AppUtils.fontSize(14),
-      fontFamily: AppFonts.recoMedium, // Cohesive inline branding
-      color: colors.primary,
-    },
-    inlineLogoDot: {
-      fontSize: AppUtils.fontSize(16),
-      fontFamily: AppFonts.bold,
-      color: colors.primary,
+    inlineLogo: {
+      width: 16,
+      height: 16,
     },
   });
 
