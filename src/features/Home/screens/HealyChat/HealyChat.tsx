@@ -1,4 +1,10 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, {
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+  cloneElement,
+} from 'react';
 import {
   View,
   Image,
@@ -32,6 +38,7 @@ const HealyChat = () => {
 
   const [chatText, setChatText] = useState('');
   const [conversationId, setConversationId] = useState('');
+  console.log(conversationId);
   const [messages, setMessages] = useState<any[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [lastStreamedId, setLastStreamedId] = useState<string | null>(null);
@@ -68,7 +75,7 @@ const HealyChat = () => {
               useNativeDriver: true,
             }),
             Animated.delay(600 - delay),
-          ])
+          ]),
         );
       };
 
@@ -96,12 +103,12 @@ const HealyChat = () => {
       }
     };
   }, [isSending, dot1, dot2, dot3]);
-
   // Fetch Message History
   const {
     data: chatData,
     refetch,
     isLoading: isHistoryLoading,
+    error: err,
   } = useGetApi(endpoints.getMessageList, ['getMessageList', conversationId], {
     conversation_id: conversationId,
   });
@@ -154,7 +161,7 @@ const HealyChat = () => {
       createdAt: new Date().toISOString(),
     };
 
-    setMessages((prev) => [...prev, tempUserMsg]);
+    setMessages(prev => [...prev, tempUserMsg]);
     setIsSending(true);
 
     sendMessageMutate(
@@ -188,7 +195,7 @@ const HealyChat = () => {
           console.log('sendMessage error:', err);
           setIsSending(false);
         },
-      }
+      },
     );
   };
 
@@ -312,7 +319,7 @@ const HealyChat = () => {
               ref={flatListRef}
               data={messages}
               renderItem={renderItem}
-              keyExtractor={(item) =>
+              keyExtractor={item =>
                 item._id || item.id || `msg-${Math.random()}`
               }
               style={styles.chatList}
@@ -328,7 +335,10 @@ const HealyChat = () => {
                       ]}
                     >
                       <View
-                        style={[styles.aiBubble, styles.thinkingBubbleContainer]}
+                        style={[
+                          styles.aiBubble,
+                          styles.thinkingBubbleContainer,
+                        ]}
                       >
                         <Animated.View
                           style={[

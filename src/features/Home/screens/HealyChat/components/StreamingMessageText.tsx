@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Image } from 'react-native';
+import { View, Image } from 'react-native';
 import SolidText from '../../../../../components/SolidText';
 
 interface StreamingMessageTextProps {
@@ -49,20 +49,17 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   }, [text, isLatest]);
 
   return (
-    <SolidText style={style}>
-      {displayedText}
+    <View style={{ alignItems: 'flex-start' }}>
+      <SolidText style={style}>{displayedText}</SolidText>
       {isDone && (
-        <>
-          {'  '}
-          <Image
-            source={logoSource}
-            style={logoStyle}
-            tintColor={tintColor}
-            resizeMode="contain"
-          />
-        </>
+        <Image
+          source={logoSource}
+          style={[logoStyle, { marginTop: 6 }]}
+          tintColor={tintColor}
+          resizeMode="contain"
+        />
       )}
-    </SolidText>
+    </View>
   );
 };
 
