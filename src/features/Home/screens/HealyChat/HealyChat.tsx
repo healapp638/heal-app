@@ -275,7 +275,7 @@ const HealyChat = () => {
   return (
     <SolidView
       isScrollEnabled={false}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
       view={
         <View style={styles.mainContainer}>
           {/* Custom Header with Sidebar */}

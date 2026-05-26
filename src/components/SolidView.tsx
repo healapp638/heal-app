@@ -14,8 +14,6 @@ import { useTheme, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   KeyboardAvoidingView,
-} from 'react-native';
-import {
   KeyboardAwareScrollView,
 } from 'react-native-keyboard-controller';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
