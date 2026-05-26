@@ -218,7 +218,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
         // CREATE CONVERSATION
         // =========================================
 
-        if (!conversation_id ||!conversation_id.trim()) {
+        if (!conversation_id ||!conversation_id.trim() || conversation_id == null) {
 
             let shortTitle = "New Chat";
 
