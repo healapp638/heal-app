@@ -31,6 +31,7 @@ const cronjob_func_1 = require("./helpers/cronjob.func");
 const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation/user.deeplink.model"));
 const perf_hooks_1 = require("perf_hooks");
 const requestId_middlewear_1 = require("./middlewares/requestId.middlewear");
+const logger_config_1 = __importDefault(require("./configs/logger.config"));
 // import { PubSub } from "@google-cloud/pubsub";
 // import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
 // const pubsub = new PubSub({
@@ -87,53 +88,54 @@ app.use(body_parser_1.default.json());
 app.use(express_1.default.json({ limit: "50mb" }));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, morgan_1.default)("tiny"));
-// morgan.token("userId", (req: any) => req.userId || "anonymous");
-// morgan.token("requestId", (req: any) => req.id || "unknown");
-// // Custom Morgan format for JSON logging
-// const morganFormat = JSON.stringify({    //STEP 3: Morgan logs request
-//   type: "access",
-//   method: ":method",
-//   url: ":url",
-//   status: ":status",
-//   responseTime: ":response-time ms",
-//   requestId: ":requestId",
-//   userId: ":userId",
-//   ip: ":remote-addr",
-//   userAgent: ":user-agent",
-//   // timestamp: ":date[iso]"
-// });
-// app.use(morgan(morganFormat, {
-//   stream: {
-//     write: (message) => {
-//       try {
-//         const logData = JSON.parse(message);
-//         logger.info("Access Log", logData);   //sends this to logger  Stored in: logs/access.log
-//       } catch {
-//         logger.info("Access Log", {
-//           type: "access",
-//           raw: message.trim(),
-//         });
-//       }
-//     }
-//   }
-// }));
-// app.use((req: any, res: any, next: any) => {
-//   const start = Date.now();
-//   res.on("finish", () => {
-//     logger.info("API_RESPONSE", {
-//       type: "app",
-//       requestId: req.id,
-//       userId: req.userId ? req.userId.toString() : "anonymous",
-//       method: req.method,
-//       url: req.originalUrl,
-//       status: res.statusCode,
-//       duration: `${Date.now() - start}ms`,
-//       ip: req.ip,
-//       userAgent: req.headers["user-agent"],
-//     });
-//   });
-//   next();
-// });
+morgan_1.default.token("userId", (req) => req.userId || "anonymous");
+morgan_1.default.token("requestId", (req) => req.id || "unknown");
+// Custom Morgan format for JSON logging
+const morganFormat = JSON.stringify({
+    type: "access",
+    method: ":method",
+    url: ":url",
+    status: ":status",
+    responseTime: ":response-time ms",
+    requestId: ":requestId",
+    userId: ":userId",
+    ip: ":remote-addr",
+    userAgent: ":user-agent",
+    // timestamp: ":date[iso]"
+});
+app.use((0, morgan_1.default)(morganFormat, {
+    stream: {
+        write: (message) => {
+            try {
+                const logData = JSON.parse(message);
+                logger_config_1.default.info("Access Log", logData); //sends this to logger  Stored in: logs/access.log
+            }
+            catch (_a) {
+                logger_config_1.default.info("Access Log", {
+                    type: "access",
+                    raw: message.trim(),
+                });
+            }
+        }
+    }
+}));
+app.use((req, res, next) => {
+    const start = Date.now();
+    res.on("finish", () => {
+        logger_config_1.default.info("API_RESPONSE", {
+            type: "app",
+            requestId: req.id,
+            userId: req.userId ? req.userId.toString() : "anonymous",
+            method: req.method,
+            url: req.originalUrl,
+            status: res.statusCode,
+            duration: `${Date.now() - start}ms`,
+            ip: req.ip,
+            userAgent: req.headers["user-agent"],
+        });
+    });
+    next();
+});
 app.use(express_1.default.static("public"));
 app.use(express_1.default.static(path_1.default.join(__dirname, "/public")));
 app.use("/files", express_1.default.static(path_1.default.join(__dirname, "/public/uploads")));
@@ -328,6 +330,28 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 app.use("/api/v1", index_1.default);
 app.use(config_util_1.handleFileSize);
+/* =========================
+   GLOBAL ERROR HANDLER
+========================= */
+app.use((err, req, res, next) => {
+    // const requestId = req?.id || "unknown_request";
+    // Satisfy linter without changing config
+    // if (!err) next();
+    if (!err)
+        return next();
+    logger_config_1.default.error("GLOBAL_ERROR_HANDLER", {
+        type: "error",
+        requestId: req.id,
+        userId: req.userId, // 👈 ADD THIS
+        message: err.message,
+        stack: err.stack,
+    });
+    res.status(500).json({
+        success: false,
+        message: "Something went wrong",
+        requestId: req.id,
+    });
+});
 app.listen(app_constant_1.APP.PORT, () => {
     console.log("Server is running on port", app_constant_1.APP.PORT);
     console.log("Swagger link:", `http://localhost:${app_constant_1.APP.PORT}/swagger`);
@@ -361,3 +385,22 @@ app.listen(app_constant_1.APP.PORT, () => {
 //   }
 // }
 // receiveNotifications().catch(console.error);
+/* =========================
+   PROCESS SAFETY  //handle unexpected crashes
+========================= */
+process.on("uncaughtException", (err) => {
+    logger_config_1.default.error("UNCAUGHT_EXCEPTION", {
+        type: "system",
+        message: err.message,
+        stack: err.stack,
+    });
+    // process.exit(1);
+});
+process.on("unhandledRejection", (reason) => {
+    logger_config_1.default.error("UNHANDLED_REJECTION", {
+        type: "system",
+        message: (reason === null || reason === void 0 ? void 0 : reason.message) || reason,
+        stack: reason === null || reason === void 0 ? void 0 : reason.stack,
+    });
+    // process.exit(1);
+});

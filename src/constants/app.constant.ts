@@ -59,7 +59,7 @@ const DATABASE_URI = {
 
 const DB: DbConstant = {
   DB_NAME: process.env.DB_NAME || '',
-  MONGODB_URI: '',
+  MONGODB_URI: process.env.MONGODB_URI || '',
 };
 
 
@@ -126,6 +126,11 @@ const initializeAwsCredential = async () => {
   GOOGLE_TRANSLATE_API_KEY,
   STMP_EMAIL,
   SMTP_API_KEY,
+  DB_URI,
+  JWT_SECRET,
+  ACCESSID,
+  REGION,
+  BUCKET
 });
   try {
     // call this function when parameters are stored to aws
@@ -165,7 +170,7 @@ const initializeAwsCredential = async () => {
     APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
     EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
     EMAIL_CREDENTIAL.SMTP_API_KEY = smtpApiKey;
-    // console.log("googleTranslateApiKey =", googleTranslateApiKey);
+    console.log("MONGODB_URI =", DB.MONGODB_URI);
     // console.log("smtpEmail =", smtpEmail);
     // console.log("smtpApiKey =", smtpApiKey);
     // console.log("EMAIL_CREDENTIALllllllll", EMAIL_CREDENTIAL);

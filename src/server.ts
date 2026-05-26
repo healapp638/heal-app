@@ -17,6 +17,8 @@ import { generateAffirmation, scheduleCroneJOb } from "./helpers/cronjob.func";
 import userDeeplinkModel from "./modules/UserAffirmation/user.deeplink.model";
 import { monitorEventLoopDelay } from "perf_hooks";
 import { requestIdMiddleware } from "./middlewares/requestId.middlewear";
+import logger from "./configs/logger.config";
+
 // import { PubSub } from "@google-cloud/pubsub";
 // import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
 // const pubsub = new PubSub({
@@ -92,58 +94,58 @@ app.use(bodyParser.json());
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("tiny"));
-// morgan.token("userId", (req: any) => req.userId || "anonymous");
-// morgan.token("requestId", (req: any) => req.id || "unknown");
-// // Custom Morgan format for JSON logging
-// const morganFormat = JSON.stringify({    //STEP 3: Morgan logs request
-//   type: "access",
-//   method: ":method",
-//   url: ":url",
-//   status: ":status",
-//   responseTime: ":response-time ms",
-//   requestId: ":requestId",
-//   userId: ":userId",
-//   ip: ":remote-addr",
-//   userAgent: ":user-agent",
-//   // timestamp: ":date[iso]"
-// });
+morgan.token("userId", (req: any) => req.userId || "anonymous");
+morgan.token("requestId", (req: any) => req.id || "unknown");
+// Custom Morgan format for JSON logging
+const morganFormat = JSON.stringify({    //STEP 3: Morgan logs request
+  type: "access",
+  method: ":method",
+  url: ":url",
+  status: ":status",
+  responseTime: ":response-time ms",
+  requestId: ":requestId",
+  userId: ":userId",
+  ip: ":remote-addr",
+  userAgent: ":user-agent",
+  // timestamp: ":date[iso]"
+});
 
 
-// app.use(morgan(morganFormat, {
-//   stream: {
-//     write: (message) => {
-//       try {
-//         const logData = JSON.parse(message);
-//         logger.info("Access Log", logData);   //sends this to logger  Stored in: logs/access.log
-//       } catch {
-//         logger.info("Access Log", {
-//           type: "access",
-//           raw: message.trim(),
-//         });
-//       }
-//     }
-//   }
-// }));
+app.use(morgan(morganFormat, {
+  stream: {
+    write: (message) => {
+      try {
+        const logData = JSON.parse(message);
+        logger.info("Access Log", logData);   //sends this to logger  Stored in: logs/access.log
+      } catch {
+        logger.info("Access Log", {
+          type: "access",
+          raw: message.trim(),
+        });
+      }
+    }
+  }
+}));
 
-// app.use((req: any, res: any, next: any) => {
-//   const start = Date.now();
+app.use((req: any, res: any, next: any) => {
+  const start = Date.now();
 
-//   res.on("finish", () => {
-//     logger.info("API_RESPONSE", {
-//       type: "app",
-//       requestId: req.id,
-//       userId: req.userId ? req.userId.toString() : "anonymous",
-//       method: req.method,
-//       url: req.originalUrl,
-//       status: res.statusCode,
-//       duration: `${Date.now() - start}ms`,
-//       ip: req.ip,
-//       userAgent: req.headers["user-agent"],
-//     });
-//   });
+  res.on("finish", () => {
+    logger.info("API_RESPONSE", {
+      type: "app",
+      requestId: req.id,
+      userId: req.userId ? req.userId.toString() : "anonymous",
+      method: req.method,
+      url: req.originalUrl,
+      status: res.statusCode,
+      duration: `${Date.now() - start}ms`,
+      ip: req.ip,
+      userAgent: req.headers["user-agent"],
+    });
+  });
 
-//   next();
-// });
+  next();
+});
 
 
 app.use(express.static("public"));
@@ -376,6 +378,30 @@ console.log("deeplink")
 app.use("/api/v1", Routes);
 app.use(handleFileSize as any);
 
+/* =========================
+   GLOBAL ERROR HANDLER
+========================= */
+app.use((err: any, req: any, res: any, next: any) => {         //handle request failures
+  // const requestId = req?.id || "unknown_request";
+  // Satisfy linter without changing config
+  // if (!err) next();
+  if (!err) return next();
+
+  logger.error("GLOBAL_ERROR_HANDLER", {
+    type: "error",
+    requestId: req.id,
+    userId: req.userId,   // 👈 ADD THIS
+    message: err.message,
+    stack: err.stack,
+  });
+
+  res.status(500).json({
+    success: false,
+    message: "Something went wrong",
+    requestId: req.id,
+  });
+});
+
 
 app.listen(APP.PORT, () => {
   console.log("Server is running on port", APP.PORT);
@@ -415,3 +441,24 @@ scheduleCroneJOb()
 //   }
 // }
 // receiveNotifications().catch(console.error);
+
+/* =========================
+   PROCESS SAFETY  //handle unexpected crashes
+========================= */
+process.on("uncaughtException", (err) => {    //This listens for synchronous errors that were NOT caught anywhere in your code.
+  logger.error("UNCAUGHT_EXCEPTION", {
+    type: "system",
+    message: err.message,
+    stack: err.stack,
+  });
+  // process.exit(1);
+});
+
+process.on("unhandledRejection", (reason: any) => {   //This catches Promise rejections that were not handled with .catch() or try/catch (async/await).
+  logger.error("UNHANDLED_REJECTION", {
+    type: "system",
+    message: reason?.message || reason,
+    stack: reason?.stack,
+  });
+  // process.exit(1);
+});

@@ -10,6 +10,7 @@ import adminPhasesModel from "../modules/AdminPhases/admin.phases.model";
 // import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
 // import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
 import { connection as connectDB } from "../configs/mongoose.config";
+import { DB, initializeAwsCredential } from "../constants/app.constant";
 import adminExelModel from "../modules/AdminCommon/admin.exel.model";
 import { sendTopicNotification } from "../services/notification.service";
 import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
@@ -17,6 +18,19 @@ import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.mo
 import adminMcqexerciseModel from "../modules/AdminExercise/admin.mcqexercise.model";
 
 console.log("👷 Worker booting...");
+console.log("Worker DB URI BEFORE AWS:", DB.MONGODB_URI);
+// const bootstrap = async () => {
+//     console.log("Before AWS:", DB.MONGODB_URI);
+
+//     await initializeAwsCredential();
+
+//     console.log("After AWS:", DB.MONGODB_URI);
+
+//     await startWorker();
+//     await startAffirmationWorker();
+// };
+
+// bootstrap().catch(console.error);
 
 // ✅ Redis connection
 const redisConnection = new IORedis({
@@ -95,6 +109,7 @@ const updateImportStatus = async (themeTitle: string, status: number) => {
 // 🚀 START WORKER
 const startWorker = async () => {
     console.log("🔌 Connecting DB...");
+    await initializeAwsCredential();
     await connectDB();
     console.log("✅ DB connected");
 
@@ -203,108 +218,6 @@ const startWorker = async () => {
                         );
                         console.log("📌 Phase:", phase._id);
 
-                    //     // ================= LESSON =================
-                    //     const exerciseDetail = await safeUpsert(
-                    //         adminExerciseDetailsModel,
-                    //         {
-                    //             phase_id: phase._id,
-                    //             "reading_title.en": row.lesson_reading_title.trim(),
-                    //         },
-                    //         {
-                    //             phase_id: phase._id,
-                    //             reading_title: await getTranslatedObj(row.lesson_reading_title.trim()),
-                    //             reading_description: await getTranslatedObj(
-                    //                 row.lesson_reading_description
-                    //             ),
-                    //             concept_title: await getTranslatedObj(
-                    //                 row.lesson_concept_title
-                    //             ),
-                    //             concept_description: await getTranslatedObj(
-                    //                 row.lesson_concept_description
-                    //             ),
-                    //             reflection: await getTranslatedObj(row.lesson_reflection),
-                    //         }
-                    //     );
-                    //     console.log("📘 ExerciseDetail:", exerciseDetail._id);
-
-                    //     const stepsMap: Record<string, { title?: string; desc?: string }> = {};
-
-                    //     Object.keys(row).forEach((key) => {
-                    //         const value = row[key];
-
-                    //         if (!value) return;
-
-                    //         // Match description
-                    //         if (key.startsWith("exercise_description_step")) {
-                    //             const stepNo = key.replace("exercise_description_step", "").trim();
-
-                    //             if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
-                    //             stepsMap[stepNo].desc = value.toString().trim();
-                    //         }
-
-                    //         // Match title
-                    //         if (key.startsWith("exercise_title_step")) {
-                    //             const stepNo = key.replace("exercise_title_step", "").trim();
-
-                    //             if (!stepsMap[stepNo]) stepsMap[stepNo] = {};
-                    //             stepsMap[stepNo].title = value.toString().trim();
-                    //         }
-                    //     });
-
-                    //     console.log("🧩 Steps Map:", stepsMap);
-
-                    //     // ✅ Now process each step
-                    //     for (const stepNo of Object.keys(stepsMap)) {
-                    //         const { title, desc } = stepsMap[stepNo];
-
-                    //         // ❗ Description is mandatory (your rule)
-                    //         if (!desc) {
-                    //             console.log(`⚠️ Skipping step ${stepNo} (no description)`);
-                    //             continue;
-                    //         }
-
-                    //         console.log(`📝 Processing Step ${stepNo}`, {
-                    //             title,
-                    //             desc,
-                    //         });
-
-                    //         try {
-                    //             const exercise = await safeUpsert(
-                    //                 adminExcerciseModel,
-                    //                 {
-                    //                     exercise_details_id: exerciseDetail._id,
-                    //                     "description.en": {
-                    //                         $regex: new RegExp(`^${desc}$`, "i"),
-                    //                     },
-                    //                 },
-                    //                 {
-                    //                     exercise_details_id: exerciseDetail._id,
-
-                    //                     // ✅ if title empty → store empty object
-                    //                     title: title
-                    //                         ? await getTranslatedObj(title)
-                    //                         : {
-                    //                             en: "",
-                    //                             hi: "",
-                    //                             zh: "",
-                    //                             es: "",
-                    //                             fr: "",
-                    //                             de: "",
-                    //                             ru: "",
-                    //                             pt: "",
-                    //                             it: "",
-                    //                             ro: "",
-                    //                         },
-
-                    //                     description: await getTranslatedObj(desc),
-                    //                 }
-                    //             );
-
-                    //             console.log("✅ Exercise saved:", exercise._id);
-                    //         } catch (err) {
-                    //             console.error(`❌ Step ${stepNo} failed`, err);
-                    //         }
-                    //     }
                         
                         // ======================================================
                         // STEP 1
@@ -389,7 +302,7 @@ const startWorker = async () => {
                             );
                         }
 
-                    
+                    await initializeAwsCredential();
                     } catch (rowErr) {
                         console.error("❌ Row failed, skipping:", rowErr);
                         continue;
@@ -441,7 +354,7 @@ startWorker();
 const startAffirmationWorker = async () => {
 
     console.log("🔌 Connecting DB...");
-
+    await initializeAwsCredential();
     await connectDB();
 
     console.log("✅ DB connected");
@@ -505,30 +418,6 @@ const startAffirmationWorker = async () => {
                                 affirmation
                             );
 
-                        // ================= SAVE =================
-                        // const savedAffirmation =
-                        //     await safeUpsert(
-                        //         userAffirmationModel,
-                        //         {
-                        //             "affirmation.en": {
-                        //                 $regex: `^${affirmation}$`,
-                        //                 $options: "i",
-                        //             },
-                        //         },
-                        //         {
-                        //             affirmation:
-                        //                 translatedAffirmation,
-
-                        //             type: "Admin",
-
-                        //             user_id: [],
-                        //         }
-                        //     );
-
-                        // console.log(
-                        //     "✅ Saved:",
-                        //     savedAffirmation._id
-                        // );
 
                         // ================= CHECK DUPLICATE =================
 

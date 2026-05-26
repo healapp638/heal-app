@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 5
+    },
+    "auditLog": "logs/mongodb/.c46f4507c103be88908a76118ff00faa7867b715-audit.json",
+    "files": [
+        {
+            "date": 1779779565297,
+            "name": "logs/mongodb/mongodb-2026-05-26.log",
+            "hash": "0455984fecb1bf4822b044b091ef9253152e6214e9d38474c0d551a6ce9534e9"
+        }
+    ],
+    "hashType": "sha256"
+}

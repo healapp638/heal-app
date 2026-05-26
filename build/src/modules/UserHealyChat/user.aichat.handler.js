@@ -205,7 +205,7 @@ const UserCommonHandler = {
             // =========================================
             // CREATE CONVERSATION
             // =========================================
-            if (!conversation_id) {
+            if (!conversation_id || !conversation_id.trim()) {
                 let shortTitle = "New Chat";
                 try {
                     const titleResponse = yield openai.chat.completions.create({

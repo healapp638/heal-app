@@ -8,7 +8,7 @@ const joi_1 = __importDefault(require("joi"));
 const validatesendMessage = (request) => {
     const schema = joi_1.default.object({
         message: joi_1.default.string().required(),
-        conversation_id: joi_1.default.string().optional(),
+        conversation_id: joi_1.default.string().optional().allow(""),
         role: joi_1.default.string().valid('user', 'ai').required(),
     });
     return schema.validate(request);

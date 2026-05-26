@@ -176,6 +176,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
         if (!message?.trim()) {
             return showResponse(false,"Message is required",null,statusCodes.VALIDATION_ERROR);
         }
+        
 
         let finalConversationId = conversation_id;
 
@@ -217,7 +218,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
         // CREATE CONVERSATION
         // =========================================
 
-        if (!conversation_id) {
+        if (!conversation_id ||!conversation_id.trim()) {
 
             let shortTitle = "New Chat";
 
