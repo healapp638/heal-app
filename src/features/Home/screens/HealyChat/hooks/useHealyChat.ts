@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { FlatList } from 'react-native';
+import { useQueryClient } from '@tanstack/react-query';
+import api from '../../../../../api/Manager/manager';
 import { setConversationId as setReduxConversationId } from '../../../../../redux/Reducers/tempData';
 import useGetApi from '../../../../../hooks/useGetApi';
 import usePostApi from '../../../../../hooks/usePostApi';
@@ -11,6 +13,7 @@ let isFreshAppLaunch = true;
 
 export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
 
   const reduxConversationId = useSelector(
     (state: any) => state.tempData?.conversationId,
@@ -69,7 +72,7 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
   } = useGetApi(endpoints.getMessageList, ['getMessageList', conversationId], {
     conversation_id: conversationId,
   }, {
-    enabled: !isNewChatRequested,
+    enabled: !isNewChatRequested && !!conversationId,
   });
 
   // Send Message Mutation
@@ -96,6 +99,13 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
       setPrevConversationId(null);
       return;
     }
+
+    // If we do not have an active conversation established yet,
+    // do not attempt to overwrite our optimistic message with empty query data.
+    if (!conversationId) {
+      return;
+    }
+
     const rawResult = chatData?.data?.result || chatData?.result || [];
     if (conversationId !== prevConversationId) {
       // Brand new conversation load
@@ -180,27 +190,56 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
         },
       },
       {
-        onSuccess: (res: any) => {
+        onSuccess: async (res: any) => {
           console.log('sendMessage response:', res);
           const newConvId =
             res?.data?.conversation_id ||
             res?.conversation_id ||
             res?.data?.id ||
             res?.id;
-          if (newConvId) {
+
+          setShouldAnimateNext(true);
+
+          if (newConvId && newConvId !== conversationId) {
             setConversationId(newConvId);
             dispatch(setReduxConversationId(newConvId));
+
+            // Fetch the history for the new conversation ID directly using queryClient
+            // to update the cache and prevent blinking/lag
+            try {
+              const fetchParams = { conversation_id: newConvId };
+              const data = await queryClient.fetchQuery({
+                queryKey: ['getMessageList', newConvId],
+                queryFn: async () => {
+                  const response = await api.get(endpoints.getMessageList, fetchParams);
+                  if (!response.ok) {
+                    throw new Error(
+                      (response.data as any)?.message ||
+                        response.problem ||
+                        'Something went wrong',
+                    );
+                  }
+                  return response.data;
+                },
+              });
+
+              const rawResult = data?.data?.result || data?.result || [];
+              setAllMessages(rawResult);
+              setVisibleCount(Math.min(10, rawResult.length));
+              setPrevConversationId(newConvId);
+            } catch (err) {
+              console.log('Failed to fetch initial messages for new conversation:', err);
+            }
+          } else {
+            // Existing conversation: manually trigger refetch to fetch bot response
+            await refetch();
           }
 
-          // Refetch messages to update thread with bot response
-          setShouldAnimateNext(true);
-          refetch().finally(() => {
-            setIsSending(false);
-            // Scroll to end after bot reply is loaded into the list
-            setTimeout(() => {
-              flatListRef.current?.scrollToEnd({ animated: false });
-            }, 300);
-          });
+          setIsSending(false);
+          // Scroll to end after bot reply is loaded into the list
+          setTimeout(() => {
+            flatListRef.current?.scrollToEnd({ animated: false });
+          }, 300);
         },
         onError: (err: any) => {
           console.log('sendMessage error:', err);
@@ -208,7 +247,7 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
         },
       },
     );
-  }, [conversationId, dispatch, refetch, sendMessageMutate, flatListRef]);
+  }, [conversationId, dispatch, refetch, sendMessageMutate, flatListRef, queryClient]);
 
   const startNewChat = useCallback(() => {
     setConversationId(null);
