@@ -44,4 +44,6 @@ export const endpoints = {
   challenge_list: '/user/challenges/list',
   challenge_details: '/user/challenges/challenge_details',
   complete_challenges: '/user/challenges/complete_challenges',
+  sendMessage: '/user/healyChat/sendMessage',
+  getMessageList: '/user/healyChat/getMessageList',
 };

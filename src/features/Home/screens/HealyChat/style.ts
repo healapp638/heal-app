@@ -67,7 +67,7 @@ const style = (colors: any) =>
       width: 22,
       height: 22,
       tintColor: colors.brown,
-      marginLeft: 10,
+      marginRight: 8
     },
     listenBtn: {},
     listenIcon: {
@@ -82,6 +82,73 @@ const style = (colors: any) =>
       width: 24,
       height: 24,
       tintColor: colors.brown,
+    },
+    // Message List Styles
+    chatList: {
+      flex: 1,
+      width: '100%',
+    },
+    chatListContent: {
+      paddingBottom: 110,
+      paddingTop: 10,
+      paddingHorizontal: 4,
+    },
+    messageContainer: {
+      marginVertical: 6,
+      flexDirection: 'row',
+      width: '100%',
+    },
+    userMessageContainer: {
+      justifyContent: 'flex-end',
+    },
+    aiMessageContainer: {
+      justifyContent: 'flex-start',
+    },
+    messageBubble: {
+      maxWidth: '82%',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 18,
+    },
+    userBubble: {
+      backgroundColor: '#FCE9D8', // Warm peach tone
+      borderBottomRightRadius: 4, // Chat bubble corner shape
+    },
+    aiBubble: {
+      backgroundColor: '#FFF0F0', // Soft pinkish/rose cream tone
+      borderBottomLeftRadius: 4, // Chat bubble corner shape
+    },
+    messageText: {
+      fontSize: AppUtils.fontSize(15),
+      fontFamily: AppFonts.medium,
+      color: colors.brown,
+      lineHeight: 20,
+    },
+    timeText: {
+      fontSize: AppUtils.fontSize(11),
+      fontFamily: AppFonts.regular,
+      color: 'rgba(58, 33, 16, 0.4)',
+      marginTop: 4,
+    },
+    userTimeText: {
+      textAlign: 'right',
+    },
+    aiTimeText: {
+      textAlign: 'left',
+    },
+    typingBubble: {
+      alignSelf: 'flex-start',
+      backgroundColor: '#FFF0F0',
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 18,
+      borderBottomLeftRadius: 4,
+      marginVertical: 6,
+    },
+    typingText: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.regular,
+      color: 'rgba(58, 33, 16, 0.5)',
     },
   });
 

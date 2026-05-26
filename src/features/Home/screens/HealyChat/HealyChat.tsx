@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
 import {
   View,
   Image,
@@ -6,6 +6,8 @@ import {
   TextInput,
   Keyboard,
   Platform,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import { useTheme, useNavigation } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -14,37 +16,238 @@ import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { useSelector } from 'react-redux';
+import useGetApi from '../../../../hooks/useGetApi';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+
 const HealyChat = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
+
   const [chatText, setChatText] = useState('');
+  const [conversationId, setConversationId] = useState('');
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isSending, setIsSending] = useState(false);
+
+  const flatListRef = useRef<FlatList>(null);
+  const token = useSelector((state: any) => state.userData?.token);
+
+  // Fetch Message History
+  const { data: chatData, refetch, isLoading: isHistoryLoading } = useGetApi(
+    endpoints.getMessageList,
+    ['getMessageList', conversationId],
+    {
+      conversation_id: conversationId,
+    }
+  );
+
+  // Send Message Mutation
+  const { mutate: sendMessageMutate } = usePostApi();
+
+  // Load messages from query response
+  useEffect(() => {
+    if (chatData?.data?.result) {
+      setMessages(chatData.data.result);
+    } else if (chatData?.result) {
+      setMessages(chatData.result);
+    }
+  }, [chatData]);
+
+  // Synchronize conversation_id if found in history list
+  useEffect(() => {
+    const apiConvId = chatData?.data?.conversation_id || chatData?.conversation_id;
+    if (apiConvId && apiConvId !== conversationId) {
+      setConversationId(apiConvId);
+    }
+  }, [chatData, conversationId]);
+
+  // Auto-scroll to the bottom when new messages arrive or when sending
+  useEffect(() => {
+    if (messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 150);
+    }
+  }, [messages, isSending]);
+
+  // Handle message submission
+  const handleSend = () => {
+    if (chatText.trim().length === 0) return;
+
+    Keyboard.dismiss();
+    triggerHaptic('impactMedium');
+
+    const userMessageContent = chatText.trim();
+    setChatText('');
+
+    // Optimistically add user's message to FlatList for real-time responsiveness
+    const tempUserMsg = {
+      _id: `temp-user-${Date.now()}`,
+      role: 'user',
+      message: userMessageContent,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, tempUserMsg]);
+    setIsSending(true);
+
+    sendMessageMutate(
+      {
+        endpoint: endpoints.sendMessage,
+        data: {
+          role: 'user',
+          conversation_id: conversationId, // First message sends empty string
+          message: userMessageContent,
+        },
+      },
+      {
+        onSuccess: (res: any) => {
+          console.log('sendMessage response:', res);
+          // Set conversation id once received from response
+          const newConvId = res?.data?.conversation_id || res?.conversation_id || res?.data?.id || res?.id;
+          if (newConvId && !conversationId) {
+            setConversationId(newConvId);
+          }
+
+          // Refetch messages to update thread with bot response
+          refetch().finally(() => {
+            setIsSending(false);
+          });
+        },
+        onError: (err: any) => {
+          console.log('sendMessage error:', err);
+          setIsSending(false);
+        },
+      }
+    );
+  };
+
+  // Time formatter matching design layout (11:54 AM, 2:20 PM)
+  const formatTime = (dateString?: string) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+
+      let hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? 'PM' : 'AM';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+      return `${hours}:${minutesStr} ${ampm}`;
+    } catch {
+      return '';
+    }
+  };
+
+  const formatMessageTime = (item: any) => {
+    if (item.time) return item.time;
+    const formatted = formatTime(item.createdAt);
+    if (formatted) return formatted;
+
+    // Default to current time for optimistic messages
+    const date = new Date();
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
+    return `${hours}:${minutesStr} ${ampm}`;
+  };
+
+  // Render individual chat bubbles
+  const renderItem = ({ item }: { item: any }) => {
+    const isUser = item.role === 'user';
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          isUser ? styles.userMessageContainer : styles.aiMessageContainer,
+        ]}
+      >
+        <View
+          style={[
+            styles.messageBubble,
+            isUser ? styles.userBubble : styles.aiBubble,
+          ]}
+        >
+          <SolidText style={styles.messageText}>{item.message}</SolidText>
+          <SolidText
+            style={[
+              styles.timeText,
+              isUser ? styles.userTimeText : styles.aiTimeText,
+            ]}
+          >
+            {formatMessageTime(item)}
+          </SolidText>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SolidView
-      isScrollEnabled
-      keyboardVerticalOffset={Platform.OS == 'ios' ? 20 : 0}
+      isScrollEnabled={false}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
       view={
         <View style={styles.mainContainer}>
           {/* Custom Header with Sidebar */}
           <HeaderCommon
             title={localization.appkeys.healyChat}
             rightIcon={images.sideBar}
-            onRightPress={() => {}} // Handle sidebar/menu action
+            onRightPress={() => {}}
           />
 
-          {/* Welcome Screen Logic */}
-          <View style={styles.welcomeContainer}>
-            <Image
-              source={images.h}
-              style={styles.logo}
-              resizeMode="contain"
-              tintColor={colors.primary}
+          {/* History loading indicator when screen is loaded */}
+          {isHistoryLoading && messages.length === 0 ? (
+            <ActivityIndicator
+              size="large"
+              color={colors.primary}
+              style={{ flex: 1, justifyContent: 'center' }}
             />
-            <SolidText style={styles.welcomeText}>
-              {localization.appkeys.chatWelcomePrompt}
-            </SolidText>
-          </View>
+          ) : null}
+
+          {/* Welcome Screen or Message List */}
+          {messages.length === 0 && !isHistoryLoading ? (
+            <View style={styles.welcomeContainer}>
+              <Image
+                source={images.h}
+                style={styles.logo}
+                resizeMode="contain"
+                tintColor={colors.primary}
+              />
+              <SolidText style={styles.welcomeText}>
+                {localization.appkeys.chatWelcomePrompt}
+              </SolidText>
+            </View>
+          ) : (
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              renderItem={renderItem}
+              keyExtractor={(item) => item._id || item.id || `msg-${Math.random()}`}
+              style={styles.chatList}
+              contentContainerStyle={styles.chatListContent}
+              showsVerticalScrollIndicator={false}
+              ListFooterComponent={() => {
+                if (isSending) {
+                  return (
+                    <View style={styles.typingBubble}>
+                      <SolidText style={styles.typingText}>
+                        Healy is typing...
+                      </SolidText>
+                    </View>
+                  );
+                }
+                return null;
+              }}
+            />
+          )}
 
           {/* Chat Input Bar */}
           <View style={styles.footerContainer}>
@@ -67,14 +270,7 @@ const HealyChat = () => {
                 onChangeText={setChatText}
                 maxFontSizeMultiplier={1.4}
               />
-              <TouchableOpacity
-                onPress={() => {
-                  if (chatText.trim().length > 0) {
-                    Keyboard.dismiss();
-                    setChatText(''); // Clear input on send
-                  }
-                }}
-              >
+              <TouchableOpacity onPress={handleSend}>
                 <Image
                   source={
                     chatText.trim().length > 0 ? images.send : images.microPhone
@@ -83,20 +279,12 @@ const HealyChat = () => {
                   resizeMode="contain"
                 />
               </TouchableOpacity>
-              {/* <TouchableOpacity style={styles.listenBtn}>
-                <Image
-                  source={images.listen}
-                  style={styles.listenIcon}
-                  resizeMode="contain"
-                />
-               </TouchableOpacity> */}
             </View>
-
-            {/* Listen / Voice Wave Button */}
           </View>
         </View>
       }
     />
   );
 };
+
 export default HealyChat;
