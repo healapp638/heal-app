@@ -330,32 +330,24 @@ const HealyChat = () => {
                       <View
                         style={[styles.aiBubble, styles.thinkingBubbleContainer]}
                       >
-                        <Image
-                          source={images.h}
-                          style={styles.thinkingLogoImage}
-                          tintColor={colors.primary}
-                          resizeMode="contain"
+                        <Animated.View
+                          style={[
+                            styles.thinkingDot,
+                            { transform: [{ translateY: dot1 }] },
+                          ]}
                         />
-                        <View style={styles.dotsContainer}>
-                          <Animated.View
-                            style={[
-                              styles.thinkingDot,
-                              { transform: [{ translateY: dot1 }] },
-                            ]}
-                          />
-                          <Animated.View
-                            style={[
-                              styles.thinkingDot,
-                              { transform: [{ translateY: dot2 }] },
-                            ]}
-                          />
-                          <Animated.View
-                            style={[
-                              styles.thinkingDot,
-                              { transform: [{ translateY: dot3 }] },
-                            ]}
-                          />
-                        </View>
+                        <Animated.View
+                          style={[
+                            styles.thinkingDot,
+                            { transform: [{ translateY: dot2 }] },
+                          ]}
+                        />
+                        <Animated.View
+                          style={[
+                            styles.thinkingDot,
+                            { transform: [{ translateY: dot3 }] },
+                          ]}
+                        />
                       </View>
                     </View>
                   );

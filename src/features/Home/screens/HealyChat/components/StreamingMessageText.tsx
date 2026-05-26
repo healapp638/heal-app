@@ -22,9 +22,11 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   onComplete,
 }) => {
   const [displayedText, setDisplayedText] = useState('');
+  const [isDone, setIsDone] = useState(!isLatest);
 
   useEffect(() => {
     if (isLatest && text) {
+      setIsDone(false);
       setDisplayedText('');
       let index = 0;
       const interval = setInterval(() => {
@@ -33,6 +35,7 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
           index++;
         } else {
           clearInterval(interval);
+          setIsDone(true);
           if (onComplete) {
             onComplete();
           }
@@ -41,18 +44,24 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
       return () => clearInterval(interval);
     } else {
       setDisplayedText(text);
+      setIsDone(true);
     }
   }, [text, isLatest]);
 
   return (
     <SolidText style={style}>
-      {displayedText}{'  '}
-      <Image
-        source={logoSource}
-        style={logoStyle}
-        tintColor={tintColor}
-        resizeMode="contain"
-      />
+      {displayedText}
+      {isDone && (
+        <>
+          {'  '}
+          <Image
+            source={logoSource}
+            style={logoStyle}
+            tintColor={tintColor}
+            resizeMode="contain"
+          />
+        </>
+      )}
     </SolidText>
   );
 };
