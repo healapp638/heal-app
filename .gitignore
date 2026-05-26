@@ -74,4 +74,5 @@ buck-out/
 /android/app/build/*
 /node_modules/*
 Source Control - fastlane docs
- 
+#  git-crypt private key
+ my-secret-key
