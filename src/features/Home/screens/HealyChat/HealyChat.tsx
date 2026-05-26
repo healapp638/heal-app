@@ -24,7 +24,8 @@ import HeaderCommon from '../../../../components/HeaderCommon';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setConversationId as setReduxConversationId } from '../../../../redux/Reducers/tempData';
 import useGetApi from '../../../../hooks/useGetApi';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
@@ -35,10 +36,11 @@ const HealyChat = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
+  const dispatch = useDispatch();
 
+  const reduxConversationId = useSelector((state: any) => state.tempData?.conversationId);
   const [chatText, setChatText] = useState('');
-  const [conversationId, setConversationId] = useState('');
-  console.log(conversationId);
+  const [conversationId, setConversationId] = useState(reduxConversationId || '');
   const [messages, setMessages] = useState<any[]>([]);
   const [isSending, setIsSending] = useState(false);
   const [lastStreamedId, setLastStreamedId] = useState<string | null>(null);
@@ -131,8 +133,9 @@ const HealyChat = () => {
       chatData?.data?.conversation_id || chatData?.conversation_id;
     if (apiConvId && apiConvId !== conversationId) {
       setConversationId(apiConvId);
+      dispatch(setReduxConversationId(apiConvId));
     }
-  }, [chatData, conversationId]);
+  }, [chatData, conversationId, dispatch]);
 
   // Auto-scroll to the bottom when new messages arrive or when sending
   useEffect(() => {
@@ -182,8 +185,9 @@ const HealyChat = () => {
             res?.conversation_id ||
             res?.data?.id ||
             res?.id;
-          if (newConvId && !conversationId) {
+          if (newConvId) {
             setConversationId(newConvId);
+            dispatch(setReduxConversationId(newConvId));
           }
 
           // Refetch messages to update thread with bot response

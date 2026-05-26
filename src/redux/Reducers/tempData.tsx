@@ -2,10 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface TempDataState {
   loader: boolean;
+  conversationId: string;
 }
 
 const initialState: TempDataState = {
   loader: false,
+  conversationId: '',
 };
 
 const tempDataSlice = createSlice({
@@ -15,9 +17,12 @@ const tempDataSlice = createSlice({
     setLoader: (state, action: PayloadAction<boolean>) => {
       state.loader = action.payload;
     },
+    setConversationId: (state, action: PayloadAction<string>) => {
+      state.conversationId = action.payload;
+    },
   },
 });
 
-export const { setLoader } = tempDataSlice.actions;
+export const { setLoader, setConversationId } = tempDataSlice.actions;
 
 export default tempDataSlice.reducer;
