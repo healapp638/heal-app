@@ -29,7 +29,21 @@ import PremiumModal from '../../../../modals/PremiumModal';
 const Journal = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
-  const { localization } = useContext(LocalizationContext) as any;
+  const { localization, appLanguage } = useContext(LocalizationContext) as any;
+  const MONTHS = [
+    localization.appkeys?.monthJan || 'January',
+    localization.appkeys?.monthFeb || 'February',
+    localization.appkeys?.monthMar || 'March',
+    localization.appkeys?.monthApr || 'April',
+    localization.appkeys?.monthMay || 'May',
+    localization.appkeys?.monthJun || 'June',
+    localization.appkeys?.monthJul || 'July',
+    localization.appkeys?.monthAug || 'August',
+    localization.appkeys?.monthSep || 'September',
+    localization.appkeys?.monthOct || 'October',
+    localization.appkeys?.monthNov || 'November',
+    localization.appkeys?.monthDec || 'December',
+  ];
   const styles = style(colors);
   const [search, setSearch] = useState('');
   const [entries, setEntries] = useState<any[]>([]);
@@ -57,11 +71,15 @@ const Journal = () => {
   useEffect(() => {
     if (data?.data?.result) {
       const fetchedEntries = data?.data?.result?.map((item: any) => {
-        const itemDate = new Date(item.createdAt).toLocaleDateString('en-US', {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        });
+        const dateObj = new Date(item.createdAt);
+        const day = dateObj.getDate();
+        const monthIndex = dateObj.getMonth();
+        const year = dateObj.getFullYear();
+        const monthName = MONTHS[monthIndex];
+        const itemDate =
+          appLanguage === 'English'
+            ? `${monthName} ${day}, ${year}`
+            : `${day} ${monthName} ${year}`;
         return {
           ...item,
           id: item._id,

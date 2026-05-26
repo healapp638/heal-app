@@ -286,6 +286,8 @@
     "plant": "Растения",
     "space": "Космос",
     "all": "Все",
+    "new": "Новые",
+    "recent": "Недавние",
     "healyChat": "Healy Chat",
     "chatWelcomePrompt": "Чем я могу помочь тебе этим утром?",
     "chatInputPlaceholder": "Общайтесь с Healy...",
@@ -546,6 +548,13 @@
     "showAllInFeed": "Показать все в ленте",
     "noFavoritesFound": "Избранное не найдено",
     "installTheApp": "Установите приложение",
-    "setUpToMatchGoals": "Настройте его под свои цели"
+    "setUpToMatchGoals": "Настройте его под свои цели",
+    "noModuleStartedYet": "Еще нет начатых модулей",
+    "noModuleFinishedYet": "Еще нет завершенных модулей",
+    "chooseThemeBelow": "ВЫБЕРИТЕ ТЕМУ НИЖЕ, ЧТОБЫ НАЧАТЬ",
+    "completedModulesAppearHere": "ЗАВЕРШЕННЫЕ МОДУЛИ ПОЯВЯТСЯ ЗДЕСЬ",
+    "signInWithApple": "Войти через Apple",
+    "signInWithGoogle": "Войти через Google",
+    "signInAgreeText": "Продолжая пользоваться Heal, вы соглашаетесь с нашими {terms} и {privacy}"
   }
 }

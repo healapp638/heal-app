@@ -286,6 +286,8 @@
     "plant": "Plante",
     "space": "Espace",
     "all": "Tout",
+    "new": "Nouveau",
+    "recent": "Récents",
     "healyChat": "Chat Healy",
     "chatWelcomePrompt": "Comment puis-je vous aider ce matin ?",
     "chatInputPlaceholder": "Discuter avec Healy...",
@@ -549,6 +551,13 @@
     "showAllInFeed": "Tout afficher dans le flux",
     "noFavoritesFound": "Aucun favori trouvé",
     "installTheApp": "Installez l'application",
-    "setUpToMatchGoals": "Configurez-la pour correspondre à vos objectifs"
+    "setUpToMatchGoals": "Configurez-la pour correspondre à vos objectifs",
+    "noModuleStartedYet": "Aucun module démarré pour l'instant",
+    "noModuleFinishedYet": "Aucun module terminé pour l'instant",
+    "chooseThemeBelow": "CHOISISSEZ UN THÈME CI-DESSOUS POUR COMMENCER",
+    "completedModulesAppearHere": "LES MODULES TERMINÉS APPARAÎTRONT ICI",
+    "signInWithApple": "Se connecter avec Apple",
+    "signInWithGoogle": "Se connecter avec Google",
+    "signInAgreeText": "En continuant avec Heal, vous acceptez nos {terms} & {privacy}"
   }
 }

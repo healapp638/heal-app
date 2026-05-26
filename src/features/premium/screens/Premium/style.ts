@@ -193,13 +193,9 @@ const style = (colors: any, appLanguage: any) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      flexWrap: 'wrap',
       marginBottom: hp(4),
-      width:
-        appLanguage == 'Russian'
-          ? '30%'
-          : appLanguage == 'German'
-            ? '25%'
-            : '40%',
+      width: '100%',
       alignSelf: 'center',
     },
     footerLink: {

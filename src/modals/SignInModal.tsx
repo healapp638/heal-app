@@ -29,6 +29,46 @@ const SignInModal = ({ visible, onClose }: SignInModalProps) => {
   const styles = useStyles(colors);
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 
+  const renderFooterLinks = () => {
+    const text = localization.appkeys?.signInAgreeText || '';
+    const parts = text.split(/(\{terms\}|\{privacy\})/g);
+    return parts.map((part: string, index: number) => {
+      if (part === '{terms}') {
+        return (
+          <SolidText
+            key={`terms-${index}`}
+            style={styles.footerLink}
+            onPress={() => {
+              onClose();
+              setTimeout(() => {
+                navigation.navigate(AppRoutes.Terms as never);
+              }, 300);
+            }}
+          >
+            {localization.appkeys?.termsOfService}
+          </SolidText>
+        );
+      }
+      if (part === '{privacy}') {
+        return (
+          <SolidText
+            key={`privacy-${index}`}
+            style={styles.footerLink}
+            onPress={() => {
+              onClose();
+              setTimeout(() => {
+                navigation.navigate(AppRoutes.PrivacyPolicy as never);
+              }, 300);
+            }}
+          >
+            {localization.appkeys?.privacyPolicy}
+          </SolidText>
+        );
+      }
+      return part;
+    });
+  };
+
   return (
     <Modal
       visible={visible}
@@ -84,7 +124,7 @@ const SignInModal = ({ visible, onClose }: SignInModalProps) => {
                   tintColor={colors.white}
                 />
                 <SolidText maxFontScale={1} style={styles.appleBtnTxt}>
-                  {localization.appkeys?.signInWithApple || 'Sign in with Apple'}
+                  {localization.appkeys?.signInWithApple}
                 </SolidText>
               </TouchableOpacity>
             )}
@@ -104,7 +144,7 @@ const SignInModal = ({ visible, onClose }: SignInModalProps) => {
                 resizeMode="contain"
               />
               <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
-                {localization.appkeys?.signInWithGoogle || 'Sign in with Google'}
+                {localization.appkeys?.signInWithGoogle}
               </SolidText>
             </TouchableOpacity>
 
@@ -131,30 +171,7 @@ const SignInModal = ({ visible, onClose }: SignInModalProps) => {
 
           <View style={styles.footer}>
             <SolidText style={styles.footerText}>
-              By continuing with Heal, you agrees to our{'\n'}
-              <SolidText
-                style={styles.footerLink}
-                onPress={() => {
-                  onClose();
-                  setTimeout(() => {
-                    navigation.navigate(AppRoutes.Terms as never);
-                  }, 300);
-                }}
-              >
-                Terms of service
-              </SolidText>
-              {' & '}
-              <SolidText
-                style={styles.footerLink}
-                onPress={() => {
-                  onClose();
-                  setTimeout(() => {
-                    navigation.navigate(AppRoutes.PrivacyPolicy as never);
-                  }, 300);
-                }}
-              >
-                Privacy Policy.
-              </SolidText>
+              {renderFooterLinks()}
             </SolidText>
           </View>
         </View>

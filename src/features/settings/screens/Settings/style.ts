@@ -189,7 +189,9 @@ const style = (colors: any) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
+      flexWrap: 'wrap',
       marginTop: hp(2),
+      width: '100%',
       alignSelf: 'center',
     },
     footerLink: {

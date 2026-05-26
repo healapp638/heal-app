@@ -551,6 +551,13 @@
     "showAllInFeed": "Show all in feed",
     "noFavoritesFound": "No favorites found",
     "installTheApp": "Install the app",
-    "setUpToMatchGoals": "Set it up to match your goals"
+    "setUpToMatchGoals": "Set it up to match your goals",
+    "noModuleStartedYet": "No module started yet",
+    "noModuleFinishedYet": "No module finished yet",
+    "chooseThemeBelow": "CHOOSE A THEME BELOW TO BEGIN",
+    "completedModulesAppearHere": "COMPLETED MODULES WILL APPEAR HERE",
+    "signInWithApple": "Sign in with Apple",
+    "signInWithGoogle": "Sign in with Google",
+    "signInAgreeText": "By continuing with Heal, you agree to our {terms} & {privacy}"
   }
 }

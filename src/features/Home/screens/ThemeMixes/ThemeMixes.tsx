@@ -103,7 +103,7 @@ const ThemeMixes = () => {
     activeCategory === 'all'
       ? localization.appkeys.forYou
       : categories.find(cat => cat.id === activeCategory)?.title ||
-      localization.appkeys.forYou;
+        localization.appkeys.forYou;
   const forYouResult =
     forYouDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
 
@@ -182,8 +182,8 @@ const ThemeMixes = () => {
                     optimisticThemeId
                       ? optimisticThemeId === item._id
                       : item.isSelected ||
-                      user?.homeTheme === item._id ||
-                      user?.homeTheme?._id === item._id
+                        user?.homeTheme === item._id ||
+                        user?.homeTheme?._id === item._id
                   }
                   activeCategory={activeCategory}
                   key={`${item._id}-${activeCategory}`}
@@ -192,7 +192,6 @@ const ThemeMixes = () => {
                     uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
                   }}
                   onPress={() => {
-                    console.log('item', item);
                     setOptimisticThemeId(item._id);
                     // Update ALL theme listing caches instantly
                     const updateCache = (oldData: any) => {

@@ -80,7 +80,6 @@ const ThemeDetail = () => {
               user?.homeTheme?._id === item._id
         }
         onPress={() => {
-          console.log('item', item);
           setOptimisticThemeId(item._id);
           // Update ALL theme listing caches instantly
           const updateCache = (oldData: any) => {

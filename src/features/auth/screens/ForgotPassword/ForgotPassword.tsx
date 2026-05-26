@@ -12,7 +12,6 @@ import { useContext, useState } from 'react';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
-import { triggerHaptic } from '../../../../hooks/useHaptic';
 const ForgotPassword = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();

@@ -174,13 +174,13 @@ const Modules = () => {
           <StartedModuleCard
             title={
               item.group === 'started'
-                ? localization.appkeys?.noModuleStartedYet || 'No module started yet'
-                : localization.appkeys?.noModuleFinishedYet || 'No module finished yet'
+                ? localization.appkeys?.noModuleStartedYet
+                : localization.appkeys?.noModuleFinishedYet
             }
             subtitle={
               item.group === 'started'
-                ? 'CHOOSE A THEME BELOW TO BEGIN'
-                : 'COMPLETED MODULES WILL APPEAR HERE'
+                ? localization.appkeys?.chooseThemeBelow
+                : localization.appkeys?.completedModulesAppearHere
             }
             progressText="0/0"
             isFinished={isFinished}
