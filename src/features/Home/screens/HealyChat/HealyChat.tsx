@@ -303,6 +303,9 @@ const HealyChat = () => {
                         styles.aiMessageContainer,
                       ]}
                     >
+                      <View
+                        style={[styles.aiBubble, styles.thinkingBubbleContainer]}
+                      >
                         <Animated.View
                           style={{ transform: [{ translateY: dotAnim }] }}
                         >
