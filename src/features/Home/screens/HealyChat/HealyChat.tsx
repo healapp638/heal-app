@@ -39,39 +39,63 @@ const HealyChat = () => {
   const flatListRef = useRef<FlatList>(null);
   const token = useSelector((state: any) => state.userData?.token);
 
-  // Animated value for the bouncing brand dot (.)
-  const dotAnim = useRef(new Animated.Value(0)).current;
+  // Animated values for the three loading dots
+  const dot1 = useRef(new Animated.Value(0)).current;
+  const dot2 = useRef(new Animated.Value(0)).current;
+  const dot3 = useRef(new Animated.Value(0)).current;
 
-  // Dot bouncing animation sequence loop (calm, fluid, lightweight)
+  // Dot bouncing animation sequence loops (calm, fluid, staggered)
   useEffect(() => {
-    let animation: Animated.CompositeAnimation | null = null;
+    let animation1: Animated.CompositeAnimation | null = null;
+    let animation2: Animated.CompositeAnimation | null = null;
+    let animation3: Animated.CompositeAnimation | null = null;
+
     if (isSending) {
-      animation = Animated.loop(
-        Animated.sequence([
-          Animated.timing(dotAnim, {
-            toValue: -5, // Subtle vertical bounce
-            duration: 500,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-          Animated.timing(dotAnim, {
-            toValue: 0, // Fall back to baseline
-            duration: 500,
-            easing: Easing.inOut(Easing.ease),
-            useNativeDriver: true,
-          }),
-        ])
-      );
-      animation.start();
+      const animateDot = (value: Animated.Value, delay: number) => {
+        return Animated.loop(
+          Animated.sequence([
+            Animated.delay(delay),
+            Animated.timing(value, {
+              toValue: -4,
+              duration: 300,
+              easing: Easing.inOut(Easing.ease),
+              useNativeDriver: true,
+            }),
+            Animated.timing(value, {
+              toValue: 0,
+              duration: 300,
+              easing: Easing.inOut(Easing.ease),
+              useNativeDriver: true,
+            }),
+            Animated.delay(600 - delay),
+          ])
+        );
+      };
+
+      animation1 = animateDot(dot1, 0);
+      animation2 = animateDot(dot2, 150);
+      animation3 = animateDot(dot3, 300);
+
+      animation1.start();
+      animation2.start();
+      animation3.start();
     } else {
-      dotAnim.setValue(0);
+      dot1.setValue(0);
+      dot2.setValue(0);
+      dot3.setValue(0);
     }
     return () => {
-      if (animation) {
-        animation.stop();
+      if (animation1) {
+        animation1.stop();
+      }
+      if (animation2) {
+        animation2.stop();
+      }
+      if (animation3) {
+        animation3.stop();
       }
     };
-  }, [isSending, dotAnim]);
+  }, [isSending, dot1, dot2, dot3]);
 
   // Fetch Message History
   const {
@@ -306,16 +330,32 @@ const HealyChat = () => {
                       <View
                         style={[styles.aiBubble, styles.thinkingBubbleContainer]}
                       >
-                        <Animated.View
-                          style={{ transform: [{ translateY: dotAnim }] }}
-                        >
-                          <Image
-                            source={images.h}
-                            style={styles.thinkingLogoImage}
-                            tintColor={colors.primary}
-                            resizeMode="contain"
+                        <Image
+                          source={images.h}
+                          style={styles.thinkingLogoImage}
+                          tintColor={colors.primary}
+                          resizeMode="contain"
+                        />
+                        <View style={styles.dotsContainer}>
+                          <Animated.View
+                            style={[
+                              styles.thinkingDot,
+                              { transform: [{ translateY: dot1 }] },
+                            ]}
                           />
-                        </Animated.View>
+                          <Animated.View
+                            style={[
+                              styles.thinkingDot,
+                              { transform: [{ translateY: dot2 }] },
+                            ]}
+                          />
+                          <Animated.View
+                            style={[
+                              styles.thinkingDot,
+                              { transform: [{ translateY: dot3 }] },
+                            ]}
+                          />
+                        </View>
                       </View>
                     </View>
                   );
