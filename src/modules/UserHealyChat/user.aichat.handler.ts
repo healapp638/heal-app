@@ -467,6 +467,9 @@ getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse>
 
         console.log(conversation_id,"conversation_id");
 
+        if(conversation_id == " " || conversation_id == null || conversation_id == undefined){
+            return showResponse(true,responseMessage.common.data_retreive_sucess,[],statusCodes.SUCCESS);
+        }
 
         const conversation = await userAichatConversationModel.findOne({
             _id: convertToObjectId(conversation_id),

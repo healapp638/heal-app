@@ -16,7 +16,7 @@ const validatesendMessage = (request) => {
 exports.validatesendMessage = validatesendMessage;
 const validateGetMessageList = (request) => {
     const schema = joi_1.default.object({
-        conversation_id: joi_1.default.string().required(),
+        conversation_id: joi_1.default.string().optional().allow(""),
         page: joi_1.default.number().optional(),
         limit: joi_1.default.number().optional(),
     });

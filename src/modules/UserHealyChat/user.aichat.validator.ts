@@ -11,7 +11,7 @@ export const validatesendMessage = (request: { message: string, conversation_id?
 
 export const validateGetMessageList = (request: any) => {
     const schema = Joi.object({
-        conversation_id: Joi.string().required(),
+        conversation_id: Joi.string().optional().allow(""),
         page: Joi.number().optional(),
         limit: Joi.number().optional(),
     })
