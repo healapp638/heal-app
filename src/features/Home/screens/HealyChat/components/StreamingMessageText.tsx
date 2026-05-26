@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SolidText from '../../../../components/SolidText';
+import SolidText from '../../../../../components/SolidText';
 
 interface StreamingMessageTextProps {
   text: string;
