@@ -85,11 +85,11 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     //ends
     sendMagicLink(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            request.email = request.email.toLocaleLowerCase().trim();
             const validate = (0, user_auth_validator_1.validateSendMagicLink)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
+            request.email = request.email.toLowerCase().trim();
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.sendMagicLink);
             return wrappedFunc(request);
         });
@@ -97,11 +97,11 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     //ends
     magicLinkLogin(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            request.email = request.email.toLocaleLowerCase().trim();
             const validate = (0, user_auth_validator_1.validateSendMagicLinkLogin)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
             }
+            request.email = request.email.toLocaleLowerCase().trim();
             const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.magicLinkLogin);
             return wrappedFunc(request);
         });

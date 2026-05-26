@@ -1,34 +1,3 @@
-// import winston from 'winston';
-
-// const enumerateErrorFormat = winston.format((info:any) => {
-//     if (info instanceof Error) {
-//         Object.assign(info, { message: info.stack });
-//     }
-//     return info;
-// });
-
-// const logger = winston.createLogger({
-//     //   levels: /* config.env === "development" ? */ "debug" /* : "info" */,
-//     format: winston.format.combine(
-//         enumerateErrorFormat(),
-//         winston.format.colorize(),
-//         winston.format.splat(),
-//         winston.format.printf(({ level, message }) => `${new Date().toISOString()} ${level}: ${message}`)
-//     ),
-//     //
-//     transports: [
-//         new winston.transports.Console({
-//             stderrLevels: ["error"],
-//         }),
-//         new winston.transports.File({
-//             level: 'error',
-//             filename: 'logs/error.log'
-//         })
-//     ],
-// });
-
-// export default logger
-
 import winston from 'winston';
 import DailyRotateFile from "winston-daily-rotate-file";
 import moment from "moment"; 
@@ -127,8 +96,8 @@ const createRotateTransport = (
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || "info",
   defaultMeta: {
-    service: "sygn-api",
-    env: process.env.ENV_MODE || "stag",
+    service: "heal-api",
+    env: process.env.ENV_MODE || "dev",
   },
 
   transports: [

@@ -178,7 +178,7 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
         const emailSent = transportMethod === 'sendgrid'
             ? yield sendgridMail(to, subject, template)
             : yield nodemail(to, subject, template, attachments);
-        console.log(emailSent, "emailSent");
+        // console.log(emailSent,"emailSent")
         if (!emailSent.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, null, statusCodes_1.default.API_ERROR);
         }

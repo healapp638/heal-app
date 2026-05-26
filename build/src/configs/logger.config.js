@@ -1,35 +1,8 @@
 "use strict";
-// import winston from 'winston';
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// const enumerateErrorFormat = winston.format((info:any) => {
-//     if (info instanceof Error) {
-//         Object.assign(info, { message: info.stack });
-//     }
-//     return info;
-// });
-// const logger = winston.createLogger({
-//     //   levels: /* config.env === "development" ? */ "debug" /* : "info" */,
-//     format: winston.format.combine(
-//         enumerateErrorFormat(),
-//         winston.format.colorize(),
-//         winston.format.splat(),
-//         winston.format.printf(({ level, message }) => `${new Date().toISOString()} ${level}: ${message}`)
-//     ),
-//     //
-//     transports: [
-//         new winston.transports.Console({
-//             stderrLevels: ["error"],
-//         }),
-//         new winston.transports.File({
-//             level: 'error',
-//             filename: 'logs/error.log'
-//         })
-//     ],
-// });
-// export default logger
 const winston_1 = __importDefault(require("winston"));
 const winston_daily_rotate_file_1 = __importDefault(require("winston-daily-rotate-file"));
 const moment_1 = __importDefault(require("moment"));
@@ -104,8 +77,8 @@ const createRotateTransport = (folder, filename, filter, level) => {
 const logger = winston_1.default.createLogger({
     level: process.env.LOG_LEVEL || "info",
     defaultMeta: {
-        service: "sygn-api",
-        env: process.env.ENV_MODE || "stag",
+        service: "heal-api",
+        env: process.env.ENV_MODE || "dev",
     },
     transports: [
         // 🔴 ERROR LOGS

@@ -213,7 +213,7 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
         const emailSent = transportMethod === 'sendgrid'
             ? await sendgridMail(to, subject, template)
             : await nodemail(to, subject, template, attachments);
-        console.log(emailSent,"emailSent")
+        // console.log(emailSent,"emailSent")
 
         if (!emailSent.status) {
             return showResponse(false, responseMessages.common.email_sent_error, null, statusCodes.API_ERROR);

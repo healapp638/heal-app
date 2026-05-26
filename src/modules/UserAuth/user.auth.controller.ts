@@ -75,11 +75,12 @@ export default class UserAuthController extends Controller {
 
     @Post("/sendMagicLink")
     public async sendMagicLink(@Body() request: { hearAboutUs: string, howFellingLately: string, feelThatWay: string, likeToFellMore: string, helpFeelBetter: string, stopFeelBetter: string, timeYouCommit: string, goalStartWith: string, fullName: string, email: string, language: string }): Promise<ApiResponse> {
-        request.email = request.email.toLocaleLowerCase().trim()
+
         const validate = validateSendMagicLink(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }
+         request.email = request.email.toLowerCase().trim();
         const wrappedFunc = tryCatchWrapper(handler.sendMagicLink);
         return wrappedFunc(request);
     }
@@ -87,11 +88,12 @@ export default class UserAuthController extends Controller {
 
     @Post("/magicLinkLogin")
     public async magicLinkLogin(@Body() request: { email: string, hearAboutUs: string, howFellingLately: string, feelThatWay: string, likeToFellMore: string, helpFeelBetter: string, stopFeelBetter: string, timeYouCommit: string, goalStartWith: string, fullName: string, language: string, timeZone: string ,code:string}): Promise<ApiResponse> {
-        request.email = request.email.toLocaleLowerCase().trim()
+
         const validate = validateSendMagicLinkLogin(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
         }
+        request.email = request.email.toLocaleLowerCase().trim()
         const wrappedFunc = tryCatchWrapper(handler.magicLinkLogin);
         return wrappedFunc(request);
     }

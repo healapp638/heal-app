@@ -39,7 +39,7 @@ export const validateSendMagicLink = (user: any) => {
         goalStartWith: joi.string().optional().allow(''),
         fullName: joi.string().required().allow(''),
         email: joi.string().trim().email().required(),
-        language: joi.string().optional().allow(...Object.values(languages)).allow(''),
+        language: joi.string().optional().valid(...Object.values(languages)).allow(''),
     }).validate(user)
 }
 
@@ -55,7 +55,7 @@ export const validateSendMagicLinkLogin = (user: any) => {
         goalStartWith: joi.string().optional().allow(''),
         fullName: joi.string().required().allow(''),
         email: joi.string().trim().email().required(),
-        language: joi.string().optional().allow(...Object.values(languages)).allow(''),
+        language: joi.string().optional().valid(...Object.values(languages)).allow(''),
         timeZone: joi.string().optional().allow(''),
         code: joi.string().optional().allow(''),
     }).validate(user)
@@ -145,7 +145,7 @@ export const validateCompleteOnboarding = (user: any) => {
         timeYouCommit: joi.string().optional(),
         goalStartWith: joi.string().optional(),
         fullName: joi.string().optional(),
-        language: joi.string().optional().allow(...Object.values(languages)),
+        language: joi.string().optional().valid(...Object.values(languages)),
     }).validate(user)
 }
 

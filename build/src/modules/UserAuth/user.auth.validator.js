@@ -44,7 +44,7 @@ const validateSendMagicLink = (user) => {
         goalStartWith: joi_1.default.string().optional().allow(''),
         fullName: joi_1.default.string().required().allow(''),
         email: joi_1.default.string().trim().email().required(),
-        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)).allow(''),
+        language: joi_1.default.string().optional().valid(...Object.values(workflow_constant_1.languages)).allow(''),
     }).validate(user);
 };
 exports.validateSendMagicLink = validateSendMagicLink;
@@ -60,7 +60,7 @@ const validateSendMagicLinkLogin = (user) => {
         goalStartWith: joi_1.default.string().optional().allow(''),
         fullName: joi_1.default.string().required().allow(''),
         email: joi_1.default.string().trim().email().required(),
-        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)).allow(''),
+        language: joi_1.default.string().optional().valid(...Object.values(workflow_constant_1.languages)).allow(''),
         timeZone: joi_1.default.string().optional().allow(''),
         code: joi_1.default.string().optional().allow(''),
     }).validate(user);
@@ -147,7 +147,7 @@ const validateCompleteOnboarding = (user) => {
         timeYouCommit: joi_1.default.string().optional(),
         goalStartWith: joi_1.default.string().optional(),
         fullName: joi_1.default.string().optional(),
-        language: joi_1.default.string().optional().allow(...Object.values(workflow_constant_1.languages)),
+        language: joi_1.default.string().optional().valid(...Object.values(workflow_constant_1.languages)),
     }).validate(user);
 };
 exports.validateCompleteOnboarding = validateCompleteOnboarding;
