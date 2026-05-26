@@ -8,6 +8,8 @@ import {
   Platform,
   FlatList,
   ActivityIndicator,
+  Animated,
+  Easing,
 } from 'react-native';
 import { useTheme, useNavigation } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -20,6 +22,7 @@ import { useSelector } from 'react-redux';
 import useGetApi from '../../../../hooks/useGetApi';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
+import StreamingMessageText from './components/StreamingMessageText';
 
 const HealyChat = () => {
   const { colors, images } = useTheme() as any;
@@ -31,18 +34,53 @@ const HealyChat = () => {
   const [conversationId, setConversationId] = useState('');
   const [messages, setMessages] = useState<any[]>([]);
   const [isSending, setIsSending] = useState(false);
+  const [lastStreamedId, setLastStreamedId] = useState<string | null>(null);
 
   const flatListRef = useRef<FlatList>(null);
   const token = useSelector((state: any) => state.userData?.token);
 
-  // Fetch Message History
-  const { data: chatData, refetch, isLoading: isHistoryLoading } = useGetApi(
-    endpoints.getMessageList,
-    ['getMessageList', conversationId],
-    {
-      conversation_id: conversationId,
+  // Animated value for the bouncing brand dot (.)
+  const dotAnim = useRef(new Animated.Value(0)).current;
+
+  // Dot bouncing animation sequence loop (calm, fluid, lightweight)
+  useEffect(() => {
+    let animation: Animated.CompositeAnimation | null = null;
+    if (isSending) {
+      animation = Animated.loop(
+        Animated.sequence([
+          Animated.timing(dotAnim, {
+            toValue: -5, // Subtle vertical bounce
+            duration: 500,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+          Animated.timing(dotAnim, {
+            toValue: 0, // Fall back to baseline
+            duration: 500,
+            easing: Easing.inOut(Easing.ease),
+            useNativeDriver: true,
+          }),
+        ])
+      );
+      animation.start();
+    } else {
+      dotAnim.setValue(0);
     }
-  );
+    return () => {
+      if (animation) {
+        animation.stop();
+      }
+    };
+  }, [isSending, dotAnim]);
+
+  // Fetch Message History
+  const {
+    data: chatData,
+    refetch,
+    isLoading: isHistoryLoading,
+  } = useGetApi(endpoints.getMessageList, ['getMessageList', conversationId], {
+    conversation_id: conversationId,
+  });
 
   // Send Message Mutation
   const { mutate: sendMessageMutate } = usePostApi();
@@ -58,7 +96,8 @@ const HealyChat = () => {
 
   // Synchronize conversation_id if found in history list
   useEffect(() => {
-    const apiConvId = chatData?.data?.conversation_id || chatData?.conversation_id;
+    const apiConvId =
+      chatData?.data?.conversation_id || chatData?.conversation_id;
     if (apiConvId && apiConvId !== conversationId) {
       setConversationId(apiConvId);
     }
@@ -107,7 +146,11 @@ const HealyChat = () => {
         onSuccess: (res: any) => {
           console.log('sendMessage response:', res);
           // Set conversation id once received from response
-          const newConvId = res?.data?.conversation_id || res?.conversation_id || res?.data?.id || res?.id;
+          const newConvId =
+            res?.data?.conversation_id ||
+            res?.conversation_id ||
+            res?.data?.id ||
+            res?.id;
           if (newConvId && !conversationId) {
             setConversationId(newConvId);
           }
@@ -161,8 +204,11 @@ const HealyChat = () => {
   };
 
   // Render individual chat bubbles
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({ item, index }: { item: any; index: number }) => {
     const isUser = item.role === 'user';
+    const isLatestAssistant =
+      !isUser && index === messages.length - 1 && item._id !== lastStreamedId;
+
     return (
       <View
         style={[
@@ -176,7 +222,18 @@ const HealyChat = () => {
             isUser ? styles.userBubble : styles.aiBubble,
           ]}
         >
-          <SolidText style={styles.messageText}>{item.message}</SolidText>
+          {isUser ? (
+            <SolidText style={styles.messageText}>{item.message}</SolidText>
+          ) : (
+            <StreamingMessageText
+              text={item.message}
+              isLatest={isLatestAssistant}
+              style={styles.messageText}
+              logoHStyle={styles.inlineLogoH}
+              logoDotStyle={styles.inlineLogoDot}
+              onComplete={() => setLastStreamedId(item._id)}
+            />
+          )}
           <SolidText
             style={[
               styles.timeText,
@@ -230,17 +287,35 @@ const HealyChat = () => {
               ref={flatListRef}
               data={messages}
               renderItem={renderItem}
-              keyExtractor={(item) => item._id || item.id || `msg-${Math.random()}`}
+              keyExtractor={(item) =>
+                item._id || item.id || `msg-${Math.random()}`
+              }
               style={styles.chatList}
               contentContainerStyle={styles.chatListContent}
               showsVerticalScrollIndicator={false}
               ListFooterComponent={() => {
                 if (isSending) {
                   return (
-                    <View style={styles.typingBubble}>
-                      <SolidText style={styles.typingText}>
-                        Healy is typing...
-                      </SolidText>
+                    <View
+                      style={[
+                        styles.messageContainer,
+                        styles.aiMessageContainer,
+                      ]}
+                    >
+                      <View
+                        style={[styles.aiBubble, styles.thinkingBubbleContainer]}
+                      >
+                        <View style={styles.logoContainer}>
+                          <SolidText style={styles.thinkingLogoH}>h</SolidText>
+                          <Animated.View
+                            style={{ transform: [{ translateY: dotAnim }] }}
+                          >
+                            <SolidText style={styles.thinkingLogoDot}>
+                              .
+                            </SolidText>
+                          </Animated.View>
+                        </View>
+                      </View>
                     </View>
                   );
                 }

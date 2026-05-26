@@ -150,6 +150,45 @@ const style = (colors: any) =>
       fontFamily: AppFonts.regular,
       color: 'rgba(58, 33, 16, 0.5)',
     },
+    // Claude-Style Brand Animation Styles
+    logoContainer: {
+      flexDirection: 'row',
+      alignItems: 'flex-end',
+      justifyContent: 'center',
+      height: 24,
+    },
+    thinkingBubbleContainer: {
+      width: 70,
+      height: 44,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 0,
+      paddingVertical: 0,
+    },
+    thinkingLogoH: {
+      fontSize: AppUtils.fontSize(18),
+      fontFamily: AppFonts.recoMedium, // Use Recoleta font for logo
+      color: colors.primary,
+      includeFontPadding: false,
+    },
+    thinkingLogoDot: {
+      fontSize: AppUtils.fontSize(22),
+      fontFamily: AppFonts.bold,
+      color: colors.primary,
+      lineHeight: 18,
+      marginLeft: 1,
+      includeFontPadding: false,
+    },
+    inlineLogoH: {
+      fontSize: AppUtils.fontSize(14),
+      fontFamily: AppFonts.recoMedium, // Cohesive inline branding
+      color: colors.primary,
+    },
+    inlineLogoDot: {
+      fontSize: AppUtils.fontSize(16),
+      fontFamily: AppFonts.bold,
+      color: colors.primary,
+    },
   });
 
 export default style;
