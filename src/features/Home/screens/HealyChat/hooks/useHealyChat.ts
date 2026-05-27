@@ -106,6 +106,11 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
       return;
     }
 
+    if (isSending) {
+      // Do not overwrite optimistic messages while sending is in progress
+      return;
+    }
+
     const rawResult = chatData?.data?.result || chatData?.result || [];
     if (conversationId !== prevConversationId) {
       // Brand new conversation load
@@ -120,7 +125,7 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
         setVisibleCount(prev => Math.min(prev + diff, rawResult.length));
       }
     }
-  }, [chatData, isNewChatRequested, conversationId, prevConversationId, allMessages.length]);
+  }, [chatData, isNewChatRequested, conversationId, prevConversationId, allMessages.length, isSending]);
 
   // Synchronize conversation_id if found in history list
   useEffect(() => {

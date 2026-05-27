@@ -1,5 +1,11 @@
 import React, { useContext, useRef, useCallback, useState } from 'react';
-import { View, FlatList, ActivityIndicator, Platform } from 'react-native';
+import {
+  View,
+  FlatList,
+  ActivityIndicator,
+  Platform,
+  Keyboard,
+} from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -131,7 +137,10 @@ const HealyChat = () => {
           <HeaderCommon
             title={localization.appkeys.healyChat}
             rightIcon={images.sideBar}
-            onRightPress={() => setIsDrawerOpen(true)}
+            onRightPress={() => {
+              Keyboard.dismiss();
+              setIsDrawerOpen(true);
+            }}
             viewStyle={{ marginBottom: 0 }}
           />
 
