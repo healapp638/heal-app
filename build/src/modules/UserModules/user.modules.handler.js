@@ -852,7 +852,7 @@ const UserCommonHandler = {
                 }
             });
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'lesson_completed_successfully'), { points: 10 }, statusCodes_1.default.SUCCESS);
     }),
     // startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
     //     const { phase_id } = data;

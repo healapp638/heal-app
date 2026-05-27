@@ -24,7 +24,7 @@ const UserCommonHandler = {
         const { cursor, limit = 10 } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const userLang = user?.language;
-        console.log(userLang,"userLang")
+        console.log(userLang, "userLang")
 
         const match: any = {
             status: USER_STATUS.ACTIVE
@@ -66,7 +66,7 @@ const UserCommonHandler = {
         const last = themeList[themeList.length - 1];
 
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        console.log(themeList,"themeList")
+        console.log(themeList, "themeList")
 
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { data: themeList, nextCursor }, statusCodes.SUCCESS);
     },
@@ -322,74 +322,74 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases: updatedPhases, nextCursor }, statusCodes.SUCCESS);
     },
 
-addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
-    try {
-        const {mcq_exercise_id,mcq_id,phase_id} = data;
+    addMcqAnswer: async (data: any, user_id: any): Promise<ApiResponse> => {
+        try {
+            const { mcq_exercise_id, mcq_id, phase_id } = data;
 
-        // ======================================================
-        // CHECK EXERCISE EXISTS
-        // ======================================================
+            // ======================================================
+            // CHECK EXERCISE EXISTS
+            // ======================================================
 
-        const exercise = await adminMcqexerciseModel.findOne({
-            _id:convertToObjectId( mcq_exercise_id ),status:USER_STATUS.ACTIVE,
-        });
-
-        if (!exercise) {
-            return showResponse(false,"MCQ Exercise not found",null,statusCodes.NOT_FOUND);
-        }
-
-        // ======================================================
-        // CHECK MCQ OPTION EXISTS
-        // ======================================================
-
-        const mcqExists = exercise.mcq.find((item: any) =>item?._id?.toString() === mcq_id);
-
-        if (!mcqExists) {
-            return showResponse(false,"MCQ option not found",null,statusCodes.NOT_FOUND);
-        }
-
-        // ======================================================
-        // CHECK ALREADY ANSWERED
-        // ======================================================
-
-        const alreadyAnswered = await userMcqanswerExerciseModel.findOne({
-                user_id:convertToObjectId(user_id),
-                mcq_exercise_id:convertToObjectId(mcq_exercise_id),
-                status:USER_STATUS.ACTIVE,
+            const exercise = await adminMcqexerciseModel.findOne({
+                _id: convertToObjectId(mcq_exercise_id), status: USER_STATUS.ACTIVE,
             });
 
-        // ======================================================
-        // UPDATE EXISTING ANSWER
-        // ======================================================
+            if (!exercise) {
+                return showResponse(false, "MCQ Exercise not found", null, statusCodes.NOT_FOUND);
+            }
 
-        if (alreadyAnswered) {
-            alreadyAnswered.mcq_id = convertToObjectId( mcq_id );
-            await alreadyAnswered.save();
-            return showResponse( true, "MCQ answer updated successfully", alreadyAnswered, statusCodes.SUCCESS );
-        }
+            // ======================================================
+            // CHECK MCQ OPTION EXISTS
+            // ======================================================
 
-        // ======================================================
-        // CREATE ANSWER
-        // ======================================================
+            const mcqExists = exercise.mcq.find((item: any) => item?._id?.toString() === mcq_id);
 
-        const createAnswer = await userMcqanswerExerciseModel.create({
-                user_id:convertToObjectId(user_id),
-                mcq_exercise_id:convertToObjectId(mcq_exercise_id),
-                mcq_id:convertToObjectId(mcq_id),
-                phase_id:convertToObjectId(phase_id)
+            if (!mcqExists) {
+                return showResponse(false, "MCQ option not found", null, statusCodes.NOT_FOUND);
+            }
+
+            // ======================================================
+            // CHECK ALREADY ANSWERED
+            // ======================================================
+
+            const alreadyAnswered = await userMcqanswerExerciseModel.findOne({
+                user_id: convertToObjectId(user_id),
+                mcq_exercise_id: convertToObjectId(mcq_exercise_id),
+                status: USER_STATUS.ACTIVE,
             });
 
-        if (!createAnswer) {
-            return showResponse(false,responseMessages.common.save_failed,null,statusCodes.API_ERROR);
+            // ======================================================
+            // UPDATE EXISTING ANSWER
+            // ======================================================
+
+            if (alreadyAnswered) {
+                alreadyAnswered.mcq_id = convertToObjectId(mcq_id);
+                await alreadyAnswered.save();
+                return showResponse(true, "MCQ answer updated successfully", alreadyAnswered, statusCodes.SUCCESS);
+            }
+
+            // ======================================================
+            // CREATE ANSWER
+            // ======================================================
+
+            const createAnswer = await userMcqanswerExerciseModel.create({
+                user_id: convertToObjectId(user_id),
+                mcq_exercise_id: convertToObjectId(mcq_exercise_id),
+                mcq_id: convertToObjectId(mcq_id),
+                phase_id: convertToObjectId(phase_id)
+            });
+
+            if (!createAnswer) {
+                return showResponse(false, responseMessages.common.save_failed, null, statusCodes.API_ERROR);
+            }
+
+            return showResponse(true, responseMessages.common.data_save, createAnswer, statusCodes.SUCCESS);
+
+        } catch (error) {
+            console.log(error, "ADD_MCQ_ANSWER_ERROR");
+            return showResponse(false, responseMessages.common.server_error, null, statusCodes.API_ERROR);
         }
-
-        return showResponse(true,responseMessages.common.data_save,createAnswer,statusCodes.SUCCESS);
-
-    } catch (error) {
-        console.log(error,"ADD_MCQ_ANSWER_ERROR");
-        return showResponse(false,responseMessages.common.server_error,null,statusCodes.API_ERROR);
-    }
-},
+    },
 
     excerciseMcqList: async (data: any, userId: string): Promise<ApiResponse> => {
         const { phase_id, cursor, limit = 10 } = data;
@@ -446,43 +446,43 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { mcqList, nextCursor }, statusCodes.SUCCESS);
     },
 
-    excerciseMcqAnswerList: async (data: any,userId: string): Promise<ApiResponse> => {
-    try {
-        const {phase_id,cursor,limit = 10} = data;
+    excerciseMcqAnswerList: async (data: any, userId: string): Promise<ApiResponse> => {
+        try {
+            const { phase_id, cursor, limit = 10 } = data;
 
-        const user =await userAuthModel.findOne({
-                _id:convertToObjectId(userId),
-                status:USER_STATUS.ACTIVE,
+            const user = await userAuthModel.findOne({
+                _id: convertToObjectId(userId),
+                status: USER_STATUS.ACTIVE,
             });
 
-        if (!user) {
-            return showResponse(false,responseMessages.common.not_exist,null,statusCodes.NOT_FOUND);
-        }
-        const userLang = user?.language || "en";
+            if (!user) {
+                return showResponse(false, responseMessages.common.not_exist, null, statusCodes.NOT_FOUND);
+            }
+            const userLang = user?.language || "en";
 
-        const match: any = {
-            status:USER_STATUS.ACTIVE,
-            phase_id:convertToObjectId(phase_id),
-        };
+            const match: any = {
+                status: USER_STATUS.ACTIVE,
+                phase_id: convertToObjectId(phase_id),
+            };
 
-        if (cursor) {
-            const parsedCursor =JSON.parse(cursor);
-            match.$or = [
-                {
-                    createdAt: {$lt: new Date(parsedCursor.createdAt)},   
-                },
-                {
-                    createdAt:new Date(parsedCursor.createdAt),  
-                    _id: {$lt: convertToObjectId(parsedCursor._id)},
-                },
-            ];
-        }
+            if (cursor) {
+                const parsedCursor = JSON.parse(cursor);
+                match.$or = [
+                    {
+                        createdAt: { $lt: new Date(parsedCursor.createdAt) },
+                    },
+                    {
+                        createdAt: new Date(parsedCursor.createdAt),
+                        _id: { $lt: convertToObjectId(parsedCursor._id) },
+                    },
+                ];
+            }
 
-        // ======================================================
-        // AGGREGATION
-        // ======================================================
+            // ======================================================
+            // AGGREGATION
+            // ======================================================
 
-        const mcqList = await adminMcqexerciseModel.aggregate([
+            const mcqList = await adminMcqexerciseModel.aggregate([
 
                 {
                     $match: match,
@@ -495,9 +495,9 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
                 {
                     $lookup: {
 
-                        from:"mcqanswerexercises",
+                        from: "mcqanswerexercises",
 
-                        let:{
+                        let: {
                             exerciseId: "$_id",
                         },
 
@@ -638,23 +638,23 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
                 },
             ]);
 
-        const last = mcqList[ mcqList.length - 1];
+            const last = mcqList[mcqList.length - 1];
 
-        const nextCursor = last ? JSON.stringify({
+            const nextCursor = last ? JSON.stringify({
 
-                    createdAt: last.createdAt,
-                    _id: last._id,
-                }) : null;
+                createdAt: last.createdAt,
+                _id: last._id,
+            }) : null;
 
-        return showResponse(true,getMessage(userLang || "en","data_fetch_success"),{mcqList,nextCursor},statusCodes.SUCCESS);
+            return showResponse(true, getMessage(userLang || "en", "data_fetch_success"), { mcqList, nextCursor }, statusCodes.SUCCESS);
 
-    } catch (error) {
+        } catch (error) {
 
-        console.log(error,"MCQ_EXERCISE_LIST_ERROR");
+            console.log(error, "MCQ_EXERCISE_LIST_ERROR");
 
-        return showResponse(false, responseMessages.common.server_error, null, statusCodes.API_ERROR);
-    }
-},
+            return showResponse(false, responseMessages.common.server_error, null, statusCodes.API_ERROR);
+        }
+    },
 
     exerciseDetailList: async (data: any, userId: string): Promise<ApiResponse> => {
         const { phase_id, cursor, limit = 10 } = data;
@@ -982,7 +982,7 @@ addMcqAnswer: async (data: any,user_id: any): Promise<ApiResponse> => {
             });
         }
 
-        return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), { points: 10 }, statusCodes.SUCCESS);
     },
 
     // startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
