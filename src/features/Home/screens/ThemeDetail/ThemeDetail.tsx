@@ -117,7 +117,7 @@ const ThemeDetail = () => {
             },
             {
               onSuccess: () => {
-                dispatch(getUserDetail());
+                dispatch(getUserDetail() as any);
                 setToastMsg('Theme selected successfully!');
               },
               onError: (error: any) => {

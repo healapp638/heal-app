@@ -17,7 +17,7 @@ const tempDataSlice = createSlice({
     setLoader: (state, action: PayloadAction<boolean>) => {
       state.loader = action.payload;
     },
-    setConversationId: (state, action: PayloadAction<string>) => {
+    setConversationId: (state, action: PayloadAction<string | null>) => {
       state.conversationId = action.payload;
     },
   },

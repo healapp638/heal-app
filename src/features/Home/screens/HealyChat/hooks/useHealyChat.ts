@@ -55,15 +55,6 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
     }
   }, [conversationId]);
 
-  useEffect(() => {
-    if (shouldScrollOnLayout && !isHistoryLoading && messages.length > 0) {
-      const timer = setTimeout(() => {
-        setShouldScrollOnLayout(false);
-      }, 800);
-      return () => clearTimeout(timer);
-    }
-  }, [shouldScrollOnLayout, isHistoryLoading, messages.length]);
-
   // Fetch Message History
   const {
     data: chatData,
@@ -74,6 +65,15 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
   }, {
     enabled: !isNewChatRequested && !!conversationId,
   });
+
+  useEffect(() => {
+    if (shouldScrollOnLayout && !isHistoryLoading && messages.length > 0) {
+      const timer = setTimeout(() => {
+        setShouldScrollOnLayout(false);
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldScrollOnLayout, isHistoryLoading, messages.length]);
 
   // Send Message Mutation
   const { mutate: sendMessageMutate } = usePostApi();

@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   ViewStyle,
   TextStyle,
+  StyleProp,
   Image,
   Platform,
   Keyboard,
@@ -21,8 +22,8 @@ const hapticOptions = {
   ignoreAndroidSystemSettings: false,
 };
 interface SolidBtnProps {
-  btnStyle?: ViewStyle;
-  txtStyle?: TextStyle;
+  btnStyle?: StyleProp<ViewStyle>;
+  txtStyle?: StyleProp<TextStyle>;
   titleTxt: string;
   onPress: () => void;
   isLoading?: boolean;

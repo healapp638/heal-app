@@ -44,7 +44,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const queryClient = useQueryClient();
   const { triggerHaptic } = useHaptic();
   const { mutate: postApi, mutateAsync: postApiAsync } = usePostApi();
-  const captureRef = useRef<ViewShot>(null);
+  const captureRef = useRef<any>(null);
   const [sharingItem, setSharingItem] = useState<any>(null);
   const user = useSelector((state: any) => state.userData?.user);
   const homeThemeUrl = user?.homeTheme?.imgUrl

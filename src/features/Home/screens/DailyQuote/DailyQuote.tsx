@@ -51,7 +51,7 @@ const DailyQuote = () => {
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const viewShotRefs = useRef<{
-    [key: string]: ViewShot;
+    [key: string]: any;
   }>({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
@@ -93,7 +93,7 @@ const DailyQuote = () => {
       limit: 20,
     },
   );
-  const shareViewShotRef = useRef<ViewShot>(null);
+  const shareViewShotRef = useRef<any>(null);
   const [shareItem, setShareItem] = useState<any>(null);
 
   const handleShare = async (item: any) => {
@@ -300,7 +300,6 @@ const DailyQuote = () => {
                 offset: SCREEN_HEIGHT * index,
                 index,
               })}
-              vertical={true}
               showsVerticalScrollIndicator={false}
               windowSize={3}
               initialNumToRender={1}

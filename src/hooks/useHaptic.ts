@@ -6,25 +6,19 @@ const options = {
   ignoreAndroidSystemSettings: true,
 };
 
-export const triggerHaptic = (
-  type:
-    | 'impactMedium'
-    | 'impactMedium'
-    | 'impactMedium'
-    | 'selection' = 'impactMedium',
-) => {
+type HapticType =
+  | 'impactLight'
+  | 'impactMedium'
+  | 'impactHeavy'
+  | 'selection';
+
+export const triggerHaptic = (type: HapticType = 'impactMedium') => {
   ReactNativeHapticFeedback.trigger(type, options);
 };
 
 export const useHaptic = () => {
   const triggerHaptic = useCallback(
-    (
-      type:
-        | 'impactMedium'
-        | 'impactMedium'
-        | 'impactMedium'
-        | 'selection' = 'impactMedium',
-    ) => {
+    (type: HapticType = 'impactMedium') => {
       ReactNativeHapticFeedback.trigger(type, options);
     },
     [],

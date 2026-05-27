@@ -148,7 +148,7 @@ const Settings = () => {
                               if (res?.data) {
                                 dispatch(setUser(res.data));
                               } else {
-                                dispatch(getUserDetail());
+                                dispatch(getUserDetail() as any);
                               }
                             },
                             onError: error => {
@@ -161,7 +161,7 @@ const Settings = () => {
                                   ?.toLowerCase()
                                   ?.includes('successfully')
                               ) {
-                                dispatch(getUserDetail());
+                                dispatch(getUserDetail() as any);
                               } else {
                                 // Real error, rollback
                                 setIsBioEnabled(!newVal);

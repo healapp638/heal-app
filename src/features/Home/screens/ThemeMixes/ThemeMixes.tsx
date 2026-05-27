@@ -229,10 +229,10 @@ const ThemeMixes = () => {
                       },
                       {
                         onSuccess: () => {
-                          dispatch(getUserDetail());
+                          dispatch(getUserDetail() as any);
                           setToastMsg('Theme selected successfully!');
                         },
-                        onError: error => {
+                        onError: (error: any) => {
                           setToastMsg(error.message);
                         },
                       },

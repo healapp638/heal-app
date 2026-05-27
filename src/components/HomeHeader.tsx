@@ -15,8 +15,8 @@ import { triggerHaptic } from '../hooks/useHaptic';
 interface HomeHeaderProps {
   userName: string;
   safeSpaceLabel: string;
-  streakCount: number;
-  onStreakPress: () => void;
+  streakCount?: number;
+  onStreakPress?: () => void;
   onCalendarPress?: () => void;
   showStreak?: boolean;
   showCrown?: boolean;
@@ -27,7 +27,7 @@ interface HomeHeaderProps {
 const HomeHeader = ({
   userName,
   safeSpaceLabel,
-  streakCount,
+  streakCount = 0,
   onStreakPress,
   onCalendarPress,
   showStreak = true,

@@ -61,7 +61,7 @@ const Home = () => {
     '"If you don\'t throw yourself into something, you\'ll never know what you could have had."';
   useFocusEffect(
     React.useCallback(() => {
-      dispatch(getUserDetail());
+      dispatch(getUserDetail() as any);
       refetchStarted();
       refetchAffirmation();
       return () => {

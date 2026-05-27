@@ -49,7 +49,7 @@ const SavedDailyQuote = () => {
   const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const viewShotRefs = useRef<{
-    [key: string]: ViewShot;
+    [key: string]: any;
   }>({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
@@ -386,7 +386,6 @@ const SavedDailyQuote = () => {
                 renderItem={renderItem}
                 keyExtractor={(item, index) => index.toString()}
                 pagingEnabled
-                vertical={true}
                 showsVerticalScrollIndicator={false}
                 snapToInterval={SCREEN_HEIGHT}
                 snapToAlignment="start"

@@ -167,7 +167,7 @@ const EditProfile = () => {
       },
       {
         onSuccess: (response: any) => {
-          dispatch(getUserDetail());
+          dispatch(getUserDetail() as any);
           AppUtils.showToast(
             localization.appkeys?.profileUpdated ||
             'Profile updated successfully',

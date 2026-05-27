@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import api from '../api/Manager/manager';
 
-const usePostApi = () => {
+const usePostApi = (): any => {
   return useMutation({
     mutationFn: async ({
       endpoint,

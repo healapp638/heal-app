@@ -322,7 +322,7 @@ const SignIn = () => {
               <View style={styles.loginRow}>
                 <SolidBtn
                   titleTxt={localization.appkeys?.logInBtn}
-                  btnStyle={[styles.loginBtn, !!biometric && { flex: 1 }]}
+                  btnStyle={[styles.loginBtn, biometric ? { flex: 1 } : {}]}
                   onPress={() => {
                     return handleLogin();
                   }}

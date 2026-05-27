@@ -176,7 +176,7 @@ const ModuleExercise = () => {
             queryClient.invalidateQueries({
               queryKey: ['theme_list'],
             });
-            dispatch(getUserDetail());
+            dispatch(getUserDetail() as any);
             showPointsToast(
               `${localization.appkeys?.completedPhase || "You've completed"} ${phase?.phase ||
               `${localization.appkeys?.phase || 'Phase'} ${phase?.phaseNumber || 1

@@ -1,6 +1,6 @@
 import { createNavigationContainerRef, CommonActions } from '@react-navigation/native';
 
-export const navigationRef = createNavigationContainerRef();
+export const navigationRef = createNavigationContainerRef<any>();
 
 export function navigate(name: string, params?: object) {
   if (navigationRef.isReady()) {
@@ -13,8 +13,9 @@ export function reset(name: string, state?: object) {
     navigationRef.dispatch(
       CommonActions.reset({
         index: 0,
-        routes: [{ name, state }],
+        routes: [{ name, ...(state ? { state } : {}) } as any],
       }),
     );
   }
 }
+

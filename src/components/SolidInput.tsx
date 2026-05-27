@@ -34,6 +34,7 @@ interface SolidInputProps {
   onInfoPress?: () => void;
   mainStyle?: ViewStyle;
   maxLength?: any;
+  labelRow?: ViewStyle;
 }
 const SolidInput: React.FC<SolidInputProps> = ({
   label,

@@ -35,7 +35,9 @@ const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const answers = useSelector((state: any) => state.userData?.onboarding?.answers);
+  const answers = useSelector(
+    (state: any) => state.userData?.onboarding?.answers,
+  );
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   const token = useSelector((state: any) => state.userData?.token);
   const { mutate: completeOnboardingApi } = usePostApi();
@@ -136,7 +138,7 @@ const CreatingSpace = () => {
         {
           onSuccess: (res: any) => {
             console.log('complete_onboarding response:', res);
-            dispatch(getUserDetail({}))
+            dispatch(getUserDetail() as any);
             navigation.reset({
               index: 0,
               routes: [
@@ -163,7 +165,7 @@ const CreatingSpace = () => {
               ],
             });
           },
-        }
+        },
       );
     } else {
       navigation.navigate(AppRoutes.AccessScreen as never);
