@@ -409,7 +409,24 @@ const challengsFn = async (userData: any) => {
         const endOfDay = moment().endOf('day').toDate();
         const startOfWeek = moment().startOf('week').toDate();
         const endOfWeek = moment().endOf('week').toDate();
-        const isOnBoardingComplete = !!(userData?.bringsYouHere && userData?.howFellingLately && userData?.likeToFellMore && userData?.timeYouCommit && userData?.startShowingOfYourSelf);
+        const isOnBoardingComplete = [
+            userData?.email,
+            userData?.hearAboutUs,
+            userData?.howFellingLately,
+            userData?.feelThatWay,
+            userData?.likeToFellMore,
+            userData?.helpFeelBetter,
+            userData?.stopFeelBetter,
+            userData?.timeYouCommit,
+            userData?.goalStartWith,
+            userData?.fullName
+        ].every(
+            value =>
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ''
+        );
+        console.log('isOnBoardingComplete', isOnBoardingComplete)
         const totalWeeklyChallanges = await userWeeklyChallengesModel.countDocuments({
             createdAt: { $gte: startOfWeek, $lte: endOfWeek },
             user_id: userData._id
@@ -425,11 +442,15 @@ const challengsFn = async (userData: any) => {
             isWeeklyChallengeExist,
             isDailyChallengeExist,
             payload: {
-                bringsYouHere: userData?.bringsYouHere,
+                hearAboutUs: userData?.hearAboutUs,
+                feelThatWay: userData?.feelThatWay,
+                helpFeelBetter: userData?.helpFeelBetter,
+                stopFeelBetter: userData?.stopFeelBetter,
+                goalStartWith: userData?.goalStartWith,
+                fullName: userData?.fullName,
                 howFellingLately: userData?.howFellingLately,
                 likeToFellMore: userData?.likeToFellMore,
                 timeYouCommit: userData?.timeYouCommit,
-                startShowingOfYourSelf: userData?.startShowingOfYourSelf
             }
         }
     } catch (err: any) {

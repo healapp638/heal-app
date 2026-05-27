@@ -122,7 +122,7 @@ const UserAuthHandler = {
             return showResponse(true, getMessage(language || 'en', "otp_sent"), {
                 is_after_social_login: true,
                 account_type,
-                is_profile_completed:true,
+                is_profile_completed: true,
                 password: password,
             }, statusCodes.SUCCESS);
         }
@@ -145,7 +145,7 @@ const UserAuthHandler = {
             await findOneAndUpdate(userAuthModel, { _id: userData?._id }, { status: USER_STATUS.ACTIVE, deactivateBy: '' })   //activate user again
         }
 
-        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed:true, ...userData, access_token, refresh_token }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed: true, ...userData, access_token, refresh_token }, statusCodes.SUCCESS)
     },//ends
 
     social_login: async (data: any) => {
@@ -239,7 +239,7 @@ const UserAuthHandler = {
             commonHelper.keysDeleteFromObject(findUser?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(findUser.data?._id, findUser.data?.user_type, tokenUserTypeInterface.USER)
 
-            const userData = { is_after_social_login: false, account_type, is_profile_completed:true, ...findUser?.data, access_token, refresh_token }
+            const userData = { is_after_social_login: false, account_type, is_profile_completed: true, ...findUser?.data, access_token, refresh_token }
 
             //if account deactivated by user then activate it again 
             if (findUser?.data?.status == USER_STATUS.DEACTIVATED && findUser.data?.deactivateBy === DEACTIVATE_BY.USER) {
@@ -308,7 +308,7 @@ const UserAuthHandler = {
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
 
-            const userData = { is_after_social_login: false, account_type, is_profile_completed:true, ...result?.data, access_token, refresh_token }
+            const userData = { is_after_social_login: false, account_type, is_profile_completed: true, ...result?.data, access_token, refresh_token }
 
             return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
         }
@@ -384,132 +384,132 @@ const UserAuthHandler = {
 
 
     sendMagicLink: async (data: any): Promise<ApiResponse> => {
-    try {
+        try {
 
-        const {hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,email,language} = data;
+            const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, email, language } = data;
 
-        // =========================================
-        // GENERATE DEEPLINK CODE
-        // =========================================
+            // =========================================
+            // GENERATE DEEPLINK CODE
+            // =========================================
 
-        const code = commonHelper.generateRandomAlphanumeric(8);
-        await userDeeplinkModel.updateMany(
-            {
-                email: email.toLowerCase().trim(),
-                isUsed: false,
-                expiresAt: { $gt: new Date() }
-            },
-            {
-                $set: {
-                    isUsed: true,
-                    usedAt: new Date(),
-                    // invalidatedReason: 'NEW_LINK_GENERATED'
+            const code = commonHelper.generateRandomAlphanumeric(8);
+            await userDeeplinkModel.updateMany(
+                {
+                    email: email.toLowerCase().trim(),
+                    isUsed: false,
+                    expiresAt: { $gt: new Date() }
+                },
+                {
+                    $set: {
+                        isUsed: true,
+                        usedAt: new Date(),
+                        // invalidatedReason: 'NEW_LINK_GENERATED'
+                    }
                 }
+            );
+
+            // save deeplink data
+            await userDeeplinkModel.create({
+                email: email.toLowerCase().trim(),
+                code,
+                createdAt: new Date(),
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
+            });
+            console.log(code, "code");
+
+            // =========================================
+            // DEEPLINK URL
+            // =========================================
+
+            const deeplink = `https://apidev.heal-app.com/link/${code}?email=${email}&hearAboutUs=${hearAboutUs}&howFellingLately=${howFellingLately}&feelThatWay=${feelThatWay}&likeToFellMore=${likeToFellMore}&helpFeelBetter=${helpFeelBetter}&stopFeelBetter=${stopFeelBetter}&timeYouCommit=${timeYouCommit}&goalStartWith=${goalStartWith}&language=${language}&fullName=${fullName}`;
+            console.log(deeplink, "deeplink");
+            // =========================================
+            // EMAIL PAYLOAD
+            // =========================================
+
+            const emailPayload = {
+                user_name: fullName,
+                magic_link: deeplink,
+            };
+
+            console.log(emailPayload, "emailPayload");
+
+            // =========================================
+            // SEND EMAIL
+            // =========================================
+
+            const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.MAGIC_LINK, email, emailPayload);
+
+            console.log(sendEmail, "sendEmail");
+
+            if (!sendEmail.status) {
+
+                return showResponse(
+                    false,
+                    getMessage(language || 'en', "err_while_sending_email"),
+                    null,
+                    statusCodes.API_ERROR
+                );
             }
-        );
 
-        // save deeplink data
-        await userDeeplinkModel.create({
-            email: email.toLowerCase().trim(),
-            code,
-            createdAt: new Date(),
-            expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
-        });
-        console.log(code, "code");
+            return showResponse(
+                true,
+                getMessage(language || 'en', "verification_email_sent"),
+                deeplink,
+                statusCodes.SUCCESS
+            );
 
-        // =========================================
-        // DEEPLINK URL
-        // =========================================
+        } catch (err) {
 
-        const deeplink = `https://apidev.heal-app.com/link/${code}?email=${email}&hearAboutUs=${hearAboutUs}&howFellingLately=${howFellingLately}&feelThatWay=${feelThatWay}&likeToFellMore=${likeToFellMore}&helpFeelBetter=${helpFeelBetter}&stopFeelBetter=${stopFeelBetter}&timeYouCommit=${timeYouCommit}&goalStartWith=${goalStartWith}&language=${language}&fullName=${fullName}`;
-        console.log(deeplink, "deeplink");
-        // =========================================
-        // EMAIL PAYLOAD
-        // =========================================
-
-        const emailPayload = {
-            user_name: fullName,
-            magic_link: deeplink,
-        };
-
-        console.log(emailPayload, "emailPayload");
-
-        // =========================================
-        // SEND EMAIL
-        // =========================================
-
-        const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.MAGIC_LINK, email, emailPayload);
-
-        console.log(sendEmail, "sendEmail");
-
-        if (!sendEmail.status) {
+            console.log(err, "register err");
 
             return showResponse(
                 false,
-                getMessage(language || 'en', "err_while_sending_email"),
+                responseMessage.common.error_while_create_acc,
                 null,
                 statusCodes.API_ERROR
             );
         }
-
-        return showResponse(
-            true,
-            getMessage(language || 'en', "verification_email_sent"),
-            deeplink,
-            statusCodes.SUCCESS
-        );
-
-    } catch (err) {
-
-        console.log(err, "register err");
-
-        return showResponse(
-            false,
-            responseMessage.common.error_while_create_acc,
-            null,
-            statusCodes.API_ERROR
-        );
-    }
-},
+    },
 
     magicLinkLogin: async (data: any): Promise<ApiResponse> => {
-        const {email,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone,code} = data;
+        const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code } = data;
 
         const lowercaseEmail = email ? email.toLowerCase().trim() : '';
 
         const queryObject = { email: lowercaseEmail, status: { $ne: USER_STATUS.DELETED } };
         const findUser = await findOne(userAuthModel, queryObject);
-        console.log(code,"codeeee")
+        console.log(code, "codeeee")
 
-        
-    const deepLink = await userDeeplinkModel.findOneAndUpdate(
-        {
-            code,
-            isUsed: false,
-            expiresAt: { $gt: new Date() },
-            status: USER_STATUS.ACTIVE
-        },
-        {
-            $set: {
-                isUsed: true,
-                usedAt: new Date()
+
+        const deepLink = await userDeeplinkModel.findOneAndUpdate(
+            {
+                code,
+                isUsed: false,
+                expiresAt: { $gt: new Date() },
+                status: USER_STATUS.ACTIVE
+            },
+            {
+                $set: {
+                    isUsed: true,
+                    usedAt: new Date()
+                }
+            },
+            {
+                new: true
             }
-        },
-        {
-            new: true
-        }
-    );
-    console.log(deepLink, "deepLink");
-
-    if (!deepLink) {
-        console.log("Magic link is invalid, innnnnnnnnnnnnnn");
-        return showResponse(
-            false,
-            "Magic link is invalid, expired, or already used",
-            null,
-            statusCodes.API_ERROR
         );
-    }
+        console.log(deepLink, "deepLink");
+
+        if (!deepLink) {
+            console.log("Magic link is invalid, innnnnnnnnnnnnnn");
+            return showResponse(
+                false,
+                "Magic link is invalid, expired, or already used",
+                null,
+                statusCodes.API_ERROR
+            );
+        }
 
         let userData: any;
 
@@ -613,7 +613,7 @@ const UserAuthHandler = {
             userData.is_onboarding = is_onboarding;
         }
 
-        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed:true,is_onboarding, ...userData, access_token, refresh_token }, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed: true, is_onboarding, ...userData, access_token, refresh_token }, statusCodes.SUCCESS);
     },//ends
 
 
@@ -731,7 +731,7 @@ const UserAuthHandler = {
         // const is_profile_completed = !!userData.dob && !!userData.country
 
         const { access_token, refresh_token } = await generateAccessRefreshToken(exists?.data?._id, exists?.data?.user_type, tokenUserTypeInterface.USER)
-        return showResponse(true, getMessage(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed:true, account_type, is_after_social_login: false }, statusCodes.SUCCESS);
+        return showResponse(true, getMessage(language || 'en', "otp_verify_success"), { access_token, refresh_token, is_profile_completed: true, account_type, is_after_social_login: false }, statusCodes.SUCCESS);
     },
 
     resendOtp: async (data: any): Promise<ApiResponse> => {
@@ -1017,7 +1017,7 @@ const UserAuthHandler = {
         if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
             isUnderProgress = true
         }
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed:true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {
@@ -1111,7 +1111,7 @@ const UserAuthHandler = {
     },
 
     completeOnboarding: async (data: any, userId: string): Promise<ApiResponse> => {
-        const { hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language } = data;
+        const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language } = data;
         const userDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId), status: USER_STATUS.ACTIVE })
         if (!userDetails) {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
@@ -1129,7 +1129,7 @@ const UserAuthHandler = {
             ...(goalStartWith?.trim() && { goalStartWith }),
             ...(fullName?.trim() && { fullName }),
         }
-        const userOnboarding:any = await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj,{ new: true })
+        const userOnboarding: any = await userAuthModel.findOneAndUpdate({ _id: commonHelper.convertToObjectId(userId) }, updateObj, { new: true })
         //challenges logic start
         const newDetails = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(userId) })
         await ChallengesQueue.add('challenges', { userData: newDetails }, {
@@ -1189,22 +1189,22 @@ const UserAuthHandler = {
     },
 
     userTrialSubscription: async (user_id: any): Promise<ApiResponse> => {
-    const trialExpireTime = moment().add(3, "days").unix();
+        const trialExpireTime = moment().add(3, "days").unix();
 
-    //check already take subscription plan
-    const userAlreadyTakeSubscription = await findOne(userAuthModel, {_id: user_id,status: { $ne: 2 },trial_package_use: true,});
-    if (userAlreadyTakeSubscription.status) {
-      return showResponse(false,"You already have a free trial plan going on.",null,statusCodes.API_ERROR);
-    }
-    const updateObj: any = {on_trial_period: true,trial_expire_time: trialExpireTime,trial_package_use: true};
+        //check already take subscription plan
+        const userAlreadyTakeSubscription = await findOne(userAuthModel, { _id: user_id, status: { $ne: 2 }, trial_package_use: true, });
+        if (userAlreadyTakeSubscription.status) {
+            return showResponse(false, "You already have a free trial plan going on.", null, statusCodes.API_ERROR);
+        }
+        const updateObj: any = { on_trial_period: true, trial_expire_time: trialExpireTime, trial_package_use: true };
 
-    // Update user auth data with trial subscription information
-    const updatedUserSubscriptionData = await findOneAndUpdate(userAuthModel,{ _id: commonHelper.convertToObjectId(user_id), status: 1 },updateObj);
-    if (!updatedUserSubscriptionData.status) {
-      return showResponse(false,"unable to update",null,statusCodes.API_ERROR);
-    }
-    return showResponse(true,"Free trial plan activated successfully",{on_trial_period: true,trial_expire_time: trialExpireTime,trial_package_use: true},statusCodes.SUCCESS);
-  }, //ends
+        // Update user auth data with trial subscription information
+        const updatedUserSubscriptionData = await findOneAndUpdate(userAuthModel, { _id: commonHelper.convertToObjectId(user_id), status: 1 }, updateObj);
+        if (!updatedUserSubscriptionData.status) {
+            return showResponse(false, "unable to update", null, statusCodes.API_ERROR);
+        }
+        return showResponse(true, "Free trial plan activated successfully", { on_trial_period: true, trial_expire_time: trialExpireTime, trial_package_use: true }, statusCodes.SUCCESS);
+    }, //ends
 }
 
 export default UserAuthHandler 

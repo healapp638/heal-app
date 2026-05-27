@@ -89,7 +89,7 @@ app.use(
   })
 );
 
-app.use(requestIdMiddleware); 
+app.use(requestIdMiddleware);
 app.use(bodyParser.json());
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -289,7 +289,7 @@ app.get("/link/:code/:affirmation_id", async (req, res) => {
 app.get("/link/:code", async (req, res) => {
   const { code } = req.params;
 
-  console.log(req.params, "req.params")  
+  console.log(req.params, "req.params")
 
   const doc = await userDeeplinkModel.findOne({ code });
   // console.log(doc, "doc")
@@ -308,7 +308,7 @@ app.get("/link/:code", async (req, res) => {
   let storeUrl = fallbackWeb;
   const codeParam = encodeURIComponent(code || "");
   // const idParam = encodeURIComponent(affirmation_id || "");
-console.log("deeplink")
+  console.log("deeplink")
   if (/iPhone|iPad|iPod/.test(ua)) {
     console.log("📱 iOS user detected");
     storeUrl = iosStore;
@@ -430,7 +430,7 @@ scheduleCroneJOb()
 //     // const subscriptionName:any = "projects/ription-demo/subscriptions/subscription_webhook-sub"; // Make sure this exists in GCP
 //     const subscriptionName:any = "projects/manifestnails/subscriptions/manifest-sub"; // Make sure this exists in GCP
 //     const subscription = pubsub.subscription(subscriptionName);
-    
+
 //     subscription.on('message', messageHandler);
 //     subscription.on('error', (err) => {
 //       console.error("❌ receiveNotifications Subscription Error:", err);

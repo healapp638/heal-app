@@ -6,11 +6,15 @@ const openai = new OpenAI({
 });
 
 type GenerateChallengePayload = {
-  bringsYouHere: string;
-  howFellingLately: string;
-  likeToFellMore: string;
-  timeYouCommit: string;
-  startShowingOfYourSelf: string;
+  hearAboutUs: string,
+  feelThatWay: string,
+  helpFeelBetter: string,
+  stopFeelBetter: string,
+  goalStartWith: string,
+  fullName: string,
+  howFellingLately: string,
+  likeToFellMore: string,
+  timeYouCommit: string,
 };
 
 export const generateUserChallengesDaily = async (payload: GenerateChallengePayload, userId: string) => {
@@ -22,11 +26,17 @@ export const generateUserChallengesDaily = async (payload: GenerateChallengePayl
                         Generate personalized challenges for a user based on onboarding answers.
 
                         USER DATA:
-                        - What brings user here: ${payload.bringsYouHere}
                         - How user feeling lately: ${payload.howFellingLately}
                         - What user wants to feel more: ${payload.likeToFellMore}
                         - Time user can commit: ${payload.timeYouCommit}
-                        - Ready to start level: ${payload.startShowingOfYourSelf}
+                        - What make user to feel that way: ${payload.feelThatWay}
+                        - What stop user to feel better: ${payload.stopFeelBetter}
+                        - goal user start with: ${payload.goalStartWith}
+                        - How user heard about us: ${payload.hearAboutUs}
+                        - User name: ${payload.fullName}
+                        - what user feel better: ${payload.helpFeelBetter}
+                        
+                        
 
                         IMPORTANT RULES:
 
@@ -155,11 +165,15 @@ export const generateUserChallengesWeekly = async (payload: GenerateChallengePay
                         Generate personalized challenges for a user based on onboarding answers.
 
                         USER DATA:
-                        - What brings user here: ${payload.bringsYouHere}
                         - How user feeling lately: ${payload.howFellingLately}
                         - What user wants to feel more: ${payload.likeToFellMore}
                         - Time user can commit: ${payload.timeYouCommit}
-                        - Ready to start level: ${payload.startShowingOfYourSelf}
+                        - What make user to feel that way: ${payload.feelThatWay}
+                        - What stop user to feel better: ${payload.stopFeelBetter}
+                        - goal user start with: ${payload.goalStartWith}
+                        - How user heard about us: ${payload.hearAboutUs}
+                        - User name: ${payload.fullName}
+                        - what user feel better: ${payload.helpFeelBetter}
 
                         IMPORTANT RULES:
 
