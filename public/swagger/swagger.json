@@ -2724,6 +2724,33 @@
 				"parameters": []
 			}
 		},
+		"/user/auth/progress_tracker_list": {
+			"get": {
+				"operationId": "ProgressTrackerList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "User Progress Tracker List",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/affirmation/getAIAffirmation": {
 			"get": {
 				"operationId": "GetAIAffirmation",

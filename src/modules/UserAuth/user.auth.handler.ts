@@ -10,7 +10,6 @@ import services from '../../services';
 import responseMessage from '../../constants/responseMessages'
 import statusCodes from '../../constants/statusCodes'
 import { getMessage } from "../../helpers/messages";
-import adminPhasesModel from "../AdminPhases/admin.phases.model";
 import userModulesCompletePhaseModel from "../UserModules/user.modules.complete.phase.model";
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.model";
@@ -797,55 +796,7 @@ const UserAuthHandler = {
         }
         const language = result?.data?.language || 'en';
         //calculate progress start
-        const Allpahses = await adminPhasesModel.aggregate([
-            {
-                $match: {
-                    status: USER_STATUS.ACTIVE
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total_points: { $sum: '$points' }
-                }
-            }
-        ]);
-        console.log(Allpahses, 'Allpahses')
-        // const total_points = Allpahses[0]?.total_points || 0;
 
-        const weeklyChallengesTotalpoints = await userWeeklyChallengesModel.aggregate([
-            {
-                $match: {
-                    user_id: commonHelper.convertToObjectId(userId),
-                    status: USER_STATUS.ACTIVE
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total_points: { $sum: '$points' }
-                }
-            }
-        ]);
-        console.log(weeklyChallengesTotalpoints, 'allChallengesTotalpoints')
-
-        const dailyChallengesTotalpoints = await userDailyChallengesModel.aggregate([
-            {
-                $match: {
-                    user_id: commonHelper.convertToObjectId(userId),
-                    status: USER_STATUS.ACTIVE
-                }
-            },
-            {
-                $group: {
-                    _id: null,
-                    total_points: { $sum: '$points' }
-                }
-            }
-        ]);
-        console.log(dailyChallengesTotalpoints, 'allChallengesTotalpoints')
-        // const total_points = Allpahses[0]?.total_points + weeklyChallengesTotalpoints[0]?.total_points + dailyChallengesTotalpoints[0]?.total_points;
-        // const total_points = 500
         const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
             {
                 $match: {
@@ -871,7 +822,6 @@ const UserAuthHandler = {
                 }
             }
         ]);
-        console.log(userId, 'userId')
         const completedWeeklyChallenges = await userWeeklyChallengesModel.aggregate([
             {
                 $match: {
@@ -903,9 +853,7 @@ const UserAuthHandler = {
             }
         ]);
         const startOfDay = moment().tz(userData?.timeZone || 'America/New_York').startOf('day').toDate();
-        console.log(startOfDay, 'startOfDay')
         const endOfDay = moment().tz(userData?.timeZone || 'America/New_York').endOf('day').toDate();
-        console.log(endOfDay, 'endOfDay')
 
         const totalJournels = await userJournalModel.countDocuments({
             user_id: commonHelper.convertToObjectId(userId),
@@ -916,10 +864,7 @@ const UserAuthHandler = {
             totalJournels > 0
                 ? ((totalJournels - 1) * 10) + 25
                 : 0;
-        console.log(completedWeeklyChallenges[0]?.total_points, 'completedWeeklyChallenges')
-        console.log(completedDailyChallenges[0]?.total_points, 'completedDailyChallenges')
-        console.log(CompletedPhases[0]?.total_points, 'CompletedPhases')
-        console.log(totalJournelEarnedPoints, 'totalJournelEarnedPoints')
+
         const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0) + totalJournelEarnedPoints || 0;
         const pointThresholds = [
             99, 235, 460, 740, 1070, 1450, 1875, 2345,
@@ -1208,6 +1153,232 @@ const UserAuthHandler = {
         }
         return showResponse(true, "Free trial plan activated successfully", { on_trial_period: true, trial_expire_time: trialExpireTime, trial_package_use: true }, statusCodes.SUCCESS);
     }, //ends
+
+    progressTrackerList: async (userId: string): Promise<ApiResponse> => {
+
+        const userData = await userAuthModel.findOne({ _id: userId }).lean();
+
+        if (!userData) {
+            return showResponse(
+                false,
+                getMessage('en', "user_not_found"),
+                null,
+                statusCodes.API_ERROR
+            )
+        }
+
+        const language = userData?.language || 'en';
+
+        // ================= COMPLETED PHASE POINTS =================
+
+        const CompletedPhases = await userModulesCompletePhaseModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $lookup: {
+                    from: "phases",
+                    localField: "phase_id",
+                    foreignField: "_id",
+                    as: "phase"
+                }
+            },
+            {
+                $unwind: "$phase"
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: "$phase.points" }
+                }
+            }
+        ]);
+
+        // ================= COMPLETED WEEKLY CHALLENGES =================
+
+        const completedWeeklyChallenges = await userWeeklyChallengesModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+
+        // ================= COMPLETED DAILY CHALLENGES =================
+
+        const completedDailyChallenges = await userDailyChallengesModel.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(userId),
+                    status: USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+
+        // ================= JOURNAL POINTS =================
+
+        const startOfDay = moment()
+            .tz(userData?.timeZone || 'America/New_York')
+            .startOf('day')
+            .toDate();
+
+        const endOfDay = moment()
+            .tz(userData?.timeZone || 'America/New_York')
+            .endOf('day')
+            .toDate();
+
+        const totalJournels = await userJournalModel.countDocuments({
+            user_id: commonHelper.convertToObjectId(userId),
+            status: USER_STATUS.ACTIVE,
+            createdAt: {
+                $gte: startOfDay,
+                $lte: endOfDay
+            }
+        });
+
+        const totalJournelEarnedPoints =
+            totalJournels > 0
+                ? ((totalJournels - 1) * 10) + 25
+                : 0;
+
+        // ================= TOTAL EARNED POINTS =================
+
+        const total_earned_points =
+            (CompletedPhases[0]?.total_points || 0) +
+            (completedWeeklyChallenges[0]?.total_points || 0) +
+            (completedDailyChallenges[0]?.total_points || 0) +
+            totalJournelEarnedPoints;
+
+        // ================= LEVEL THRESHOLDS =================
+
+        const pointThresholds = [
+            99, 235, 460, 740, 1070, 1450, 1875, 2345,
+            2860, 3415, 4015, 4650, 5325, 6040, 6795,
+            7590, 8420, 9290, 10195, 11140, 12120,
+            13135, 14185, 15270, 16390, 17545,
+            18730, 19955, 21215, 22505
+        ];
+
+        // ================= CURRENT LEVEL =================
+
+        let currentLevel =
+            pointThresholds.findIndex(
+                (points) => total_earned_points < points
+            ) + 1;
+
+        // if user completed all levels
+        if (currentLevel === 0) {
+            currentLevel = 30;
+        }
+
+        // ================= CURRENT LEVEL TOTAL POINTS =================
+
+        const currentLevelTotalPoints =
+            pointThresholds[currentLevel - 1] || 22505;
+
+        // ================= OVERALL PROGRESS =================
+
+        const completedPercentage =
+            currentLevelTotalPoints > 0
+                ? Math.min(
+                    Math.round(
+                        (total_earned_points / currentLevelTotalPoints) * 100
+                    ),
+                    100
+                )
+                : 0;
+
+        // ================= LEVEL LISTING =================
+
+        const progressListing = pointThresholds.map((threshold, index) => {
+
+            const levelNumber = index + 1;
+
+            let earned_point = 0;
+
+            let progress = 0;
+
+            let level_status:
+                'completed'
+                | 'inprogress'
+                | 'pending' = 'pending';
+
+            // COMPLETED LEVEL
+            if (total_earned_points >= threshold) {
+
+                earned_point = threshold;
+
+                progress = 100;
+
+                level_status = 'completed';
+            }
+
+            // CURRENT RUNNING LEVEL
+            else if (levelNumber === currentLevel) {
+
+                earned_point = total_earned_points;
+
+                progress = Math.min(
+                    Math.round((earned_point / threshold) * 100),
+                    100
+                );
+
+                level_status = 'inprogress';
+            }
+
+            // PENDING LEVELS
+            else {
+
+                earned_point = 0;
+
+                progress = 0;
+
+                level_status = 'pending';
+            }
+
+            return {
+                level_number: levelNumber,
+                total_points: threshold,
+                earned_point,
+                progress,
+                level_status
+            };
+        });
+
+        // ================= RESPONSE =================
+
+        return showResponse(
+            true,
+            getMessage(language, "success"),
+            {
+                total_earned_points,
+                currentLevel,
+                completedPercentage,
+                progressListing
+            },
+            statusCodes.SUCCESS
+        );
+    }
+
+
 }
 
 export default UserAuthHandler 

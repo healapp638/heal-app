@@ -145,6 +145,12 @@ router.get('/trialSubscription', verifyTokenUser, async (req: Request | any, res
     const controller = new UserAuthController(req, res)
     const result: ApiResponse = await controller.userTrialSubscription();
     return showOutput(res, result, result.code)
-})
+});
+
+router.get('/progress_tracker_list', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.progressTrackerList();
+    return showOutput(res, result, result.code)
+});
 
 export default router

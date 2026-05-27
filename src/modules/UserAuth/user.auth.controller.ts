@@ -308,6 +308,17 @@ export default class UserAuthController extends Controller {
     return wrappedFunc(this.userId); // Invoking the wrapped function
   }
   //ends
+
+  /**
+   * User Progress Tracker List
+   */
+    @Security("Bearer")
+    @Get("/progress_tracker_list")
+    public async progressTrackerList(): Promise<ApiResponse> {
+    const wrappedFunc = tryCatchWrapper(handler.progressTrackerList);
+    return wrappedFunc(this.userId); // Invoking the wrapped function
+  }
+  //ends
 }
 
 
