@@ -16,6 +16,9 @@ import { LocalizationContext } from '../../../../localization/localization';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import style from './style';
 import PremiumModal from '../../../../modals/PremiumModal';
+import useGetApi from '../../../../hooks/useGetApi';
+import { endpoints } from '../../../../api/Services/endpoints';
+import { ActivityIndicator } from 'react-native';
 
 const ProgressTracker = () => {
   const { colors, images } = useTheme() as any;
@@ -66,6 +69,18 @@ const ProgressTracker = () => {
     },
   ];
 
+  const { data: progressData, isLoading } = useGetApi(
+    endpoints.progress_tracker_list,
+    ['progress_tracker_list'],
+  );
+
+  let displayModules = modules;
+  const apiModules = progressData?.data || progressData;
+  if (Array.isArray(apiModules) && apiModules.length > 0) {
+    displayModules = apiModules;
+  }
+
+
   return (
     <SolidView
       isScrollEnabled
@@ -85,7 +100,7 @@ const ProgressTracker = () => {
           </SolidText>
 
           {/* Stats Card */}
-          <ProgressStatsCard
+          {/* <ProgressStatsCard
             level={1}
             progress="0/5"
             pts="0/500"
@@ -93,18 +108,24 @@ const ProgressTracker = () => {
             levelLabel={localization.appkeys.level}
             progressLabel={localization.appkeys.progress}
             ptsLabel={localization.appkeys.pts}
-          />
+          /> */}
 
           {/* Journey Modules */}
-          <View style={styles.moduleList}>
-            {modules.map(item => (
-              <JourneyModuleItem
-                key={item.id}
-                item={item}
-                localization={localization}
-              />
-            ))}
-          </View>
+          {isLoading ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>
+              <ActivityIndicator size="large" color={colors.brown} />
+            </View>
+          ) : (
+            <View style={styles.moduleList}>
+              {displayModules.map((item: any, index: number) => (
+                <JourneyModuleItem
+                  key={item.id || item._id || String(index)}
+                  item={item}
+                  localization={localization}
+                />
+              ))}
+            </View>
+          )}
 
           <PremiumModal
             visible={showCreditsModal}

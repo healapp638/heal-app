@@ -7,12 +7,18 @@ import AppUtils from '../utils/appUtils';
 
 interface JourneyModuleItemProps {
   item: {
-    id: string;
-    title: string;
-    subtitle: string;
-    progress: number;
-    level: number;
-    isLocked: boolean;
+    id?: string;
+    _id?: string;
+    title?: string;
+    name?: string;
+    subtitle?: string;
+    description?: string;
+    progress?: number;
+    completedPercentage?: number;
+    level?: number;
+    isLocked?: boolean;
+    is_locked?: boolean;
+    [key: string]: any;
   };
   localization: any;
 }
@@ -20,9 +26,24 @@ interface JourneyModuleItemProps {
 const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
   const { colors, images } = useTheme() as any;
 
-  if (item.isLocked) {
+  const isLocked = item.isLocked ?? item.is_locked ?? false;
+  const level = item.level || 1;
+  const title = item.title || item.name || `Level ${level}`;
+  const subtitle = item.subtitle || item.description || '';
+  const progress = item.progress ?? item.completedPercentage ?? 0;
+  const points =
+    item.points ?? item.pts ?? item.current_points ?? item.completed_points;
+  const totalPoints =
+    item.totalPoints ??
+    item.total_points ??
+    item.max_points ??
+    item.target_points ??
+    100;
+  const hasPoints = points !== undefined;
+
+  if (isLocked) {
     return (
-      <View key={item.id}>
+      <View key={item.id || item._id}>
         <ImageBackground
           source={images.lockedProgress}
           style={styles.lockedBackground}
@@ -34,26 +55,32 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
   }
 
   return (
-    <View key={item.id} style={styles.moduleCard}>
+    <View key={item.id || item._id} style={styles.moduleCard}>
       <View style={styles.moduleContent}>
         <View style={styles.moduleHeader}>
           <SolidText style={[styles.moduleTitle, { color: colors.brown }]}>
-            {item.title}
+            {title}
           </SolidText>
           <View style={styles.levelBadge}>
             <SolidText style={styles.levelBadgeText}>
-              {localization.appkeys.level} {item.level}
+              {hasPoints
+                ? `${points}/${totalPoints} pts`
+                : `${localization.appkeys.level} ${level}`}
             </SolidText>
           </View>
         </View>
-        <SolidText
-          style={[styles.moduleSub, { color: colors.brown }]}
-          numberOfLines={1}
-        >
-          {item.subtitle}
-        </SolidText>
+        {!!subtitle && (
+          <SolidText
+            style={[styles.moduleSub, { color: colors.brown }]}
+            numberOfLines={1}
+          >
+            {subtitle}
+          </SolidText>
+        )}
 
-        <View style={styles.progressContainer}>
+        <View
+          style={[styles.progressContainer, !subtitle && { marginTop: 16 }]}
+        >
           <View style={styles.progressLabelRow}>
             <SolidText style={[styles.progressLabel, { color: colors.brown }]}>
               {localization.appkeys.progress}
@@ -61,7 +88,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
             <SolidText
               style={[styles.progressValue, { color: colors.lightBrown }]}
             >
-              {item.progress}%
+              {progress}%
             </SolidText>
           </View>
           <View
@@ -74,7 +101,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
               style={[
                 styles.progressBarFill,
                 {
-                  width: `${item.progress}%`,
+                  width: `${progress}%`,
                   backgroundColor: colors.lightBrown,
                 },
               ]}

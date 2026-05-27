@@ -13,13 +13,18 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { useQueryClient } from '@tanstack/react-query';
 import useGetApi from '../../../../hooks/useGetApi';
+import { showPointsToast } from '../../../../components/TopPointsToast';
 
 const Exercise = () => {
   const { colors } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
   const route = useRoute() as any;
-  const { exercises: routeExercises, challenge_id, challenge_type } = route.params || {};
+  const {
+    exercises: routeExercises,
+    challenge_id,
+    challenge_type,
+  } = route.params || {};
   const { mutate: completeChallengeApi } = usePostApi();
   const queryClient = useQueryClient();
 
@@ -47,7 +52,13 @@ const Exercise = () => {
               title={localization.appkeys?.exercise || 'Exercise'}
               onBackPress={() => navigation.goBack()}
             />
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
               <ActivityIndicator size="large" color={colors.brown} />
             </View>
           </View>
@@ -100,8 +111,10 @@ const Exercise = () => {
           },
         },
         {
-          onSuccess: () => {
+          onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ['challenge_list'] });
+            showPointsToast(data?.message, `+${data?.data?.points} pts`);
+
             navigation.reset({
               index: 0,
               routes: [

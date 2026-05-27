@@ -24,6 +24,7 @@ const ProgressTrackerCard = ({
 }: ProgressTrackerCardProps) => {
   const { colors } = useTheme() as any;
   const userDetails = useSelector((state: any) => state.userData.user);
+
   const displayPercentage =
     percentage ||
     (userDetails?.completedPercentage !== undefined

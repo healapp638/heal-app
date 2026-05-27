@@ -33,6 +33,7 @@ import Voice, {
 import { useSelector } from 'react-redux';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import PremiumModal from '../../../../modals/PremiumModal';
+import { showPointsToast } from '../../../../components/TopPointsToast';
 const SPEECH_LOCALE_BY_LANGUAGE: Record<string, string> = {
   English: 'en-US',
   Spanish: 'es-ES',
@@ -210,9 +211,9 @@ const AddJournal = () => {
       },
       {
         onSuccess: (data: any) => {
-          AppUtils.showToast(
-            data?.message || 'Journal entry saved successfully',
-          );
+          console.log(data?.data?.points);
+          showPointsToast(data?.message, `+${data?.data?.points} pts`);
+
           navigation.goBack();
         },
         onError: (error: any) => {

@@ -1,6 +1,15 @@
 import React, { cloneElement, useContext, useEffect, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { View, TextInput, BackHandler, ScrollView, TouchableOpacity, ActivityIndicator, Platform, Keyboard } from 'react-native';
+import {
+  View,
+  TextInput,
+  BackHandler,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  Platform,
+  Keyboard,
+} from 'react-native';
 import useGetApi from '../../../../hooks/useGetApi';
 import {
   CommonActions,
@@ -34,10 +43,7 @@ const ModuleExercise = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const route = useRoute();
-  const {
-    phase,
-    isLastPhase,
-  } = (route.params as any) || {};
+  const { phase, isLastPhase } = (route.params as any) || {};
 
   const { data: mcqData, isLoading: isMcqLoading } = useGetApi(
     endpoints.exercise_mcq_list,
@@ -82,7 +88,9 @@ const ModuleExercise = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [reflectionText, setReflectionText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState<{ [key: number]: string }>({});
+  const [selectedOptions, setSelectedOptions] = useState<{
+    [key: number]: string;
+  }>({});
 
   const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
   const { mutate: addMcqAnswer, isPending: isSavingAnswer } = usePostApi();
@@ -114,7 +122,7 @@ const ModuleExercise = () => {
         if (!selectedOptionId) {
           ToastService.show(
             localization.appkeys?.pleaseSelectOption ||
-            'Please select an option to proceed',
+              'Please select an option to proceed',
           );
           return;
         }
@@ -144,7 +152,7 @@ const ModuleExercise = () => {
       if (!reflectionText.trim()) {
         ToastService.show(
           localization.appkeys?.pleaseEnterReflection ||
-          'Please enter your reflection',
+            'Please enter your reflection',
         );
         return;
       }
@@ -160,7 +168,8 @@ const ModuleExercise = () => {
           },
         },
         {
-          onSuccess: () => {
+          onSuccess: (data: any) => {
+            console.log(data);
             queryClient.invalidateQueries({
               queryKey: ['phase_list'],
             });
@@ -178,11 +187,13 @@ const ModuleExercise = () => {
             });
             dispatch(getUserDetail() as any);
             showPointsToast(
-              `${localization.appkeys?.completedPhase || "You've completed"} ${phase?.phase ||
-              `${localization.appkeys?.phase || 'Phase'} ${phase?.phaseNumber || 1
-              }`
+              `${localization.appkeys?.completedPhase || "You've completed"} ${
+                phase?.phase ||
+                `${localization.appkeys?.phase || 'Phase'} ${
+                  phase?.phaseNumber || 1
+                }`
               }`,
-              '+10 pts'
+              `+${data?.data?.points || 0} pts`,
             );
             navigation.dispatch(state => {
               const targetRoute = isLastPhase
@@ -201,10 +212,7 @@ const ModuleExercise = () => {
               const source = (route.params as any)?.source;
               const theme = (route.params as any)?.theme;
               let actualTargetRoute = targetRoute;
-              if (
-                isLastPhase &&
-                (source === 'all' || source === 'dashboard')
-              ) {
+              if (isLastPhase && (source === 'all' || source === 'dashboard')) {
                 actualTargetRoute = AppRoutes.AllModules;
               }
               return CommonActions.reset({
@@ -228,10 +236,10 @@ const ModuleExercise = () => {
               });
             });
           },
-          onError: (error) => {
-            console.log(error)
+          onError: error => {
+            console.log(error);
             ToastService.show('Failed to complete lesson. Please try again.');
-          }
+          },
         },
       );
     }
@@ -278,7 +286,8 @@ const ModuleExercise = () => {
                 style={{ width: '100%', flex: 1 }}
                 contentContainerStyle={[
                   styles.scrollContent,
-                  (currentStepData.type === 'text' || currentStepData.type === 'mcq') && { paddingBottom: 120 }
+                  (currentStepData.type === 'text' ||
+                    currentStepData.type === 'mcq') && { paddingBottom: 120 },
                 ]}
                 showsVerticalScrollIndicator={false}
               >
@@ -299,13 +308,13 @@ const ModuleExercise = () => {
                     styles.exerciseTitle,
                     currentStepData.type === 'text'
                       ? {
-                        textAlign: 'left',
-                        alignSelf: 'flex-start',
-                        fontFamily: AppFonts.semiBold,
-                      }
+                          textAlign: 'left',
+                          alignSelf: 'flex-start',
+                          fontFamily: AppFonts.semiBold,
+                        }
                       : {
-                        fontFamily: AppFonts.medium,
-                      },
+                          fontFamily: AppFonts.medium,
+                        },
                   ]}
                 >
                   {currentStepData.title}
@@ -319,7 +328,8 @@ const ModuleExercise = () => {
                 ) : (
                   <View style={styles.optionList}>
                     {currentStepData.options.map((optionItem: any) => {
-                      const isSelected = selectedOptions[currentStep] === optionItem._id;
+                      const isSelected =
+                        selectedOptions[currentStep] === optionItem._id;
                       return (
                         <TouchableOpacity
                           key={optionItem._id}
@@ -343,12 +353,15 @@ const ModuleExercise = () => {
                     })}
                   </View>
                 )}
-
-
               </ScrollView>
             ) : (
               <View
-                style={{ flex: 1, justifyContent: 'space-between', height: '100%', width: '100%' }}
+                style={{
+                  flex: 1,
+                  justifyContent: 'space-between',
+                  height: '100%',
+                  width: '100%',
+                }}
               >
                 <HeaderCommon
                   title={localization.appkeys?.exercise || 'Exercise'}
@@ -385,7 +398,6 @@ const ModuleExercise = () => {
                     />
                   </View>
                 </View>
-
               </View>
             )}
           </View>
@@ -402,11 +414,15 @@ const ModuleExercise = () => {
             }}
             btnStyle={[
               styles.floatingNextButton,
-              currentStepData?.type === 'reflection' && { position: 'relative', marginTop: 20, marginBottom: 30, bottom: 0 }
+              currentStepData?.type === 'reflection' && {
+                position: 'relative',
+                marginTop: 20,
+                marginBottom: 30,
+                bottom: 0,
+              },
             ]}
             isLoading={isCompleting || isSavingAnswer}
           />
-
         </View>
       }
     />
