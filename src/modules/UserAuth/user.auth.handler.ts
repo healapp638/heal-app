@@ -912,7 +912,7 @@ const UserAuthHandler = {
             status: USER_STATUS.ACTIVE,
             createdAt: { $gte: startOfDay, $lte: endOfDay }
         });
-        const totalJournelEarnedPoints = (totalJournels * 10) + 25 || 0
+        const totalJournelEarnedPoints = ((totalJournels - 1) * 10) + 25 || 0
         console.log(completedWeeklyChallenges[0]?.total_points, 'completedWeeklyChallenges')
         console.log(completedDailyChallenges[0]?.total_points, 'completedDailyChallenges')
         console.log(CompletedPhases[0]?.total_points, 'CompletedPhases')
@@ -928,13 +928,13 @@ const UserAuthHandler = {
         const total_points = pointThresholds.find((curelem) => total_earned_points < curelem) ?? 22505
 
         const completedPercentage = total_points > 0
-            ? (total_earned_points / total_points) * 100
+            ? (Math.round((total_earned_points / total_points) * 100))
             : 0;
 
         // Calculate level
-        const totalLevels = 5;
+        const totalLevels = 30;
 
-        let currentLevel = Math.ceil((completedPercentage / 100) * totalLevels);
+        let currentLevel = total_earned_points < 99 ? 1 : total_earned_points < 235 ? 2 : total_earned_points < 460 ? 3 : total_earned_points < 740 ? 4 : total_earned_points < 1070 ? 5 : total_earned_points < 1450 ? 6 : total_earned_points < 1875 ? 7 : total_earned_points < 2345 ? 8 : total_earned_points < 2860 ? 9 : total_earned_points < 3415 ? 10 : total_earned_points < 4015 ? 11 : total_earned_points < 4650 ? 12 : total_earned_points < 5325 ? 13 : total_earned_points < 6040 ? 14 : total_earned_points < 6795 ? 15 : total_earned_points < 7590 ? 16 : total_earned_points < 8420 ? 17 : total_earned_points < 9290 ? 18 : total_earned_points < 10195 ? 19 : total_earned_points < 11140 ? 20 : total_earned_points < 12120 ? 21 : total_earned_points < 13135 ? 22 : total_earned_points < 14185 ? 23 : total_earned_points < 15270 ? 24 : total_earned_points < 16390 ? 25 : total_earned_points < 17545 ? 26 : total_earned_points < 18730 ? 27 : total_earned_points < 19955 ? 28 : total_earned_points < 21215 ? 29 : total_earned_points < 22505 ? 30 : 31;
 
         // Edge case fix
         if (currentLevel === 0) currentLevel = 1;

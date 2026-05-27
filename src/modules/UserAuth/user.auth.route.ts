@@ -18,16 +18,16 @@ router.post('/register', async (req: Request | any, res: Response) => {
 })
 
 router.post('/sendMagicLink', async (req: Request | any, res: Response) => {
-    const { hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,email,language } = req.body;
+    const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, email, language } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.sendMagicLink({ hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,email,language });
+    const result: ApiResponse = await controller.sendMagicLink({ hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, email, language });
     return showOutput(res, result, result.code)
 })
 
 router.post('/magicLinkLogin', async (req: Request | any, res: Response) => {
-    const { email, hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language,timeZone,code } = req.body;
+    const { email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone,code });
+    const result: ApiResponse = await controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code });
     return showOutput(res, result, result.code)
 })
 
@@ -45,9 +45,9 @@ router.post('/login', ratLimiting, async (req: Request | any, res: Response) => 
 })
 
 router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
-    const { login_source, social_auth, email, name, os_type, language,timeZone } = req.body;
+    const { login_source, social_auth, email, name, os_type, language, timeZone } = req.body;
     const userAuthController = new UserAuthController(req, res)
-    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language,timeZone);
+    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language, timeZone);
     return showOutput(res, result, result.code)
 })
 
@@ -135,9 +135,9 @@ router.get('/details_user', verifyTokenUser, async (req: Request | any, res: Res
 });
 
 router.post('/complete_onboarding', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language } = req.body;
+    const { hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language } = req.body;
     const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.completeOnboarding({ hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,fullName,language });
+    const result: ApiResponse = await controller.completeOnboarding({ hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language });
     return showOutput(res, result, result.code)
 })
 
