@@ -48,7 +48,6 @@ const affirmationHandler = {
         statusCodes.NOT_FOUND,
       );
     }
-    console.log(aiAffirmation,"aiAffirmation")
 
     // return only user's language
     const responseData = {
@@ -588,7 +587,6 @@ const affirmationHandler = {
       _id: convertToObjectId(user_id),
       status: USER_STATUS.ACTIVE,
     });
-    console.log(sort_column, sort_direction, user_id)
 
     if (!userData) {
       return showResponse(
@@ -601,7 +599,6 @@ const affirmationHandler = {
 
     // user language
     const language = userData?.data?.language || "en";
-    console.log(language, "language")
 
     const aggregate = [
       // user liked affirmations
@@ -687,7 +684,6 @@ const affirmationHandler = {
   createLink: async (data: any): Promise<ApiResponse> => {
         try {
             const { affirmation_id } = data;
-            console.log(affirmation_id,"affirmation_id")
             // Generate random 8-char code
             const code = commonHelper.generateRandomAlphanumeric(8);
 

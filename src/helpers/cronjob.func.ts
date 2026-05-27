@@ -161,7 +161,6 @@ Return JSON:
       });
 
       const content: any = response.choices?.[0]?.message?.content || "{}";
-      console.log(content, "content")
 
       const parsed = JSON.parse(content);
 
@@ -253,9 +252,7 @@ const generateChallenges = async () => {
     await connectDB()
     //daily logic 
     const startOfDay = moment().startOf('day').toDate();
-    console.log(startOfDay, 'startOfDay')
     const findUser = await userAuthModel.find({ lastDailyChallengeGeneratedDate: { $lt: startOfDay }, isVerified: true })
-    console.log(findUser, 'findUser')
     if (findUser.length > 0) {
       await Promise.all(findUser.map(async (curelem: any) => {
         //challenges logic start
@@ -265,10 +262,8 @@ const generateChallenges = async () => {
         const payload: any = challengesDetails?.payload;
         if (isOnBoardingComplete && !isDailyChallengeExist) {
           //
-          console.log('inside')
           await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { isDailyChallengeInProgress: true } })
           const res = await generateUserChallengesDaily(payload, curelem?._id.toString());
-          console.log(res, 'res')
           const languagess = Object.values(languages);
           const formattedChallenges = await Promise.all(
             res?.data?.map(async (challenge: any) => {
@@ -309,7 +304,6 @@ const generateChallenges = async () => {
               };
             })
           );
-          console.log(formattedChallenges, 'formattedChallenges')
           const result = await userDailyChallengesModel.insertMany(
             formattedChallenges
           );
@@ -373,7 +367,6 @@ const generateChallenges = async () => {
               };
             })
           );
-          console.log(formattedChallenges, 'formattedChallenges')
           const result = await userWeeklyChallengesModel.insertMany(
             formattedChallenges
           );
@@ -392,7 +385,6 @@ const generateChallenges = async () => {
 
 export const scheduleCroneJOb = () => {
   nodeCron.schedule('*/5 * * * *', () => {
-    console.log('running a task every 5 minute');
     generateChallenges()
   })
 }

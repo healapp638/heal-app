@@ -14,10 +14,6 @@ const translate_1 = require("@google-cloud/translate");
 const translate = new translate_1.Translate({
     key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
 });
-// const translate = new Translate({
-//     key: APP.GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-// });
-// console.log(APP.GOOGLE_TRANSLATE_API_KEY, "APP.GOOGLE_TRANSLATE_API_KEY")
 const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (targetLanguage == 'en') {

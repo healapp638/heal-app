@@ -965,7 +965,8 @@ const UserAuthHandler = {
         if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
             isUnderProgress = true
         }
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result.data, account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
+        const result2 = await findOne(userAuthModel, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0, password: 0 });
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result2.data, account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {

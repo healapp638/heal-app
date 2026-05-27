@@ -33,7 +33,7 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
     var _a, _b;
     try {
         yield (0, mongoose_config_1.connection)();
-        console.log("BullMQ Worker Started...");
+        console.log("BullMQ Worker Started in...");
         const { userData } = job.data;
         const challengesDetails = yield (0, common_helper_1.challengsFn)(userData);
         const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
@@ -68,7 +68,6 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
                 };
             })));
             const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
-            console.log(result, 'result');
             if (result) {
                 yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } });
             }

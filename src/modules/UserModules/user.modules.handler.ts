@@ -816,89 +816,6 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { exerciseDetail: exerciseDetail[0], exercises, nextCursor }, statusCodes.SUCCESS);
     },
 
-    // completeLesson: async (data: any, userId: string): Promise<ApiResponse> => {
-    //     const { exercise_id, exercise_details_id, phase_id, reflection } = data;
-    //     const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
-    //     const userLang = user?.language || 'en';
-
-    //     const completedLesson = await userModulesCompleteLessonModel.findOne({
-    //         user_id: convertToObjectId(userId),
-    //         exercise_id: convertToObjectId(exercise_id),
-    //         exercise_details_id: convertToObjectId(exercise_details_id),
-    //         phase_id: convertToObjectId(phase_id),
-    //         status: USER_STATUS.ACTIVE
-    //     });
-
-    //     if (completedLesson) {
-    //         return showResponse(false, getMessage(userLang || 'en', 'already_completed'), null, statusCodes.API_ERROR);
-    //     }
-
-    //     const completedLessonData = await userModulesCompleteLessonModel.create({
-    //         user_id: convertToObjectId(userId),
-    //         exercise_id: convertToObjectId(exercise_id),
-    //         exercise_details_id: convertToObjectId(exercise_details_id),
-    //         phase_id: convertToObjectId(phase_id),
-    //         reflection: reflection,
-    //         status: USER_STATUS.ACTIVE
-    //     });
-
-    //     if (!completedLessonData) {
-    //         return showResponse(false, getMessage(userLang || 'en', 'error_while_completing_lesson'), null, statusCodes.API_ERROR);
-    //     }
-
-    //     const totalLessonInPhase = await adminExerciseDetailsModel.countDocuments({
-    //         phase_id: convertToObjectId(phase_id),
-    //         status: USER_STATUS.ACTIVE
-    //     })
-
-    //     const completedLessonCount = await userModulesCompleteLessonModel.countDocuments({
-    //         user_id: convertToObjectId(userId),
-    //         phase_id: convertToObjectId(phase_id),
-    //         status: USER_STATUS.ACTIVE
-    //     });
-
-    //     const submodule = await adminPhasesModel.findOne({
-    //         _id: convertToObjectId(phase_id),
-    //         status: USER_STATUS.ACTIVE
-    //     });
-
-    //     const subModuleId: any = submodule?.subModuleId;
-    //     console.log(subModuleId, "subModuleId")
-
-    //     if (totalLessonInPhase === completedLessonCount) {
-    //         await userModulesCompletePhaseModel.create({
-    //             user_id: convertToObjectId(userId),
-    //             phase_id: convertToObjectId(phase_id),
-    //             sub_module_id: subModuleId,
-    //             status: USER_STATUS.ACTIVE
-    //         });
-    //     }
-
-
-    //     const totalPhaseInSubModule = await adminPhasesModel.countDocuments({
-    //         subModuleId: convertToObjectId(subModuleId),
-    //         status: USER_STATUS.ACTIVE
-    //     })
-
-    //     const completedPhaseInSubModule = await userModulesCompletePhaseModel.countDocuments({
-    //         user_id: convertToObjectId(userId),
-    //         sub_module_id: convertToObjectId(subModuleId),
-    //         status: USER_STATUS.ACTIVE
-    //     })
-
-    //     if (totalPhaseInSubModule === completedPhaseInSubModule) {
-    //         await userModuleStartLessonModel.updateOne({
-    //             user_id: convertToObjectId(userId),
-    //             sub_module_id: convertToObjectId(subModuleId),
-    //         }, {
-    //             $set: {
-    //                 sub_module_status: "end"
-    //             }
-    //         });
-    //     }
-
-    //     return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), null, statusCodes.SUCCESS);
-    // },
     completeLesson: async (data: any, userId: string): Promise<ApiResponse> => {
         const { exercise_id, phase_id, reflection } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
@@ -926,19 +843,6 @@ const UserCommonHandler = {
         if (!completedLessonData) {
             return showResponse(false, getMessage(userLang || 'en', 'error_while_completing_lesson'), null, statusCodes.API_ERROR);
         }
-
-        // const totalLessonInPhase = await adminMcqexerciseModel.countDocuments({
-        //     phase_id: convertToObjectId(phase_id),
-        //     status: USER_STATUS.ACTIVE
-        // })
-        // console.log(totalLessonInPhase, "totalLessonInPhase")
-
-        // const completedLessonCount = await userModulesCompleteLessonModel.countDocuments({
-        //     user_id: convertToObjectId(userId),
-        //     phase_id: convertToObjectId(phase_id),
-        //     status: USER_STATUS.ACTIVE
-        // });
-        // console.log(completedLessonCount, "completedLessonCount")
 
         const submodule = await adminPhasesModel.findOne({
             _id: convertToObjectId(phase_id),
@@ -985,38 +889,6 @@ const UserCommonHandler = {
         return showResponse(true, getMessage(userLang || 'en', 'lesson_completed_successfully'), { points: 10 }, statusCodes.SUCCESS);
     },
 
-    // startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
-    //     const { phase_id } = data;
-    //     const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
-    //     const userLang = user?.language || 'en';
-
-    //     const submodule = await adminPhasesModel.findOne({
-    //         _id: convertToObjectId(phase_id),
-    //         status: USER_STATUS.ACTIVE
-    //     });
-
-    //     const subModuleId: any = submodule?.subModuleId;
-
-    //     const start_lesson = await userModuleStartLessonModel.findOneAndUpdate({
-    //         user_id: convertToObjectId(userId),
-    //         sub_module_id: convertToObjectId(subModuleId),
-    //     }, {
-    //         $set: {
-    //             user_id: convertToObjectId(userId),
-    //             sub_module_id: convertToObjectId(subModuleId),
-    //             status: USER_STATUS.ACTIVE
-    //         }
-    //     }, {
-    //         upsert: true,
-    //         new: true
-    //     });
-
-    //     if (!start_lesson) {
-    //         return showResponse(false, getMessage(userLang || 'en', 'error_while_starting_lesson'), null, statusCodes.API_ERROR);
-    //     }
-
-    //     return showResponse(true, getMessage(userLang || 'en', 'lesson_started_successfully'), null, statusCodes.SUCCESS);
-    // },
     startLesson: async (data: any, userId: string): Promise<ApiResponse> => {
         const { phase_id } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });

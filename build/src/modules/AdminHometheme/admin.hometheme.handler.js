@@ -62,10 +62,8 @@ const CommonHandler = {
     // },
     deleteCategoryTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { themeCategoryId, status } = data;
-        console.log(themeCategoryId, "themeCategoryId");
         // 1. Delete Category
         const deleteCategory = yield admin_homethemeCategory_model_1.default.findOneAndUpdate({ _id: (0, common_helper_1.convertToObjectId)(themeCategoryId) }, { $set: { status } }, { new: true });
-        console.log(deleteCategory, "deleteCategory");
         if (!deleteCategory) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.delete_failed, null, statusCodes_1.default.API_ERROR);
         }
@@ -76,7 +74,6 @@ const CommonHandler = {
         const themeIds = themes.map((item) => item._id);
         // 3. Soft delete all themes
         yield admin_hometheme_model_1.default.updateMany({ categoryTheme_id: (0, common_helper_1.convertToObjectId)(themeCategoryId) }, { $set: { status } });
-        console.log(themeIds, "themeIds");
         // 4. Soft delete all recent theme records
         if (themeIds.length > 0) {
             yield user_recentHomeTheme_model_1.default.updateMany({ homeTheme_id: { $in: themeIds } }, { $set: { status } });

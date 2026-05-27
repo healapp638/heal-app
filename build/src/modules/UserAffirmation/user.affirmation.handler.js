@@ -80,7 +80,6 @@ const affirmationHandler = {
         if (!aiAffirmation) {
             return (0, response_util_1.showResponse)(false, "No AI affirmation found", null, statusCodes_1.default.NOT_FOUND);
         }
-        console.log(aiAffirmation, "aiAffirmation");
         // return only user's language
         const responseData = {
             _id: aiAffirmation._id,
@@ -441,13 +440,11 @@ const affirmationHandler = {
             _id: (0, common_helper_1.convertToObjectId)(user_id),
             status: workflow_constant_1.USER_STATUS.ACTIVE,
         });
-        console.log(sort_column, sort_direction, user_id);
         if (!userData) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
         }
         // user language
         const language = ((_a = userData === null || userData === void 0 ? void 0 : userData.data) === null || _a === void 0 ? void 0 : _a.language) || "en";
-        console.log(language, "language");
         const aggregate = [
             // user liked affirmations
             {
@@ -508,7 +505,6 @@ const affirmationHandler = {
     createLink: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const { affirmation_id } = data;
-            console.log(affirmation_id, "affirmation_id");
             // Generate random 8-char code
             const code = commonHelper.generateRandomAlphanumeric(8);
             // Insert document with code and params

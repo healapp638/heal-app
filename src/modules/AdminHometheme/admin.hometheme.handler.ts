@@ -70,7 +70,6 @@ const CommonHandler = {
 
     deleteCategoryTheme: async (data: any): Promise<ApiResponse> => {
         const { themeCategoryId, status } = data
-        console.log(themeCategoryId,"themeCategoryId")
 
         // 1. Delete Category
         const deleteCategory = await adminHomethemeCategoryModel.findOneAndUpdate(
@@ -78,7 +77,6 @@ const CommonHandler = {
             { $set: { status } },
             { new: true }
         )
-        console.log(deleteCategory,"deleteCategory")
 
         if (!deleteCategory) {
             return showResponse(
@@ -101,7 +99,6 @@ const CommonHandler = {
             { categoryTheme_id: convertToObjectId(themeCategoryId) },
             { $set: { status } }
         )
-        console.log(themeIds,"themeIds")
 
         // 4. Soft delete all recent theme records
         if (themeIds.length > 0) {

@@ -153,7 +153,6 @@ Return JSON:
                 ],
             });
             const content = ((_c = (_b = (_a = response.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) || "{}";
-            console.log(content, "content");
             const parsed = JSON.parse(content);
             generatedQuote = (_d = parsed === null || parsed === void 0 ? void 0 : parsed.affirmation) === null || _d === void 0 ? void 0 : _d.trim();
             if (!generatedQuote) {
@@ -209,9 +208,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
         yield (0, mongoose_config_1.connection)();
         //daily logic 
         const startOfDay = (0, moment_1.default)().startOf('day').toDate();
-        console.log(startOfDay, 'startOfDay');
         const findUser = yield user_auth_model_1.default.find({ lastDailyChallengeGeneratedDate: { $lt: startOfDay }, isVerified: true });
-        console.log(findUser, 'findUser');
         if (findUser.length > 0) {
             yield Promise.all(findUser.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
                 var _a;
@@ -222,10 +219,8 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
                 const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
                 if (isOnBoardingComplete && !isDailyChallengeExist) {
                     //
-                    console.log('inside');
                     yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { isDailyChallengeInProgress: true } });
                     const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, curelem === null || curelem === void 0 ? void 0 : curelem._id.toString());
-                    console.log(res, 'res');
                     const languagess = Object.values(workflow_constant_1.languages);
                     const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
                         const titleObj = {};
@@ -250,7 +245,6 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
                             exercises,
                         };
                     })));
-                    console.log(formattedChallenges, 'formattedChallenges');
                     const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
                     if (result) {
                         yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } });
@@ -298,7 +292,6 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
                             exercises,
                         };
                     })));
-                    console.log(formattedChallenges, 'formattedChallenges');
                     const result = yield user_weekly_challenges_model_1.default.insertMany(formattedChallenges);
                     if (result) {
                         yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } });
@@ -315,7 +308,6 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 });
 const scheduleCroneJOb = () => {
     node_cron_1.default.schedule('*/5 * * * *', () => {
-        console.log('running a task every 5 minute');
         generateChallenges();
     });
 };

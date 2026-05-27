@@ -426,7 +426,6 @@ const challengsFn = async (userData: any) => {
                 value !== null &&
                 String(value).trim() !== ''
         );
-        console.log('isOnBoardingComplete', isOnBoardingComplete)
         const totalWeeklyChallanges = await userWeeklyChallengesModel.countDocuments({
             createdAt: { $gte: startOfWeek, $lte: endOfWeek },
             user_id: userData._id

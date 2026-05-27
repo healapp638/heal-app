@@ -337,9 +337,7 @@ const exerciseHandler = {
         return showResponse(true,responseMessage.common.data_save,createExercise,statusCodes.SUCCESS);
 
     } catch (error) {
-
         console.log(error,"CREATE_MCQ_EXERCISE_ERROR");
-
         return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
     }
 },

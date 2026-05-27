@@ -382,7 +382,6 @@ const challengsFn = (userData) => __awaiter(void 0, void 0, void 0, function* ()
         ].every(value => value !== undefined &&
             value !== null &&
             String(value).trim() !== '');
-        console.log('isOnBoardingComplete', isOnBoardingComplete);
         const totalWeeklyChallanges = yield user_weekly_challenges_model_1.default.countDocuments({
             createdAt: { $gte: startOfWeek, $lte: endOfWeek },
             user_id: userData._id
