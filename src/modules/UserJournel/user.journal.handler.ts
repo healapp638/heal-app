@@ -26,16 +26,16 @@ const UserCommonHandler = {
         };
 
         const langs = Object.values(languages);
-        const sourceLanguage = 'en'; 
+        const sourceLanguage = 'en';
         await Promise.all(
             langs.map(async (lang: string) => {
-                            // Skip translation if target is same as source
-            if (lang === sourceLanguage) {
-                obj.feeling[lang] = feeling;
-                obj.title[lang] = title;
-                obj.description[lang] = description;
-                return;
-            }
+                // Skip translation if target is same as source
+                if (lang === sourceLanguage) {
+                    obj.feeling[lang] = feeling;
+                    obj.title[lang] = title;
+                    obj.description[lang] = description;
+                    return;
+                }
                 const [translatedFeeling, translatedTitle, translatedDescription] = await Promise.all([
                     AutoTranslateText(feeling, lang, sourceLanguage),
                     AutoTranslateText(title, lang, sourceLanguage),
@@ -53,11 +53,22 @@ const UserCommonHandler = {
             feeling: obj.feeling,
             title: obj.title,
             description: obj.description
-        })
+        });
+
         if (!response) {
             return showResponse(false, getMessage(lang, 'error_while_creating_journal'), null, statusCodes.API_ERROR)
         }
-        return showResponse(true, getMessage(lang, 'journal_created_successfully'), null, statusCodes.SUCCESS)
+        const todayJournelCount = await userJournalModel.countDocuments({
+            user_id: userId,
+            createdAt: {
+                $gte: moment().startOf('day').toDate(),
+                $lte: moment().endOf('day').toDate()
+            }
+        });
+        if (todayJournelCount == 1) {
+            return showResponse(true, getMessage(lang, 'journal_created_successfully'), { points: 25 }, statusCodes.SUCCESS)
+        }
+        return showResponse(true, getMessage(lang, 'journal_created_successfully'), { points: 10 }, statusCodes.SUCCESS)
     },
 
     journalList: async (page: string, limit: number = 10, search_key: string, userId: string): Promise<ApiResponse> => {

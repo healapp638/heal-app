@@ -62,7 +62,17 @@ const UserCommonHandler = {
         if (!response) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(lang, 'error_while_creating_journal'), null, statusCodes_1.default.API_ERROR);
         }
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_created_successfully'), null, statusCodes_1.default.SUCCESS);
+        const todayJournelCount = yield user_journel_model_1.default.countDocuments({
+            user_id: userId,
+            createdAt: {
+                $gte: (0, moment_1.default)().startOf('day').toDate(),
+                $lte: (0, moment_1.default)().endOf('day').toDate()
+            }
+        });
+        if (todayJournelCount == 1) {
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_created_successfully'), { points: 25 }, statusCodes_1.default.SUCCESS);
+        }
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(lang, 'journal_created_successfully'), { points: 10 }, statusCodes_1.default.SUCCESS);
     }),
     journalList: (page_1, ...args_1) => __awaiter(void 0, [page_1, ...args_1], void 0, function* (page, limit = 10, search_key, userId) {
         limit = Number(limit);

@@ -8,7 +8,7 @@ import { USER_STATUS } from "../../constants/workflow.constant";
 import moment from "moment";
 import { getMessage } from "../../helpers/messages";
 import userAuthModel from "../UserAuth/user.auth.model";
-import {convertToObjectId } from "../../helpers/common.helper";
+import { convertToObjectId } from "../../helpers/common.helper";
 
 
 const UserChallengesHandler = {
@@ -200,11 +200,11 @@ const UserChallengesHandler = {
         }
         if (challenge_type == 'daily') {
             await userDailyChallengesModel.findByIdAndUpdate(challenge_id, { isCompleted: true })
-            return showResponse(true, getMessage(userDetails?.language || 'en', 'challenges_completed_successfully'), {}, statusCodes.SUCCESS)
+            return showResponse(true, getMessage(userDetails?.language || 'en', 'challenges_completed_successfully'), { points: 10 }, statusCodes.SUCCESS)
         }
         if (challenge_type == 'weekly') {
             await userWeeklyChallengesModel.findByIdAndUpdate(challenge_id, { isCompleted: true })
-            return showResponse(true, getMessage(userDetails?.language || 'en', 'challenges_completed_successfully'), {}, statusCodes.SUCCESS)
+            return showResponse(true, getMessage(userDetails?.language || 'en', 'challenges_completed_successfully'), { points: 25 }, statusCodes.SUCCESS)
         }
         return showResponse(false, getMessage(userDetails?.language || 'en', 'invalid_challenge_type'), {}, statusCodes.API_ERROR)
     }

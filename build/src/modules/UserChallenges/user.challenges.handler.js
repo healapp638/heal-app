@@ -204,11 +204,11 @@ const UserChallengesHandler = {
         }
         if (challenge_type == 'daily') {
             yield user_daily_challenges_model_1.default.findByIdAndUpdate(challenge_id, { isCompleted: true });
-            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'challenges_completed_successfully'), {}, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'challenges_completed_successfully'), { points: 10 }, statusCodes_1.default.SUCCESS);
         }
         if (challenge_type == 'weekly') {
             yield user_weekly_challenges_model_1.default.findByIdAndUpdate(challenge_id, { isCompleted: true });
-            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'challenges_completed_successfully'), {}, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'challenges_completed_successfully'), { points: 25 }, statusCodes_1.default.SUCCESS);
         }
         return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)((userDetails === null || userDetails === void 0 ? void 0 : userDetails.language) || 'en', 'invalid_challenge_type'), {}, statusCodes_1.default.API_ERROR);
     })
