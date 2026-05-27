@@ -794,7 +794,9 @@ const UserAuthHandler = {
             status: workflow_constant_1.USER_STATUS.ACTIVE,
             createdAt: { $gte: startOfDay, $lte: endOfDay }
         });
-        const totalJournelEarnedPoints = ((totalJournels - 1) * 10) + 25 || 0;
+        const totalJournelEarnedPoints = totalJournels > 0
+            ? ((totalJournels - 1) * 10) + 25
+            : 0;
         console.log((_c = completedWeeklyChallenges[0]) === null || _c === void 0 ? void 0 : _c.total_points, 'completedWeeklyChallenges');
         console.log((_d = completedDailyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points, 'completedDailyChallenges');
         console.log((_e = CompletedPhases[0]) === null || _e === void 0 ? void 0 : _e.total_points, 'CompletedPhases');

@@ -912,7 +912,10 @@ const UserAuthHandler = {
             status: USER_STATUS.ACTIVE,
             createdAt: { $gte: startOfDay, $lte: endOfDay }
         });
-        const totalJournelEarnedPoints = ((totalJournels - 1) * 10) + 25 || 0
+        const totalJournelEarnedPoints =
+            totalJournels > 0
+                ? ((totalJournels - 1) * 10) + 25
+                : 0;
         console.log(completedWeeklyChallenges[0]?.total_points, 'completedWeeklyChallenges')
         console.log(completedDailyChallenges[0]?.total_points, 'completedDailyChallenges')
         console.log(CompletedPhases[0]?.total_points, 'CompletedPhases')
