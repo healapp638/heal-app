@@ -1,131 +1,156 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useMemo, useCallback, useEffect } from 'react';
 import {
   View,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
-  ScrollView,
+  FlatList,
+  ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
-import ProgressStatsCard from '../../../../components/ProgressStatsCard';
 import JourneyModuleItem from '../../../../components/JourneyModuleItem';
 import { LocalizationContext } from '../../../../localization/localization';
-import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import style from './style';
 import PremiumModal from '../../../../modals/PremiumModal';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
-import { ActivityIndicator } from 'react-native';
+
+const PAGE_SIZE = 10;
 
 const ProgressTracker = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const modules = [
-    {
-      id: '1',
-      title: localization.appkeys.firstSteps,
-      subtitle: localization.appkeys.firstStepsSub,
-      progress: 30,
-      level: 1,
-      isLocked: false,
-    },
-    {
-      id: '2',
-      title: localization.appkeys.findingGround,
-      subtitle: localization.appkeys.findingGroundSub,
-      progress: 0,
-      level: 2,
-      isLocked: true,
-    },
-    {
-      id: '3',
-      title: localization.appkeys.growingRoots,
-      subtitle: localization.appkeys.growingRootsSub,
-      progress: 0,
-      level: 3,
-      isLocked: true,
-    },
-    {
-      id: '4',
-      title: localization.appkeys.blooming,
-      subtitle: localization.appkeys.bloomingSub,
-      progress: 0,
-      level: 4,
-      isLocked: true,
-    },
-    {
-      id: '5',
-      title: localization.appkeys.flourishing,
-      subtitle: localization.appkeys.flourishingSub,
-      progress: 0,
-      level: 5,
-      isLocked: true,
-    },
-  ];
-
-  const { data: progressData, isLoading } = useGetApi(
+  const { data: progressData, isLoading, error } = useGetApi(
     endpoints.progress_tracker_list,
     ['progress_tracker_list'],
   );
 
-  let displayModules = modules;
-  const apiModules = progressData?.data || progressData;
-  if (Array.isArray(apiModules) && apiModules.length > 0) {
-    displayModules = apiModules;
-  }
+  const mappedModules = useMemo(() => {
+    const rawListing = progressData?.data?.progressListing || [];
+    if (!Array.isArray(rawListing)) return [];
 
+    return rawListing.map((item: any) => ({
+      ...item,
+      isLocked: item.level_status === 'pending',
+      level: item.level_number,
+      pts: item.earned_point,
+      totalPoints: item.total_points,
+      title: `${localization.appkeys.level} ${item.level_number}`,
+      subtitle: '',
+    }));
+  }, [progressData, localization]);
+
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [mappedModules.length]);
+
+  const visibleModules = useMemo(() => {
+    return mappedModules.slice(0, visibleCount);
+  }, [mappedModules, visibleCount]);
+
+  const loadMoreLocal = useCallback(() => {
+    if (visibleCount < mappedModules.length) {
+      setVisibleCount(prev => Math.min(prev + PAGE_SIZE, mappedModules.length));
+    }
+  }, [visibleCount, mappedModules.length]);
+
+  const renderItem = useCallback(({ item }: { item: any }) => (
+    <JourneyModuleItem item={item} localization={localization} />
+  ), [localization]);
+
+  const keyExtractor = useCallback((item: any, index: number) =>
+    item.id || item._id || String(index),
+  []);
+
+  const ListHeader = useMemo(() => (
+    <View>
+      <HeaderCommon
+        title={localization.appkeys.homeProgressTracker}
+        rightIcon={images.crown}
+        onRightPress={() => setShowCreditsModal(true)}
+      />
+
+      <SolidText style={styles.journeyTitle}>
+        {localization.appkeys.yourProgressJourney}
+      </SolidText>
+      <SolidText style={styles.journeySub}>
+        {localization.appkeys.progressJourneySub}
+      </SolidText>
+    </View>
+  ), [localization, images, styles]);
+
+  const ListEmpty = useCallback(() => {
+    if (isLoading) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 40,
+          }}
+        >
+          <ActivityIndicator size="large" color={colors.brown} />
+        </View>
+      );
+    }
+    if (error) {
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 40,
+            paddingHorizontal: 20,
+          }}
+        >
+          <SolidText style={{ color: 'red', textAlign: 'center' }}>
+            {(error as any)?.message || 'Something went wrong'}
+          </SolidText>
+        </View>
+      );
+    }
+    return null;
+  }, [isLoading, error, colors.brown]);
+
+  const ListFooter = useCallback(() => {
+    if (visibleCount >= mappedModules.length) return null;
+    return (
+      <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+        <ActivityIndicator size="small" color={colors.brown} />
+      </View>
+    );
+  }, [visibleCount, mappedModules.length, colors.brown]);
 
   return (
     <SolidView
-      isScrollEnabled
+      edges={['top']}
+      containerStyle={{ flex: 1 }}
       view={
-        <View style={styles.mainContainer}>
-          <HeaderCommon
-            title={localization.appkeys.homeProgressTracker}
-            rightIcon={images.crown}
-            onRightPress={() => setShowCreditsModal(true)}
+        <View style={{ flex: 1 }}>
+          <FlatList
+            data={visibleModules}
+            style={styles.mainContainer}
+            contentContainerStyle={{ paddingBottom: 24 }}
+            showsVerticalScrollIndicator={false}
+            keyExtractor={keyExtractor}
+            ListHeaderComponent={ListHeader}
+            renderItem={renderItem}
+            ListEmptyComponent={ListEmpty}
+            ListFooterComponent={ListFooter}
+            onEndReached={loadMoreLocal}
+            onEndReachedThreshold={0.4}
+            initialNumToRender={PAGE_SIZE}
+            maxToRenderPerBatch={PAGE_SIZE}
+            windowSize={5}
+            removeClippedSubviews={Platform.OS === 'android'}
           />
-
-          <SolidText style={styles.journeyTitle}>
-            {localization.appkeys.yourProgressJourney}
-          </SolidText>
-          <SolidText style={styles.journeySub}>
-            {localization.appkeys.progressJourneySub}
-          </SolidText>
-
-          {/* Stats Card */}
-          {/* <ProgressStatsCard
-            level={1}
-            progress="0/5"
-            pts="0/500"
-            lvText={localization.appkeys.lv}
-            levelLabel={localization.appkeys.level}
-            progressLabel={localization.appkeys.progress}
-            ptsLabel={localization.appkeys.pts}
-          /> */}
-
-          {/* Journey Modules */}
-          {isLoading ? (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 40 }}>
-              <ActivityIndicator size="large" color={colors.brown} />
-            </View>
-          ) : (
-            <View style={styles.moduleList}>
-              {displayModules.map((item: any, index: number) => (
-                <JourneyModuleItem
-                  key={item.id || item._id || String(index)}
-                  item={item}
-                  localization={localization}
-                />
-              ))}
-            </View>
-          )}
 
           <PremiumModal
             visible={showCreditsModal}

@@ -4,7 +4,11 @@ import SolidView from '../../../../components/SolidView';
 import HomeHeader from '../../../../components/HomeHeader';
 import { LocalizationContext } from '../../../../localization/localization';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
-import { useNavigation, useTheme, useFocusEffect } from '@react-navigation/native';
+import {
+  useNavigation,
+  useTheme,
+  useFocusEffect,
+} from '@react-navigation/native';
 import ProgressTrackerCard from '../../../../components/ProgressTrackerCard';
 import DailyWeeklyToggle from '../../../../components/DailyWeeklyToggle';
 import ChallengeList from '../../../../components/ChallengeList';
@@ -27,8 +31,6 @@ const Challenges = () => {
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const user = useSelector((state: any) => state.userData.user);
 
-
-
   const { colors } = useTheme() as any;
 
   const {
@@ -43,7 +45,7 @@ const Challenges = () => {
   useFocusEffect(
     React.useCallback(() => {
       refetch();
-    }, [refetch])
+    }, [refetch]),
   );
   const formatRemainingTime = (endDateUnix: number) => {
     const now = moment();
@@ -72,14 +74,14 @@ const Challenges = () => {
   const challengeData = challengeResponse && challengeResponse.data;
   const allChallenges = Array.isArray(challengeData)
     ? challengeData.map((item: any) => ({
-      id: item._id,
-      title: item.title,
-      description: item.description,
-      points: `${item.points} Pts`,
-      badge: formatRemainingTime(item.end_date_unix),
-      isCompleted: item.isCompleted,
-      category: item.challenge_type, // 'daily' or 'weekly'
-    }))
+        id: item._id,
+        title: item.title,
+        description: item.description,
+        points: `${item.points} Pts`,
+        badge: formatRemainingTime(item.end_date_unix),
+        isCompleted: item.isCompleted,
+        category: item.challenge_type, // 'daily' or 'weekly'
+      }))
     : [];
   return (
     <SolidView
@@ -111,23 +113,17 @@ const Challenges = () => {
             contentContainerStyle={{
               paddingHorizontal: 20,
               paddingBottom: 150,
+              marginVertical: 16,
             }}
           >
             <ProgressTrackerCard
-              viewStyle={{
-                marginTop: 20,
-              }}
               onPress={() => {
+                triggerHaptic('impactMedium');
                 return navigation.navigate(AppRoutes.ProgressTracker as never);
               }}
               title={
                 localization.appkeys?.homeProgressTracker || 'Progress Tracker'
               }
-              percentage="30%"
-              level={
-                localization.appkeys?.homeLevel2?.split(' ')[1] || 'Level 2'
-              }
-              points="145/500 PTS"
             />
 
             <DailyWeeklyToggle
@@ -185,7 +181,6 @@ const Challenges = () => {
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />
-
         </View>
       }
     />

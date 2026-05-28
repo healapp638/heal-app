@@ -47,6 +47,8 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const captureRef = useRef<any>(null);
   const [sharingItem, setSharingItem] = useState<any>(null);
   const user = useSelector((state: any) => state.userData?.user);
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+  const locale = AppUtils.getLanguageCode(appLanguage) || 'en';
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
@@ -188,7 +190,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       <SolidText style={styles.quoteText}>{item.affirmation}</SolidText>
       <View style={styles.cardFooter}>
         <SolidText style={styles.dateText}>
-          {new Date(item.createdAt).toLocaleDateString('en-US', {
+          {new Date(item.createdAt).toLocaleDateString(locale, {
             weekday: 'short',
             month: 'short',
             day: 'numeric',

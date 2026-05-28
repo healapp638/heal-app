@@ -566,6 +566,16 @@
     "completedModulesAppearHere": "ABGESCHLOSSENE MODULE WERDEN HIER ANGEZEIGT",
     "signInWithApple": "Mit Apple anmelden",
     "signInWithGoogle": "Mit Google anmelden",
-    "signInAgreeText": "Indem Sie mit Heal fortfahren, stimmen Sie unseren {terms} & {privacy} zu"
+    "signInAgreeText": "Indem Sie mit Heal fortfahren, stimmen Sie unseren {terms} & {privacy} zu",
+    "reason": "Grund",
+    "reasonPlaceholder": "Geben Sie den Grund für die Löschung ein",
+    "enterReason": "Bitte geben Sie einen Grund für die Löschung ein.",
+    "deleteAccountConfirmMsg": "Sind Sie sicher, dass Sie Ihr Konto dauerhaft löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteAccountSuccess": "Ihr Konto wurde erfolgreich gelöscht.",
+    "deleteAccountFailed": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es erneut.",
+    "selectCountryMsg": "Bitte wählen Sie Ihr Land aus",
+    "selectDobMsg": "Bitte wählen Sie Ihr Geburtsdatum aus",
+    "profileUpdateFailed": "Profilaktualisierung fehlgeschlagen",
+    "failedToUploadImage": "Bild-Upload fehlgeschlagen"
   }
 }

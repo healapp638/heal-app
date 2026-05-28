@@ -211,7 +211,6 @@ const AddJournal = () => {
       },
       {
         onSuccess: (data: any) => {
-          console.log(data?.data?.points);
           showPointsToast(data?.message, `+${data?.data?.points} pts`);
 
           navigation.goBack();

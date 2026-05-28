@@ -108,6 +108,18 @@ const style = (colors: any) =>
       height: 16,
       tintColor: colors.brown,
     },
+    deleteAccountContainer: {
+      alignSelf: 'center',
+      marginBottom: hp('4%'),
+      marginTop: -hp('2%'),
+    },
+    deleteAccountText: {
+      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(14),
+      color: colors.primary,
+      textDecorationLine: 'underline',
+      includeFontPadding: false,
+    },
   });
 
 export default style;

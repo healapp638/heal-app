@@ -57,7 +57,7 @@ const DailyQuote = () => {
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const visibleItem = viewableItems[0].item;
-      console.log('Current Item on Screen:', visibleItem);
+      // console.log('Current Item on Screen:', visibleItem);
       setCurrentIndex(viewableItems[0].index);
 
       // Hit addView API
@@ -100,7 +100,6 @@ const DailyQuote = () => {
     try {
       triggerHaptic('impactMedium');
       setShareItem(item);
-
 
       let shareLink = 'https://www.heal-app.com/';
       try {
@@ -170,9 +169,9 @@ const DailyQuote = () => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                  ...quote,
-                  is_liked: !isLiked,
-                }
+                    ...quote,
+                    is_liked: !isLiked,
+                  }
                 : quote,
             ),
           },
@@ -438,7 +437,6 @@ const DailyQuote = () => {
                           width: 0,
                           height: 1,
                         },
-
                       },
                     ]}
                   >

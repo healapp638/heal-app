@@ -29,6 +29,7 @@ import AddJournal from '../../features/Journal/screens/AddJournal/AddJournal';
 import Calendar from '../../features/Journal/screens/Calendar/Calendar';
 import ConnectedEntries from '../../features/Journal/screens/ConnectedEntries/ConnectedEntries';
 import EditProfile from '../../features/settings/screens/EditProfile/EditProfile';
+import DeleteAccount from '../../features/settings/screens/DeleteAccount/DeleteAccount';
 import SelectLanguage from '../../features/auth/screens/SelectLanguage/SelectLanguage';
 import PrivacyAndSecurity from '../../features/settings/screens/PrivacyAndSecurity/PrivacyAndSecurity';
 import ChangePassword from '../../features/settings/screens/ChangePassword/ChangePassword';
@@ -88,6 +89,7 @@ export default function NonAuthStack() {
         component={ConnectedEntries}
       />
       <Stack.Screen name={AppRoutes.EditProfile} component={EditProfile} />
+      <Stack.Screen name={AppRoutes.DeleteAccount} component={DeleteAccount} />
       <Stack.Screen
         name={AppRoutes.SelectLanguage}
         component={SelectLanguage}

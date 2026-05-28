@@ -569,6 +569,16 @@
     "completedModulesAppearHere": "COMPLETED MODULES WILL APPEAR HERE",
     "signInWithApple": "Sign in with Apple",
     "signInWithGoogle": "Sign in with Google",
-    "signInAgreeText": "By continuing with Heal, you agree to our {terms} & {privacy}"
+    "signInAgreeText": "By continuing with Heal, you agree to our {terms} & {privacy}",
+    "reason": "Reason",
+    "reasonPlaceholder": "Enter reason for deletion",
+    "enterReason": "Please enter a reason for deletion.",
+    "deleteAccountConfirmMsg": "Are you sure you want to permanently delete your account? This action cannot be undone.",
+    "deleteAccountSuccess": "Your account has been deleted successfully.",
+    "deleteAccountFailed": "Failed to delete account. Please try again.",
+    "selectCountryMsg": "Please select your country",
+    "selectDobMsg": "Please select date of birth",
+    "profileUpdateFailed": "Failed to update profile",
+    "failedToUploadImage": "Failed to upload image"
   }
 }

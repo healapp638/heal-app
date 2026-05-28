@@ -569,6 +569,16 @@
     "completedModulesAppearHere": "LOS MÓDULOS COMPLETADOS APARECERÁN AQUÍ",
     "signInWithApple": "Iniciar sesión con Apple",
     "signInWithGoogle": "Iniciar sesión con Google",
-    "signInAgreeText": "Al continuar con Heal, aceptas nuestros {terms} y {privacy}"
+    "signInAgreeText": "Al continuar con Heal, aceptas nuestros {terms} y {privacy}",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Introduce el motivo de la eliminación",
+    "enterReason": "Por favor, introduce un motivo para la eliminación.",
+    "deleteAccountConfirmMsg": "¿Estás seguro de que deseas eliminar permanentemente tu cuenta? Esta acción no se puede deshacer.",
+    "deleteAccountSuccess": "Tu cuenta ha sido eliminada con éxito.",
+    "deleteAccountFailed": "No se pudo eliminar la cuenta. Por favor, inténtalo de nuevo.",
+    "selectCountryMsg": "Por favor, selecciona tu país",
+    "selectDobMsg": "Por favor, selecciona tu fecha de nacimiento",
+    "profileUpdateFailed": "No se pudo actualizar el perfil",
+    "failedToUploadImage": "No se pudo subir la imagen"
   }
 }

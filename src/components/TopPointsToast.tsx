@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Animated, StyleSheet, View, Platform, DeviceEventEmitter } from 'react-native';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
+import { Animated, StyleSheet, View, Platform, DeviceEventEmitter, PanResponder } from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 
@@ -12,6 +12,31 @@ export const showPointsToast = (message: string, points: string) => {
 export default function TopPointsToast() {
   const [toastData, setToastData] = useState<{ message: string; points: string } | null>(null);
   const slideAnim = useRef(new Animated.Value(-150)).current;
+
+  const dismissToast = useCallback(() => {
+    slideAnim.stopAnimation();
+    Animated.timing(slideAnim, {
+      toValue: -150,
+      duration: 250,
+      useNativeDriver: true,
+    }).start(() => {
+      setToastData(null);
+    });
+  }, [slideAnim]);
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        const isTap = Math.abs(gestureState.dx) < 5 && Math.abs(gestureState.dy) < 5;
+        const isSwipeUp = gestureState.dy < -10 || gestureState.vy < -0.1;
+        if (isTap || isSwipeUp) {
+          dismissToast();
+        }
+      },
+    })
+  ).current;
 
   useEffect(() => {
     const subscription = DeviceEventEmitter.addListener(SHOW_POINTS_TOAST_EVENT, (data) => {
@@ -30,20 +55,25 @@ export default function TopPointsToast() {
           duration: 300,
           useNativeDriver: true,
         }),
-      ]).start(() => {
-        setToastData(null);
+      ]).start((result) => {
+        if (result.finished) {
+          setToastData(null);
+        }
       });
     });
 
     return () => {
       subscription.remove();
     };
-  }, []);
+  }, [slideAnim]);
 
   if (!toastData) return null;
 
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateY: slideAnim }] }]} pointerEvents="none">
+    <Animated.View
+      style={[styles.container, { transform: [{ translateY: slideAnim }] }]}
+      {...panResponder.panHandlers}
+    >
       <View style={styles.content}>
         <View style={styles.pointsContainer}>
           <SolidText style={styles.pointsText}>{toastData.points}</SolidText>

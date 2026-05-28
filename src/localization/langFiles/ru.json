@@ -566,6 +566,16 @@
     "completedModulesAppearHere": "ЗАВЕРШЕННЫЕ МОДУЛИ ПОЯВЯТСЯ ЗДЕСЬ",
     "signInWithApple": "Войти через Apple",
     "signInWithGoogle": "Войти через Google",
-    "signInAgreeText": "Продолжая пользоваться Heal, вы соглашаетесь с нашими {terms} и {privacy}"
+    "signInAgreeText": "Продолжая пользоваться Heal, вы соглашаетесь с нашими {terms} и {privacy}",
+    "reason": "Причина",
+    "reasonPlaceholder": "Введите причину удаления",
+    "enterReason": "Пожалуйста, введите причину удаления.",
+    "deleteAccountConfirmMsg": "Вы уверены, что хотите навсегда удалить свой аккаунт? Это действие нельзя отменить.",
+    "deleteAccountSuccess": "Ваш аккаунт был успешно удален.",
+    "deleteAccountFailed": "Не удалось удалить аккаунт. Пожалуйста, попробуйте еще раз.",
+    "selectCountryMsg": "Пожалуйста, выберите страну",
+    "selectDobMsg": "Пожалуйста, выберите дату рождения",
+    "profileUpdateFailed": "Не удалось обновить профиль",
+    "failedToUploadImage": "Не удалось загрузить изображение"
   }
 }

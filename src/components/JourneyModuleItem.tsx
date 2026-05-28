@@ -26,13 +26,17 @@ interface JourneyModuleItemProps {
 const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
   const { colors, images } = useTheme() as any;
 
-  const isLocked = item.isLocked ?? item.is_locked ?? false;
-  const level = item.level || 1;
+  const isLocked = item.level_status === 'pending' || false;
+  const level = item.level ?? item.level_number ?? 1;
   const title = item.title || item.name || `Level ${level}`;
   const subtitle = item.subtitle || item.description || '';
   const progress = item.progress ?? item.completedPercentage ?? 0;
   const points =
-    item.points ?? item.pts ?? item.current_points ?? item.completed_points;
+    item.points ??
+    item.pts ??
+    item.current_points ??
+    item.completed_points ??
+    item.earned_point;
   const totalPoints =
     item.totalPoints ??
     item.total_points ??
@@ -40,6 +44,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
     item.target_points ??
     100;
   const hasPoints = points !== undefined;
+  const isCompleted = item.level_status === 'completed' || progress === 100;
 
   if (isLocked) {
     return (
@@ -63,7 +68,9 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
           </SolidText>
           <View style={styles.levelBadge}>
             <SolidText style={styles.levelBadgeText}>
-              {hasPoints
+              {isCompleted
+                ? localization.appkeys.completed
+                : hasPoints
                 ? `${points}/${totalPoints} pts`
                 : `${localization.appkeys.level} ${level}`}
             </SolidText>
@@ -116,7 +123,6 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
 const styles = StyleSheet.create({
   moduleCard: {
     width: '100%',
-    minHeight: 108,
     backgroundColor: 'white',
     borderRadius: 14,
     marginBottom: 16,
@@ -134,7 +140,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
   },
   moduleTitle: {
     fontSize: AppUtils.fontSize(16),
@@ -143,14 +148,15 @@ const styles = StyleSheet.create({
   },
   levelBadge: {
     backgroundColor: '#352516',
-    paddingHorizontal: 18,
-    paddingVertical: 3,
+    paddingHorizontal: 16,
+    paddingVertical: 4,
     borderRadius: 12,
   },
   levelBadgeText: {
     color: 'white',
     fontSize: AppUtils.fontSize(11),
     fontFamily: AppFonts.medium,
+    includeFontPadding: false,
   },
   moduleSub: {
     fontSize: AppUtils.fontSize(12),
@@ -160,7 +166,6 @@ const styles = StyleSheet.create({
   },
   progressContainer: {
     marginTop: 'auto',
-    marginBottom: 2,
   },
   progressLabelRow: {
     flexDirection: 'row',

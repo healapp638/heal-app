@@ -566,6 +566,16 @@
     "completedModulesAppearHere": "OS MÓDULOS CONCLUÍDOS APARECERÃO AQUI",
     "signInWithApple": "Entrar com a Apple",
     "signInWithGoogle": "Entrar com o Google",
-    "signInAgreeText": "Ao continuar com o Heal, você concorda com nossos {terms} e {privacy}"
+    "signInAgreeText": "Ao continuar com o Heal, você concorda com nossos {terms} e {privacy}",
+    "reason": "Motivo",
+    "reasonPlaceholder": "Insira o motivo da exclusão",
+    "enterReason": "Por favor, insira um motivo para a exclusão.",
+    "deleteAccountConfirmMsg": "Tem certeza de que deseja excluir permanentemente sua conta? Esta ação não pode ser desfeita.",
+    "deleteAccountSuccess": "Sua conta foi excluída com sucesso.",
+    "deleteAccountFailed": "Falha ao excluir a conta. Por favor, tente novamente.",
+    "selectCountryMsg": "Por favor, selecione seu país",
+    "selectDobMsg": "Por favor, selecione sua data de nascimento",
+    "profileUpdateFailed": "Falha ao atualizar o perfil",
+    "failedToUploadImage": "Falha ao enviar a imagem"
   }
 }

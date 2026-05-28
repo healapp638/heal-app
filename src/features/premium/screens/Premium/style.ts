@@ -61,7 +61,7 @@ const style = (colors: any, appLanguage: any) =>
     },
     premiumImage: {
       width: wp(11),
-      height: Platform.OS == 'ios' ? hp(30) : hp(34),
+      height: Platform.OS == 'ios' ? hp(32) : hp(34),
       resizeMode: 'stretch',
     },
     timelineRight: {

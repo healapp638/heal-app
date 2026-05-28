@@ -49,4 +49,5 @@ export const endpoints = {
   getConversationList: '/user/healyChat/getConversationList',
   getRandomQuestions: '/user/healyChat/getRandomQuestions',
   progress_tracker_list: '/user/auth/progress_tracker_list',
+  delete_deactivate: '/user/auth/delete_deactivate',
 };

@@ -223,8 +223,9 @@ const useStyles = (colors: any, appLanguage: any) =>
       justifyContent: 'center',
     },
     premiumImage: {
-      width: wp(10),
-      height: Platform.OS == 'ios' ? hp(20) : hp(23),
+      width: wp(11),
+      height: Platform.OS == 'ios' ? hp(32) : hp(34),
+
       resizeMode: 'stretch',
     },
     timelineRight: {

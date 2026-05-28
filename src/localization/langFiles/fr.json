@@ -569,6 +569,16 @@
     "completedModulesAppearHere": "LES MODULES TERMINÉS APPARAÎTRONT ICI",
     "signInWithApple": "Se connecter avec Apple",
     "signInWithGoogle": "Se connecter avec Google",
-    "signInAgreeText": "En continuant avec Heal, vous acceptez nos {terms} & {privacy}"
+    "signInAgreeText": "En continuant avec Heal, vous acceptez nos {terms} & {privacy}",
+    "reason": "Raison",
+    "reasonPlaceholder": "Saisissez le motif de la suppression",
+    "enterReason": "Veuillez saisir un motif de suppression.",
+    "deleteAccountConfirmMsg": "Êtes-vous sûr de vouloir supprimer définitivement votre compte ? Cette action est irréversible.",
+    "deleteAccountSuccess": "Votre compte a été supprimé avec succès.",
+    "deleteAccountFailed": "Échec de la suppression du compte. Veuillez réessayer.",
+    "selectCountryMsg": "Veuillez sélectionner votre pays",
+    "selectDobMsg": "Veuillez sélectionner votre date de naissance",
+    "profileUpdateFailed": "Échec de la mise à jour du profil",
+    "failedToUploadImage": "Échec du téléchargement de l'image"
   }
 }

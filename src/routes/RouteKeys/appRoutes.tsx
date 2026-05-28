@@ -58,6 +58,7 @@ const AppRoutes = {
   Calendar: 'Calendar',
   ConnectedEntries: 'ConnectedEntries',
   EditProfile: 'EditProfile',
+  DeleteAccount: 'DeleteAccount',
   PrivacyAndSecurity: 'PrivacyAndSecurity',
   ChangePassword: 'ChangePassword',
   HelpAndSupport: 'HelpAndSupport',

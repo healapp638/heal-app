@@ -33,6 +33,7 @@ const ForgotPassword = () => {
       );
       return;
     }
+
     forgotPassword(
       {
         endpoint: endpoints.forgot_password,

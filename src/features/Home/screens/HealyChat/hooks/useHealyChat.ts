@@ -196,7 +196,7 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
       },
       {
         onSuccess: async (res: any) => {
-          console.log('sendMessage response:', res);
+
           const newConvId =
             res?.data?.conversation_id ||
             res?.conversation_id ||

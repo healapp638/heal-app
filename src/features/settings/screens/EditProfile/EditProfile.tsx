@@ -121,7 +121,11 @@ const EditProfile = () => {
         },
         onError: error => {
           console.log('upload error', error);
-          AppUtils.showToast(error.message || 'Failed to upload image');
+          AppUtils.showToast(
+            error.message ||
+              localization.appkeys?.failedToUploadImage ||
+              'Failed to upload image',
+          );
         },
       },
     );
@@ -129,19 +133,19 @@ const EditProfile = () => {
   const handleSave = () => {
     if (!fullName?.trim()) {
       AppUtils.showToast(
-        localization.appkeys?.enterNamePlaceholder || 'Please enter full name',
+        localization.appkeys?.toastEnterFullName || 'Please enter full name',
       );
       return;
     }
     if (!selectedCountry) {
       AppUtils.showToast(
-        localization.appkeys?.selectCountryMsg || 'Please select your country',
+        localization.appkeys?.toastSelectCountry || 'Please select your country',
       );
       return;
     }
     if (!isDobSelected) {
       AppUtils.showToast(
-        localization.appkeys?.selectDobMsg || 'Please select date of birth',
+        localization.appkeys?.toastSelectBirthDate || 'Please select date of birth',
       );
       return;
     }
@@ -176,7 +180,11 @@ const EditProfile = () => {
           navigation.goBack();
         },
         onError: error => {
-          AppUtils.showToast(error.message || 'Failed to update profile');
+          AppUtils.showToast(
+            error.message ||
+              localization.appkeys?.profileUpdateFailed ||
+              'Failed to update profile',
+          );
         },
       },
     );
@@ -355,6 +363,18 @@ const EditProfile = () => {
             isLoading={isPending || isUploading}
             disabled={isPending || isUploading}
           />
+          <TouchableOpacity
+            activeOpacity={0.7}
+            style={styles.deleteAccountContainer}
+            onPress={() => {
+              triggerHaptic('impactMedium');
+              navigation.navigate(AppRoutes.DeleteAccount as never);
+            }}
+          >
+            <SolidText style={styles.deleteAccountText}>
+              {localization.appkeys?.deleteAccountTitle || 'Delete Account'}
+            </SolidText>
+          </TouchableOpacity>
           <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
@@ -378,7 +398,10 @@ const EditProfile = () => {
             visible={ageModalVisible}
             onClose={() => setAgeModalVisible(false)}
             title={localization.appkeys?.sorryTitle || "We're sorry!"}
-            message={'You must be at least 13 years old to use HEAL.'}
+            message={
+              localization.appkeys?.ageRequirementMsg ||
+              'You must be at least 13 years old to use HEAL.'
+            }
           />
 
           <InfoModal
