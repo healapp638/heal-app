@@ -41,7 +41,6 @@ router.get('/dashboard', verifyTokenAdmin, async (req: Request | any, res: Respo
 
 })
 
-
 // router.post('/send/multiple/notifications', verifyTokenAdmin, async (req: Request | any, res: Response) => {
 //     // const { } = req.body
 //     const controller = new AdminUserController(req, res)

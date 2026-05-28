@@ -36,4 +36,19 @@ router.get('/questions', verifyTokenBoth, (req, res) => __awaiter(void 0, void 0
     const result = yield controller.getQuestions();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.get('/test-error', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new common_controller_1.default(req, res);
+    const result = yield controller.testError();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/test-exception', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new common_controller_1.default(req, res);
+    const result = yield controller.testException();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/test-rejection', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new common_controller_1.default(req, res);
+    const result = yield controller.testRejection();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

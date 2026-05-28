@@ -74,6 +74,41 @@ let CommonController = class CommonController extends tsoa_1.Controller {
             return wrappedFunc(name, value); // Invoking the wrapped function 
         });
     }
+    //ends
+    /**
+   * Test endpoint to trigger a handled error for logging verification
+   * GET /admin/test-error
+   */
+    testError() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(() => __awaiter(this, void 0, void 0, function* () {
+                throw new Error('Test Handled Error - Verify logging');
+            }));
+            return wrappedFunc();
+        });
+    }
+    /**
+     * Test endpoint to trigger an uncaught exception for logging verification
+     * GET /admin/test-exception
+     */
+    testException() {
+        return __awaiter(this, void 0, void 0, function* () {
+            setTimeout(() => {
+                throw new Error('Test Uncaught Exception - Verify logging');
+            }, 100);
+            return (0, response_util_1.showResponse)(true, "Uncaught exception triggered. Check logs/exceptions.", null, statusCodes_1.default.SERVER_TRYCATCH_ERROR);
+        });
+    }
+    /**
+     * Test endpoint to trigger an unhandled rejection for logging verification
+     * GET /admin/test-rejection
+     */
+    testRejection() {
+        return __awaiter(this, void 0, void 0, function* () {
+            Promise.reject(new Error('Test Unhandled Rejection - Verify logging'));
+            return (0, response_util_1.showResponse)(true, "Unhandled rejection triggered. Check logs/rejections.", null, statusCodes_1.default.SERVER_TRYCATCH_ERROR);
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -99,6 +134,24 @@ __decorate([
     __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", Promise)
 ], CommonController.prototype, "storeParameterToAws", null);
+__decorate([
+    (0, tsoa_1.Get)('test-error'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CommonController.prototype, "testError", null);
+__decorate([
+    (0, tsoa_1.Get)('test-exception'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CommonController.prototype, "testException", null);
+__decorate([
+    (0, tsoa_1.Get)('test-rejection'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], CommonController.prototype, "testRejection", null);
 CommonController = __decorate([
     (0, tsoa_1.Tags)('Common'),
     (0, tsoa_1.Route)('/common'),

@@ -3148,6 +3148,75 @@
 				}
 			}
 		},
+		"/common/test-error": {
+			"get": {
+				"operationId": "TestError",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Test endpoint to trigger a handled error for logging verification\nGET /admin/test-error",
+				"tags": [
+					"Common"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/common/test-exception": {
+			"get": {
+				"operationId": "TestException",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Test endpoint to trigger an uncaught exception for logging verification\nGET /admin/test-exception",
+				"tags": [
+					"Common"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/common/test-rejection": {
+			"get": {
+				"operationId": "TestRejection",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Test endpoint to trigger an unhandled rejection for logging verification\nGET /admin/test-rejection",
+				"tags": [
+					"Common"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
 		"/admin/user/list": {
 			"get": {
 				"operationId": "GetUsersList",

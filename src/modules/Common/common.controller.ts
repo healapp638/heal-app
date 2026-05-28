@@ -63,6 +63,53 @@ export default class CommonController extends Controller {
         return wrappedFunc(name, value); // Invoking the wrapped function 
     }
     //ends
+
+
+    /**
+   * Test endpoint to trigger a handled error for logging verification
+   * GET /admin/test-error
+   */
+    @Get('test-error')
+    public async testError(): Promise<ApiResponse> {
+
+    const wrappedFunc = tryCatchWrapper(async () => {
+
+        throw new Error('Test Handled Error - Verify logging');
+    });
+    return wrappedFunc();
+    }
+ 
+  /**
+   * Test endpoint to trigger an uncaught exception for logging verification
+   * GET /admin/test-exception
+   */
+  @Get('test-exception')
+  async testException() {
+    setTimeout(() => {
+      throw new Error('Test Uncaught Exception - Verify logging');
+    }, 100);
+    return showResponse(
+    true,
+    "Uncaught exception triggered. Check logs/exceptions.",
+    null,
+    statusCodes.SERVER_TRYCATCH_ERROR
+);
+  }
+ 
+  /**
+   * Test endpoint to trigger an unhandled rejection for logging verification
+   * GET /admin/test-rejection
+   */
+  @Get('test-rejection')
+  async testRejection() {
+    Promise.reject(new Error('Test Unhandled Rejection - Verify logging'));
+    return showResponse(
+    true,
+    "Unhandled rejection triggered. Check logs/rejections.",
+    null,
+    statusCodes.SERVER_TRYCATCH_ERROR
+);
+  }
 }
 
 
