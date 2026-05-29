@@ -15,10 +15,11 @@ import ChallengeList from '../../../../components/ChallengeList';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
 import OnboardingModal from '../../../../modals/OnboardingModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PremiumModal from '../../../../modals/PremiumModal';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
+import { setChallengesActiveTab } from '../../../../redux/Reducers/tempData';
 import SolidText from '../../../../components/SolidText';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
@@ -26,8 +27,9 @@ import moment from 'moment';
 import { ActivityIndicator } from 'react-native';
 const Challenges = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
-  const [activeTab, setActiveTab] = useState<'daily' | 'weekly'>('daily');
+  const activeTab = useSelector((state: any) => state.tempData.challengesActiveTab);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const user = useSelector((state: any) => state.userData.user);
 
@@ -128,7 +130,7 @@ const Challenges = () => {
 
             <DailyWeeklyToggle
               activeTab={activeTab}
-              onTabChange={setActiveTab}
+              onTabChange={(tab) => dispatch(setChallengesActiveTab(tab))}
               dailyLabel={localization.appkeys?.daily || 'Daily'}
               weeklyLabel={localization.appkeys?.weekly || 'Weekly'}
             />

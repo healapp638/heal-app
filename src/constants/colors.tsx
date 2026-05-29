@@ -180,6 +180,8 @@ const LightTheme = {
     thoughtfulS: require('../assets/thoughtfulS.png'),
     sadS: require('../assets/sadS.png'),
     hopeS: require('../assets/hopeS.png'),
+    fireGif: require('../assets/fireGif.gif'),
+    newChat: require('../assets/newChat.png'),
   },
 };
 
@@ -364,6 +366,8 @@ const DarkTheme = {
     thoughtfulS: require('../assets/thoughtfulS.png'),
     sadS: require('../assets/sadS.png'),
     hopeS: require('../assets/hopeS.png'),
+    newChat: require('../assets/newChat.png'),
+    fireGif: require('../assets/fireGif.gif'),
   },
 };
 export { LightTheme, DarkTheme };

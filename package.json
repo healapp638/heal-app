@@ -55,6 +55,7 @@
     "react-native-screens": "^4.15.3",
     "react-native-share": "^12.3.1",
     "react-native-store-version": "^1.4.1",
+    "react-native-svg": "^15.15.5",
     "react-native-video": "^6.19.1",
     "react-native-view-shot": "^5.1.0",
     "react-native-worklets": "^0.8.1",

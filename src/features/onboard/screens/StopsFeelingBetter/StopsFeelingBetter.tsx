@@ -19,6 +19,10 @@ import {
   setOnboardingCurrentScreen,
 } from '../../../../redux/Reducers/userData';
 
+const normalizeString = (str: string) => {
+  return str.replace(/’/g, "'").trim();
+};
+
 const StopsFeelingBetter = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -31,13 +35,14 @@ const StopsFeelingBetter = () => {
     (state: any) => state.userData?.onboarding?.answers?.stopFeelBetter,
   );
 
-  const selectedList = typeof savedSelection === 'string'
-    ? savedSelection.split(', ').filter(Boolean)
-    : Array.isArray(savedSelection)
-    ? savedSelection
-    : savedSelection
-    ? [savedSelection]
-    : [];
+  const selectedList =
+    typeof savedSelection === 'string'
+      ? savedSelection.split(', ').filter(Boolean)
+      : Array.isArray(savedSelection)
+      ? savedSelection
+      : savedSelection
+      ? [savedSelection]
+      : [];
 
   useFocusEffect(
     useCallback(() => {
@@ -72,30 +77,27 @@ const StopsFeelingBetter = () => {
     },
     {
       id: 'unhealthyPatterns',
-      label: localization.appkeys?.optUnhealthyPatterns || 'Falling into unhealthy patterns',
+      label:
+        localization.appkeys?.optUnhealthyPatterns ||
+        'Falling into unhealthy patterns',
     },
   ];
 
   const handleOptionPress = (optionId: string, optionLabel: string) => {
     triggerHaptic('impactMedium');
     let updatedSelection: string[];
-    const dontKnowLabel = localization.appkeys?.optDontKnow || "I don't know what helps";
+    const normalizedOptionLabel = normalizeString(optionLabel);
 
-    if (optionId === 'dontKnow') {
-      if (selectedList.includes(optionLabel)) {
-        updatedSelection = [];
-      } else {
-        updatedSelection = [optionLabel];
-      }
+    const isAlreadySelected = selectedList.some(
+      item => normalizeString(item) === normalizedOptionLabel,
+    );
+
+    if (isAlreadySelected) {
+      updatedSelection = selectedList.filter(
+        item => normalizeString(item) !== normalizedOptionLabel,
+      );
     } else {
-      if (selectedList.includes(optionLabel)) {
-        updatedSelection = selectedList.filter(item => item !== optionLabel);
-      } else {
-        updatedSelection = [
-          ...selectedList.filter(item => item !== dontKnowLabel),
-          optionLabel,
-        ];
-      }
+      updatedSelection = [...selectedList, optionLabel];
     }
 
     dispatch(
@@ -137,7 +139,10 @@ const StopsFeelingBetter = () => {
 
             <View style={styles.listContainer}>
               {options.map(option => {
-                const isCurrentSelected = selectedList.includes(option.label);
+                const isCurrentSelected = selectedList.some(
+                  item =>
+                    normalizeString(item) === normalizeString(option.label),
+                );
 
                 return (
                   <TouchableOpacity
@@ -181,7 +186,9 @@ const StopsFeelingBetter = () => {
               btnStyle={styles.btn}
               disabled={selectedList.length === 0}
               onPress={() => {
-                return navigation.navigate(AppRoutes.UnderstandYourself as never);
+                return navigation.navigate(
+                  AppRoutes.UnderstandYourself as never,
+                );
               }}
             />
           </View>

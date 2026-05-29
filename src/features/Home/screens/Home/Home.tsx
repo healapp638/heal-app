@@ -32,6 +32,7 @@ import { store } from '../../../../redux/Store/store';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { setModuleSubModule } from '../../../../redux/Reducers/tempData';
 const Home = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -39,6 +40,7 @@ const Home = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const user = useSelector((state: any) => state.userData.user);
+
   const [showCreditsModal, setShowCreditsModal] = React.useState(false);
 
   const userName = user?.fullName || 'User';
@@ -54,6 +56,22 @@ const Home = () => {
     refetch: refetchAffirmation,
     isLoading: isAILoading,
   } = useGetApi(endpoints.ai_affirmation, ['getAIAffirmation']);
+  const { refetch: refetchRandomQuestions } = useGetApi(
+    endpoints.getRandomQuestions,
+    ['getRandomQuestions'],
+    {},
+  );
+
+  React.useEffect(() => {
+    refetchRandomQuestions();
+  }, [refetchRandomQuestions]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetchRandomQuestions();
+    }, [refetchRandomQuestions]),
+  );
+
   const startedModules = startedModulesData?.data?.subModules || [];
   const aiAffirmation =
     aiAffirmationData?.data?.affirmation ||
@@ -68,7 +86,7 @@ const Home = () => {
         // Do something when the screen is unfocused
         // Useful for cleanup functions
       };
-    }, [dispatch, refetchStarted]),
+    }, [dispatch, refetchStarted, refetchAffirmation]),
   );
   return (
     <SolidView
@@ -143,7 +161,9 @@ const Home = () => {
             {startedModules?.length > 0 ? (
               <>
                 <SectionHeader
-                  title={localization.appkeys?.startedModule || 'Started Modules'}
+                  title={
+                    localization.appkeys?.startedModule || 'Started Modules'
+                  }
                   actionLabel={localization.appkeys?.seeAll || 'See All'}
                   onActionPress={() => {
                     navigation.navigate(
@@ -170,16 +190,11 @@ const Home = () => {
                     <ModuleCard
                       onPress={() => {
                         triggerHaptic('impactMedium');
-                        return navigation.navigate(
-                          AppRoutes.StartedModule as never,
-                          {
-                            module: item.module,
-                            subModule: {
-                              ...item,
-                              _id: item.sub_module_id,
-                            },
-                          } as never,
-                        );
+                        dispatch(setModuleSubModule({
+                          ...item,
+                          _id: item.sub_module_id,
+                        }));
+                        return navigation.navigate(AppRoutes.StartedModule as never);
                       }}
                       background={
                         index === 0 ? images.moduleBack1 : images.moduleBack2
@@ -198,7 +213,9 @@ const Home = () => {
             ) : (
               <>
                 <SectionHeader
-                  title={localization.appkeys?.startedModule || 'Started Modules'}
+                  title={
+                    localization.appkeys?.startedModule || 'Started Modules'
+                  }
                   containerStyle={{
                     marginTop: 10,
                   }}
@@ -228,10 +245,12 @@ const Home = () => {
 
                         <View style={styles.startModuleTextContainer}>
                           <SolidText style={styles.startModuleTitle}>
-                            {localization.appkeys?.startNewModule || 'Start a new module'}
+                            {localization.appkeys?.startNewModule ||
+                              'Start a new module'}
                           </SolidText>
                           <SolidText style={styles.startModuleSubtitle}>
-                            {localization.appkeys?.exploreVarietyGuided || 'EXPLORE A VARIETY OF GUIDED PROGRAMS'}
+                            {localization.appkeys?.exploreVarietyGuided ||
+                              'EXPLORE A VARIETY OF GUIDED PROGRAMS'}
                           </SolidText>
                         </View>
                       </View>
@@ -248,7 +267,7 @@ const Home = () => {
 
             <SectionHeader
               title={localization.appkeys?.todayJournal || 'Today Journal'}
-              onActionPress={() => { }}
+              onActionPress={() => {}}
               containerStyle={{
                 marginTop: 20,
               }}

@@ -28,7 +28,7 @@ import { LocalizationContext } from '../../../../localization/localization';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { ToastService } from '../../../../utils/ToastManager';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import AppFonts from '../../../../constants/fonts';
@@ -42,8 +42,11 @@ const ModuleExercise = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const route = useRoute();
-  const { phase, isLastPhase } = (route.params as any) || {};
+  const phase = useSelector((state: any) => state.tempData.modulePhase);
+  const isLastPhase = useSelector((state: any) => state.tempData.moduleIsLastPhase);
+  const source = useSelector((state: any) => state.tempData.moduleSource);
+  const theme = useSelector((state: any) => state.tempData.moduleTheme);
+  const subModule = useSelector((state: any) => state.tempData.moduleSubModule);
 
   const { data: mcqData, isLoading: isMcqLoading } = useGetApi(
     endpoints.exercise_mcq_list,
@@ -127,27 +130,28 @@ const ModuleExercise = () => {
           return;
         }
 
-        addMcqAnswer(
-          {
-            endpoint: endpoints.add_mcq_answer,
-            data: {
-              phase_id: phase?._id,
-              mcq_id: selectedOptionId,
-              mcq_exercise_id: currentStepData._id,
-            },
-          },
-          {
-            onSuccess: () => {
-              setCurrentStep(currentStep + 1);
-            },
-            onError: () => {
-              ToastService.show('Failed to save answer. Please try again.');
-            },
-          },
-        );
-      } else {
-        setCurrentStep(currentStep + 1);
+        //   addMcqAnswer(
+        //     {
+        //       endpoint: endpoints.add_mcq_answer,
+        //       data: {
+        //         phase_id: phase?._id,
+        //         mcq_id: selectedOptionId,
+        //         mcq_exercise_id: currentStepData._id,
+        //       },
+        //     },
+        //     {
+        //       onSuccess: () => {
+        //         setCurrentStep(currentStep + 1);
+        //       },
+        //       onError: () => {
+        //         ToastService.show('Failed to save answer. Please try again.');
+        //       },
+        //     },
+        //   );
+        // } else {
+        //   setCurrentStep(currentStep + 1);
       }
+      setCurrentStep(currentStep + 1);
     } else {
       if (!reflectionText.trim()) {
         ToastService.show(
@@ -209,8 +213,6 @@ const ModuleExercise = () => {
                   index,
                 });
               }
-              const source = (route.params as any)?.source;
-              const theme = (route.params as any)?.theme;
               let actualTargetRoute = targetRoute;
               if (isLastPhase && (source === 'all' || source === 'dashboard')) {
                 actualTargetRoute = AppRoutes.AllModules;
@@ -227,8 +229,6 @@ const ModuleExercise = () => {
                   {
                     name: actualTargetRoute,
                     params: {
-                      theme: theme,
-                      subModule: (route.params as any)?.subModule,
                       type: 'started',
                     },
                   },

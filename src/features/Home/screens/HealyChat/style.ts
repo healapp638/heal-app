@@ -70,10 +70,12 @@ const style = (colors: any) =>
       alignItems: 'center',
       backgroundColor: 'white',
       borderRadius: 30,
-      height: 44,
+      minHeight: 44,
+      maxHeight: 140,
       marginHorizontal: 12,
       paddingLeft: 20,
       paddingRight: 6,
+      paddingVertical: Platform.OS === 'ios' ? 8 : 4,
       shadowColor: '#000000ff',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.1,
@@ -87,6 +89,7 @@ const style = (colors: any) =>
       color: colors.brown,
       paddingVertical: 0,
       includeFontPadding: false,
+      maxHeight: 120,
     },
     micIcon: {
       width: 22,
@@ -284,7 +287,7 @@ const style = (colors: any) =>
     newChatIcon: {
       width: 18,
       height: 18,
-      tintColor: 'white',
+      tintColor:  'white',
       marginRight: 8,
     },
     newChatBtnText: {

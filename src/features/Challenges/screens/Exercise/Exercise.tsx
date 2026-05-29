@@ -14,8 +14,11 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import { useQueryClient } from '@tanstack/react-query';
 import useGetApi from '../../../../hooks/useGetApi';
 import { showPointsToast } from '../../../../components/TopPointsToast';
+import { useDispatch } from 'react-redux';
+import { getUserDetail } from '../../../../redux/Reducers/userData';
 
 const Exercise = () => {
+  const dispatch = useDispatch();
   const { colors } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
@@ -114,7 +117,7 @@ const Exercise = () => {
           onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ['challenge_list'] });
             showPointsToast(data?.message, `+${data?.data?.points} pts`);
-
+            dispatch(getUserDetail() as any);
             navigation.reset({
               index: 0,
               routes: [

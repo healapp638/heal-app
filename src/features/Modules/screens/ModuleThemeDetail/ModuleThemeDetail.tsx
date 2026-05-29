@@ -24,18 +24,23 @@ import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import SubModuleItem from '../../../../components/SubModuleItem';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { useDispatch, useSelector } from 'react-redux';
+import { setModuleSubModule, setModuleSource } from '../../../../redux/Reducers/tempData';
+
 const ModuleThemeDetail = () => {
+  const dispatch = useDispatch();
+  const theme = useSelector((state: any) => state.tempData.moduleTheme);
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
-  const route = useRoute();
-  const { theme } = (route.params as any) || {};
   const { localization } = useContext(LocalizationContext) as any;
   const [modules, setModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [themeDetail, setThemeDetail] = useState<any>(theme);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [themeId] = useState(theme?._id || theme?.id || themeDetail?._id || themeDetail?.id);
+  const [themeId] = useState(
+    theme?._id || theme?.id || themeDetail?._id || themeDetail?.id,
+  );
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.module_list,
     ['module_list', themeId, cursor],
@@ -177,15 +182,9 @@ const ModuleThemeDetail = () => {
                 onPress={() => {
                   triggerHaptic('impactMedium');
                   if (!isCompleted) {
-                    navigation.navigate(
-                      AppRoutes.StartedModule as never,
-                      {
-                        module: moduleItem,
-                        subModule: sub,
-                        theme: themeDetail,
-                        source: 'theme',
-                      } as never,
-                    );
+                    dispatch(setModuleSubModule(sub));
+                    dispatch(setModuleSource('theme'));
+                    navigation.navigate(AppRoutes.StartedModule as never);
                   }
                 }}
               />
@@ -194,7 +193,7 @@ const ModuleThemeDetail = () => {
         </View>
       );
     },
-    [styles, navigation, images, colors, sectionColors],
+    [styles, navigation, images, colors, sectionColors, dispatch],
   );
   const keyExtractor = useCallback(
     (item: any, index: number) => (item._id || index).toString(),

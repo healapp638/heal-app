@@ -47,12 +47,12 @@ const HealyChat = () => {
     startNewChat,
     shouldScrollOnLayout,
     setShouldScrollOnLayout,
-    randomQuestions,
+
+    randomQuestion,
     loadMorePastMessages,
     isPaginationLoading,
   } = useHealyChat(flatListRef);
 
-  const keyboardHeight = useKeyboardHeight(flatListRef);
   const [dot1, dot2, dot3] = useDotAnimation(isSending);
 
   const handleScroll = useCallback(
@@ -65,25 +65,7 @@ const HealyChat = () => {
     [loadMorePastMessages],
   );
 
-  const getDynamicWelcomeText = useCallback(() => {
-    const basePrompt = localization.appkeys.chatWelcomePrompt || '';
-    const morningKey = localization.appkeys.timeMorning || 'morning';
-
-    const hour = new Date().getHours();
-    let timeOfDay = localization.appkeys.timeMorning || 'morning';
-
-    if (hour >= 5 && hour < 12) {
-      timeOfDay = localization.appkeys.timeMorning || 'morning';
-    } else if (hour >= 12 && hour < 17) {
-      timeOfDay = localization.appkeys.timeAfternoon || 'afternoon';
-    } else if (hour >= 17 && hour < 21) {
-      timeOfDay = localization.appkeys.timeEvening || 'evening';
-    } else {
-      timeOfDay = localization.appkeys.timeNight || 'night';
-    }
-
-    return basePrompt.replace(new RegExp(morningKey, 'gi'), timeOfDay);
-  }, [localization.appkeys]);
+  // Removed getDynamicWelcomeText to display the random question directly as welcome text
 
   // Memoized render bubble item to prevent full re-renders of the list cells
   const renderItem = useCallback(
@@ -158,10 +140,8 @@ const HealyChat = () => {
             <WelcomeView
               logoSource={images.h}
               logoColor={colors.primary}
-              welcomeText={getDynamicWelcomeText()}
+              welcomeText={randomQuestion}
               styles={styles}
-              questions={randomQuestions}
-              onQuestionPress={handleSend}
             />
           ) : (
             <FlatList

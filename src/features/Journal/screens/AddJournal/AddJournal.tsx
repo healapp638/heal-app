@@ -30,7 +30,8 @@ import Voice, {
   SpeechResultsEvent,
   SpeechErrorEvent,
 } from '@dev-amirzubair/react-native-voice';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import PremiumModal from '../../../../modals/PremiumModal';
 import { showPointsToast } from '../../../../components/TopPointsToast';
@@ -44,11 +45,12 @@ const SPEECH_LOCALE_BY_LANGUAGE: Record<string, string> = {
   Italian: 'it-IT',
 };
 const AddJournal = () => {
+  const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
-  const [selectedEmotion, setSelectedEmotion] = useState<string>('hope');
+  const [selectedEmotion, setSelectedEmotion] = useState<string>('');
   const [titleText, setTitleText] = useState('');
   const [bodyText, setBodyText] = useState('');
   const [isTitleFocused, setIsTitleFocused] = useState(false);
@@ -188,6 +190,12 @@ const AddJournal = () => {
     startSpeechRecognition();
   }, [isListening, ensureMicPermission, startSpeechRecognition]);
   const handleSave = async () => {
+    if (selectedEmotion == '') {
+      AppUtils.showToast(
+        localization.appkeys?.pleaseSelectEmotion || 'Please select emotion',
+      );
+      return;
+    }
     if (!titleText.trim()) {
       AppUtils.showToast(
         localization.appkeys?.titleRequired || 'Please enter a title',
@@ -212,7 +220,7 @@ const AddJournal = () => {
       {
         onSuccess: (data: any) => {
           showPointsToast(data?.message, `+${data?.data?.points} pts`);
-
+          dispatch(getUserDetail() as any);
           navigation.goBack();
         },
         onError: (error: any) => {

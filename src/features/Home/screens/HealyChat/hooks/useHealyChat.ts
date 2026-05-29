@@ -32,7 +32,6 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
   const [shouldAnimateNext, setShouldAnimateNext] = useState(false);
   const [shouldScrollOnLayout, setShouldScrollOnLayout] = useState(false);
   const [isNewChatRequested, setIsNewChatRequested] = useState(false);
-
   const messages = allMessages.slice(-visibleCount);
   const lastMessageRef = useRef<string | null>(null);
 
@@ -81,15 +80,16 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
   // Fetch Random Questions for New Chat Welcome Screen
   const {
     data: randomQuestionsData,
+    refetch: refetchRandomQuestions,
   } = useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {}, {
-    enabled: isNewChatRequested || messages.length === 0,
+    enabled: false,
   });
 
-  const randomQuestions = 
-    (randomQuestionsData as any)?.data?.result ||
-    (randomQuestionsData as any)?.result ||
-    (randomQuestionsData as any)?.data ||
-    [];
+    
+
+
+  const randomQuestion =
+    randomQuestionsData?.data?.question||""
 
   // Load messages from query response
   useEffect(() => {
@@ -263,7 +263,8 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
     setShouldAnimateNext(false);
     dispatch(setReduxConversationId(null));
     setIsNewChatRequested(true);
-  }, [dispatch]);
+    refetchRandomQuestions();
+  }, [dispatch, refetchRandomQuestions]);
 
   return {
     messages,
@@ -279,7 +280,8 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
     startNewChat,
     shouldScrollOnLayout,
     setShouldScrollOnLayout,
-    randomQuestions,
+
+    randomQuestion,
     loadMorePastMessages,
     isPaginationLoading,
     allMessagesLength: allMessages.length,

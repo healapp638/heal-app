@@ -1,4 +1,12 @@
-import React, { cloneElement, useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  cloneElement,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setModulePhase, setModuleIsLastPhase } from '../../../../redux/Reducers/tempData';
 import {
   View,
   FlatList,
@@ -25,12 +33,12 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 const StartedModule = () => {
+  const dispatch = useDispatch();
+  const subModule = useSelector((state: any) => state.tempData.moduleSubModule);
   const { colors } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const navigation = useNavigation();
-  const route = useRoute();
-  const { subModule } = route.params as any;
   const [phases, setPhases] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [subModuleDetail, setSubModuleDetail] = useState<any>(subModule);
@@ -126,7 +134,9 @@ const StartedModule = () => {
                   <View style={styles.circleContainer}>
                     <View
                       style={
-                        isCompleted ? styles.circleActive : styles.circleInactive
+                        isCompleted
+                          ? styles.circleActive
+                          : styles.circleInactive
                       }
                     >
                       <SolidText
@@ -151,7 +161,6 @@ const StartedModule = () => {
           </View>
         )}
 
-
         <SolidText
           style={[
             styles.sectionTitle,
@@ -164,7 +173,14 @@ const StartedModule = () => {
         </SolidText>
       </>
     ),
-    [styles, subModuleDetail, localization.appkeys, colors.brown, navigation, phases],
+    [
+      styles,
+      subModuleDetail,
+      localization.appkeys,
+      colors.brown,
+      navigation,
+      phases,
+    ],
   );
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => {
@@ -182,7 +198,6 @@ const StartedModule = () => {
           onPress={() => {
             if (isStarting) return;
             if (!isLocked && !item.isCompleted) {
-
               triggerHaptic('impactMedium');
               startLesson(
                 {
@@ -193,16 +208,9 @@ const StartedModule = () => {
                 },
                 {
                   onSuccess: () => {
-                    (navigation.navigate as any)(
-                      AppRoutes.ModuleExercise,
-                      {
-                        phase: item,
-                        isLastPhase: index === phases.length - 1,
-                        theme: (route.params as any)?.theme,
-                        subModule: subModuleDetail,
-                        source: (route.params as any)?.source,
-                      },
-                    );
+                    dispatch(setModulePhase(item));
+                    dispatch(setModuleIsLastPhase(index === phases.length - 1));
+                    (navigation.navigate as any)(AppRoutes.ModuleExercise);
                   },
                 },
               );
@@ -217,8 +225,8 @@ const StartedModule = () => {
       phases.length,
       startLesson,
       isStarting,
-      route.params,
       subModuleDetail,
+      dispatch,
     ],
   );
   const keyExtractor = useCallback(

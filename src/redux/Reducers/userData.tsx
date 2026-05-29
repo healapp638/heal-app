@@ -131,6 +131,14 @@ export const userDataSlice = createSlice({
     clearOnboardingProgress: state => {
       state.onboarding = getInitialOnboardingState();
     },
+    setOnboardingAnswers: (state, action) => {
+      ensureOnboardingState(state);
+      state.onboarding.answers = {
+        ...state.onboarding.answers,
+        ...action.payload,
+      };
+      state.onboarding.hasStarted = true;
+    },
   },
 });
 export const {
@@ -142,6 +150,7 @@ export const {
   setFontScaling,
   setOnboardingCurrentScreen,
   setOnboardingAnswer,
+  setOnboardingAnswers,
   setOnboardingCompleted,
   clearOnboardingProgress,
   setBiometric,

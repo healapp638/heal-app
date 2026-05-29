@@ -29,8 +29,12 @@ import { triggerHaptic } from '../../../../hooks/useHaptic';
 import AppUtils from '../../../../utils/appUtils';
 import AppFonts from '../../../../constants/fonts';
 import PremiumModal from '../../../../modals/PremiumModal';
+import { useQueryClient } from '@tanstack/react-query';
+import { clearModuleParams } from '../../../../redux/Reducers/tempData';
+
 const Settings = () => {
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -253,6 +257,8 @@ const Settings = () => {
               dispatch(setAuth(false));
               dispatch(setUser({}));
               dispatch(setToken(null));
+              dispatch(clearModuleParams());
+              queryClient.clear();
               navigation.reset({
                 index: 0,
                 routes: [

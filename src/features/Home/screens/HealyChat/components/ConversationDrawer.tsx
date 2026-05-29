@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from 'react';
 import {
   View,
   Image,
@@ -64,7 +70,9 @@ const formatConversationDate = (dateString: string, localization: any) => {
         localization?.appkeys?.monthNov?.substring(0, 3) || 'Nov',
         localization?.appkeys?.monthDec?.substring(0, 3) || 'Dec',
       ];
-      return `${months[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
+      return `${
+        months[date.getMonth()]
+      } ${date.getDate()}, ${date.getFullYear()}`;
     }
   } catch {
     return '';
@@ -182,9 +190,14 @@ const ConversationDrawerComponent: React.FC<ConversationDrawerProps> = ({
 
   const renderConversationItem = useCallback(
     ({ item }: { item: any }) => {
-      const isActive = item._id === activeConversationId || item.id === activeConversationId;
+      const isActive =
+        item._id === activeConversationId || item.id === activeConversationId;
       // Use fallback title if backend doesn't return a custom title
-      const title = item.title || item.lastMessage || localization?.appkeys?.chatSessionFallback || 'Chat Session';
+      const title =
+        item.title ||
+        item.lastMessage ||
+        localization?.appkeys?.chatSessionFallback ||
+        'Chat Session';
 
       return (
         <TouchableOpacity
@@ -203,7 +216,10 @@ const ConversationDrawerComponent: React.FC<ConversationDrawerProps> = ({
             {title}
           </SolidText>
           <SolidText style={styles.drawerListItemDate}>
-            {formatConversationDate(item.createdAt || item.updatedAt, localization)}
+            {formatConversationDate(
+              item.createdAt || item.updatedAt,
+              localization,
+            )}
           </SolidText>
         </TouchableOpacity>
       );
@@ -242,34 +258,31 @@ const ConversationDrawerComponent: React.FC<ConversationDrawerProps> = ({
           <SolidText style={styles.drawerTitle}>
             {localization?.appkeys?.chatHistory || 'History'}
           </SolidText>
-          <TouchableOpacity
-            style={styles.closeBtn}
-            onPress={handleClose}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Image
-              source={images.cross}
-              style={styles.closeIcon}
-              resizeMode="contain"
-            />
-          </TouchableOpacity>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <TouchableOpacity
+              style={[styles.closeBtn, { marginRight: 12 }]}
+              onPress={handleNewChat}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Image
+                source={images.newChat}
+                style={styles.closeIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.closeBtn}
+              onPress={handleClose}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Image
+                source={images.cross}
+                style={styles.closeIcon}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-
-        {/* Start New Chat Button */}
-        <TouchableOpacity
-          style={styles.newChatBtn}
-          onPress={handleNewChat}
-          activeOpacity={0.8}
-        >
-          <Image
-            source={images.plus}
-            style={styles.newChatIcon}
-            resizeMode="contain"
-          />
-          <SolidText style={styles.newChatBtnText}>
-            {localization?.appkeys?.newChat || 'New Chat'}
-          </SolidText>
-        </TouchableOpacity>
 
         {/* Paginated Conversations List */}
         {loading && conversations.length === 0 ? (
@@ -280,7 +293,8 @@ const ConversationDrawerComponent: React.FC<ConversationDrawerProps> = ({
           />
         ) : conversations.length === 0 ? (
           <SolidText style={styles.drawerEmptyText}>
-            {localization?.appkeys?.noConversationsFound || 'No past conversations found.'}
+            {localization?.appkeys?.noConversationsFound ||
+              'No past conversations found.'}
           </SolidText>
         ) : (
           <FlatList

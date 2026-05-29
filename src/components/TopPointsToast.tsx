@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Animated, StyleSheet, View, Platform, DeviceEventEmitter, PanResponder } from 'react-native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
+import { triggerHaptic } from '../hooks/useHaptic';
 
 export const SHOW_POINTS_TOAST_EVENT = 'SHOW_POINTS_TOAST_EVENT';
 
@@ -40,6 +41,7 @@ export default function TopPointsToast() {
 
   useEffect(() => {
     const subscription = DeviceEventEmitter.addListener(SHOW_POINTS_TOAST_EVENT, (data) => {
+      triggerHaptic('impactHeavy');
       setToastData(data);
       slideAnim.setValue(-150);
 

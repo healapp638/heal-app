@@ -163,9 +163,7 @@ const Welcome = () => {
             resizeMode="contain"
             style={styles.phoneImage}
           />
-          <View
-            style={{ flex: 1 }}
-          />
+          <View style={{ flex: 1 }} />
           <SolidText style={styles.title}>
             {localization.appkeys?.healingStarts}
           </SolidText>
@@ -178,6 +176,8 @@ const Welcome = () => {
           />
           <SolidText
             onPress={() => {
+              triggerHaptic('impactMedium');
+
               setSignInModalVisible(true);
             }}
             style={styles.footerText}

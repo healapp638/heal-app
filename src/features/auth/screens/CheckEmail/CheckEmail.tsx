@@ -12,9 +12,11 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setOnboardingAnswers } from '../../../../redux/Reducers/userData';
 
 const CheckEmail = () => {
+  const dispatch = useDispatch();
   const { colors } = useTheme() as any;
   const navigation = useNavigation();
   const route = useRoute() as any;
@@ -24,6 +26,14 @@ const CheckEmail = () => {
 
   const [timer, setTimer] = useState(30);
   const { mutate: resendMagicLink, isPending } = usePostApi();
+
+  useEffect(() => {
+    return () => {
+      if (payload) {
+        dispatch(setOnboardingAnswers(payload));
+      }
+    };
+  }, [payload, dispatch]);
 
   useEffect(() => {
     let interval: any;

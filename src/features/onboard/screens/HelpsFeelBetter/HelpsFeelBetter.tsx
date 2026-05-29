@@ -31,13 +31,14 @@ const HelpsFeelBetter = () => {
     (state: any) => state.userData?.onboarding?.answers?.helpFeelBetter,
   );
 
-  const selectedList = typeof savedSelection === 'string'
-    ? savedSelection.split(', ').filter(Boolean)
-    : Array.isArray(savedSelection)
-    ? savedSelection
-    : savedSelection
-    ? [savedSelection]
-    : [];
+  const selectedList =
+    typeof savedSelection === 'string'
+      ? savedSelection.split(', ').filter(Boolean)
+      : Array.isArray(savedSelection)
+      ? savedSelection
+      : savedSelection
+      ? [savedSelection]
+      : [];
 
   useFocusEffect(
     useCallback(() => {
@@ -60,7 +61,8 @@ const HelpsFeelBetter = () => {
     },
     {
       id: 'journaling',
-      label: localization.appkeys?.optJournaling || 'Journaling / Self-reflection',
+      label:
+        localization.appkeys?.optJournaling || 'Journaling / Self-reflection',
     },
     {
       id: 'nature',
@@ -68,11 +70,14 @@ const HelpsFeelBetter = () => {
     },
     {
       id: 'talkingSomeone',
-      label: localization.appkeys?.optTalkingSomeone || 'Talking to someone I trust',
+      label:
+        localization.appkeys?.optTalkingSomeone || 'Talking to someone I trust',
     },
     {
       id: 'listeningMusic',
-      label: localization.appkeys?.optListeningMusic || 'Listening to music / podcasts',
+      label:
+        localization.appkeys?.optListeningMusic ||
+        'Listening to music / podcasts',
     },
     {
       id: 'other',
@@ -117,10 +122,12 @@ const HelpsFeelBetter = () => {
           />
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
-              {localization.appkeys?.helpsFeelBetterTitle || 'What helps you feel better?'}
+              {localization.appkeys?.helpsFeelBetterTitle ||
+                'What helps you feel better?'}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              {localization.appkeys?.helpsFeelBetterSub || 'You can select more than one option.'}
+              {localization.appkeys?.helpsFeelBetterSub ||
+                'You can select more than one option.'}
             </SolidText>
 
             <View style={styles.listContainer}>
@@ -169,7 +176,9 @@ const HelpsFeelBetter = () => {
               btnStyle={styles.btn}
               disabled={selectedList.length === 0}
               onPress={() => {
-                return navigation.navigate(AppRoutes.StopsFeelingBetter as never);
+                return navigation.navigate(
+                  AppRoutes.StopsFeelingBetter as never,
+                );
               }}
             />
           </View>

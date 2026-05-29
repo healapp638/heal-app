@@ -29,9 +29,7 @@ const EmailSignIn = () => {
   const answers = useSelector(
     (state: any) => state?.userData?.onboarding?.answers,
   );
-  const appLanguage = useSelector(
-    (state: any) => state?.userData?.appLanguage,
-  );
+  const appLanguage = useSelector((state: any) => state?.userData?.appLanguage);
 
   const handleSendLink = () => {
     if (!email) {
@@ -43,7 +41,7 @@ const EmailSignIn = () => {
     if (!AppUtils.validateEmail(email)) {
       AppUtils.showToast(
         localization.appkeys?.toastInvalidEmail ||
-        'Please enter a valid email address.',
+          'Please enter a valid email address.',
       );
       return;
     }
@@ -63,7 +61,7 @@ const EmailSignIn = () => {
       howFellingLately: answers?.howFellingLately || '',
       hearAboutUs: answers?.hearAboutUs || '',
     };
-
+    console.log(payload);
     sendMagicLink(
       {
         endpoint: endpoints.sendMagicLink,
@@ -105,12 +103,13 @@ const EmailSignIn = () => {
               {localization.appkeys?.whatsYourEmail || 'What’s your email?'}
             </SolidText>
             <SolidText style={styles.subtitle}>
-              {localization.appkeys?.weWillEmailLink || 'We’ll email you a link to sign in.'}
+              {localization.appkeys?.weWillEmailLink ||
+                'We’ll email you a link to sign in.'}
             </SolidText>
 
             <SolidInput
               label={localization.appkeys?.email || 'Email'}
-              placeholder="Johnsmith911@gmail.com"
+              placeholder="name@example.com"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -125,7 +124,10 @@ const EmailSignIn = () => {
 
           <View style={styles.footerContainer}>
             <SolidBtn
-              titleTxt={localization.appkeys?.emailMeMagicLink || 'Email me a magic link'}
+              titleTxt={
+                localization.appkeys?.emailMeMagicLink ||
+                'Email me a magic link'
+              }
               btnStyle={styles.submitBtn}
               txtStyle={styles.submitBtnText}
               onPress={handleSendLink}

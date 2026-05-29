@@ -227,6 +227,7 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
           maxFontSizeMultiplier={1.4}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          multiline={true}
         />
         <TouchableOpacity onPress={handleButtonPress} activeOpacity={0.7}>
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>

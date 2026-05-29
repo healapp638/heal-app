@@ -39,9 +39,48 @@ import EmergencyResources from '../../features/settings/screens/EmergencyResourc
 import TopPointsToast from '../../components/TopPointsToast';
 import useGetApi from '../../hooks/useGetApi';
 import { endpoints } from '../../api/Services/endpoints';
+import { useSelector } from 'react-redux';
+import SuccessModal from '../../modals/SuccessModal';
 
 export default function NonAuthStack() {
   useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {});
+
+  const user = useSelector((state: any) => state.userData.user);
+  const [prevLevel, setPrevLevel] = React.useState<number | null>(null);
+  const [prevEarnedPoints, setPrevEarnedPoints] = React.useState<number | null>(
+    null,
+  );
+  const [showLevelModal, setShowLevelModal] = React.useState(false);
+  const [completedLevelNum, setCompletedLevelNum] = React.useState<number>(1);
+
+  React.useEffect(() => {
+    if (user && typeof user.currentLevel === 'number') {
+      if (prevLevel === null) {
+        setPrevLevel(user.currentLevel);
+      } else if (user.currentLevel > prevLevel) {
+        // Level completion detected via level increment!
+        setCompletedLevelNum(prevLevel);
+        setShowLevelModal(true);
+        setPrevLevel(user.currentLevel);
+      }
+    }
+  }, [user?.currentLevel, prevLevel]);
+
+  React.useEffect(() => {
+    if (user && user.total_points > 0) {
+      const earned = user.total_earned_points || 0;
+      const total = user.total_points || 0;
+
+      if (prevEarnedPoints !== null && earned !== prevEarnedPoints) {
+        if (earned >= total) {
+          // Level completion detected via points threshold!
+          setCompletedLevelNum(user.currentLevel || 1);
+          setShowLevelModal(true);
+        }
+      }
+      setPrevEarnedPoints(earned);
+    }
+  }, [user?.total_earned_points, user?.total_points, prevEarnedPoints]);
 
   const Stack = createNativeStackNavigator();
   return (
@@ -49,70 +88,91 @@ export default function NonAuthStack() {
       <Stack.Navigator
         screenOptions={{ headerShown: false, gestureEnabled: false }}
       >
-      <Stack.Screen name={AppRoutes.Offer} component={Offer} />
-      <Stack.Screen name={AppRoutes.Reminder} component={Reminder} />
-      <Stack.Screen name={AppRoutes.Premium} component={Premium} />
-      <Stack.Screen name={AppRoutes.Terms} component={Terms} />
-      <Stack.Screen name={AppRoutes.PrivacyPolicy} component={PrivacyPolicy} />
-      <Stack.Screen name={AppRoutes.BottomTab} component={TabNavigator} />
-      <Stack.Screen name={AppRoutes.DailyStreak} component={DailyStreak} />
-      <Stack.Screen name={AppRoutes.DailyQuote} component={DailyQuote} />
-      <Stack.Screen
-        name={AppRoutes.ProgressTracker}
-        component={ProgressTracker}
-      />
-      <Stack.Screen name={AppRoutes.ThemeMixes} component={ThemeMixes} />
-      <Stack.Screen name={AppRoutes.ThemeSeeAll} component={ThemeSeeAll} />
-      <Stack.Screen name={AppRoutes.ThemeDetail} component={ThemeDetail} />
-      <Stack.Screen name={AppRoutes.SavedDailyQuote} component={SavedDailyQuote} />
-      <Stack.Screen name={AppRoutes.HealyChat} component={HealyChat} />
-      <Stack.Screen
-        name={AppRoutes.ChallengeDetail}
-        component={ChallengeDetail}
-      />
-      <Stack.Screen name={AppRoutes.Exercise} component={Exercise} />
-      <Stack.Screen name={AppRoutes.StartedModule} component={StartedModule} />
-      <Stack.Screen name={AppRoutes.PhaseDetail} component={PhaseDetail} />
-      <Stack.Screen
-        name={AppRoutes.ModuleExercise}
-        component={ModuleExercise}
-      />
-      <Stack.Screen
-        name={AppRoutes.ModuleThemeDetail}
-        component={ModuleThemeDetail}
-      />
-      <Stack.Screen name={AppRoutes.AllModules} component={AllModules} />
-      <Stack.Screen name={AppRoutes.AddJournal} component={AddJournal} />
-      <Stack.Screen name={AppRoutes.Calendar} component={Calendar} />
-      <Stack.Screen
-        name={AppRoutes.ConnectedEntries}
-        component={ConnectedEntries}
-      />
-      <Stack.Screen name={AppRoutes.EditProfile} component={EditProfile} />
-      <Stack.Screen name={AppRoutes.DeleteAccount} component={DeleteAccount} />
-      <Stack.Screen
-        name={AppRoutes.SelectLanguage}
-        component={SelectLanguage}
-      />
-      <Stack.Screen
-        name={AppRoutes.PrivacyAndSecurity}
-        component={PrivacyAndSecurity}
-      />
-      <Stack.Screen
-        name={AppRoutes.ChangePassword}
-        component={ChangePassword}
-      />
-      <Stack.Screen
-        name={AppRoutes.HelpAndSupport}
-        component={HelpAndSupport}
-      />
-      <Stack.Screen name={AppRoutes.aboutHeal} component={AboutHeal} />
-      <Stack.Screen
-        name={AppRoutes.EmergencyResources}
-        component={EmergencyResources}
-      />
+        <Stack.Screen name={AppRoutes.Offer} component={Offer} />
+        <Stack.Screen name={AppRoutes.Reminder} component={Reminder} />
+        <Stack.Screen name={AppRoutes.Premium} component={Premium} />
+        <Stack.Screen name={AppRoutes.Terms} component={Terms} />
+        <Stack.Screen
+          name={AppRoutes.PrivacyPolicy}
+          component={PrivacyPolicy}
+        />
+        <Stack.Screen name={AppRoutes.BottomTab} component={TabNavigator} />
+        <Stack.Screen name={AppRoutes.DailyStreak} component={DailyStreak} />
+        <Stack.Screen name={AppRoutes.DailyQuote} component={DailyQuote} />
+        <Stack.Screen
+          name={AppRoutes.ProgressTracker}
+          component={ProgressTracker}
+        />
+        <Stack.Screen name={AppRoutes.ThemeMixes} component={ThemeMixes} />
+        <Stack.Screen name={AppRoutes.ThemeSeeAll} component={ThemeSeeAll} />
+        <Stack.Screen name={AppRoutes.ThemeDetail} component={ThemeDetail} />
+        <Stack.Screen
+          name={AppRoutes.SavedDailyQuote}
+          component={SavedDailyQuote}
+        />
+        <Stack.Screen name={AppRoutes.HealyChat} component={HealyChat} />
+        <Stack.Screen
+          name={AppRoutes.ChallengeDetail}
+          component={ChallengeDetail}
+        />
+        <Stack.Screen name={AppRoutes.Exercise} component={Exercise} />
+        <Stack.Screen
+          name={AppRoutes.StartedModule}
+          component={StartedModule}
+        />
+        <Stack.Screen name={AppRoutes.PhaseDetail} component={PhaseDetail} />
+        <Stack.Screen
+          name={AppRoutes.ModuleExercise}
+          component={ModuleExercise}
+        />
+        <Stack.Screen
+          name={AppRoutes.ModuleThemeDetail}
+          component={ModuleThemeDetail}
+        />
+        <Stack.Screen name={AppRoutes.AllModules} component={AllModules} />
+        <Stack.Screen name={AppRoutes.AddJournal} component={AddJournal} />
+        <Stack.Screen name={AppRoutes.Calendar} component={Calendar} />
+        <Stack.Screen
+          name={AppRoutes.ConnectedEntries}
+          component={ConnectedEntries}
+        />
+        <Stack.Screen name={AppRoutes.EditProfile} component={EditProfile} />
+        <Stack.Screen
+          name={AppRoutes.DeleteAccount}
+          component={DeleteAccount}
+        />
+        <Stack.Screen
+          name={AppRoutes.SelectLanguage}
+          component={SelectLanguage}
+        />
+        <Stack.Screen
+          name={AppRoutes.PrivacyAndSecurity}
+          component={PrivacyAndSecurity}
+        />
+        <Stack.Screen
+          name={AppRoutes.ChangePassword}
+          component={ChangePassword}
+        />
+        <Stack.Screen
+          name={AppRoutes.HelpAndSupport}
+          component={HelpAndSupport}
+        />
+        <Stack.Screen name={AppRoutes.aboutHeal} component={AboutHeal} />
+        <Stack.Screen
+          name={AppRoutes.EmergencyResources}
+          component={EmergencyResources}
+        />
       </Stack.Navigator>
       <TopPointsToast />
+      <SuccessModal
+        visible={showLevelModal}
+        onClose={() => setShowLevelModal(false)}
+        title="Well done"
+        subtitle={`You've completed Level ${completedLevelNum}`}
+        btnLabel="Continue"
+        onPressBtn={() => setShowLevelModal(false)}
+        btnStyle={{ marginTop: -10 }}
+      />
     </>
   );
 }

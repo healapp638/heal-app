@@ -30,7 +30,11 @@ import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import getEnvVars from '../../../../../env';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { useDispatch } from 'react-redux';
+import { setModuleTheme, setModuleSubModule, setModuleSource } from '../../../../redux/Reducers/tempData';
+
 const Modules = () => {
+  const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
@@ -62,6 +66,11 @@ const Modules = () => {
       limit: 10,
     },
   );
+  const { refetch: refetchRandomQuestions } = useGetApi(
+    endpoints.getRandomQuestions,
+    ['getRandomQuestions'],
+    {},
+  );
   useFocusEffect(
     useCallback(() => {
       // Optional: refetch on focus if needed
@@ -69,7 +78,8 @@ const Modules = () => {
       refetch();
       refetchStarted();
       refetchFinished();
-    }, [refetch, refetchStarted, refetchFinished]),
+      refetchRandomQuestions();
+    }, [refetch, refetchStarted, refetchFinished, refetchRandomQuestions]),
   );
   useEffect(() => {
     if (data?.data) {
@@ -107,20 +117,13 @@ const Modules = () => {
       setIsRefreshing(false);
     }, 1000);
   };
-  const loadMore = () => {
-    const responseData = data?.data;
-    const nextCursor = responseData?.nextCursor || responseData?.next_cursor;
-    if (nextCursor && !isFetching) {
-      setCursor(nextCursor);
-    }
-  };
+
   const [activeIndex, setActiveIndex] = useState(0);
   const { width: screenWidth } = Dimensions.get('window');
   const carouselCardWidth = screenWidth - 40;
 
   const activeStarted = startedModules.filter(
-    (item: any) =>
-      item?.completed_phase_count < item?.total_phase_count,
+    (item: any) => item?.completed_phase_count < item?.total_phase_count,
   );
   const finishedList = finishedModulesData?.data?.subModules || [];
 
@@ -212,22 +215,17 @@ const Modules = () => {
           }}
           onPress={() => {
             triggerHaptic('impactMedium');
-            navigation.navigate(
-              AppRoutes.StartedModule as never,
-              {
-                module: item.module,
-                subModule: {
-                  ...item,
-                  _id: item.sub_module_id,
-                },
-                source: 'dashboard',
-              } as never,
-            );
+            dispatch(setModuleSubModule({
+              ...item,
+              _id: item.sub_module_id,
+            }));
+            dispatch(setModuleSource('dashboard'));
+            navigation.navigate(AppRoutes.StartedModule as never);
           }}
         />
       );
     },
-    [localization.appkeys, navigation, carouselCardWidth],
+    [localization.appkeys, navigation, carouselCardWidth, dispatch],
   );
 
   const renderHeader = () => (
@@ -322,40 +320,17 @@ const Modules = () => {
     </View>
   );
 
-  const renderFooter = () => (
-    <View
-      style={{
-        paddingBottom: 40,
-        marginTop: 10,
-      }}
-    >
-      {isFetching && cursor !== null && (
-        <ActivityIndicator
-          size="small"
-          color={colors.brown}
-          style={{
-            marginVertical: 20,
-          }}
-        />
-      )}
-    </View>
-  );
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
       <ModuleThemeCard
         item={item}
         onPress={() => {
-
-          return navigation.navigate(
-            AppRoutes.ModuleThemeDetail as never,
-            {
-              theme: item,
-            } as never,
-          );
+          dispatch(setModuleTheme(item));
+          return navigation.navigate(AppRoutes.ModuleThemeDetail as never);
         }}
       />
     ),
-    [navigation],
+    [navigation, dispatch],
   );
   const keyExtractor = useCallback(
     (item: any, index: number) => (item.id || index).toString(),
@@ -376,7 +351,7 @@ const Modules = () => {
               safeSpaceLabel={
                 localization.appkeys?.modulesSubtitle || 'Choose guided support'
               }
-              onStreakPress={() => { }}
+              onStreakPress={() => {}}
             />
           </View>
           <FlatList
@@ -388,8 +363,7 @@ const Modules = () => {
             windowSize={10}
             removeClippedSubviews={true}
             ListHeaderComponent={renderHeader()}
-            ListFooterComponent={renderFooter()}
-            onEndReached={loadMore}
+            // onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />

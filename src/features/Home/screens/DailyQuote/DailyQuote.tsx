@@ -46,8 +46,6 @@ const DailyQuote = () => {
   const { mutate: postApi, mutateAsync: postApiAsync } = usePostApi();
   const user = useSelector((state: any) => state.userData?.user);
 
-  useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {});
-
   const [showFavoritesModal, setShowFavoritesModal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const viewShotRefs = useRef<{
