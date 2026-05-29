@@ -431,46 +431,175 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
     }
 },
 
+// getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
+
+//     try {
+
+//         // =========================================
+//         // USER LANGUAGE
+//         // =========================================
+
+//         const user =await userAuthModel.findOne({_id: convertToObjectId(user_id),status: USER_STATUS.ACTIVE});
+
+//         const userLanguage = user?.language || "en";
+
+//         // =========================================
+//         // QUESTIONS
+//         // =========================================
+//         // const questions = workflowConstant.questions;
+
+//         const finalQuestion = questions;
+
+//         // =========================================
+//         // RANDOM 5
+//         // =========================================
+
+//         const shuffled =finalQuestion.sort(() => 0.5 - Math.random());
+
+//         const randomQuestions =shuffled.slice(0, 5);
+
+//         // =========================================
+//         // LANGUAGE RESPONSE
+//         // =========================================
+
+//         const finalQuestions = randomQuestions.map((item: any) =>item[userLanguage] || item.en);
+
+//         return showResponse(true,responseMessage.common.data_retreive_sucess,finalQuestions,statusCodes.SUCCESS);
+
+//     } catch (error) {
+
+//         console.log(error,"GET_RANDOM_QUESTIONS_ERROR");
+
+//         return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
+//     }
+// },
+
 getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
 
     try {
 
         // =========================================
-        // USER LANGUAGE
+        // USER
         // =========================================
 
-        const user =await userAuthModel.findOne({_id: convertToObjectId(user_id),status: USER_STATUS.ACTIVE});
+        const user = await userAuthModel.findOne({
+            _id: convertToObjectId(user_id),
+            status: USER_STATUS.ACTIVE
+        });
+
+        if (!user) {
+
+            return showResponse(
+                false,
+                "User not found",
+                null,
+                statusCodes.NOT_FOUND
+            );
+        }
 
         const userLanguage = user?.language || "en";
 
         // =========================================
-        // QUESTIONS
-        // =========================================
-        // const questions = workflowConstant.questions;
-
-        const finalQuestion = questions;
-
-        // =========================================
-        // RANDOM 5
+        // RANDOM REFERENCE QUESTION
         // =========================================
 
-        const shuffled =finalQuestion.sort(() => 0.5 - Math.random());
+        const randomQuestion:any =
+            questions[Math.floor(Math.random() * questions.length)];
 
-        const randomQuestions =shuffled.slice(0, 5);
+        const referenceQuestion =
+            randomQuestion[userLanguage] || randomQuestion.en;
 
         // =========================================
-        // LANGUAGE RESPONSE
+        // OPENAI
         // =========================================
 
-        const finalQuestions = randomQuestions.map((item: any) =>item[userLanguage] || item.en);
+        const openai = new OpenAI({
+            apiKey: APP.OPENAI_API_KEY,
+        });
 
-        return showResponse(true,responseMessage.common.data_retreive_sucess,finalQuestions,statusCodes.SUCCESS);
+        // =========================================
+        // LANGUAGE MAP
+        // =========================================
+
+        const languageMap: any = {
+            en: "English",
+            zh: "Chinese",
+            hi: "Hindi",
+            es: "Spanish",
+            fr: "French",
+            de: "German",
+            ru: "Russian",
+            pt: "Portuguese",
+            it: "Italian",
+            ro: "Romanian",
+        };
+
+        const languageName =
+            languageMap[userLanguage] || "English";
+
+        // =========================================
+        // AI QUESTION GENERATION
+        // =========================================
+
+        const prompt = `
+Generate ONE short emotional wellness reflection question.
+
+Rules:
+- Inspired by this question:
+"${referenceQuestion}"
+
+- Generate a NEW unique question.
+- Keep same emotional and healing tone.
+- Max 15 words.
+- Human sounding.
+- Do not copy the reference question.
+- Return ONLY the question.
+- Language must be ${languageName}.
+`;
+
+        const completion = await openai.chat.completions.create({
+            model: "gpt-4.1-mini",
+            messages: [
+                {
+                    role: "system",
+                    content:
+                        "You generate emotional wellness reflection questions."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            temperature: 0.9,
+            max_tokens: 60,
+        });
+
+        // =========================================
+        // FINAL QUESTION
+        // =========================================
+
+        const generatedQuestion =
+            completion.choices?.[0]?.message?.content?.trim();
+
+        return showResponse(
+            true,
+            responseMessage.common.data_retreive_sucess,
+            {
+                question: generatedQuestion
+            },
+            statusCodes.SUCCESS
+        );
 
     } catch (error) {
 
-        console.log(error,"GET_RANDOM_QUESTIONS_ERROR");
+        console.log(error, "GET_RANDOM_QUESTIONS_ERROR");
 
-        return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
+        return showResponse(
+            false,
+            responseMessage.common.server_error,
+            null,
+            statusCodes.API_ERROR
+        );
     }
 },
 
