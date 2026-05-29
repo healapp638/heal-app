@@ -93,7 +93,7 @@ app.use(requestIdMiddleware);
 app.use(bodyParser.json());
 app.use(express.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan("tiny"));
+// app.use(morgan("tiny"));
 morgan.token("userId", (req: any) => req.userId || "anonymous");
 morgan.token("requestId", (req: any) => req.id || "unknown");
 // Custom Morgan format for JSON logging
@@ -213,7 +213,7 @@ app.get("/link/:code/:affirmation_id", async (req, res) => {
 
   const iosStore = `https://apps.apple.com/us/app`;
   const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
-  const fallbackWeb = "https://apidev.heal-app.com/";
+  const fallbackWeb = "https://www.heal-app.com/";
 
   let storeUrl = fallbackWeb;
   const codeParam = encodeURIComponent(code || "");
@@ -303,7 +303,7 @@ app.get("/link/:code", async (req, res) => {
   // const iosStore = `https://apps.apple.com/us/app`;
   const iosStore = `https://apps.apple.com/us/app/heal-emotional-companion/id6771270384`;
   const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
-  const fallbackWeb = "https://apidev.heal-app.com/";
+  const fallbackWeb = "https://www.heal-app.com/";
 
   let storeUrl = fallbackWeb;
   const codeParam = encodeURIComponent(code || "");

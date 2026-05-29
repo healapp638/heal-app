@@ -87,7 +87,7 @@ app.use(requestId_middlewear_1.requestIdMiddleware);
 app.use(body_parser_1.default.json());
 app.use(express_1.default.json({ limit: "50mb" }));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
-app.use((0, morgan_1.default)("tiny"));
+// app.use(morgan("tiny"));
 morgan_1.default.token("userId", (req) => req.userId || "anonymous");
 morgan_1.default.token("requestId", (req) => req.id || "unknown");
 // Custom Morgan format for JSON logging
@@ -186,7 +186,7 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
     const ua = req.headers["user-agent"] || "";
     const iosStore = `https://apps.apple.com/us/app`;
     const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
-    const fallbackWeb = "https://apidev.heal-app.com/";
+    const fallbackWeb = "https://www.heal-app.com/";
     let storeUrl = fallbackWeb;
     const codeParam = encodeURIComponent(code || "");
     const idParam = encodeURIComponent(affirmation_id || "");
@@ -263,7 +263,7 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
     // const iosStore = `https://apps.apple.com/us/app`;
     const iosStore = `https://apps.apple.com/us/app/heal-emotional-companion/id6771270384`;
     const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
-    const fallbackWeb = "https://apidev.heal-app.com/";
+    const fallbackWeb = "https://www.heal-app.com/";
     let storeUrl = fallbackWeb;
     const codeParam = encodeURIComponent(code || "");
     // const idParam = encodeURIComponent(affirmation_id || "");

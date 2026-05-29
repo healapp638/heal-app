@@ -301,6 +301,16 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
             return wrappedFunc(this.userId); // Invoking the wrapped function
         });
     }
+    //ends
+    /**
+    * Get User streak
+    */
+    claimStreak() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.claimStreak);
+            return wrappedFunc(this.userId); // Invoking the wrapped function
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Post)("/login"),
@@ -458,6 +468,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "progressTrackerList", null);
+__decorate([
+    (0, tsoa_1.Security)("Bearer"),
+    (0, tsoa_1.Post)("/user_streak"),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "claimStreak", null);
 UserAuthController = __decorate([
     (0, tsoa_1.Tags)('User Auth Routes'),
     (0, tsoa_1.Route)('/user/auth'),

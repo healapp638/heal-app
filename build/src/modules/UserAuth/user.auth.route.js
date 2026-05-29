@@ -139,4 +139,9 @@ router.get('/progress_tracker_list', verifyTokenUser, (req, res) => __awaiter(vo
     const result = yield controller.progressTrackerList();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/claimStreak', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.claimStreak();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

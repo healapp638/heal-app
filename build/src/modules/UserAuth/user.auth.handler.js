@@ -1141,6 +1141,88 @@ const UserAuthHandler = {
             completedPercentage,
             progressListing
         }, statusCodes_1.default.SUCCESS);
+    }),
+    claimStreak: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        const STREAK_REWARDS = {
+            3: 50,
+            7: 100,
+            14: 175,
+            30: 250,
+            60: 450,
+            100: 1000,
+        };
+        try {
+            const user = yield user_auth_model_1.default.findOne({
+                _id: commonHelper.convertToObjectId(user_id),
+                status: workflow_constant_1.USER_STATUS.ACTIVE
+            });
+            if (!user) {
+                return (0, response_util_1.showResponse)(false, "User not found", null, statusCodes_1.default.NOT_FOUND);
+            }
+            const userTimeZone = user.timeZone || "America/New_York";
+            // =========================================
+            // CURRENT DATE IN USER TIMEZONE
+            // =========================================
+            const today = (0, moment_timezone_1.default)().tz(userTimeZone).format("YYYY-MM-DD");
+            const yesterday = (0, moment_timezone_1.default)()
+                .tz(userTimeZone)
+                .subtract(1, "day")
+                .format("YYYY-MM-DD");
+            // =========================================
+            // ALREADY CLAIMED TODAY
+            // =========================================
+            if (user.last_streak_date === today) {
+                return (0, response_util_1.showResponse)(true, "Streak already claimed today", null, statusCodes_1.default.SUCCESS);
+            }
+            let streakCount = user.streak_count || 0;
+            let streakDays = user.streak_days || [];
+            let streakCredit = user.streak_credit || 0;
+            // =========================================
+            // RESET IF DAY MISSED
+            // =========================================
+            if (user.last_streak_date &&
+                user.last_streak_date !== yesterday) {
+                streakCount = 0;
+                streakDays = [];
+            }
+            // =========================================
+            // INCREASE STREAK
+            // =========================================
+            streakCount += 1;
+            // =========================================
+            // SAVE UNIX
+            // =========================================
+            const unix = (0, moment_timezone_1.default)().unix();
+            streakDays.push(unix);
+            // =========================================
+            // REWARD XP
+            // =========================================
+            const rewardXP = STREAK_REWARDS[streakCount] || 0;
+            if (rewardXP > 0) {
+                streakCredit += rewardXP;
+            }
+            // =========================================
+            // UPDATE USER
+            // =========================================
+            yield user_auth_model_1.default.updateOne({ _id: user._id }, {
+                $set: {
+                    streak_count: streakCount,
+                    streak_credit: streakCredit,
+                    streak_days: streakDays,
+                    last_streak_date: today,
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "Streak claimed successfully", {
+                streak_count: streakCount,
+                streak_credit: streakCredit,
+                rewardXP,
+                streak_days: streakDays
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "CLAIM_STREAK_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+        }
     })
 };
 exports.default = UserAuthHandler;

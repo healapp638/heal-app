@@ -1377,8 +1377,142 @@ const UserAuthHandler = {
             },
             statusCodes.SUCCESS
         );
-    }
+    }, 
 
+
+claimStreak: async (user_id: string): Promise<ApiResponse> => {
+const STREAK_REWARDS: any = {
+    3: 50,
+    7: 100,
+    14: 175,
+    30: 250,
+    60: 450,
+    100: 1000,
+};
+    try {
+
+        const user = await userAuthModel.findOne({
+            _id: commonHelper.convertToObjectId(user_id),
+            status: USER_STATUS.ACTIVE
+        });
+
+        if (!user) {
+            return showResponse(
+                false,
+                "User not found",
+                null,
+                statusCodes.NOT_FOUND
+            );
+        }
+
+        const userTimeZone = user.timeZone || "America/New_York";
+
+        // =========================================
+        // CURRENT DATE IN USER TIMEZONE
+        // =========================================
+
+        const today = moment().tz(userTimeZone).format("YYYY-MM-DD");
+
+        const yesterday = moment()
+            .tz(userTimeZone)
+            .subtract(1, "day")
+            .format("YYYY-MM-DD");
+
+        // =========================================
+        // ALREADY CLAIMED TODAY
+        // =========================================
+
+        if (user.last_streak_date === today) {
+
+            return showResponse(
+                true,
+                "Streak already claimed today",
+                null,
+                statusCodes.SUCCESS
+            );
+        }
+
+        let streakCount = user.streak_count || 0;
+        let streakDays = user.streak_days || [];
+        let streakCredit = user.streak_credit || 0;
+
+        // =========================================
+        // RESET IF DAY MISSED
+        // =========================================
+
+        if (
+            user.last_streak_date &&
+            user.last_streak_date !== yesterday
+        ) {
+
+            streakCount = 0;
+            streakDays = [];
+        }
+
+        // =========================================
+        // INCREASE STREAK
+        // =========================================
+
+        streakCount += 1;
+
+        // =========================================
+        // SAVE UNIX
+        // =========================================
+
+        const unix = moment().unix();
+
+        streakDays.push(unix);
+
+        // =========================================
+        // REWARD XP
+        // =========================================
+
+        const rewardXP = STREAK_REWARDS[streakCount] || 0;
+
+        if (rewardXP > 0) {
+            streakCredit += rewardXP;
+        }
+
+        // =========================================
+        // UPDATE USER
+        // =========================================
+
+        await userAuthModel.updateOne(
+            { _id: user._id },
+            {
+                $set: {
+                    streak_count: streakCount,
+                    streak_credit: streakCredit,
+                    streak_days: streakDays,
+                    last_streak_date: today,
+                }
+            }
+        );
+
+        return showResponse(
+            true,
+            "Streak claimed successfully",
+            {
+                streak_count: streakCount,
+                streak_credit: streakCredit,
+                rewardXP,
+                streak_days: streakDays
+            },
+            statusCodes.SUCCESS
+        );
+
+    } catch (error) {
+
+        console.log(error, "CLAIM_STREAK_ERROR");
+
+        return showResponse(
+            false,
+            responseMessage.common.server_error,
+            null,
+            statusCodes.API_ERROR
+        );
+    }
+}
 
 }
 

@@ -153,4 +153,10 @@ router.get('/progress_tracker_list', verifyTokenUser, async (req: Request | any,
     return showOutput(res, result, result.code)
 });
 
+router.post('/claimStreak', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.claimStreak();
+    return showOutput(res, result, result.code)
+});
+
 export default router

@@ -20,6 +20,7 @@ const themeSchema = new mongoose.Schema(
         title: langSchema,
         description: langSchema,
         status: { type: Number, default: USER_STATUS.ACTIVE },
+        // sequence: { type: Number, default: 0 },
     },
     { timestamps: true, versionKey: false }
 );

@@ -59,7 +59,7 @@ const UserCommonHandler = {
             },
             {
                 $sort: {
-                    createdAt: -1,
+                    createdAt: 1,
                     _id: -1
                 }
             },

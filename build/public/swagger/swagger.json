@@ -2751,6 +2751,33 @@
 				"parameters": []
 			}
 		},
+		"/user/auth/user_streak": {
+			"post": {
+				"operationId": "ClaimStreak",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get User streak",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/user/affirmation/getAIAffirmation": {
 			"get": {
 				"operationId": "GetAIAffirmation",

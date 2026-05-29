@@ -61,6 +61,10 @@ const UserSchema = new mongoose_1.Schema({
     lastWeeklyChallengeGeneratedDate: { type: Date, default: null },
     isDailyChallengeInProgress: { type: Boolean, default: false },
     isWeeklyChallengeInProgress: { type: Boolean, default: false },
+    streak_count: { type: Number, default: 0 },
+    streak_credit: { type: Number, default: 0 },
+    streak_days: { type: [Number], default: [] },
+    last_streak_date: { type: String, default: "" }, // YYYY-MM-DD in user timezone
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
