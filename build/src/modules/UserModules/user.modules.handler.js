@@ -30,6 +30,7 @@ const user_module_start_lesson_model_1 = __importDefault(require("./user.module.
 const admin_mcqexercise_model_1 = __importDefault(require("../AdminExercise/admin.mcqexercise.model"));
 const user_mcqanswer_exercise_model_1 = __importDefault(require("./user.mcqanswer.exercise.model"));
 const responseMessages_1 = __importDefault(require("../../constants/responseMessages"));
+const user_themeEngagement_model_1 = __importDefault(require("./user.themeEngagement.model"));
 const UserCommonHandler = {
     themeList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
         const { cursor, limit = 10 } = data;
@@ -88,6 +89,8 @@ const UserCommonHandler = {
         if (theme.length === 0) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(userLang || 'en', 'theme_not_found'), null, statusCodes_1.default.NOT_FOUND);
         }
+        //calculate user enagement of each theme
+        yield user_themeEngagement_model_1.default.create({ theme_id: (0, common_helper_1.convertToObjectId)(theme_id), user_id: userId, theme_name: theme[0].title });
         const match = {
             themeId: (0, common_helper_1.convertToObjectId)(theme_id),
             status: workflow_constant_1.USER_STATUS.ACTIVE
