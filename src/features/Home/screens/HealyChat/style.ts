@@ -140,18 +140,17 @@ const style = (colors: any) =>
 
     },
     userBubble: {
-      backgroundColor: colors.brown + '18', // Warm sand tone dynamically blended from theme's brown color
-      borderBottomRightRadius: 4, // Chat bubble corner shape
+      backgroundColor: colors.primary + '33', // Soft rose pink matching the third screenshot
     },
     aiBubble: {
       backgroundColor: colors.primary + '18', // Warm light-rose tone dynamically blended from theme's primary color
       borderBottomLeftRadius: 4, // Chat bubble corner shape
     },
     messageText: {
-      fontSize: AppUtils.fontSize(15),
-      fontFamily: AppFonts.medium,
+      fontSize: AppUtils.fontSize(15.5),
+      fontFamily: AppFonts.regular,
       color: colors.brown,
-      lineHeight: 20,
+      lineHeight: 25, // Increased line height for legibility as per screenshot
     },
     timeText: {
       fontSize: AppUtils.fontSize(11),

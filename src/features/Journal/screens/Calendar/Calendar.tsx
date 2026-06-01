@@ -95,10 +95,6 @@ const Calendar = () => {
         <View style={styles.mainContainer}>
           <HeaderCommon
             title={localization.appkeys?.calendarTitle || 'Calendar'}
-            rightIcon={images.crown}
-            onRightPress={() => {
-              setShowCreditsModal(true);
-            }}
           />
 
           <HomeHeader

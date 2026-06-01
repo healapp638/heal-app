@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
@@ -120,63 +120,104 @@ const HearAboutUs = () => {
 
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       viewStyle={{ flex: 1 }}
       view={
         <View style={{ flex: 1 }}>
-          <HeaderProgress showBar={false} onBackPress={handleBackPress} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            overScrollMode="never"
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 130 }}
+          >
+            <HeaderProgress showBar={false} onBackPress={handleBackPress} />
 
-          <Image
-            source={images.heartRope}
-            style={styles.heartRope}
-            resizeMode="contain"
-          />
-          <View style={styles.mainContainer}>
-            <SolidText style={styles.title}>
-              {localization.appkeys?.hearAboutTitle}
-            </SolidText>
-            <SolidText style={styles.subtitle}>
-              {localization.appkeys?.seeBetterSubtitle}
-            </SolidText>
+            <Image
+              source={images.heartRope}
+              style={styles.heartRope}
+              resizeMode="contain"
+            />
+            <View style={styles.mainContainer}>
+              <SolidText style={styles.title}>
+                {localization.appkeys?.hearAboutTitle}
+              </SolidText>
+              <SolidText style={styles.subtitle}>
+                {localization.appkeys?.seeBetterSubtitle}
+              </SolidText>
 
-            <View style={styles.listContainer}>
-              {options.map(option => {
-                const isSelected =
-                  selected === option.id || selected === option.label;
-                const isOther = option.id === 'other';
+              <View style={styles.listContainer}>
+                {options.map(option => {
+                  const isSelected =
+                    selected === option.id || selected === option.label;
+                  const isOther = option.id === 'other';
 
-                return (
-                  <TouchableOpacity
-                    key={option.id}
-                    style={[
-                      styles.optionCard,
-                      isOther && styles.optionCardFull,
-                      isSelected && styles.optionCardSelected,
-                    ]}
-                    onPress={() => {
-                      triggerHaptic('impactMedium');
-                      setSelected(option.label);
-                      dispatch(
-                        setOnboardingAnswer({
-                          key: 'hearAboutUs',
-                          value: option.label,
-                        }),
-                      );
-                    }}
-                    activeOpacity={0.7}
-                  >
-                    {!isOther ? (
-                      <>
-                        <View style={styles.iconWrap}>
-                          <Image
-                            source={option.icon}
-                            style={
-                              option?.id == 'group'
-                                ? { height: 44, width: 44, marginLeft: -4 }
-                                : styles.icon
-                            }
-                            resizeMode="contain"
-                          />
+                  return (
+                    <TouchableOpacity
+                      key={option.id}
+                      style={[
+                        styles.optionCard,
+                        isOther && styles.optionCardFull,
+                        isSelected && styles.optionCardSelected,
+                      ]}
+                      onPress={() => {
+                        triggerHaptic('impactMedium');
+                        setSelected(option.label);
+                        dispatch(
+                          setOnboardingAnswer({
+                            key: 'hearAboutUs',
+                            value: option.label,
+                          }),
+                        );
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      {!isOther ? (
+                        <>
+                          <View style={styles.iconWrap}>
+                            <Image
+                              source={option.icon}
+                              style={
+                                option?.id == 'group'
+                                  ? { height: 44, width: 44, marginLeft: -4 }
+                                  : styles.icon
+                              }
+                              resizeMode="contain"
+                            />
+                            {isSelected && (
+                              <Image
+                                source={images.tick}
+                                style={styles.tickIcon}
+                                resizeMode="contain"
+                              />
+                            )}
+                          </View>
+                          <SolidText
+                            style={[
+                              styles.optionText,
+                              isSelected && styles.optionTextSelected,
+                            ]}
+                            maxFontScale={1}
+                          >
+                            {option.label}
+                          </SolidText>
+                        </>
+                      ) : (
+                        <>
+                          <View style={styles.optionCardFullLeft}>
+                            <Image
+                              source={option.icon}
+                              style={[styles.icon, styles.optionCardFullIcon]}
+                              resizeMode="contain"
+                            />
+                            <SolidText
+                              style={[
+                                styles.optionText,
+                                isSelected && styles.optionTextSelected,
+                              ]}
+                            >
+                              {option.label}
+                            </SolidText>
+                          </View>
                           {isSelected && (
                             <Image
                               source={images.tick}
@@ -184,48 +225,16 @@ const HearAboutUs = () => {
                               resizeMode="contain"
                             />
                           )}
-                        </View>
-                        <SolidText
-                          style={[
-                            styles.optionText,
-                            isSelected && styles.optionTextSelected,
-                          ]}
-                          maxFontScale={1}
-                        >
-                          {option.label}
-                        </SolidText>
-                      </>
-                    ) : (
-                      <>
-                        <View style={styles.optionCardFullLeft}>
-                          <Image
-                            source={option.icon}
-                            style={[styles.icon, styles.optionCardFullIcon]}
-                            resizeMode="contain"
-                          />
-                          <SolidText
-                            style={[
-                              styles.optionText,
-                              isSelected && styles.optionTextSelected,
-                            ]}
-                          >
-                            {option.label}
-                          </SolidText>
-                        </View>
-                        {isSelected && (
-                          <Image
-                            source={images.tick}
-                            style={styles.tickIcon}
-                            resizeMode="contain"
-                          />
-                        )}
-                      </>
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
+                        </>
+                      )}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
             </View>
-            <View style={{ flex: 1 }} />
+          </ScrollView>
+
+          <View style={styles.btnContainer}>
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}

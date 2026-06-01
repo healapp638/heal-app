@@ -16,6 +16,7 @@ import { LocalizationContext } from '../localization/localization';
 import useSocialLogin from '../hooks/useSocialLogin';
 import { triggerHaptic } from '../hooks/useHaptic';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
+import { wp } from '../utils/dimension';
 
 interface SignInModalProps {
   visible: boolean;
@@ -164,7 +165,8 @@ const SignInModal = ({ visible, onClose }: SignInModalProps) => {
                 resizeMode="contain"
               />
               <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
-                {localization.appkeys?.continueWithEmail || 'Continue with Email'}
+                {localization.appkeys?.continueWithEmail ||
+                  'Continue with Email'}
               </SolidText>
             </TouchableOpacity>
           </View>
@@ -184,51 +186,50 @@ const useStyles = (colors: any) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.6)',
+      backgroundColor: 'rgba(0,0,0,0.01)',
       justifyContent: 'flex-end',
     },
     container: {
       backgroundColor: '#F7F4EB', // Typical off-white color in Heal app, fallback to F7F4EB
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
-      paddingHorizontal: 24,
+
       paddingBottom: Platform.OS === 'ios' ? 40 : 20,
-      paddingTop: 24,
+      paddingTop: 20,
     },
     header: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: 16,
+      marginBottom: 12,
+      paddingHorizontal: 24,
     },
     headerSpacer: {
       width: 24, // same as closeBtn to keep title centered
     },
     title: {
-      fontSize: AppUtils.fontSize(18),
-      fontFamily: AppFonts.reco,
+      fontSize: AppUtils.fontSize(22),
+      fontFamily: AppFonts.semiBold,
       color: colors.brown || '#3A2110',
       textAlign: 'center',
       includeFontPadding: false,
-
     },
-    closeBtn: {
-
-    },
+    closeBtn: {},
     closeIcon: {
       width: 14,
       height: 14,
-      tintColor: colors.brown
+      tintColor: colors.brown,
     },
     divider: {
       height: 1,
       backgroundColor: 'rgba(58, 33, 16, 0.1)', // Light brown divider
 
       marginBottom: 34,
-      marginTop: 10
+      marginTop: 10,
     },
     socialButtonsContainer: {
       width: '100%',
+      paddingHorizontal: 24,
     },
     socialBtn: {
       flexDirection: 'row',
@@ -241,7 +242,7 @@ const useStyles = (colors: any) =>
       marginBottom: 16,
       borderWidth: 1,
       borderColor: 'rgba(58, 33, 16, 0.2)', // Border color
-      alignSelf: "center"
+      alignSelf: 'center',
     },
     appleBtn: {
       backgroundColor: '#000000',
@@ -265,23 +266,21 @@ const useStyles = (colors: any) =>
       includeFontPadding: false,
     },
     footer: {
-
       alignItems: 'center',
+      paddingHorizontal: 24,
     },
     footerText: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(13),
       color: colors.brown || '#3A2110',
       textAlign: 'center',
-      lineHeight: 20
+      lineHeight: 20,
     },
     footerLink: {
       fontFamily: AppFonts.regular,
       textDecorationLine: 'underline',
       color: colors.brown || '#3A2110',
       fontSize: AppUtils.fontSize(12),
-
-
     },
   });
 

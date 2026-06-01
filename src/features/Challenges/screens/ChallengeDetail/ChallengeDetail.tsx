@@ -34,11 +34,14 @@ const ChallengeDetail = () => {
   const challengeData = detailResponse?.data?.[0] || {};
 
   const handleStart = () => {
-    navigation.navigate(AppRoutes.Exercise as never, {
-      exercises: challengeData.exercises,
-      challenge_id,
-      challenge_type,
-    } as any);
+    navigation.navigate(
+      AppRoutes.Exercise as never,
+      {
+        exercises: challengeData.exercises,
+        challenge_id,
+        challenge_type,
+      } as any,
+    );
   };
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   return (
@@ -48,8 +51,6 @@ const ChallengeDetail = () => {
         <View style={styles.mainContainer}>
           <HeaderCommon
             title={localization.appkeys?.tabChallenges || 'Challenges'}
-            rightIcon={images.crown}
-            onRightPress={() => setShowCreditsModal(true)}
           />
 
           {isLoading ? (
@@ -60,74 +61,74 @@ const ChallengeDetail = () => {
             />
           ) : (
             <>
+              <View style={styles.headerTextContainer}>
+                <SolidText style={styles.title}>
+                  {challengeData.concept_title ||
+                    localization.appkeys?.challenge2Title ||
+                    'Moment of gratitude'}
+                </SolidText>
+                <SolidText style={styles.subtitle}>
+                  {challengeData.concept_description ||
+                    localization.appkeys?.emotionalWellbeing ||
+                    'Emotional well-being'}
+                </SolidText>
+              </View>
 
-          <View style={styles.headerTextContainer}>
-            <SolidText style={styles.title}>
-              {challengeData.concept_title ||
-                localization.appkeys?.challenge2Title ||
-                'Moment of gratitude'}
-            </SolidText>
-            <SolidText style={styles.subtitle}>
-              {challengeData.concept_description ||
-                localization.appkeys?.emotionalWellbeing ||
-                'Emotional well-being'}
-            </SolidText>
-          </View>
-
-          <View style={styles.taskCard}>
-            <View style={styles.badgeWrapper}>
-              <View style={styles.badgeCircle}>
-                {/* <Image
+              <View style={styles.taskCard}>
+                <View style={styles.badgeWrapper}>
+                  <View style={styles.badgeCircle}>
+                    {/* <Image
                   source={images.star1}
                   style={styles.badgeIcon}
                   resizeMode="contain"
                   tintColor={colors.brown}
                 /> */}
-                <Image
-                  source={images.h}
-                  style={styles.badgeIcon}
-                  resizeMode="contain"
-                  tintColor={colors.brown}
-                />
+                    <Image
+                      source={images.h}
+                      style={styles.badgeIcon}
+                      resizeMode="contain"
+                      tintColor={colors.brown}
+                    />
+                  </View>
+                </View>
+
+                <Text maxFontSizeMultiplier={1.4} style={styles.taskText}>
+                  {challengeData.about_challenge ||
+                    localization.appkeys?.challenge2Desc ||
+                    'Write 3 things you are grateful for today'}
+                </Text>
+
+                <View style={styles.pointsBadge}>
+                  <Image
+                    source={images.point}
+                    style={styles.pointsIcon}
+                    resizeMode="contain"
+                    tintColor="white"
+                  />
+                  <SolidText style={styles.pointsText}>
+                    {challengeData.points
+                      ? `${challengeData.points} points`
+                      : localization.appkeys?.tenPoints || '10 points'}
+                  </SolidText>
+                </View>
               </View>
-            </View>
 
-            <Text maxFontSizeMultiplier={1.4} style={styles.taskText}>
-              {challengeData.about_challenge ||
-                localization.appkeys?.challenge2Desc ||
-                'Write 3 things you are grateful for today'}
-            </Text>
-
-            <View style={styles.pointsBadge}>
-              <Image
-                source={images.point}
-                style={styles.pointsIcon}
-                resizeMode="contain"
-                tintColor="white"
+              <View style={styles.aboutCard}>
+                <SolidText style={styles.aboutTitle}>
+                  {localization.appkeys?.aboutChallenge ||
+                    'About this challenge'}
+                </SolidText>
+                <SolidText style={styles.aboutText}>
+                  {challengeData.about_challenge ||
+                    localization.appkeys?.gratitudeChallengeAbout ||
+                    'Gratitude is a powerful healing tool. By taking the time to acknowledge the positive aspects of your life, even the smallest ones, you train your mind to see beyond the pain and appreciate what surrounds you.'}
+                </SolidText>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                }}
               />
-              <SolidText style={styles.pointsText}>
-                {challengeData.points
-                  ? `${challengeData.points} points`
-                  : localization.appkeys?.tenPoints || '10 points'}
-              </SolidText>
-            </View>
-          </View>
-
-          <View style={styles.aboutCard}>
-            <SolidText style={styles.aboutTitle}>
-              {localization.appkeys?.aboutChallenge || 'About this challenge'}
-            </SolidText>
-            <SolidText style={styles.aboutText}>
-              {challengeData.about_challenge ||
-                localization.appkeys?.gratitudeChallengeAbout ||
-                'Gratitude is a powerful healing tool. By taking the time to acknowledge the positive aspects of your life, even the smallest ones, you train your mind to see beyond the pain and appreciate what surrounds you.'}
-            </SolidText>
-          </View>
-          <View
-            style={{
-              flex: 1,
-            }}
-          />
               <SolidBtn
                 titleTxt={localization.appkeys?.start || 'Start'}
                 btnStyle={{

@@ -119,6 +119,7 @@ const EmailSignIn = () => {
               labelRow={false} // Ensure custom label is styled
               viewStyle={styles.inputContainer}
               textInputStyle={styles.textInput}
+              autoFocus={true}
             />
           </View>
 

@@ -4,6 +4,7 @@
     "welcome_solid": "Willkommen\nSolidAppMaker",
     "go_home": "Zur Startseite",
     "healingStarts": "Healing starts with you",
+    "healyIsAiAndCanMakeMistakes": "Healy ist eine KI und kann Fehler machen. Bitte überprüfe die Antworten.",
     "alreadyAccount": "Hast du bereits ein Konto?",
     "signIn": "Anmelden",
     "login": "Login",
@@ -213,8 +214,8 @@
     "monthly": "Monatlich",
     "yearly": "Jährlich",
     "save60": "60% SPAREN",
-    "monthlyPrice": "CHF 2,31/Woche",
-    "yearlyPrice": "CHF 0,96/Woche",
+    "monthlyPrice": "CHF 10.00/Monat",
+    "yearlyPrice": "CHF 4.00/Monat",
     "yearlyPriceInfo": "CHF 0,96/Woche, jährliche Abrechnung als CHF 49,99/Jahr",
     "startFreeTrialBtn": "Jetzt 3-tägigen kostenlosen Test starten",
     "addPromoCode": "Aktionscode hinzufügen",
@@ -577,6 +578,17 @@
     "selectCountryMsg": "Bitte wählen Sie Ihr Land aus",
     "selectDobMsg": "Bitte wählen Sie Ihr Geburtsdatum aus",
     "profileUpdateFailed": "Profilaktualisierung fehlgeschlagen",
-    "failedToUploadImage": "Bild-Upload fehlgeschlagen"
+    "failedToUploadImage": "Bild-Upload fehlgeschlagen",
+    "feelBetterEveryDay": "Jeden Tag besser fühlen",
+    "feelBetterEveryDaySub": "Kleine tägliche Handlungen, die dir helfen, dich ausgeglichener, ruhiger und zufriedener zu fühlen.",
+    "buildBetterHabits": "Bessere Gewohnheiten aufbauen",
+    "buildBetterHabitsSub": "Erstelle einfache Gewohnheiten, die dein mentales Wohlbefinden und persönliches Wachstum unterstützen.",
+    "becomeBestSelf": "Werde dein bestes Selbst",
+    "becomeBestSelfSub": "Entfalte dein Potenzial und wachse zu der Person heran, die du sein möchtest.",
+    "threeDaysFree": "3 Tage kostenlos",
+    "startMyJourney": "Meine Reise beginnen",
+    "monthlyPriceInfo": "Nur CHF 10.00 pro Monat. Die Abrechnung erfolgt monatlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird.",
+    "startMy3DayFreeTrial": "Starten Sie Ihre 3-tägige kostenlose Testversion",
+    "yearlyPriceInfoNew": "3 Tage kostenlos, danach CHF 48.00 pro Jahr. Die Abrechnung erfolgt jährlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird."
   }
 }

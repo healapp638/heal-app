@@ -1,10 +1,11 @@
-import React, { useContext, useState, useMemo, useCallback, useEffect } from 'react';
-import {
-  View,
-  FlatList,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import React, {
+  useContext,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+} from 'react';
+import { View, FlatList, ActivityIndicator, Platform } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -25,10 +26,11 @@ const ProgressTracker = () => {
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const { data: progressData, isLoading, error } = useGetApi(
-    endpoints.progress_tracker_list,
-    ['progress_tracker_list'],
-  );
+  const {
+    data: progressData,
+    isLoading,
+    error,
+  } = useGetApi(endpoints.progress_tracker_list, ['progress_tracker_list']);
 
   const mappedModules = useMemo(() => {
     const rawListing = progressData?.data?.progressListing || [];
@@ -59,30 +61,33 @@ const ProgressTracker = () => {
     }
   }, [visibleCount, mappedModules.length]);
 
-  const renderItem = useCallback(({ item }: { item: any }) => (
-    <JourneyModuleItem item={item} localization={localization} />
-  ), [localization]);
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <JourneyModuleItem item={item} localization={localization} />
+    ),
+    [localization],
+  );
 
-  const keyExtractor = useCallback((item: any, index: number) =>
-    item.id || item._id || String(index),
-  []);
+  const keyExtractor = useCallback(
+    (item: any, index: number) => item.id || item._id || String(index),
+    [],
+  );
 
-  const ListHeader = useMemo(() => (
-    <View>
-      <HeaderCommon
-        title={localization.appkeys.homeProgressTracker}
-        rightIcon={images.crown}
-        onRightPress={() => setShowCreditsModal(true)}
-      />
+  const ListHeader = useMemo(
+    () => (
+      <View>
+        <HeaderCommon title={localization.appkeys.homeProgressTracker} />
 
-      <SolidText style={styles.journeyTitle}>
-        {localization.appkeys.yourProgressJourney}
-      </SolidText>
-      <SolidText style={styles.journeySub}>
-        {localization.appkeys.progressJourneySub}
-      </SolidText>
-    </View>
-  ), [localization, images, styles]);
+        <SolidText style={styles.journeyTitle}>
+          {localization.appkeys.yourProgressJourney}
+        </SolidText>
+        <SolidText style={styles.journeySub}>
+          {localization.appkeys.progressJourneySub}
+        </SolidText>
+      </View>
+    ),
+    [localization, images, styles],
+  );
 
   const ListEmpty = useCallback(() => {
     if (isLoading) {

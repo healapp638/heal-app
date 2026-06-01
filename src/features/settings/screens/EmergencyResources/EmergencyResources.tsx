@@ -69,8 +69,6 @@ const EmergencyResources = () => {
               localization.appkeys?.emergencyHeader || 'Emergency Resources'
             }
             onBackPress={() => navigation.goBack()}
-            rightIcon={images.crown}
-            onRightPress={() => {}}
           />
 
           <HomeHeader

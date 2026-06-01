@@ -89,8 +89,6 @@ const PrivacyAndSecurity = () => {
               localization.appkeys?.privacyAndSecurityHeader ||
               'Privacy and security'
             }
-            rightIcon={images.crown}
-            onRightPress={() => {}}
           />
           <HomeHeader
             viewStyle={{

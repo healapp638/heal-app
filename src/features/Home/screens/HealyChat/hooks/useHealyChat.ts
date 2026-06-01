@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { FlatList } from 'react-native';
+import { FlatList, Keyboard } from 'react-native';
 import { useQueryClient } from '@tanstack/react-query';
 import api from '../../../../../api/Manager/manager';
 import { setConversationId as setReduxConversationId } from '../../../../../redux/Reducers/tempData';
@@ -168,6 +168,7 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
   const handleSend = useCallback((textToSend: string) => {
     if (textToSend.trim().length === 0) return;
 
+    Keyboard.dismiss();
     triggerHaptic('impactMedium');
 
     const userMessageContent = textToSend.trim();

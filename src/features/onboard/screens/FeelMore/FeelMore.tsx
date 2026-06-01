@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
@@ -100,7 +100,7 @@ const FeelMore = () => {
 
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       viewStyle={{
         flex: 1,
       }}
@@ -110,53 +110,57 @@ const FeelMore = () => {
             flex: 1,
           }}
         >
-          <HeaderProgress progress={0.65} onBackPress={handleBackPress} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            overScrollMode="never"
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 130 }}
+          >
+            <HeaderProgress progress={0.65} onBackPress={handleBackPress} />
 
-          <Image
-            source={images.heartRope}
-            style={styles.heartRope}
-            resizeMode="stretch"
-          />
-          <View style={styles.mainContainer}>
-            <SolidText style={styles.title}>
-              {localization.appkeys?.feelMoreTitle}
-            </SolidText>
-            <SolidText style={styles.subtitle}>
-              {localization.appkeys?.safeSpaceSub}
-            </SolidText>
-
-            <View style={styles.listContainer}>
-              {options.map(option => {
-                const isSelected =
-                  selectedList.includes(option.label) || selectedList.includes(option.id);
-                return (
-                  <TouchableOpacity
-                    key={option.id}
-                    style={[
-                      styles.optionCard,
-                      isSelected && styles.optionCardSelected,
-                    ]}
-                    onPress={() => handleOptionPress(option.label)}
-                    activeOpacity={0.7}
-                  >
-                    <SolidText
-                      style={[
-                        styles.optionText,
-                        isSelected && styles.optionTextSelected,
-                      ]}
-                    >
-                      {option.label}
-                    </SolidText>
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-
-            <View
-              style={{
-                flex: 1,
-              }}
+            <Image
+              source={images.heartRope}
+              style={styles.heartRope}
+              resizeMode="stretch"
             />
+            <View style={styles.mainContainer}>
+              <SolidText style={styles.title}>
+                {localization.appkeys?.feelMoreTitle}
+              </SolidText>
+              <SolidText style={styles.subtitle}>
+                {localization.appkeys?.safeSpaceSub}
+              </SolidText>
+
+              <View style={styles.listContainer}>
+                {options.map(option => {
+                  const isSelected =
+                    selectedList.includes(option.label) || selectedList.includes(option.id);
+                  return (
+                    <TouchableOpacity
+                      key={option.id}
+                      style={[
+                        styles.optionCard,
+                        isSelected && styles.optionCardSelected,
+                      ]}
+                      onPress={() => handleOptionPress(option.label)}
+                      activeOpacity={0.7}
+                    >
+                      <SolidText
+                        style={[
+                          styles.optionText,
+                          isSelected && styles.optionTextSelected,
+                        ]}
+                      >
+                        {option.label}
+                      </SolidText>
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </ScrollView>
+
+          <View style={styles.btnContainer}>
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}

@@ -51,8 +51,6 @@ const MessageItemComponent: React.FC<MessageItemProps> = ({
   item,
   isLatestAssistant,
   styles,
-  logoSource,
-  tintColor,
   onComplete,
 }) => {
   const isUser = item.role === 'user';
@@ -64,34 +62,25 @@ const MessageItemComponent: React.FC<MessageItemProps> = ({
         isUser ? styles.userMessageContainer : styles.aiMessageContainer,
       ]}
     >
-      <View
-        style={[
-          styles.messageBubble,
-          isUser ? styles.userBubble : styles.aiBubble,
-        ]}
-      >
-        {isUser ? (
+      {isUser ? (
+        <View
+          style={[
+            styles.messageBubble,
+            styles.userBubble,
+          ]}
+        >
           <SolidText style={styles.messageText}>{item.message}</SolidText>
-        ) : (
+        </View>
+      ) : (
+        <View style={{ flex: 1, paddingVertical: 4 }}>
           <StreamingMessageText
             text={item.message}
             isLatest={isLatestAssistant}
             style={styles.messageText}
-            logoSource={logoSource}
-            logoStyle={styles.inlineLogo}
-            tintColor={tintColor}
             onComplete={onComplete}
           />
-        )}
-        <SolidText
-          style={[
-            styles.timeText,
-            isUser ? styles.userTimeText : styles.aiTimeText,
-          ]}
-        >
-          {getMessageTime(item)}
-        </SolidText>
-      </View>
+        </View>
+      )}
     </View>
   );
 };

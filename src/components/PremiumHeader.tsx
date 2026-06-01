@@ -23,7 +23,7 @@ const PremiumHeader: React.FC<PremiumHeaderProps> = ({
           }}
         >
           <Image
-            source={images.cross2}
+            source={images.back}
             style={styles.closeIcon}
             resizeMode="contain"
           />

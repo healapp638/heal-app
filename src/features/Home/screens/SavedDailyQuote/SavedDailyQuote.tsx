@@ -175,9 +175,9 @@ const SavedDailyQuote = () => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                  ...quote,
-                  is_liked: false,
-                }
+                    ...quote,
+                    is_liked: false,
+                  }
                 : quote,
             ),
           },
@@ -354,16 +354,16 @@ const SavedDailyQuote = () => {
                     Platform.OS == 'android'
                       ? -10
                       : insets?.top > 0
-                        ? insets.top - 10
-                        : 20,
+                      ? insets.top - 10
+                      : 20,
                 },
               ]}
             >
               <HeaderCommon
-                title={localization.appkeys?.favouriteQuotes || 'Favourite Quotes'}
+                title={
+                  localization.appkeys?.favouriteQuotes || 'Favourite Quotes'
+                }
                 showBack={true}
-                rightIcon={images.crown}
-                onRightPress={() => setShowCreditsModal(true)}
                 tintColor={activeColor}
               />
             </View>
@@ -427,7 +427,8 @@ const SavedDailyQuote = () => {
                         color: activeColor,
                       }}
                     >
-                      {localization.appkeys?.noFavouritesFound || 'No favourites quotes found'}
+                      {localization.appkeys?.noFavouritesFound ||
+                        'No favourites quotes found'}
                     </SolidText>
                   </View>
                 )}

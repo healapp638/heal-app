@@ -251,11 +251,7 @@ const DailyQuote = () => {
           ]}
         >
           <View style={styles.headerWrapper}>
-            <HeaderCommon
-              rightIcon={images.crown}
-              onRightPress={() => setShowPremiumModal(true)}
-              tintColor={activeColor}
-            />
+            <HeaderCommon />
           </View>
           {isLoading ? (
             <View

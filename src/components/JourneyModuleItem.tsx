@@ -26,17 +26,17 @@ interface JourneyModuleItemProps {
 const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
   const { colors, images } = useTheme() as any;
 
-  const isLocked = item.level_status === 'pending' || false;
+  const isLocked =
+    item.isLocked || item.is_locked || item.level_status === 'pending' || false;
   const level = item.level ?? item.level_number ?? 1;
-  const title = item.title || item.name || `Level ${level}`;
-  const subtitle = item.subtitle || item.description || '';
   const progress = item.progress ?? item.completedPercentage ?? 0;
   const points =
     item.points ??
     item.pts ??
     item.current_points ??
     item.completed_points ??
-    item.earned_point;
+    item.earned_point ??
+    0;
   const totalPoints =
     item.totalPoints ??
     item.total_points ??
@@ -46,15 +46,66 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
   const hasPoints = points !== undefined;
   const isCompleted = item.level_status === 'completed' || progress === 100;
 
+  const title = `${localization.appkeys.level} ${level}`;
+
   if (isLocked) {
     return (
-      <View key={item.id || item._id}>
-        <ImageBackground
-          source={images.lockedProgress}
-          style={styles.lockedBackground}
-          imageStyle={{ marginTop: -8 }}
-          resizeMode="stretch"
-        />
+      <View
+        key={item.id || item._id}
+        style={[styles.moduleCard, styles.lockedCard]}
+      >
+        <View style={styles.mutedContent}>
+          <View style={styles.moduleHeader}>
+            <SolidText style={[styles.moduleTitle, { color: colors.brown }]}>
+              {title}
+            </SolidText>
+            <View style={styles.levelBadge}>
+              <SolidText style={styles.levelBadgeText}>
+                {`${points}/${totalPoints} pts`}
+              </SolidText>
+            </View>
+          </View>
+
+          <View style={[styles.progressContainer, { marginTop: 16 }]}>
+            <View style={styles.progressLabelRow}>
+              <SolidText
+                style={[styles.progressLabel, { color: colors.brown }]}
+              >
+                {localization.appkeys.progress}
+              </SolidText>
+              <SolidText
+                style={[styles.progressValue, { color: colors.lightBrown }]}
+              >
+                0%
+              </SolidText>
+            </View>
+            <View
+              style={[
+                styles.progressBarBg,
+                { backgroundColor: colors.progressTrack },
+              ]}
+            >
+              <View
+                style={[
+                  styles.progressBarFill,
+                  {
+                    width: '0%',
+                    backgroundColor: colors.lightBrown,
+                  },
+                ]}
+              />
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.lockOverlay}>
+          <Image
+            source={images.lock}
+            style={styles.lockIcon}
+            resizeMode="contain"
+            tintColor="#3A2110"
+          />
+        </View>
       </View>
     );
   }
@@ -76,18 +127,8 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
             </SolidText>
           </View>
         </View>
-        {!!subtitle && (
-          <SolidText
-            style={[styles.moduleSub, { color: colors.brown }]}
-            numberOfLines={1}
-          >
-            {subtitle}
-          </SolidText>
-        )}
 
-        <View
-          style={[styles.progressContainer, !subtitle && { marginTop: 16 }]}
-        >
+        <View style={[styles.progressContainer, { marginTop: 16 }]}>
           <View style={styles.progressLabelRow}>
             <SolidText style={[styles.progressLabel, { color: colors.brown }]}>
               {localization.appkeys.progress}
@@ -190,10 +231,24 @@ const styles = StyleSheet.create({
     height: '100%',
     borderRadius: 4,
   },
-  lockedBackground: {
-    height: 90,
-    width: '100%',
-    marginTop: 8,
+  lockedCard: {
+    borderColor: '#3A2110',
+    borderWidth: 1,
+  },
+  mutedContent: {
+    flex: 1,
+    opacity: 0.35,
+  },
+  lockOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(70,50,37,.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  lockIcon: {
+    width: 40,
+    height: 40,
   },
 });
 

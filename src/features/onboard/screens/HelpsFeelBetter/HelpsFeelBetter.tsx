@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { Image, TouchableOpacity, View } from 'react-native';
+import { Image, ScrollView, TouchableOpacity, View } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
@@ -103,7 +103,7 @@ const HelpsFeelBetter = () => {
 
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       viewStyle={{
         flex: 1,
       }}
@@ -113,64 +113,68 @@ const HelpsFeelBetter = () => {
             flex: 1,
           }}
         >
-          <HeaderProgress progress={0.8} onBackPress={handleBackPress} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            overScrollMode="never"
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 130 }}
+          >
+            <HeaderProgress progress={0.8} onBackPress={handleBackPress} />
 
-          <Image
-            source={images.heartRope}
-            style={styles.heartRope}
-            resizeMode="stretch"
-          />
-          <View style={styles.mainContainer}>
-            <SolidText style={styles.title}>
-              {localization.appkeys?.helpsFeelBetterTitle ||
-                'What helps you feel better?'}
-            </SolidText>
-            <SolidText style={styles.subtitle}>
-              {localization.appkeys?.helpsFeelBetterSub ||
-                'You can select more than one option.'}
-            </SolidText>
-
-            <View style={styles.listContainer}>
-              {options.map(option => {
-                const isCurrentSelected = selectedList.includes(option.label);
-
-                return (
-                  <TouchableOpacity
-                    key={option.id}
-                    style={[
-                      styles.optionCard,
-                      isCurrentSelected && styles.optionCardSelected,
-                    ]}
-                    onPress={() => handleOptionPress(option.label)}
-                    activeOpacity={0.7}
-                  >
-                    <View style={styles.optionContent}>
-                      <SolidText
-                        style={[
-                          styles.optionText,
-                          isCurrentSelected && styles.optionTextSelected,
-                        ]}
-                      >
-                        {option.label}
-                      </SolidText>
-                    </View>
-                    {/* {isCurrentSelected && (
-                      <Image
-                        source={images.tick}
-                        style={styles.tickIcon}
-                        resizeMode="contain"
-                      />
-                    )} */}
-                  </TouchableOpacity>
-                );
-              })}
-            </View>
-            <View
-              style={{
-                flex: 1,
-                minHeight: 20,
-              }}
+            <Image
+              source={images.heartRope}
+              style={styles.heartRope}
+              resizeMode="stretch"
             />
+            <View style={styles.mainContainer}>
+              <SolidText style={styles.title}>
+                {localization.appkeys?.helpsFeelBetterTitle ||
+                  'What helps you feel better?'}
+              </SolidText>
+              <SolidText style={styles.subtitle}>
+                {localization.appkeys?.helpsFeelBetterSub ||
+                  'You can select more than one option.'}
+              </SolidText>
+
+              <View style={styles.listContainer}>
+                {options.map(option => {
+                  const isCurrentSelected = selectedList.includes(option.label);
+
+                  return (
+                    <TouchableOpacity
+                      key={option.id}
+                      style={[
+                        styles.optionCard,
+                        isCurrentSelected && styles.optionCardSelected,
+                      ]}
+                      onPress={() => handleOptionPress(option.label)}
+                      activeOpacity={0.7}
+                    >
+                      <View style={styles.optionContent}>
+                        <SolidText
+                          style={[
+                            styles.optionText,
+                            isCurrentSelected && styles.optionTextSelected,
+                          ]}
+                        >
+                          {option.label}
+                        </SolidText>
+                      </View>
+                      {/* {isCurrentSelected && (
+                        <Image
+                          source={images.tick}
+                          style={styles.tickIcon}
+                          resizeMode="contain"
+                        />
+                      )} */}
+                    </TouchableOpacity>
+                  );
+                })}
+              </View>
+            </View>
+          </ScrollView>
+
+          <View style={styles.btnContainer}>
             <SolidBtn
               titleTxt={localization.appkeys?.continue || 'Continue'}
               btnStyle={styles.btn}

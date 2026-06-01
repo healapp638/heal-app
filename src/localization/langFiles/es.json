@@ -4,6 +4,7 @@
     "welcome_solid": "Bienvenido\nSolidAppMaker",
     "go_home": "Ir al inicio",
     "healingStarts": "Healing starts with you",
+    "healyIsAiAndCanMakeMistakes": "Healy es una IA y puede cometer errores. Por favor, verifica las respuestas.",
     "alreadyAccount": "¿Ya tienes una cuenta?",
     "signIn": "Iniciar sesión",
     "login": "Login",
@@ -213,8 +214,8 @@
     "monthly": "Mensual",
     "yearly": "Anual",
     "save60": "AHORRA 60%",
-    "monthlyPrice": "CHF 2,31/semana",
-    "yearlyPrice": "CHF 0,96/semana",
+    "monthlyPrice": "CHF 10.00/mes",
+    "yearlyPrice": "CHF 4.00/mes",
     "yearlyPriceInfo": "CHF 0,96/semana, facturado anualmente como CHF 49,99/año",
     "startFreeTrialBtn": "Comienza tu prueba gratuita de 3 días ahora",
     "addPromoCode": "Añadir código promocional",
@@ -580,6 +581,17 @@
     "selectCountryMsg": "Por favor, selecciona tu país",
     "selectDobMsg": "Por favor, selecciona tu fecha de nacimiento",
     "profileUpdateFailed": "No se pudo actualizar el perfil",
-    "failedToUploadImage": "No se pudo subir la imagen"
+    "failedToUploadImage": "No se pudo subir la imagen",
+    "feelBetterEveryDay": "Siéntete mejor cada día",
+    "feelBetterEveryDaySub": "Pequeñas acciones diarias diseñadas para ayudarte a sentirte más equilibrado, tranquilo y realizado.",
+    "buildBetterHabits": "Crea mejores hábitos",
+    "buildBetterHabitsSub": "Crea hábitos sencillos que apoyen tu bienestar mental y crecimiento personal.",
+    "becomeBestSelf": "Conviértete en tu mejor versión",
+    "becomeBestSelfSub": "Desbloquea tu potencial y conviértete en la persona que deseas ser.",
+    "threeDaysFree": "3 días gratis",
+    "startMyJourney": "Comenzar mi viaje",
+    "monthlyPriceInfo": "Solo CHF 10.00 al mes. Se factura mensualmente y se renueva automáticamente a menos que se cancele en la App Store.",
+    "startMy3DayFreeTrial": "Comenzar mi prueba gratuita de 3 días",
+    "yearlyPriceInfoNew": "3 días gratis, luego CHF 48.00 al año. Se factura anualmente y se renueva automáticamente a menos que se cancele en la App Store."
   }
 }

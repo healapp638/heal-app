@@ -35,6 +35,7 @@ interface SolidInputProps {
   mainStyle?: ViewStyle;
   maxLength?: any;
   labelRow?: ViewStyle;
+  autoFocus?: boolean;
 }
 const SolidInput: React.FC<SolidInputProps> = ({
   label,
@@ -55,6 +56,7 @@ const SolidInput: React.FC<SolidInputProps> = ({
   rightImgTintColor,
   mainStyle,
   maxLength,
+  autoFocus,
 }) => {
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
@@ -102,6 +104,7 @@ const SolidInput: React.FC<SolidInputProps> = ({
           editable={editable}
           maxFontSizeMultiplier={1.4}
           maxLength={maxLength}
+          autoFocus={autoFocus}
         />
         {rightImg && (
           <Pressable

@@ -19,7 +19,6 @@ import PremiumHeader from '../components/PremiumHeader';
 import TimelineCard from '../components/TimelineCard';
 import ReminderToggle from '../components/ReminderToggle';
 import PlansSection from '../components/PlansSection';
-import PremiumFooter from '../components/PremiumFooter';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
 
 interface PremiumModalProps {
@@ -98,6 +97,7 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 images={images}
                 trialReminderDate={trialReminderDate}
                 becomeMemberDate={becomeMemberDate}
+                selectedPlan={selectedPlan}
               />
 
               <ReminderToggle
@@ -115,15 +115,15 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 setSelectedPlan={setSelectedPlan}
               />
 
-              <SolidText style={styles.priceInfo}>
-                {localization.appkeys?.yearlyPriceInfo}
-              </SolidText>
-
               <SolidBtn
                 maxFontScale={1}
                 btnStyle={styles.actionBtn}
                 txtStyle={styles.actionBtnText}
-                titleTxt={localization.appkeys?.startFreeTrialBtn}
+                titleTxt={
+                  selectedPlan === 'monthly'
+                    ? localization.appkeys?.startMyJourney
+                    : localization.appkeys?.startMy3DayFreeTrial
+                }
                 onPress={() => {
                   onClose();
                   // navigation.reset({
@@ -137,18 +137,17 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 }}
               />
 
+              <SolidText style={styles.priceInfo}>
+                {selectedPlan === 'monthly'
+                  ? localization.appkeys?.monthlyPriceInfo
+                  : localization.appkeys?.yearlyPriceInfoNew}
+              </SolidText>
+
               <TouchableOpacity style={styles.promoBtn}>
                 <SolidText style={styles.promoText}>
                   {localization.appkeys?.addPromoCode}
                 </SolidText>
               </TouchableOpacity>
-
-              <PremiumFooter
-                localization={localization}
-                styles={styles}
-                navigation={navigation}
-                appLanguage={appLanguage}
-              />
             </View>
           </ScrollView>
         </View>
@@ -228,6 +227,12 @@ const useStyles = (colors: any, appLanguage: any) =>
 
       resizeMode: 'stretch',
     },
+    premiumImage2: {
+      width: wp(11),
+      height: Platform.OS == 'ios' ? hp(32) : hp(34),
+
+      resizeMode: 'stretch',
+    },
     timelineRight: {
       flex: 1,
       paddingLeft: 10,
@@ -302,6 +307,13 @@ const useStyles = (colors: any, appLanguage: any) =>
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
       color: '#3A2110',
+      includeFontPadding: false,
+    },
+    planFreeTrial: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(12),
+      color: '#7A7A7A',
+      marginTop: 2,
       includeFontPadding: false,
     },
     badge: {

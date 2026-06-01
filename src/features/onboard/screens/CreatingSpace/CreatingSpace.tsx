@@ -29,8 +29,8 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-const CHAR_INTERVAL_MS = 28;
-const SENTENCE_PAUSE_MS = 700;
+const CHAR_INTERVAL_MS = 27;
+const SENTENCE_PAUSE_MS = 1400;
 const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -194,7 +194,9 @@ const CreatingSpace = () => {
           <View style={styles.mainContainer}>
             <SolidText style={styles.title}>
               {allDone
-                ? localization.appkeys?.allSetB
+                ? answers?.fullName
+                  ? `${localization.appkeys?.allSetB} ${answers.fullName}`
+                  : `${localization.appkeys?.allSetB?.replace(/,$/, '')}`
                 : localization.appkeys?.creatingSpaceTitle}
             </SolidText>
 

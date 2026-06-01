@@ -10,7 +10,6 @@ import PremiumHeader from '../../../../components/PremiumHeader';
 import TimelineCard from '../../../../components/TimelineCard';
 import ReminderToggle from '../../../../components/ReminderToggle';
 import PlansSection from '../../../../components/PlansSection';
-import PremiumFooter from '../../../../components/PremiumFooter';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useSelector } from 'react-redux';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
@@ -28,7 +27,7 @@ const Premium = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowCloseBtn(true);
-    }, 4000);
+    }, 0);
     return () => clearTimeout(timer);
   }, []);
 
@@ -77,6 +76,7 @@ const Premium = () => {
             images={images}
             trialReminderDate={trialReminderDate}
             becomeMemberDate={becomeMemberDate}
+            selectedPlan={selectedPlan}
           />
 
           <ReminderToggle
@@ -94,15 +94,15 @@ const Premium = () => {
             setSelectedPlan={setSelectedPlan}
           />
 
-          <SolidText style={styles.priceInfo}>
-            {localization.appkeys?.yearlyPriceInfo}
-          </SolidText>
-
           <SolidBtn
             maxFontScale={1}
             btnStyle={styles.actionBtn}
             txtStyle={styles.actionBtnText}
-            titleTxt={localization.appkeys?.startFreeTrialBtn}
+            titleTxt={
+              selectedPlan === 'monthly'
+                ? localization.appkeys?.startMyJourney
+                : localization.appkeys?.startMy3DayFreeTrial
+            }
             onPress={() => {
               navigation.reset({
                 index: 0,
@@ -115,18 +115,17 @@ const Premium = () => {
             }}
           />
 
+          <SolidText style={styles.priceInfo}>
+            {selectedPlan === 'monthly'
+              ? localization.appkeys?.monthlyPriceInfo
+              : localization.appkeys?.yearlyPriceInfoNew}
+          </SolidText>
+
           {/* <TouchableOpacity style={styles.promoBtn}>
             <SolidText style={styles.promoText}>
               {localization.appkeys?.addPromoCode}
             </SolidText>
           </TouchableOpacity> */}
-
-          <PremiumFooter
-            localization={localization}
-            styles={styles}
-            navigation={navigation}
-            appLanguage={appLanguage}
-          />
         </View>
       }
     />

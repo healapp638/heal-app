@@ -24,7 +24,6 @@ const Splash = () => {
   }, [auth]);
 
   const handleNavigation = () => {
-
     if (!auth) {
       navigation.reset({
         index: 0,
@@ -67,7 +66,6 @@ const Splash = () => {
         });
       }
     }
-
   };
 
   return (

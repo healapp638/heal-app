@@ -22,7 +22,7 @@ const style = (colors: any, appLanguage: any) =>
     closeIcon: {
       width: 14,
       height: 14,
-      tintColor: '#999',
+
     },
     title: {
       fontSize: AppUtils.fontSize(25),
@@ -62,6 +62,11 @@ const style = (colors: any, appLanguage: any) =>
     premiumImage: {
       width: wp(11),
       height: Platform.OS == 'ios' ? hp(32) : hp(34),
+      resizeMode: 'stretch',
+    },
+    premiumImage2: {
+      width: wp(11),
+      height: Platform.OS == 'ios' ? hp(29) : hp(30),
       resizeMode: 'stretch',
     },
     timelineRight: {
@@ -123,7 +128,7 @@ const style = (colors: any, appLanguage: any) =>
       borderWidth: 1.5,
       borderColor: 'transparent',
       width: '48%',
-      height: 80,
+      height: 90,
       justifyContent: 'center',
     },
     activePlanCard: {
@@ -133,14 +138,21 @@ const style = (colors: any, appLanguage: any) =>
       fontFamily: AppFonts.semiBold,
       fontSize: AppUtils.fontSize(18),
       color: colors.brown,
-      marginBottom: 5,
+      marginBottom: 3,
       includeFontPadding: false,
     },
     planPrice: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
       color: colors.brown,
-      marginTop: 4,
+      marginTop: 2,
+      includeFontPadding: false,
+    },
+    planFreeTrial: {
+      fontFamily: AppFonts.regular,
+      fontSize: AppUtils.fontSize(12),
+      color: '#666',
+      marginTop: 2,
       includeFontPadding: false,
     },
     badge: {
@@ -163,7 +175,7 @@ const style = (colors: any, appLanguage: any) =>
       fontSize: AppUtils.fontSize(12),
       color: '#666',
       textAlign: 'center',
-      marginBottom: hp(2),
+      marginBottom: hp(4),
       includeFontPadding: false,
     },
     actionBtn: {

@@ -1,51 +1,52 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Animated } from 'react-native';
 
 interface ThinkingBubbleProps {
-  dot1: Animated.Value;
-  dot2: Animated.Value;
-  dot3: Animated.Value;
+  logoSource: any;
   styles: any;
+  tintColor?: string;
 }
 
 const ThinkingBubbleComponent: React.FC<ThinkingBubbleProps> = ({
-  dot1,
-  dot2,
-  dot3,
+  logoSource,
   styles,
+  tintColor,
 }) => {
+  const fadeAnim = useRef(new Animated.Value(0.2)).current;
+
+  useEffect(() => {
+    const animation = Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 950,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 0.2,
+          duration: 950,
+          useNativeDriver: true,
+        }),
+      ])
+    );
+    animation.start();
+    return () => animation.stop();
+  }, [fadeAnim]);
+
   return (
-    <View
-      style={[
-        styles.messageContainer,
-        styles.aiMessageContainer,
-      ]}
-    >
-      <View
-        style={[
-          styles.aiBubble,
-          styles.thinkingBubbleContainer,
-        ]}
-      >
-        <Animated.View
-          style={[
-            styles.thinkingDot,
-            { transform: [{ translateY: dot1 }] },
-          ]}
-        />
-        <Animated.View
-          style={[
-            styles.thinkingDot,
-            { transform: [{ translateY: dot2 }] },
-          ]}
-        />
-        <Animated.View
-          style={[
-            styles.thinkingDot,
-            { transform: [{ translateY: dot3 }] },
-          ]}
-        />
-      </View>
+    <View style={[styles.messageContainer, styles.aiMessageContainer]}>
+      <Animated.Image
+        source={logoSource}
+        style={{
+          width: 22,
+          height: 22,
+          opacity: fadeAnim,
+          tintColor: tintColor,
+          marginLeft: 4,
+          marginVertical: 12,
+        }}
+        resizeMode="contain"
+      />
     </View>
   );
 };

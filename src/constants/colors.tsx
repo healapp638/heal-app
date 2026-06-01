@@ -182,6 +182,7 @@ const LightTheme = {
     hopeS: require('../assets/hopeS.png'),
     fireGif: require('../assets/fireGif.gif'),
     newChat: require('../assets/newChat.png'),
+    premium2: require('../assets/premium2.png'),
   },
 };
 
@@ -368,6 +369,7 @@ const DarkTheme = {
     hopeS: require('../assets/hopeS.png'),
     newChat: require('../assets/newChat.png'),
     fireGif: require('../assets/fireGif.gif'),
+    premium2: require('../assets/premium2.png'),
   },
 };
 export { LightTheme, DarkTheme };

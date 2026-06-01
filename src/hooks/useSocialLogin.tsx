@@ -30,6 +30,9 @@ const useSocialLogin = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+  const onboardingAnswers = useSelector(
+    (state: any) => state.userData?.onboarding?.answers,
+  );
   const { handleBiometricAuth, biometric } = useBiometric();
 
   const handleSocialLogin = (
@@ -46,6 +49,15 @@ const useSocialLogin = () => {
       os_type: Platform.OS,
       language: AppUtils.getLanguageCode(appLanguage),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      fullName: onboardingAnswers?.fullName || '',
+      goalStartWith: onboardingAnswers?.goalStartWith || '',
+      timeYouCommit: onboardingAnswers?.timeYouCommit || '',
+      stopFeelBetter: onboardingAnswers?.stopFeelBetter || '',
+      helpFeelBetter: onboardingAnswers?.helpFeelBetter || '',
+      likeToFellMore: onboardingAnswers?.likeToFellMore || '',
+      feelThatWay: onboardingAnswers?.feelThatWay || '',
+      howFellingLately: onboardingAnswers?.howFellingLately || '',
+      hearAboutUs: onboardingAnswers?.hearAboutUs || '',
     };
 
     socialLoginMutate(

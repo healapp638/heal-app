@@ -102,10 +102,6 @@ const HelpAndSupport = () => {
           <HeaderCommon
             title={localization.appkeys?.contactUs || 'Contact Us'}
             onBackPress={() => navigation.goBack()}
-            rightIcon={images.crown}
-            onRightPress={() => {
-              setShowCreditsModal(true);
-            }}
           />
 
           <HomeHeader

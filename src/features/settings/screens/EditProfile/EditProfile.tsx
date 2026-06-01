@@ -53,31 +53,31 @@ const EditProfile = () => {
   } | null>(
     user?.country
       ? {
-        name: user.country,
-        isoCode: '',
-      }
+          name: user.country,
+          isoCode: '',
+        }
       : null,
   );
 
   // Initialize DOB from user data
   const initialDob = user?.dob
     ? (() => {
-      const [year, month, dayWithTime] = user.dob.split('-');
-      const day = dayWithTime ? dayWithTime.split('T')[0] : '01';
-      const monthName = Object.keys(monthToNumber).find(
-        key => monthToNumber[key] === month,
-      );
-      return {
-        year: year || '2000',
-        day: day.padStart(2, '0'),
-        month: monthName || 'January',
-      };
-    })()
+        const [year, month, dayWithTime] = user.dob.split('-');
+        const day = dayWithTime ? dayWithTime.split('T')[0] : '01';
+        const monthName = Object.keys(monthToNumber).find(
+          key => monthToNumber[key] === month,
+        );
+        return {
+          year: year || '2000',
+          day: day.padStart(2, '0'),
+          month: monthName || 'January',
+        };
+      })()
     : {
-      month: 'January',
-      day: '01',
-      year: '2000',
-    };
+        month: 'January',
+        day: '01',
+        year: '2000',
+      };
   const [selectedDate, setSelectedDate] = useState<DobDateParts>(initialDob);
 
   // Modal State
@@ -90,9 +90,9 @@ const EditProfile = () => {
   const [ageModalVisible, setAgeModalVisible] = useState(false);
   const dobDisplay = isDobSelected
     ? `${selectedDate.day} - ${getLocalizedMonthName(
-      selectedDate.month,
-      localization,
-    )} - ${selectedDate.year}`
+        selectedDate.month,
+        localization,
+      )} - ${selectedDate.year}`
     : localization.appkeys?.selectBirthDate;
   const handleImageSelect = (image: any) => {
     setProfilePic(image.path); // Set local preview immediately
@@ -139,13 +139,15 @@ const EditProfile = () => {
     }
     if (!selectedCountry) {
       AppUtils.showToast(
-        localization.appkeys?.toastSelectCountry || 'Please select your country',
+        localization.appkeys?.toastSelectCountry ||
+          'Please select your country',
       );
       return;
     }
     if (!isDobSelected) {
       AppUtils.showToast(
-        localization.appkeys?.toastSelectBirthDate || 'Please select date of birth',
+        localization.appkeys?.toastSelectBirthDate ||
+          'Please select date of birth',
       );
       return;
     }
@@ -154,8 +156,9 @@ const EditProfile = () => {
       setAgeModalVisible(true);
       return;
     }
-    const formattedDob = `${selectedDate.year}-${monthToNumber[selectedDate.month]
-      }-${selectedDate.day}`;
+    const formattedDob = `${selectedDate.year}-${
+      monthToNumber[selectedDate.month]
+    }-${selectedDate.day}`;
     const payload = {
       language: AppUtils.getLanguageCode(appLanguage),
       profilePic: profilePicUrl,
@@ -174,7 +177,7 @@ const EditProfile = () => {
           dispatch(getUserDetail() as any);
           AppUtils.showToast(
             localization.appkeys?.profileUpdated ||
-            'Profile updated successfully',
+              'Profile updated successfully',
           );
           dispatch(setUser(response?.data));
           navigation.goBack();
@@ -194,11 +197,7 @@ const EditProfile = () => {
       isScrollEnabled={true}
       view={
         <View style={styles.mainContainer}>
-          <HeaderCommon
-            onRightPress={() => setShowCreditsModal(true)}
-            title={localization.appkeys?.editProfile || 'Edit Profile'}
-            rightIcon={images.crown}
-          />
+          <HeaderCommon onRightPress={() => setShowCreditsModal(true)} />
 
           <HomeHeader
             viewStyle={{
@@ -207,7 +206,7 @@ const EditProfile = () => {
             }}
             showCrown={false}
             showStreak={false}
-            onCrownPress={() => { }}
+            onCrownPress={() => {}}
             userName={
               localization.appkeys?.personalInfo || 'Personal Information'
             }
@@ -226,11 +225,11 @@ const EditProfile = () => {
                 source={
                   profilePic
                     ? {
-                      uri: profilePic,
-                    }
+                        uri: profilePic,
+                      }
                     : {
-                      uri: getEnvVars()?.fileUrl + user?.profilePic,
-                    }
+                        uri: getEnvVars()?.fileUrl + user?.profilePic,
+                      }
                 }
                 style={styles.profileImage}
               />
@@ -351,7 +350,6 @@ const EditProfile = () => {
                 />
               </TouchableOpacity>
             )} */}
-
           </View>
           <View style={{ flex: 1 }} />
           <SolidBtn

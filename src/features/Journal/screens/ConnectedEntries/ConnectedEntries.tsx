@@ -97,11 +97,6 @@ const ConnectedEntries = () => {
             title={
               localization.appkeys?.connectedEntriesTitle || 'Connected Entries'
             }
-            rightIcon={images.crown}
-            onRightPress={() => {
-              triggerHaptic('impactMedium');
-              setShowCreditsModal(true);
-            }}
           />
 
           <HomeHeader

@@ -31,9 +31,6 @@ const AccessScreen = () => {
   const dispatch = useDispatch();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 
-
-
-
   return (
     <SolidView
       isScrollEnabled
@@ -64,24 +61,6 @@ const AccessScreen = () => {
             </SolidText>
 
             <View style={styles.socialButtonsContainer}>
-              <TouchableOpacity
-                style={styles.socialBtn}
-                onPress={(...args: any) => {
-                  triggerHaptic('impactMedium');
-                  return (googleLogin as any)(...args);
-                }}
-                disabled={isSocialPending}
-              >
-                <Image
-                  source={images.google2}
-                  style={styles.socialIcon}
-                  resizeMode="contain"
-                />
-                <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
-                  {localization.appkeys?.continueWithGoogle}
-                </SolidText>
-              </TouchableOpacity>
-
               {Platform.OS === 'ios' && (
                 <TouchableOpacity
                   style={styles.socialBtn}
@@ -101,6 +80,23 @@ const AccessScreen = () => {
                   </SolidText>
                 </TouchableOpacity>
               )}
+              <TouchableOpacity
+                style={styles.socialBtn}
+                onPress={(...args: any) => {
+                  triggerHaptic('impactMedium');
+                  return (googleLogin as any)(...args);
+                }}
+                disabled={isSocialPending}
+              >
+                <Image
+                  source={images.google2}
+                  style={styles.socialIcon}
+                  resizeMode="contain"
+                />
+                <SolidText maxFontScale={1} style={styles.socialBtnTxt}>
+                  {localization.appkeys?.continueWithGoogle}
+                </SolidText>
+              </TouchableOpacity>
 
               <TouchableOpacity
                 style={styles.socialBtn}

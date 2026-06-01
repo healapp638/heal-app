@@ -66,8 +66,6 @@ const AboutHeal = () => {
           <HeaderCommon
             title={localization.appkeys?.aboutHealHeader || 'About HEAL'}
             onBackPress={() => navigation.goBack()}
-            rightIcon={images.crown}
-            onRightPress={() => setCreditsVisible(true)}
           />
 
           <HomeHeader

@@ -269,8 +269,6 @@ const AddJournal = () => {
           {/* Header */}
           <HeaderCommon
             title={localization.appkeys?.addJournalHeaderTitle || 'New Entry'}
-            rightIcon={images.crown}
-            onRightPress={() => setShowCreditsModal(true)}
           />
 
           {/* Titles */}

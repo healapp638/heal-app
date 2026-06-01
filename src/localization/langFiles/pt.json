@@ -4,6 +4,7 @@
     "welcome_solid": "Bem-vindo\nSolidAppMaker",
     "go_home": "Ir para o Início",
     "healingStarts": "Healing starts with you",
+    "healyIsAiAndCanMakeMistakes": "Healy é uma IA e pode cometer erros. Por favor, verifique as respostas.",
     "alreadyAccount": "Já tem uma conta?",
     "signIn": "Entrar",
     "login": "Login",
@@ -213,8 +214,8 @@
     "monthly": "Mensal",
     "yearly": "Anual",
     "save60": "ECONOMIZE 60%",
-    "monthlyPrice": "CHF 2,31/semana",
-    "yearlyPrice": "CHF 0,96/semana",
+    "monthlyPrice": "CHF 10.00/mês",
+    "yearlyPrice": "CHF 4.00/mês",
     "yearlyPriceInfo": "CHF 0,96/semana, cobrado anualmente como CHF 49,99/ano",
     "startFreeTrialBtn": "Iniciar avaliação gratuita de 3 dias agora",
     "addPromoCode": "Adicionar código promocional",
@@ -577,6 +578,17 @@
     "selectCountryMsg": "Por favor, selecione seu país",
     "selectDobMsg": "Por favor, selecione sua data de nascimento",
     "profileUpdateFailed": "Falha ao atualizar o perfil",
-    "failedToUploadImage": "Falha ao enviar a imagem"
+    "failedToUploadImage": "Falha ao enviar a imagem",
+    "feelBetterEveryDay": "Sentir-se melhor todos os dias",
+    "feelBetterEveryDaySub": "Pequenas ações diárias projetadas para ajudar você a se sentir mais equilibrado, calmo e realizado.",
+    "buildBetterHabits": "Criar melhores hábitos",
+    "buildBetterHabitsSub": "Crie hábitos simples que apoiem seu bem-estar mental e crescimento pessoal.",
+    "becomeBestSelf": "Torne-se sua melhor versão",
+    "becomeBestSelfSub": "Desbloqueie seu potencial e cresça para ser a pessoa que você deseja ser.",
+    "threeDaysFree": "3 dias grátis",
+    "startMyJourney": "Começar minha jornada",
+    "monthlyPriceInfo": "Apenas CHF 10.00 por mês. Cobrado mensalmente e renovado automaticamente, a menos que seja cancelado na App Store.",
+    "startMy3DayFreeTrial": "Começar minha avaliação gratuita de 3 dias",
+    "yearlyPriceInfoNew": "3 dias grátis, depois CHF 48.00 por ano. Cobrado anualmente e renovado automaticamente, a menos que seja cancelado na App Store."
   }
 }

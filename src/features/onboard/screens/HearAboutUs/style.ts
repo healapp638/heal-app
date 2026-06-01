@@ -93,6 +93,14 @@ const style = (colors: any) =>
       alignSelf: 'center',
       marginBottom: 40,
     },
+    btnContainer: {
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     tickIcon: {
       width: 24,
       height: 24,

@@ -4,6 +4,7 @@
     "welcome_solid": "Benvenuto\nSolidAppMaker",
     "go_home": "Vai alla Home",
     "healingStarts": "Healing starts with you",
+    "healyIsAiAndCanMakeMistakes": "Healy è un'IA e può commettere errori. Si prega di verificare le risposte.",
     "alreadyAccount": "Hai già un account?",
     "signIn": "Accedi",
     "login": "Login",
@@ -213,8 +214,8 @@
     "monthly": "Mensile",
     "yearly": "Annuale",
     "save60": "RISPARMIA IL 60%",
-    "monthlyPrice": "CHF 2,31/settimana",
-    "yearlyPrice": "CHF 0,96/settimana",
+    "monthlyPrice": "CHF 10.00/mese",
+    "yearlyPrice": "CHF 4.00/mese",
     "yearlyPriceInfo": "CHF 0,96/settimana, fatturati annualmente come CHF 49,99/anno",
     "startFreeTrialBtn": "Inizia ora la prova gratuita di 3 giorni",
     "addPromoCode": "Aggiungi codice promozionale",
@@ -577,6 +578,17 @@
     "selectCountryMsg": "Seleziona il tuo paese",
     "selectDobMsg": "Seleziona la tua data di nascita",
     "profileUpdateFailed": "Impossibile aggiornare il profilo",
-    "failedToUploadImage": "Impossibile caricare l'immagine"
+    "failedToUploadImage": "Impossibile caricare l'immagine",
+    "feelBetterEveryDay": "Sentirsi meglio ogni giorno",
+    "feelBetterEveryDaySub": "Piccole azioni quotidiane pensate per aiutarti a sentirti più equilibrato, calmo e soddisfatto.",
+    "buildBetterHabits": "Costruire abitudini migliori",
+    "buildBetterHabitsSub": "Crea semplici abitudini che supportino il tuo benessere mentale e la tua crescita personale.",
+    "becomeBestSelf": "Diventare la versione migliore di te",
+    "becomeBestSelfSub": "Sblocca il tuo potenziale e cresci nella persona che vuoi essere.",
+    "threeDaysFree": "3 giorni gratis",
+    "startMyJourney": "Inizia il mio viaggio",
+    "monthlyPriceInfo": "Solo CHF 10.00 al mese. Fatturato mensilmente e si rinnova automaticamente a meno che non venga annullato nell'App Store.",
+    "startMy3DayFreeTrial": "Inizia la mia prova gratuita di 3 giorni",
+    "yearlyPriceInfoNew": "3 giorni gratis, poi CHF 48.00 all'anno. Fatturato annualmente e si rinnova automaticamente a meno che non venga annullato nell'App Store."
   }
 }

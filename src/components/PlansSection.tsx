@@ -53,6 +53,9 @@ const PlansSection: React.FC<PlansSectionProps> = ({
         <SolidText maxFontScale={1} style={styles.planPrice}>
           {localization.appkeys?.yearlyPrice}
         </SolidText>
+        <SolidText maxFontScale={1} style={styles.planFreeTrial}>
+          {localization.appkeys?.threeDaysFree}
+        </SolidText>
       </TouchableOpacity>
     </View>
   );

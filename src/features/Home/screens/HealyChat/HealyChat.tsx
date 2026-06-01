@@ -13,7 +13,6 @@ import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 // Custom Hooks
-import { useDotAnimation } from './hooks/useDotAnimation';
 import { useKeyboardHeight } from './hooks/useKeyboardHeight';
 import { useHealyChat } from './hooks/useHealyChat';
 
@@ -53,8 +52,6 @@ const HealyChat = () => {
     isPaginationLoading,
   } = useHealyChat(flatListRef);
 
-  const [dot1, dot2, dot3] = useDotAnimation(isSending);
-
   const handleScroll = useCallback(
     (event: any) => {
       const { contentOffset } = event.nativeEvent;
@@ -72,7 +69,7 @@ const HealyChat = () => {
     ({ item, index }: { item: any; index: number }) => {
       const isUser = item.role === 'user';
       const isLatestAssistant =
-        !isUser &&
+         !isUser &&
         index === messages.length - 1 &&
         item._id !== lastStreamedId &&
         shouldAnimateNext;
@@ -189,10 +186,9 @@ const HealyChat = () => {
                 if (isSending) {
                   return (
                     <ThinkingBubble
-                      dot1={dot1 as any}
-                      dot2={dot2 as any}
-                      dot3={dot3 as any}
+                      logoSource={images.h}
                       styles={styles}
+                      tintColor={colors.primary}
                     />
                   );
                 }

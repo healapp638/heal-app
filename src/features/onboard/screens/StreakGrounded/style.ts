@@ -86,6 +86,7 @@ const style = (colors: any) =>
       marginBottom: 8,
       textAlign: 'center',
       includeFontPadding: false,
+      color:colors.brown
     },
     statusCircle: {
       width: 30,

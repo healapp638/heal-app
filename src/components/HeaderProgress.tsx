@@ -18,13 +18,13 @@ interface HeaderProgressProps {
   progress?: number; // 0 to 1
   showBack?: boolean;
   onBackPress?: () => void;
-  showBar?: any
+  showBar?: any;
 }
 const HeaderProgress: React.FC<HeaderProgressProps> = ({
   progress,
   showBack = true,
   onBackPress,
-  showBar = true
+  showBar = true,
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -44,6 +44,7 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
       {showBack ? (
         <TouchableOpacity
           style={[styles.backButton]}
+          hitSlop={14}
           onPress={() => {
             ReactNativeHapticFeedback.trigger('impactMedium', options);
             if (onBackPress) {
@@ -65,24 +66,26 @@ const HeaderProgress: React.FC<HeaderProgressProps> = ({
       ) : (
         <View style={styles.backButtonPlaceholder} />
       )}
-      {showBar && <View
-        style={[
-          styles.progressBackground,
-          {
-            backgroundColor: colors.white,
-          },
-        ]}
-      >
+      {showBar && (
         <View
           style={[
-            styles.progressFill,
+            styles.progressBackground,
             {
-              backgroundColor: '#DF9D83',
-              width: `${displayProgress * 100}%`,
-            }, // Light peach/brown from screenshot
+              backgroundColor: colors.white,
+            },
           ]}
-        />
-      </View>}
+        >
+          <View
+            style={[
+              styles.progressFill,
+              {
+                backgroundColor: '#DF9D83',
+                width: `${displayProgress * 100}%`,
+              }, // Light peach/brown from screenshot
+            ]}
+          />
+        </View>
+      )}
       <View style={styles.rightPlaceholder} />
     </View>
   );
