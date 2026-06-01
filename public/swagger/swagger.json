@@ -2751,7 +2751,7 @@
 				"parameters": []
 			}
 		},
-		"/user/auth/user_streak": {
+		"/user/auth/claimStreak": {
 			"post": {
 				"operationId": "ClaimStreak",
 				"responses": {

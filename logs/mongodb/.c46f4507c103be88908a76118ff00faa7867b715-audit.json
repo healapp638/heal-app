@@ -14,6 +14,11 @@
             "date": 1780032308502,
             "name": "logs/mongodb/mongodb-2026-05-29.log",
             "hash": "28ef5466339fb3b48c56837ef37934ef207aee91cd68aa00e4e289c811622c1c"
+        },
+        {
+            "date": 1780290037473,
+            "name": "logs/mongodb/mongodb-2026-06-01.log",
+            "hash": "4802343fae3bd1793f17497cf500175b68278dddc93fd2ed803359387a1736e6"
         }
     ],
     "hashType": "sha256"

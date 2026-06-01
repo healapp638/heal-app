@@ -746,7 +746,9 @@ const UserAuthHandler = {
         const totalJournelEarnedPoints = totalJournels > 0
             ? ((totalJournels - 1) * 10) + 25
             : 0;
-        const total_earned_points = (((_c = CompletedPhases[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0) + (((_d = completedWeeklyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points) || 0) + (((_e = completedDailyChallenges[0]) === null || _e === void 0 ? void 0 : _e.total_points) || 0) + totalJournelEarnedPoints || 0;
+        const total_earned_points = (((_c = CompletedPhases[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0) + (((_d = completedWeeklyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points) || 0) + (((_e = completedDailyChallenges[0]) === null || _e === void 0 ? void 0 : _e.total_points) || 0) + totalJournelEarnedPoints || 0 + (userData === null || userData === void 0 ? void 0 : userData.streak_credit) || 0;
+        // console.log("total_earned_points===========>", total_earned_points);
+        // console.log("userData.streak_credit===========>", userData?.streak_credit);
         const pointThresholds = [
             99, 235, 460, 740, 1070, 1450, 1875, 2345,
             2860, 3415, 4015, 4650, 5325, 6040, 6795,
@@ -1164,10 +1166,13 @@ const UserAuthHandler = {
             // CURRENT DATE IN USER TIMEZONE
             // =========================================
             const today = (0, moment_timezone_1.default)().tz(userTimeZone).format("YYYY-MM-DD");
+            console.log("today =====================================>>", today);
             const yesterday = (0, moment_timezone_1.default)()
                 .tz(userTimeZone)
                 .subtract(1, "day")
                 .format("YYYY-MM-DD");
+            console.log("yesterday =====================================>>", yesterday);
+            console.log("user.last_streak_date =====================================>>", user.last_streak_date);
             // =========================================
             // ALREADY CLAIMED TODAY
             // =========================================
@@ -1198,6 +1203,7 @@ const UserAuthHandler = {
             // REWARD XP
             // =========================================
             const rewardXP = STREAK_REWARDS[streakCount] || 0;
+            console.log("rewardXP =====================================>>", rewardXP);
             if (rewardXP > 0) {
                 streakCredit += rewardXP;
             }

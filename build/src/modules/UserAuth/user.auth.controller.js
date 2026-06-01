@@ -470,7 +470,7 @@ __decorate([
 ], UserAuthController.prototype, "progressTrackerList", null);
 __decorate([
     (0, tsoa_1.Security)("Bearer"),
-    (0, tsoa_1.Post)("/user_streak"),
+    (0, tsoa_1.Post)("/claimStreak"),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
