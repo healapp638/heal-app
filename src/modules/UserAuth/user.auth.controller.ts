@@ -325,10 +325,9 @@ export default class UserAuthController extends Controller {
    * Get User streak
    */
     @Security("Bearer")
-    @Post("/user_streak")
+    @Post("/claimStreak")
     public async claimStreak(): Promise<ApiResponse> {
-    const wrappedFunc = tryCatchWrapper(handler.claimStreak
-    );
+    const wrappedFunc = tryCatchWrapper(handler.claimStreak);
     return wrappedFunc(this.userId); // Invoking the wrapped function
   }
   //ends

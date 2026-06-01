@@ -865,7 +865,9 @@ const UserAuthHandler = {
                 ? ((totalJournels - 1) * 10) + 25
                 : 0;
 
-        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0) + totalJournelEarnedPoints || 0;
+        const total_earned_points = (CompletedPhases[0]?.total_points || 0) + (completedWeeklyChallenges[0]?.total_points || 0) + (completedDailyChallenges[0]?.total_points || 0) + totalJournelEarnedPoints || 0 + userData?.streak_credit || 0;
+        // console.log("total_earned_points===========>", total_earned_points);
+        // console.log("userData.streak_credit===========>", userData?.streak_credit);
         const pointThresholds = [
             99, 235, 460, 740, 1070, 1450, 1875, 2345,
             2860, 3415, 4015, 4650, 5325, 6040, 6795,
@@ -1412,11 +1414,15 @@ const STREAK_REWARDS: any = {
         // =========================================
 
         const today = moment().tz(userTimeZone).format("YYYY-MM-DD");
+        console.log("today =====================================>>", today);
 
         const yesterday = moment()
             .tz(userTimeZone)
             .subtract(1, "day")
             .format("YYYY-MM-DD");
+        console.log("yesterday =====================================>>", yesterday);
+
+        console.log("user.last_streak_date =====================================>>", user.last_streak_date);
 
         // =========================================
         // ALREADY CLAIMED TODAY
@@ -1444,7 +1450,6 @@ const STREAK_REWARDS: any = {
             user.last_streak_date &&
             user.last_streak_date !== yesterday
         ) {
-
             streakCount = 0;
             streakDays = [];
         }
@@ -1461,13 +1466,14 @@ const STREAK_REWARDS: any = {
 
         const unix = moment().unix();
 
-        streakDays.push(unix);
+        streakDays.push(unix);  
 
         // =========================================
         // REWARD XP
         // =========================================
 
         const rewardXP = STREAK_REWARDS[streakCount] || 0;
+        console.log("rewardXP =====================================>>", rewardXP);
 
         if (rewardXP > 0) {
             streakCredit += rewardXP;
