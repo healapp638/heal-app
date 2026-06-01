@@ -13,6 +13,7 @@ import userModulesCompletePhaseModel from "../UserModules/user.modules.complete.
 import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.model";
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userAuthModel from "../../modules/UserAuth/user.auth.model";
+import userThemeEngagementModel from "../UserModules/user.themeEngagement.model";
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 
 const AdminUserHandler = {
@@ -309,6 +310,26 @@ const AdminUserHandler = {
                     _id: 0
                 }
             }
+        ]);
+        const userEngagementOnThemeChart = await userThemeEngagementModel.aggregate([
+            {
+                $match: {
+                    createdAt: fetch_data_date,
+                    status: USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: "$theme_name",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $addFields: {
+                    theme_name: "$_id",
+                    _id: 0
+                }
+            }
         ])
 
         const user_summary = {
@@ -316,7 +337,8 @@ const AdminUserHandler = {
             active_users: active_users.data,
             deactivated_users: deactivated_users.data,
             journelPieChart,
-            hearAboutUsPieChart
+            hearAboutUsPieChart,
+            userEngagementOnThemeChart
         }
 
         return showResponse(true, 'Dashboard data is here', { user_summary, dashboard }, statusCodes.SUCCESS);

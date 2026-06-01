@@ -59,6 +59,7 @@ const user_modules_complete_phase_model_1 = __importDefault(require("../UserModu
 const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
 const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
 const user_auth_model_2 = __importDefault(require("../../modules/UserAuth/user.auth.model"));
+const user_themeEngagement_model_1 = __importDefault(require("../UserModules/user.themeEngagement.model"));
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 const AdminUserHandler = {
     getUsersList: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -326,12 +327,33 @@ const AdminUserHandler = {
                 }
             }
         ]);
+        const userEngagementOnThemeChart = yield user_themeEngagement_model_1.default.aggregate([
+            {
+                $match: {
+                    createdAt: fetch_data_date,
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: "$theme_name",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $addFields: {
+                    theme_name: "$_id",
+                    _id: 0
+                }
+            }
+        ]);
         const user_summary = {
             all_users: all_users.data,
             active_users: active_users.data,
             deactivated_users: deactivated_users.data,
             journelPieChart,
-            hearAboutUsPieChart
+            hearAboutUsPieChart,
+            userEngagementOnThemeChart
         };
         return (0, response_util_1.showResponse)(true, 'Dashboard data is here', { user_summary, dashboard }, statusCodes_1.default.SUCCESS);
     }),
