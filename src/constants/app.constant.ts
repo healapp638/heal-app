@@ -84,8 +84,8 @@ const LOGS = {
 };
 
 const REDIS_CREDENTIAL = {
-  URI: "127.0.0.1",
-  PORT: 6379,
+  URI: process.env.REDIS_HOST || 'redis',
+  PORT: Number(process.env.REDIS_PORT) || 6379
 };
 
 //***** MAKE SURE FOR  DEV, PROD, AND STAGE ENVIOREMENENT USER ENV_PARMAS THAT ABOVE SHOWS AND SAVE IT IN AWS WITH SAME NAME  ******/
@@ -123,15 +123,15 @@ const initializeAwsCredential = async () => {
   console.time("AWS_CREDENTIAL_INIT")
   console.log("Initializing AWS credentials in parallel...")
   console.log({
-  GOOGLE_TRANSLATE_API_KEY,
-  STMP_EMAIL,
-  SMTP_API_KEY,
-  DB_URI,
-  JWT_SECRET,
-  ACCESSID,
-  REGION,
-  BUCKET
-});
+    GOOGLE_TRANSLATE_API_KEY,
+    STMP_EMAIL,
+    SMTP_API_KEY,
+    DB_URI,
+    JWT_SECRET,
+    ACCESSID,
+    REGION,
+    BUCKET
+  });
   try {
     // call this function when parameters are stored to aws
     const results = await Promise.all([
@@ -141,7 +141,7 @@ const initializeAwsCredential = async () => {
       services.awsService.getParameterFromAWS({ name: REGION }),
       services.awsService.getSecretFromAWS("heal_secret"),
       services.awsService.getParameterFromAWS({ name: BUCKET }),
-      services.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY ),
+      services.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY),
       // services.awsService.getSecretFromAWS(CLOUDFRONT_URL),
       // services.awsService.getSecretFromAWS(SWAGGER_USER_NAME),
       // services.awsService.getSecretFromAWS(SWAGGER_PASSWORD),

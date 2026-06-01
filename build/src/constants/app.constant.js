@@ -82,8 +82,8 @@ const LOGS = {
 };
 exports.LOGS = LOGS;
 const REDIS_CREDENTIAL = {
-    URI: "127.0.0.1",
-    PORT: 6379,
+    URI: process.env.REDIS_HOST || 'redis',
+    PORT: Number(process.env.REDIS_PORT) || 6379
 };
 exports.REDIS_CREDENTIAL = REDIS_CREDENTIAL;
 //***** MAKE SURE FOR  DEV, PROD, AND STAGE ENVIOREMENENT USER ENV_PARMAS THAT ABOVE SHOWS AND SAVE IT IN AWS WITH SAME NAME  ******/
