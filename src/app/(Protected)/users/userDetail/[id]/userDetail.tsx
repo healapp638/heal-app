@@ -32,6 +32,11 @@ interface UserDetailResult {
     status: number;
     timeYouCommit: string;
     updatedAt: string;
+    // Gamification properties
+    total_earned_points?: number;
+    total_points?: number;
+    currentLevel?: number;
+    completedPercentage?: number;
 }
 
 
@@ -69,17 +74,45 @@ export default function UserDetail() {
                 <Col span={24}>
                     <Card className="shadow-sm border-none! bg-white! overflow-hidden" styles={{ body: { padding: 0 } }}>
                         <div className="h-32 bg-linear-to-r from-maincolor to-secondary-light" />
-                        <div className="px-8 pb-8 -mt-12 flex flex-col md:flex-row items-end gap-6">
-                            <Avatar
-                                size={140}
-                                src={`${FILE_URL}${userDataResult.profilePic}`}
-                                className="border-4 border-white shadow-lg bg-white!"
-                            />
-                            <div className="flex-1 pb-2">
-                                <div className="flex items-center gap-3 flex-wrap">
-                                    <Title className="text-black!" level={2} style={{ margin: 0 }}>{userDataResult.fullName || "User"}</Title>
+                        <div className="px-8 pb-8 -mt-1 flex flex-col md:flex-row md:items-end justify-between gap-6">
+                            <div className="flex flex-col md:flex-row items-end gap-6">
+                                <Avatar
+                                    size={140}
+                                    src={`${FILE_URL}${userDataResult.profilePic}`}
+                                    className="border-4 border-white shadow-lg bg-white!"
+                                />
+                                <div className="pb-2">
+                                    <div className="flex items-center gap-3 flex-wrap">
+                                        <Title className="text-black!" level={2} style={{ margin: 0 }}>{userDataResult.fullName || "User"}</Title>
+                                    </div>
+                                    <Text type="secondary" className="text-lg text-black!">{userDataResult.email}</Text>
                                 </div>
-                                <Text type="secondary" className="text-lg text-black!">{userDataResult.email}</Text>
+                            </div>
+
+                            {/* Gamification Progress Box */}
+                            <div className="w-full md:w-80 bg-gray-50/70 p-4 rounded-xl border border-gray-100 flex flex-col gap-2 shadow-inner">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-gray-500">Level</span>
+                                        <span className="bg-maincolor/10 text-maincolor border border-maincolor/20 text-sm font-black px-2.5 py-0.5 rounded-full">
+                                            {userDataResult.currentLevel ?? 1}
+                                        </span>
+                                    </div>
+                                    <div className="text-right">
+                                        <span className="text-xs font-bold text-black!">{userDataResult.total_earned_points ?? 0}</span>
+                                        <span className="text-xs text-gray-400"> / {userDataResult.total_points ?? 0} XP</span>
+                                    </div>
+                                </div>
+                                <div className="w-full bg-gray-200/80 rounded-full h-2.5 overflow-hidden">
+                                    <div 
+                                        className="bg-maincolor h-full rounded-full transition-all duration-500"
+                                        style={{ width: `${userDataResult.completedPercentage ?? 0}%` }}
+                                    />
+                                </div>
+                                <div className="flex justify-between items-center text-[10px] font-bold text-gray-400">
+                                    <span>Progress</span>
+                                    <span className="text-maincolor">{userDataResult.completedPercentage ?? 0}% Completed</span>
+                                </div>
                             </div>
                         </div>
                     </Card>
@@ -116,6 +149,16 @@ export default function UserDetail() {
                                 <p className="font-medium text-black">Joined On :</p>
                                 <p className="text-gray-600">{formattedDateOnly(userDataResult.createdAt)}</p>
                             </div>
+                            <div className="flex justify-between items-center w-full border-t border-gray-100 pt-3">
+                                <p className="font-semibold text-black">Current Level :</p>
+                                <p className="text-gray-600 font-bold bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Level {userDataResult.currentLevel ?? 1}</p>
+                            </div>
+                            <div className="flex justify-between items-center w-full">
+                                <p className="font-semibold text-black">Points Progress :</p>
+                                <p className="text-gray-600 font-medium">
+                                    <span className="font-bold text-maincolor">{userDataResult.total_earned_points ?? 0}</span> / {userDataResult.total_points ?? 0} XP ({userDataResult.completedPercentage ?? 0}%)
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </Col>
@@ -126,10 +169,10 @@ export default function UserDetail() {
                             Onboarding <span className="text-maincolor">Insights</span>
                         </h1>
                         <div className="flex flex-col gap-4 px-4 py-2">
-                            <div className="flex justify-between items-center w-full">
+                            {/* <div className="flex justify-between items-center w-full">
                                 <p className="font-medium text-black">What brings you here?</p>
                                 <p className="text-gray-600">{userDataResult.bringsYouHere || "Not specified"}</p>
-                            </div>
+                            </div> */}
                             <div className="flex justify-between items-center w-full">
                                 <p className="font-medium text-black">How are you feeling lately?</p>
                                 <p className="text-gray-600">{userDataResult.howFellingLately || "N/A"}</p>
@@ -138,10 +181,10 @@ export default function UserDetail() {
                                 <p className="font-medium text-black">What would you like to feel more?</p>
                                 <p className="text-gray-600">{userDataResult.likeToFellMore || "N/A"}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            {/* <div className="flex justify-between items-center w-full">
                                 <p className="font-medium text-black">How you describe yourself?</p>
                                 <p className="text-gray-600">{userDataResult.startShowingOfYourSelf || "N/A"}</p>
-                            </div>
+                            </div> */}
                             <div className="flex justify-between items-center w-full">
                                 <p className="font-medium text-black">Time commitment</p>
                                 <p className="text-gray-600">{userDataResult.timeYouCommit || "N/A"}</p>
