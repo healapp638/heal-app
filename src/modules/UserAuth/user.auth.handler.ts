@@ -94,70 +94,77 @@ const UserAuthHandler = {
     //     }
     // },//ends
 
-    update_social_info: async (findUser: any, model: any, data: any) => {
+update_social_info: async (findUser: any, model: any, data: any) => {
     try {
-
-        const {
-            login_source,
-            social_auth,
-            email,
-            name,
-            hearAboutUs,
-            howFellingLately,
-            feelThatWay,
-            likeToFellMore,
-            helpFeelBetter,
-            stopFeelBetter,
-            timeYouCommit,
-            goalStartWith,
-            language,
-            timeZone
-        } = data;
-        console.log(data,"dtaaaaa")
-
+        const {login_source,social_auth,email,name,fullName,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,helpFeelBetter,stopFeelBetter,
+            timeYouCommit,goalStartWith,language,timeZone} = data;
+console.log("insideeee")
         const editObj: any = {
             $set: {}
         };
-        console.log(data,"data")
 
         // =========================================
-        // UPDATE ROOT USER FIELDS
+        // ROOT USER FIELDS
         // =========================================
 
-        if (email !== undefined) editObj.$set.email = email;
-        if (name !== undefined) editObj.$set.fullName = name;
-        if (language !== undefined) editObj.$set.language = language;
-        if (timeZone !== undefined) editObj.$set.timeZone = timeZone;
+        editObj.$set = {
+            ...(email?.trim() && { email }),
+            ...((fullName || name)?.trim() && {
+                fullName: fullName || name
+            }),
+            ...(language?.trim() && { language }),
+            ...(timeZone?.trim() && { timeZone }),
 
-        if (hearAboutUs !== undefined) editObj.$set.hearAboutUs = hearAboutUs;
-        if (howFellingLately !== undefined) editObj.$set.howFellingLately = howFellingLately;
-        if (feelThatWay !== undefined) editObj.$set.feelThatWay = feelThatWay;
-        if (likeToFellMore !== undefined) editObj.$set.likeToFellMore = likeToFellMore;
-        if (helpFeelBetter !== undefined) editObj.$set.helpFeelBetter = helpFeelBetter;
-        if (stopFeelBetter !== undefined) editObj.$set.stopFeelBetter = stopFeelBetter;
-        if (timeYouCommit !== undefined) editObj.$set.timeYouCommit = timeYouCommit;
-        if (goalStartWith !== undefined) editObj.$set.goalStartWith = goalStartWith;
+            ...(hearAboutUs?.trim() && { hearAboutUs }),
+            ...(howFellingLately?.trim() && { howFellingLately }),
+            ...(feelThatWay?.trim() && { feelThatWay }),
+            ...(likeToFellMore?.trim() && { likeToFellMore }),
+            ...(helpFeelBetter?.trim() && { helpFeelBetter }),
+            ...(stopFeelBetter?.trim() && { stopFeelBetter }),
+            ...(timeYouCommit?.trim() && { timeYouCommit }),
+            ...(goalStartWith?.trim() && { goalStartWith })
+        };
 
         // =========================================
         // SOCIAL ACCOUNT OBJECT
         // =========================================
 
-        const social_account = {
-            email,
-            source: login_source,
-            token: social_auth,
-            fullName: name
+        const social_account: any = {
+            ...(email?.trim() && { email }),
+            ...(login_source?.trim() && { source: login_source }),
+            ...(social_auth?.trim() && { token: social_auth }),
+            ...((fullName || name)?.trim() && {
+                fullName: fullName || name
+            })
         };
 
-        const accountIndex = findUser?.data?.social_account?.findIndex(
-            (info: any) => info?.source === login_source
-        );
+        const accountIndex =
+            findUser?.data?.social_account?.findIndex(
+                (info: any) => info?.source === login_source
+            );
 
-        if (accountIndex !== -1) {
-            editObj.$set[`social_account.${accountIndex}`] = social_account;
-        } else {
-            editObj.$push = {
-                social_account
+        if (Object.keys(social_account).length > 0) {
+            if (accountIndex !== -1) {
+                editObj.$set[`social_account.${accountIndex}`] =
+                    social_account;
+            } else {
+                editObj.$push = {
+                    social_account
+                };
+            }
+        }
+
+        // =========================================
+        // NOTHING TO UPDATE
+        // =========================================
+
+        if (
+            Object.keys(editObj.$set).length === 0 &&
+            !editObj.$push
+        ) {
+            return {
+                status: true,
+                data: findUser.data
             };
         }
 
@@ -178,6 +185,13 @@ const UserAuthHandler = {
             .findById(findUser.data?._id)
             .lean();
 
+        if (!updatedUser) {
+            return {
+                status: false,
+                data: null
+            };
+        }
+
         // =========================================
         // CHECK ONBOARDING STATUS
         // =========================================
@@ -194,22 +208,26 @@ const UserAuthHandler = {
             updatedUser?.goalStartWith,
             updatedUser?.fullName
         ].every(
-            value =>
+            (value: any) =>
                 value !== undefined &&
                 value !== null &&
                 String(value).trim() !== ''
         );
 
-        console.log(updatedUser?.is_onboarding, is_onboarding, "data")
-
         if (updatedUser?.is_onboarding !== is_onboarding) {
             await model.updateOne(
                 { _id: updatedUser._id },
-                { $set: { is_onboarding } }
+                {
+                    $set: {
+                        is_onboarding
+                    }
+                }
             );
 
             updatedUser.is_onboarding = is_onboarding;
         }
+        console.log(updatedUser,"updateddd")
+        // const findUserr = await findOne(userAuthModel, {_id: updatedUser._id});
 
         return {
             status: true,
@@ -218,6 +236,7 @@ const UserAuthHandler = {
 
     } catch (error) {
         console.log(error, "error update_social_info");
+
         return {
             status: false,
             data: null
@@ -313,7 +332,7 @@ const UserAuthHandler = {
     },//ends
 
     social_login: async (data: any) => {
-        const { login_source, social_auth, email, name = undefined, language, timeZone,hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
+        const { login_source, social_auth, email, name = undefined, language, timeZone,fullName,hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
         console.log(data,"dattttaaaa")
         const queryObject = {
             status: { $ne: USER_STATUS.DELETED }, //user not deleted
@@ -350,7 +369,7 @@ const UserAuthHandler = {
             // console.log(goalStartWith,"goalStartWith")
             const data = findUser?.data
             // console.log(data,"datatatatta")
-            const updatedata = await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone, hearAboutUs:hearAboutUs, howFellingLately:howFellingLately, feelThatWay:feelThatWay, likeToFellMore:likeToFellMore, helpFeelBetter:helpFeelBetter, stopFeelBetter:stopFeelBetter, timeYouCommit:timeYouCommit, goalStartWith:goalStartWith } },{ new: true });
+            const updatedata = await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone, hearAboutUs:hearAboutUs,fullName:fullName, howFellingLately:howFellingLately, feelThatWay:feelThatWay, likeToFellMore:likeToFellMore, helpFeelBetter:helpFeelBetter, stopFeelBetter:stopFeelBetter, timeYouCommit:timeYouCommit, goalStartWith:goalStartWith } },{ new: true });
             // console.log(updatedata,"updatedata")
             await ChallengesQueue.add('challenges', { userData: data }, {
                 attempts: 3,
@@ -422,11 +441,11 @@ const UserAuthHandler = {
                         source: login_source,
                         email: email,
                         token: social_auth,
-                        fullName: name
+                        name: name
                     }
                 ],
                 email,
-                fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
+                fullName:fullName,
                 account_source: login_source,
                 isVerified: true,
                 language: language || 'en',
@@ -438,7 +457,8 @@ const UserAuthHandler = {
                 helpFeelBetter,
                 stopFeelBetter,
                 timeYouCommit,
-                goalStartWith
+                goalStartWith,
+                timeZone
             };
             console.log(newObj, "newObj>>>>>>>>>>>>>>>")
 

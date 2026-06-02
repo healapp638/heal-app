@@ -130,69 +130,63 @@ const UserAuthHandler = {
     //     }
     // },//ends
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e, _f;
         try {
-            const { login_source, social_auth, email, name, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, language, timeZone } = data;
-            console.log(data, "dtaaaaa");
+            const { login_source, social_auth, email, name, fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, language, timeZone } = data;
+            console.log("insideeee");
             const editObj = {
                 $set: {}
             };
-            console.log(data, "data");
             // =========================================
-            // UPDATE ROOT USER FIELDS
+            // ROOT USER FIELDS
             // =========================================
-            if (email !== undefined)
-                editObj.$set.email = email;
-            if (name !== undefined)
-                editObj.$set.fullName = name;
-            if (language !== undefined)
-                editObj.$set.language = language;
-            if (timeZone !== undefined)
-                editObj.$set.timeZone = timeZone;
-            if (hearAboutUs !== undefined)
-                editObj.$set.hearAboutUs = hearAboutUs;
-            if (howFellingLately !== undefined)
-                editObj.$set.howFellingLately = howFellingLately;
-            if (feelThatWay !== undefined)
-                editObj.$set.feelThatWay = feelThatWay;
-            if (likeToFellMore !== undefined)
-                editObj.$set.likeToFellMore = likeToFellMore;
-            if (helpFeelBetter !== undefined)
-                editObj.$set.helpFeelBetter = helpFeelBetter;
-            if (stopFeelBetter !== undefined)
-                editObj.$set.stopFeelBetter = stopFeelBetter;
-            if (timeYouCommit !== undefined)
-                editObj.$set.timeYouCommit = timeYouCommit;
-            if (goalStartWith !== undefined)
-                editObj.$set.goalStartWith = goalStartWith;
+            editObj.$set = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, ((email === null || email === void 0 ? void 0 : email.trim()) && { email })), (((_a = (fullName || name)) === null || _a === void 0 ? void 0 : _a.trim()) && {
+                fullName: fullName || name
+            })), ((language === null || language === void 0 ? void 0 : language.trim()) && { language })), ((timeZone === null || timeZone === void 0 ? void 0 : timeZone.trim()) && { timeZone })), ((hearAboutUs === null || hearAboutUs === void 0 ? void 0 : hearAboutUs.trim()) && { hearAboutUs })), ((howFellingLately === null || howFellingLately === void 0 ? void 0 : howFellingLately.trim()) && { howFellingLately })), ((feelThatWay === null || feelThatWay === void 0 ? void 0 : feelThatWay.trim()) && { feelThatWay })), ((likeToFellMore === null || likeToFellMore === void 0 ? void 0 : likeToFellMore.trim()) && { likeToFellMore })), ((helpFeelBetter === null || helpFeelBetter === void 0 ? void 0 : helpFeelBetter.trim()) && { helpFeelBetter })), ((stopFeelBetter === null || stopFeelBetter === void 0 ? void 0 : stopFeelBetter.trim()) && { stopFeelBetter })), ((timeYouCommit === null || timeYouCommit === void 0 ? void 0 : timeYouCommit.trim()) && { timeYouCommit })), ((goalStartWith === null || goalStartWith === void 0 ? void 0 : goalStartWith.trim()) && { goalStartWith }));
             // =========================================
             // SOCIAL ACCOUNT OBJECT
             // =========================================
-            const social_account = {
-                email,
-                source: login_source,
-                token: social_auth,
-                fullName: name
-            };
-            const accountIndex = (_b = (_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.social_account) === null || _b === void 0 ? void 0 : _b.findIndex((info) => (info === null || info === void 0 ? void 0 : info.source) === login_source);
-            if (accountIndex !== -1) {
-                editObj.$set[`social_account.${accountIndex}`] = social_account;
+            const social_account = Object.assign(Object.assign(Object.assign(Object.assign({}, ((email === null || email === void 0 ? void 0 : email.trim()) && { email })), ((login_source === null || login_source === void 0 ? void 0 : login_source.trim()) && { source: login_source })), ((social_auth === null || social_auth === void 0 ? void 0 : social_auth.trim()) && { token: social_auth })), (((_b = (fullName || name)) === null || _b === void 0 ? void 0 : _b.trim()) && {
+                fullName: fullName || name
+            }));
+            const accountIndex = (_d = (_c = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _c === void 0 ? void 0 : _c.social_account) === null || _d === void 0 ? void 0 : _d.findIndex((info) => (info === null || info === void 0 ? void 0 : info.source) === login_source);
+            if (Object.keys(social_account).length > 0) {
+                if (accountIndex !== -1) {
+                    editObj.$set[`social_account.${accountIndex}`] =
+                        social_account;
+                }
+                else {
+                    editObj.$push = {
+                        social_account
+                    };
+                }
             }
-            else {
-                editObj.$push = {
-                    social_account
+            // =========================================
+            // NOTHING TO UPDATE
+            // =========================================
+            if (Object.keys(editObj.$set).length === 0 &&
+                !editObj.$push) {
+                return {
+                    status: true,
+                    data: findUser.data
                 };
             }
             // =========================================
             // UPDATE USER
             // =========================================
-            yield model.updateOne({ _id: (_c = findUser.data) === null || _c === void 0 ? void 0 : _c._id }, editObj);
+            yield model.updateOne({ _id: (_e = findUser.data) === null || _e === void 0 ? void 0 : _e._id }, editObj);
             // =========================================
             // GET UPDATED USER
             // =========================================
             const updatedUser = yield model
-                .findById((_d = findUser.data) === null || _d === void 0 ? void 0 : _d._id)
+                .findById((_f = findUser.data) === null || _f === void 0 ? void 0 : _f._id)
                 .lean();
+            if (!updatedUser) {
+                return {
+                    status: false,
+                    data: null
+                };
+            }
             // =========================================
             // CHECK ONBOARDING STATUS
             // =========================================
@@ -207,14 +201,19 @@ const UserAuthHandler = {
                 updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.timeYouCommit,
                 updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.goalStartWith,
                 updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.fullName
-            ].every(value => value !== undefined &&
+            ].every((value) => value !== undefined &&
                 value !== null &&
                 String(value).trim() !== '');
-            console.log(updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.is_onboarding, is_onboarding, "data");
             if ((updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.is_onboarding) !== is_onboarding) {
-                yield model.updateOne({ _id: updatedUser._id }, { $set: { is_onboarding } });
+                yield model.updateOne({ _id: updatedUser._id }, {
+                    $set: {
+                        is_onboarding
+                    }
+                });
                 updatedUser.is_onboarding = is_onboarding;
             }
+            console.log(updatedUser, "updateddd");
+            // const findUserr = await findOne(userAuthModel, {_id: updatedUser._id});
             return {
                 status: true,
                 data: updatedUser
@@ -305,7 +304,7 @@ const UserAuthHandler = {
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
-        const { login_source, social_auth, email, name = undefined, language, timeZone, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
+        const { login_source, social_auth, email, name = undefined, language, timeZone, fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
         console.log(data, "dattttaaaa");
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
@@ -338,7 +337,7 @@ const UserAuthHandler = {
             // console.log(goalStartWith,"goalStartWith")
             const data = findUser === null || findUser === void 0 ? void 0 : findUser.data;
             // console.log(data,"datatatatta")
-            const updatedata = yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { timeZone: timeZone, hearAboutUs: hearAboutUs, howFellingLately: howFellingLately, feelThatWay: feelThatWay, likeToFellMore: likeToFellMore, helpFeelBetter: helpFeelBetter, stopFeelBetter: stopFeelBetter, timeYouCommit: timeYouCommit, goalStartWith: goalStartWith } }, { new: true });
+            const updatedata = yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { timeZone: timeZone, hearAboutUs: hearAboutUs, fullName: fullName, howFellingLately: howFellingLately, feelThatWay: feelThatWay, likeToFellMore: likeToFellMore, helpFeelBetter: helpFeelBetter, stopFeelBetter: stopFeelBetter, timeYouCommit: timeYouCommit, goalStartWith: goalStartWith } }, { new: true });
             // console.log(updatedata,"updatedata")
             yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: data }, {
                 attempts: 3,
@@ -402,11 +401,11 @@ const UserAuthHandler = {
                         source: login_source,
                         email: email,
                         token: social_auth,
-                        fullName: name
+                        name: name
                     }
                 ],
                 email,
-                fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
+                fullName: fullName,
                 account_source: login_source,
                 isVerified: true,
                 language: language || 'en',
@@ -418,7 +417,8 @@ const UserAuthHandler = {
                 helpFeelBetter,
                 stopFeelBetter,
                 timeYouCommit,
-                goalStartWith
+                goalStartWith,
+                timeZone
             };
             console.log(newObj, "newObj>>>>>>>>>>>>>>>");
             const userRef = new user_auth_model_1.default(newObj);

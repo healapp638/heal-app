@@ -120,6 +120,7 @@ const validateSocialLogin = (user) => {
         os_type: joi_1.default.string().optional().allow(''),
         language: joi_1.default.string().optional().allow(''),
         timeZone: joi_1.default.string().optional().allow(''),
+        fullName: joi_1.default.string().optional().allow(''),
         hearAboutUs: joi_1.default.string().optional().allow(''),
         howFellingLately: joi_1.default.string().optional().allow(''),
         feelThatWay: joi_1.default.string().optional().allow(''),

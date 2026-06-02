@@ -116,6 +116,7 @@ export const validateSocialLogin = (user: any) => {
         os_type: joi.string().optional().allow(''),
         language: joi.string().optional().allow(''),
         timeZone: joi.string().optional().allow(''),
+        fullName:joi.string().optional().allow(''),
         hearAboutUs: joi.string().optional().allow(''),
         howFellingLately: joi.string().optional().allow(''),
         feelThatWay: joi.string().optional().allow(''),

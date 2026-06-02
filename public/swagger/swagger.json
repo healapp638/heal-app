@@ -1895,6 +1895,9 @@
 									"timeZone": {
 										"type": "string"
 									},
+									"fullName": {
+										"type": "string"
+									},
 									"hearAboutUs": {
 										"type": "string"
 									},
