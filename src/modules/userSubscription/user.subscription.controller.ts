@@ -2,10 +2,7 @@ import { Request, Response } from 'express'
 import { Route, Controller, Tags, Post, Body, Security} from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from './user.subscription.handler'
-import {
- validateInitialPurchasedAndroidSubscription,
-validateInitialPurchasedIosSubscription
-} from './user.subscription.validator';
+import {validateInitialPurchasedAndroidSubscription,validateInitialPurchasedIosSubscription} from './user.subscription.validator';
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
 import { tryCatchWrapper } from '../../utils/config.util';
@@ -84,5 +81,24 @@ public async initialPurchasedAndroidSubscription(@Body() request: { plan_name: s
     return wrappedFunc({ plan_name, purchase_token }, this.userId); // Pass the request object directly to the function
 }
 //ends
+
+/**
+ * Create Credit
+ */
+@Security('Bearer')
+@Post("/addCredit")
+public async addCredit(
+    @Body() request: { package_name: string, transaction_id: string }
+): Promise<ApiResponse> {
+
+    const { package_name, transaction_id } = request;
+
+    if (!package_name || !transaction_id) {
+        return showResponse(false, "package_name and transaction_id required", null, statusCodes.VALIDATION_ERROR);
+    }
+
+    const wrappedFunc = tryCatchWrapper(handler.addCredit);
+    return wrappedFunc({ package_name, transaction_id }, this.userId);
+}
 
 }

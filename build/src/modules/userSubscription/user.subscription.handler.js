@@ -762,5 +762,69 @@ const UserSubscriptionHandler = {
         }
         return (0, response_util_1.showResponse)(true, "Plan list get successfully", getResponse, statusCodes_1.default.SUCCESS);
     }),
+    addCredit: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const { package_name, transaction_id } = data;
+            if (!package_name || !transaction_id) {
+                return (0, response_util_1.showResponse)(false, "package_name and transaction_id required", null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            console.log("Incoming:", package_name, transaction_id);
+            // ✅ USER CHECK
+            const user = yield user_auth_model_1.default.findById(user_id);
+            if (!user) {
+                return (0, response_util_1.showResponse)(false, "User not found", null, statusCodes_1.default.API_ERROR);
+            }
+            // ✅ DUPLICATE TRANSACTION CHECK
+            const existingLog = yield user_subscriptionLogs_model_1.default.findOne({ transaction_id });
+            if (existingLog) {
+                return (0, response_util_1.showResponse)(false, "Transaction already used", null, statusCodes_1.default.API_ERROR);
+            }
+            // ✅ GET PLAN
+            const plan = yield user_subscriptionPlans_model_1.default.findOne({
+                plan_name: { $regex: `^${package_name}$`, $options: "i" }
+            });
+            // 🔥 AUTO CREATE PLAN (fallback)
+            if (!plan) {
+                console.log("⚠️ Plan not found, creating default plan...");
+                return (0, response_util_1.showResponse)(false, "Invalid credit pack type", null, statusCodes_1.default.API_ERROR);
+                // plan = await subscriptionPlans.create({
+                //     plan_name: package_name,
+                //     type: "credit",
+                //     credits: 500,        // 🔥 default (change if needed)
+                //     amount: 12.99,
+                //     status: 1
+                // });
+            }
+            console.log("PLAN:", plan);
+            if (plan.type !== "credit") {
+                return (0, response_util_1.showResponse)(false, "Invalid credit pack type", null, statusCodes_1.default.API_ERROR);
+            }
+            const creditsToAdd = plan.credits || 0;
+            if (creditsToAdd <= 0) {
+                return (0, response_util_1.showResponse)(false, "Invalid credit value in plan", null, statusCodes_1.default.API_ERROR);
+            }
+            // ✅ ADD CREDITS (atomic)
+            yield user_auth_model_1.default.updateOne({ _id: user_id }, { $inc: { extra_credits: creditsToAdd }, is_credit_pack: true });
+            // ✅ SAVE LOG
+            yield user_subscriptionLogs_model_1.default.create({
+                user_id,
+                package_name: plan.plan_name,
+                transaction_id,
+                credits_added: creditsToAdd,
+                type: "credit",
+                subscription_status: "CREDIT_PURCHASE",
+                prev_user_subscription_obj: user.user_subscription || {},
+                amount: plan.amount || 0,
+                currency: "USD"
+            });
+            return (0, response_util_1.showResponse)(true, "Credits added successfully", {
+                credits_added: creditsToAdd
+            }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.error("❌ createCredit error:", error);
+            return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Something went wrong", null, statusCodes_1.default.API_ERROR);
+        }
+    })
 };
 exports.default = UserSubscriptionHandler;

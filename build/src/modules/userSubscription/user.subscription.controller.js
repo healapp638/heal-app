@@ -87,6 +87,20 @@ let UserSubscriptionController = class UserSubscriptionController extends tsoa_1
             return wrappedFunc({ plan_name, purchase_token }, this.userId); // Pass the request object directly to the function
         });
     }
+    //ends
+    /**
+     * Create Credit
+     */
+    addCredit(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { package_name, transaction_id } = request;
+            if (!package_name || !transaction_id) {
+                return (0, response_util_1.showResponse)(false, "package_name and transaction_id required", null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_subscription_handler_1.default.addCredit);
+            return wrappedFunc({ package_name, transaction_id }, this.userId);
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -112,6 +126,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserSubscriptionController.prototype, "initialPurchasedAndroidSubscription", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/addCredit"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserSubscriptionController.prototype, "addCredit", null);
 UserSubscriptionController = __decorate([
     (0, tsoa_1.Tags)('User Subscription Routes'),
     (0, tsoa_1.Route)('/user/subscription'),

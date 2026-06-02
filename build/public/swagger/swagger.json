@@ -271,6 +271,55 @@
 				}
 			}
 		},
+		"/user/subscription/addCredit": {
+			"post": {
+				"operationId": "AddCredit",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create Credit",
+				"tags": [
+					"User Subscription Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"transaction_id": {
+										"type": "string"
+									},
+									"package_name": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"transaction_id",
+									"package_name"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/modules/theme_list": {
 			"get": {
 				"operationId": "ThemeList",
@@ -1845,6 +1894,30 @@
 									},
 									"timeZone": {
 										"type": "string"
+									},
+									"hearAboutUs": {
+										"type": "string"
+									},
+									"howFellingLately": {
+										"type": "string"
+									},
+									"feelThatWay": {
+										"type": "string"
+									},
+									"likeToFellMore": {
+										"type": "string"
+									},
+									"helpFeelBetter": {
+										"type": "string"
+									},
+									"stopFeelBetter": {
+										"type": "string"
+									},
+									"timeYouCommit": {
+										"type": "string"
+									},
+									"goalStartWith": {
+										"type": "string"
 									}
 								},
 								"required": [
@@ -2109,32 +2182,6 @@
 						}
 					}
 				}
-			}
-		},
-		"/user/auth/toggle_biometric": {
-			"post": {
-				"operationId": "ToggleBiometric",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ApiResponse"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"User Auth Routes"
-				],
-				"security": [
-					{
-						"Bearer": []
-					}
-				],
-				"parameters": []
 			}
 		},
 		"/user/auth/forgot_password": {

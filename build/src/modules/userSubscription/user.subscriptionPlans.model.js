@@ -6,9 +6,13 @@ const susbriptionPlansSchema = new mongoose_1.Schema({
         type: String,
         default: "",
     },
-    duration_in_days: {
+    // duration_in_days: {
+    //     type: Number,
+    //     default: 30,
+    // },
+    credits: {
         type: Number,
-        default: 30,
+        default: 0,
     },
     type: {
         type: String,

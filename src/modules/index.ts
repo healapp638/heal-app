@@ -25,6 +25,7 @@ import userCommonRoutes from '../modules/UserCommon/user.common.route'
 import userAffirmationRoutes from '../modules/UserAffirmation/user.affirmation.route'
 import userHomeThemeRoutes from '../modules/UserHomeTheme/user.HomeTheme.route'
 import userHealyChatRoutes from '../modules/UserHealyChat/user.aichat.route'
+import userSubscriptionRoutes from '../modules/userSubscription/user.subscription.route'
 
 
 
@@ -49,10 +50,12 @@ Route.use('/user/auth', userAuthRoutes);
 Route.use('/user/common', userCommonRoutes);
 Route.use('/user/modules', userModulesRoutes);
 Route.use('/user/journal', userJournelRoutes);
+Route.use('/user/subscription',userSubscriptionRoutes)
 Route.use('/user/challenges', userChallengesRoutes);
 Route.use('/user/affirmation',userAffirmationRoutes)
 Route.use('/user/homeTheme',userHomeThemeRoutes)
 Route.use('/user/healyChat',userHealyChatRoutes)
+
 //user and admin all usertype common routes
 Route.use('/common', commonRoutes);
 

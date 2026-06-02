@@ -1,6 +1,6 @@
 import { ApiResponse, tokenUserTypeInterface } from "../../utils/interfaces.util";
 import { showResponse } from "../../utils/response.util";
-import { findOne, findByIdAndUpdate, findOneAndUpdate, findAndUpdatePushOrSet, createOne } from "../../helpers/db.helpers";
+import { findOne, findByIdAndUpdate, findOneAndUpdate, createOne } from "../../helpers/db.helpers";
 import { decodeToken, generateAccessRefreshToken } from "../../utils/auth.util";
 import * as commonHelper from "../../helpers/common.helper";
 import userAuthModel from "../../modules/UserAuth/user.auth.model";
@@ -22,43 +22,208 @@ import moment from "moment-timezone";
 import userDeeplinkModel from "../UserAffirmation/user.deeplink.model";
 
 const UserAuthHandler = {
+    // update_social_info: async (findUser: any, model: any, data: any) => {
+    //     try {
+    //         const { login_source, social_auth, email, name, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data
+
+    //         const editObj: any = {}
+
+    //         const social_account = {
+    //             email,
+    //             source: login_source,
+    //             token: social_auth,
+    //             fullName: name,
+    //             hearAboutUs: hearAboutUs,
+    //             howFellingLately: howFellingLately,
+    //             feelThatWay: feelThatWay,
+    //             likeToFellMore: likeToFellMore,
+    //             helpFeelBetter: helpFeelBetter,
+    //             stopFeelBetter: stopFeelBetter,
+    //             timeYouCommit: timeYouCommit,
+    //             goalStartWith: goalStartWith
+    //         }
+
+    //         // Check if social account exists in device_info array
+    //         const accountIndex = findUser?.data?.social_account?.findIndex((info: any) => info?.source === data?.login_source);
+
+    //         //if exist then update else add new
+    //         if (accountIndex !== -1) {
+    //             editObj[`social_account.${accountIndex}`] = social_account;
+    //         } else {
+    //             editObj.$push = { social_account: social_account }
+    //         }
+
+    //         const response = await findAndUpdatePushOrSet(model, { _id: findUser.data?._id }, editObj);
+
+    //     const is_onboarding = [
+    //     response?.data?.email,
+    //     response?.data?.hearAboutUs,
+    //     response?.data?.howFellingLately,
+    //     response?.data?.feelThatWay,
+    //     response?.data?.likeToFellMore,
+    //     response?.data?.helpFeelBetter,
+    //     response?.data?.stopFeelBetter,
+    //     response?.data?.timeYouCommit,
+    //     response?.data?.goalStartWith,
+    //     response?.data?.fullName
+    //     ].every(
+    //     value =>
+    //         value !== undefined &&
+    //         value !== null &&
+    //         String(value).trim() !== ''
+    //    );
+
+    //    if (response?.data?.is_onboarding !== is_onboarding) {
+    //     await userAuthModel.updateOne(
+    //         { _id: response.data?._id },
+    //         { $set: { is_onboarding } }
+    //     );
+    //    }
+    //    console.log(response, "response update_social_info")
+    //         //return update result
+    //         if (response.status) {
+    //             return { status: true, data: response.data }
+
+    //         } else {
+    //             return { status: false, data: null }
+    //         }
+
+    //     } catch (error) {
+    //         console.log(error, "error update_device_idd")
+    //         return { status: false }
+    //     }
+    // },//ends
+
     update_social_info: async (findUser: any, model: any, data: any) => {
-        try {
-            const { login_source, social_auth, email, name } = data
+    try {
 
-            const editObj: any = {}
+        const {
+            login_source,
+            social_auth,
+            email,
+            name,
+            hearAboutUs,
+            howFellingLately,
+            feelThatWay,
+            likeToFellMore,
+            helpFeelBetter,
+            stopFeelBetter,
+            timeYouCommit,
+            goalStartWith,
+            language,
+            timeZone
+        } = data;
+        console.log(data,"dtaaaaa")
 
-            const social_account = {
-                email,
-                source: login_source,
-                token: social_auth,
-                fullName: name
-            }
+        const editObj: any = {
+            $set: {}
+        };
+        console.log(data,"data")
 
-            // Check if social account exists in device_info array
-            const accountIndex = findUser?.data?.social_account?.findIndex((info: any) => info?.source === data?.login_source);
+        // =========================================
+        // UPDATE ROOT USER FIELDS
+        // =========================================
 
-            //if exist then update else add new
-            if (accountIndex !== -1) {
-                editObj[`social_account.${accountIndex}`] = social_account;
-            } else {
-                editObj.$push = { social_account: social_account }
-            }
+        if (email !== undefined) editObj.$set.email = email;
+        if (name !== undefined) editObj.$set.fullName = name;
+        if (language !== undefined) editObj.$set.language = language;
+        if (timeZone !== undefined) editObj.$set.timeZone = timeZone;
 
-            const response = await findAndUpdatePushOrSet(model, { _id: findUser.data?._id }, editObj);
-            //return update result
-            if (response.status) {
-                return { status: true, data: response.data }
+        if (hearAboutUs !== undefined) editObj.$set.hearAboutUs = hearAboutUs;
+        if (howFellingLately !== undefined) editObj.$set.howFellingLately = howFellingLately;
+        if (feelThatWay !== undefined) editObj.$set.feelThatWay = feelThatWay;
+        if (likeToFellMore !== undefined) editObj.$set.likeToFellMore = likeToFellMore;
+        if (helpFeelBetter !== undefined) editObj.$set.helpFeelBetter = helpFeelBetter;
+        if (stopFeelBetter !== undefined) editObj.$set.stopFeelBetter = stopFeelBetter;
+        if (timeYouCommit !== undefined) editObj.$set.timeYouCommit = timeYouCommit;
+        if (goalStartWith !== undefined) editObj.$set.goalStartWith = goalStartWith;
 
-            } else {
-                return { status: false, data: null }
-            }
+        // =========================================
+        // SOCIAL ACCOUNT OBJECT
+        // =========================================
 
-        } catch (error) {
-            console.log(error, "error update_device_idd")
-            return { status: false }
+        const social_account = {
+            email,
+            source: login_source,
+            token: social_auth,
+            fullName: name
+        };
+
+        const accountIndex = findUser?.data?.social_account?.findIndex(
+            (info: any) => info?.source === login_source
+        );
+
+        if (accountIndex !== -1) {
+            editObj.$set[`social_account.${accountIndex}`] = social_account;
+        } else {
+            editObj.$push = {
+                social_account
+            };
         }
-    },//ends
+
+        // =========================================
+        // UPDATE USER
+        // =========================================
+
+        await model.updateOne(
+            { _id: findUser.data?._id },
+            editObj
+        );
+
+        // =========================================
+        // GET UPDATED USER
+        // =========================================
+
+        const updatedUser = await model
+            .findById(findUser.data?._id)
+            .lean();
+
+        // =========================================
+        // CHECK ONBOARDING STATUS
+        // =========================================
+
+        const is_onboarding = [
+            updatedUser?.email,
+            updatedUser?.hearAboutUs,
+            updatedUser?.howFellingLately,
+            updatedUser?.feelThatWay,
+            updatedUser?.likeToFellMore,
+            updatedUser?.helpFeelBetter,
+            updatedUser?.stopFeelBetter,
+            updatedUser?.timeYouCommit,
+            updatedUser?.goalStartWith,
+            updatedUser?.fullName
+        ].every(
+            value =>
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ''
+        );
+
+        console.log(updatedUser?.is_onboarding, is_onboarding, "data")
+
+        if (updatedUser?.is_onboarding !== is_onboarding) {
+            await model.updateOne(
+                { _id: updatedUser._id },
+                { $set: { is_onboarding } }
+            );
+
+            updatedUser.is_onboarding = is_onboarding;
+        }
+
+        return {
+            status: true,
+            data: updatedUser
+        };
+
+    } catch (error) {
+        console.log(error, "error update_social_info");
+        return {
+            status: false,
+            data: null
+        };
+    }
+},
 
     login: async (data: any): Promise<ApiResponse> => {
         const { email, password, language, timeZone } = data;
@@ -148,7 +313,7 @@ const UserAuthHandler = {
     },//ends
 
     social_login: async (data: any) => {
-        const { login_source, social_auth, email, name = undefined, language, timeZone } = data;
+        const { login_source, social_auth, email, name = undefined, language, timeZone,hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
         const queryObject = {
             status: { $ne: USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -181,10 +346,11 @@ const UserAuthHandler = {
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //challenges logic start
-
+            // console.log(goalStartWith,"goalStartWith")
             const data = findUser?.data
-            await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone } });
-
+            // console.log(data,"datatatatta")
+            const updatedata = await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { timeZone: timeZone, hearAboutUs:hearAboutUs, howFellingLately:howFellingLately, feelThatWay:feelThatWay, likeToFellMore:likeToFellMore, helpFeelBetter:helpFeelBetter, stopFeelBetter:stopFeelBetter, timeYouCommit:timeYouCommit, goalStartWith:goalStartWith } },{ new: true });
+            // console.log(updatedata,"updatedata")
             await ChallengesQueue.add('challenges', { userData: data }, {
                 attempts: 3,
                 backoff: {
@@ -230,7 +396,7 @@ const UserAuthHandler = {
             }
 
             //update social account array 
-            const updateSocialInfo = await UserAuthHandler.update_social_info(findUser, userAuthModel, data)
+            const updateSocialInfo = await UserAuthHandler.update_social_info(findUser, userAuthModel, updatedata)
             if (!updateSocialInfo.status) {
                 return showResponse(false, getMessage(language || 'en', "login_error"), null, statusCodes.API_ERROR);
             }
@@ -264,7 +430,16 @@ const UserAuthHandler = {
                 isVerified: true,
                 language: language || 'en',
                 profilePic: 'file/file-1777357630130.webp',
+                hearAboutUs,
+                howFellingLately,
+                feelThatWay,
+                likeToFellMore,
+                helpFeelBetter,
+                stopFeelBetter,
+                timeYouCommit,
+                goalStartWith
             };
+            console.log(newObj, "newObj>>>>>>>>>>>>>>>")
 
             const userRef = new userAuthModel(newObj)
             const result = await createOne(userRef);
@@ -307,7 +482,32 @@ const UserAuthHandler = {
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
 
-            const userData = { is_after_social_login: false, account_type, is_profile_completed: true, ...result?.data, access_token, refresh_token }
+        const is_onboarding = [
+        result?.data?.email,
+        result?.data?.hearAboutUs,
+        result?.data?.howFellingLately,
+        result?.data?.feelThatWay,
+        result?.data?.likeToFellMore,
+        result?.data?.helpFeelBetter,
+        result?.data?.stopFeelBetter,
+        result?.data?.timeYouCommit,
+        result?.data?.goalStartWith,
+        result?.data?.fullName
+        ].every(
+        value =>
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ''
+       );
+
+       if (result?.data?.is_onboarding !== is_onboarding) {
+        await userAuthModel.updateOne(
+            { _id: result.data?._id },
+            { $set: { is_onboarding } }
+        );
+       }
+
+            const userData = { is_after_social_login: false, account_type, is_profile_completed: true, ...result?.data, access_token, refresh_token,is_onboarding:is_onboarding }
 
             return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
         }
@@ -619,43 +819,43 @@ const UserAuthHandler = {
 
 
     //ends
-    toggleBiometric: async (userId: string): Promise<ApiResponse> => {
-        try {
-            // find user
-            const user = await userAuthModel.findOne({
-                _id: commonHelper.convertToObjectId(userId),
-                status: USER_STATUS.ACTIVE,
-            });
+    // toggleBiometric: async (userId: string): Promise<ApiResponse> => {
+    //     try {
+    //         // find user
+    //         const user = await userAuthModel.findOne({
+    //             _id: commonHelper.convertToObjectId(userId),
+    //             status: USER_STATUS.ACTIVE,
+    //         });
 
-            if (!user) {
-                return showResponse(
-                    false,
-                    responseMessage.common.data_not_found,
-                    null
-                );
-            }
+    //         if (!user) {
+    //             return showResponse(
+    //                 false,
+    //                 responseMessage.common.data_not_found,
+    //                 null
+    //             );
+    //         }
 
-            // toggle value
-            user.is_biometric = !user.is_biometric;
+    //         // toggle value
+    //         user.is_biometric = !user.is_biometric;
 
-            await user.save();
+    //         await user.save();
 
-            return showResponse(
-                true,
-                "Biometric status updated successfully",
-                {
-                    is_biometric: user.is_biometric,
-                },
-                statusCodes.SUCCESS
-            );
-        } catch {
-            return showResponse(
-                false,
-                "err while updating status",
-                null
-            );
-        }
-    },
+    //         return showResponse(
+    //             true,
+    //             "Biometric status updated successfully",
+    //             {
+    //                 is_biometric: user.is_biometric,
+    //             },
+    //             statusCodes.SUCCESS
+    //         );
+    //     } catch {
+    //         return showResponse(
+    //             false,
+    //             "err while updating status",
+    //             null
+    //         );
+    //     }
+    // },
 
     forgotPassword: async (data: any): Promise<ApiResponse> => {
         const { email } = data;

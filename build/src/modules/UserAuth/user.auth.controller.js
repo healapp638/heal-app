@@ -56,9 +56,9 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     //   * User Social login 
     //   * login_source can be for google use google & for apple use apple etc
     //   */
-    socialLogin(login_source, social_auth, email, name, os_type, language, timeZone) {
+    socialLogin(login_source, social_auth, email, name, os_type, language, timeZone, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith) {
         return __awaiter(this, void 0, void 0, function* () {
-            const request = { login_source, social_auth, email, name, os_type, language, timeZone };
+            const request = { login_source, social_auth, email, name, os_type, language, timeZone, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith };
             const validate = (0, user_auth_validator_1.validateSocialLogin)(request);
             if (validate.error) {
                 return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
@@ -107,12 +107,12 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
         });
     }
     //ends
-    toggleBiometric() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_auth_handler_1.default.toggleBiometric);
-            return wrappedFunc(this.userId);
-        });
-    }
+    // @Security('Bearer')
+    // @Post("/toggle_biometric")
+    // public async toggleBiometric(): Promise<ApiResponse> {
+    //     const wrappedFunc = tryCatchWrapper(handler.toggleBiometric);
+    //     return wrappedFunc(this.userId);
+    // }
     //ends
     /**
     * Forgot password api endpoint
@@ -328,8 +328,16 @@ __decorate([
     __param(4, (0, tsoa_1.FormField)()),
     __param(5, (0, tsoa_1.FormField)()),
     __param(6, (0, tsoa_1.FormField)()),
+    __param(7, (0, tsoa_1.FormField)()),
+    __param(8, (0, tsoa_1.FormField)()),
+    __param(9, (0, tsoa_1.FormField)()),
+    __param(10, (0, tsoa_1.FormField)()),
+    __param(11, (0, tsoa_1.FormField)()),
+    __param(12, (0, tsoa_1.FormField)()),
+    __param(13, (0, tsoa_1.FormField)()),
+    __param(14, (0, tsoa_1.FormField)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, String, String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, String, String, String, String, String, String, String, String, String, String, String, String]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "socialLogin", null);
 __decorate([
@@ -353,13 +361,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "magicLinkLogin", null);
-__decorate([
-    (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/toggle_biometric"),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], UserAuthController.prototype, "toggleBiometric", null);
 __decorate([
     (0, tsoa_1.Post)("/forgot_password"),
     __param(0, (0, tsoa_1.Body)()),

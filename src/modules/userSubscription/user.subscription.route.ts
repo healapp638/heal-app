@@ -24,4 +24,11 @@ router.post('/ios_subscription_webhook', async (req: Request | any, res: Respons
     const result: ApiResponse = await controller.iosSubscriptionWebhook(req.body);
     return showOutput(res, result, result.code)
 })
+router.post('/addCredit', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { package_name, transaction_id } = req.body;
+
+    const controller = new UserSubscriptionController(req, res);
+    const result: ApiResponse = await controller.addCredit({ package_name, transaction_id });
+    return showOutput(res, result, result.code);
+});
 export default router
