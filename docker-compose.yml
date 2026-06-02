@@ -7,21 +7,21 @@ services:
         ports: 
         - "3001:3001"
         env_file:
-          - .env
+          - .env.docker
 
     bull-worker:
       build: .
       container_name: bull-worker
       command: npm run bull-worker
       env_file:
-        - .env
+        - .env.docker
 
     excel-worker:
         build: .
         container_name: excel-worker
         command: npm run excel-worker
         env_file:
-          - .env
+          - .env.docker
 
     redis:
       image: redis:7-alpine
