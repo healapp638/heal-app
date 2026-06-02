@@ -849,6 +849,89 @@ const UserSubscriptionHandler = {
         }
         return showResponse(true, "Plan list get successfully", getResponse, statusCodes.SUCCESS)
     },
+
+    addCredit: async (data: any, user_id: string): Promise<ApiResponse> => {
+        try {
+            const { package_name, transaction_id } = data;
+
+            if (!package_name || !transaction_id) {
+                return showResponse(false, "package_name and transaction_id required", null, statusCodes.VALIDATION_ERROR);
+            }
+
+            console.log("Incoming:", package_name, transaction_id);
+
+            // ✅ USER CHECK
+            const user:any = await userAuthModel.findById(user_id);
+            if (!user) {
+                return showResponse(false, "User not found", null, statusCodes.API_ERROR);
+            }
+
+            // ✅ DUPLICATE TRANSACTION CHECK
+            const existingLog = await userSusbriptionLogsModel.findOne({ transaction_id });
+            if (existingLog) {
+                return showResponse(false, "Transaction already used", null, statusCodes.API_ERROR);
+            }
+
+            // ✅ GET PLAN
+            const plan:any = await subscriptionPlans.findOne({
+                plan_name: { $regex: `^${package_name}$`, $options: "i" }
+            });
+
+            // 🔥 AUTO CREATE PLAN (fallback)
+            if (!plan) {
+                console.log("⚠️ Plan not found, creating default plan...");
+                return showResponse(false, "Invalid credit pack type", null, statusCodes.API_ERROR);
+
+                // plan = await subscriptionPlans.create({
+                //     plan_name: package_name,
+                //     type: "credit",
+                //     credits: 500,        // 🔥 default (change if needed)
+                //     amount: 12.99,
+                //     status: 1
+                // });
+            }
+
+            console.log("PLAN:", plan);
+
+            if (plan.type !== "credit") {
+                return showResponse(false, "Invalid credit pack type", null, statusCodes.API_ERROR);
+            }
+
+            const creditsToAdd = plan.credits || 0;
+
+            if (creditsToAdd <= 0) {
+                return showResponse(false, "Invalid credit value in plan", null, statusCodes.API_ERROR);
+            }
+
+            // ✅ ADD CREDITS (atomic)
+            await userAuthModel.updateOne(
+                { _id: user_id },
+                { $inc: { extra_credits: creditsToAdd }, is_credit_pack: true }
+            );
+
+            // ✅ SAVE LOG
+            await userSusbriptionLogsModel.create({
+                user_id,
+                package_name: plan.plan_name,
+                transaction_id,
+                credits_added: creditsToAdd,
+                type: "credit",
+                subscription_status: "CREDIT_PURCHASE",
+                prev_user_subscription_obj: user.user_subscription || {},
+                amount: plan.amount || 0,
+                currency: "USD"
+            });
+
+            return showResponse(true, "Credits added successfully", {
+                credits_added: creditsToAdd
+            }, statusCodes.SUCCESS);
+
+        } catch (error: any) {
+            console.error("❌ createCredit error:", error);
+            return showResponse(false, error?.message || "Something went wrong", null, statusCodes.API_ERROR);
+        }
+    }
 }
+
 
 export default UserSubscriptionHandler

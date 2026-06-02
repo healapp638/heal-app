@@ -17,7 +17,7 @@ const UserSchema = new mongoose_1.Schema({
     // country: { type: String, default: "" },
     email: { type: String, default: "", index: true },
     // dob: { type: Date, default: "" },
-    password: { type: String, default: "" },
+    // password: { type: String, default: "" },
     // otp: { type: String, default: null },
     // otpCreatedAt: { type: Date, default: null },
     profilePic: { type: String, default: "file/file-1777357630130.webp" },
@@ -54,7 +54,7 @@ const UserSchema = new mongoose_1.Schema({
         default: 'email',
         Comment: "email for normal created google with google apple with apple "
     },
-    is_biometric: { type: Boolean, default: false },
+    // is_biometric: { type: Boolean, default: false },
     timeZone: { type: String, default: "" },
     is_onboarding: { type: Boolean, default: false },
     lastDailyChallengeGeneratedDate: { type: Date, default: null },
@@ -65,6 +65,7 @@ const UserSchema = new mongoose_1.Schema({
     streak_credit: { type: Number, default: 0 },
     streak_days: { type: [Number], default: [] },
     last_streak_date: { type: String, default: "" }, // YYYY-MM-DD in user timezone
+    extra_credits: { type: Number, default: 0 }
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

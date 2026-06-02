@@ -36,4 +36,10 @@ router.post('/ios_subscription_webhook', (req, res) => __awaiter(void 0, void 0,
     const result = yield controller.iosSubscriptionWebhook(req.body);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/addCredit', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { package_name, transaction_id } = req.body;
+    const controller = new user_subscription_controller_1.default(req, res);
+    const result = yield controller.addCredit({ package_name, transaction_id });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

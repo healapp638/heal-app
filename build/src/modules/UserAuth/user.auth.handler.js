@@ -67,40 +67,166 @@ const moment_timezone_1 = __importDefault(require("moment-timezone"));
 // import moment from "moment";
 const user_deeplink_model_1 = __importDefault(require("../UserAffirmation/user.deeplink.model"));
 const UserAuthHandler = {
+    // update_social_info: async (findUser: any, model: any, data: any) => {
+    //     try {
+    //         const { login_source, social_auth, email, name, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data
+    //         const editObj: any = {}
+    //         const social_account = {
+    //             email,
+    //             source: login_source,
+    //             token: social_auth,
+    //             fullName: name,
+    //             hearAboutUs: hearAboutUs,
+    //             howFellingLately: howFellingLately,
+    //             feelThatWay: feelThatWay,
+    //             likeToFellMore: likeToFellMore,
+    //             helpFeelBetter: helpFeelBetter,
+    //             stopFeelBetter: stopFeelBetter,
+    //             timeYouCommit: timeYouCommit,
+    //             goalStartWith: goalStartWith
+    //         }
+    //         // Check if social account exists in device_info array
+    //         const accountIndex = findUser?.data?.social_account?.findIndex((info: any) => info?.source === data?.login_source);
+    //         //if exist then update else add new
+    //         if (accountIndex !== -1) {
+    //             editObj[`social_account.${accountIndex}`] = social_account;
+    //         } else {
+    //             editObj.$push = { social_account: social_account }
+    //         }
+    //         const response = await findAndUpdatePushOrSet(model, { _id: findUser.data?._id }, editObj);
+    //     const is_onboarding = [
+    //     response?.data?.email,
+    //     response?.data?.hearAboutUs,
+    //     response?.data?.howFellingLately,
+    //     response?.data?.feelThatWay,
+    //     response?.data?.likeToFellMore,
+    //     response?.data?.helpFeelBetter,
+    //     response?.data?.stopFeelBetter,
+    //     response?.data?.timeYouCommit,
+    //     response?.data?.goalStartWith,
+    //     response?.data?.fullName
+    //     ].every(
+    //     value =>
+    //         value !== undefined &&
+    //         value !== null &&
+    //         String(value).trim() !== ''
+    //    );
+    //    if (response?.data?.is_onboarding !== is_onboarding) {
+    //     await userAuthModel.updateOne(
+    //         { _id: response.data?._id },
+    //         { $set: { is_onboarding } }
+    //     );
+    //    }
+    //    console.log(response, "response update_social_info")
+    //         //return update result
+    //         if (response.status) {
+    //             return { status: true, data: response.data }
+    //         } else {
+    //             return { status: false, data: null }
+    //         }
+    //     } catch (error) {
+    //         console.log(error, "error update_device_idd")
+    //         return { status: false }
+    //     }
+    // },//ends
     update_social_info: (findUser, model, data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         try {
-            const { login_source, social_auth, email, name } = data;
-            const editObj = {};
-            const social_account = {
-                email,
-                source: login_source,
-                token: social_auth,
-                fullName: name
+            const { login_source, social_auth, email, name, fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, language, timeZone } = data;
+            const editObj = {
+                $set: {}
             };
-            // Check if social account exists in device_info array
-            const accountIndex = (_b = (_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.social_account) === null || _b === void 0 ? void 0 : _b.findIndex((info) => (info === null || info === void 0 ? void 0 : info.source) === (data === null || data === void 0 ? void 0 : data.login_source));
-            //if exist then update else add new
-            if (accountIndex !== -1) {
-                editObj[`social_account.${accountIndex}`] = social_account;
+            // =========================================
+            // ROOT USER FIELDS
+            // =========================================
+            Object.assign(editObj.$set, Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, ((email === null || email === void 0 ? void 0 : email.trim()) && { email })), (((_a = (fullName || name)) === null || _a === void 0 ? void 0 : _a.trim()) && {
+                fullName: fullName || name
+            })), ((language === null || language === void 0 ? void 0 : language.trim()) && { language })), ((timeZone === null || timeZone === void 0 ? void 0 : timeZone.trim()) && { timeZone })), ((hearAboutUs === null || hearAboutUs === void 0 ? void 0 : hearAboutUs.trim()) && { hearAboutUs })), ((howFellingLately === null || howFellingLately === void 0 ? void 0 : howFellingLately.trim()) && { howFellingLately })), ((feelThatWay === null || feelThatWay === void 0 ? void 0 : feelThatWay.trim()) && { feelThatWay })), ((likeToFellMore === null || likeToFellMore === void 0 ? void 0 : likeToFellMore.trim()) && { likeToFellMore })), ((helpFeelBetter === null || helpFeelBetter === void 0 ? void 0 : helpFeelBetter.trim()) && { helpFeelBetter })), ((stopFeelBetter === null || stopFeelBetter === void 0 ? void 0 : stopFeelBetter.trim()) && { stopFeelBetter })), ((timeYouCommit === null || timeYouCommit === void 0 ? void 0 : timeYouCommit.trim()) && { timeYouCommit })), ((goalStartWith === null || goalStartWith === void 0 ? void 0 : goalStartWith.trim()) && { goalStartWith })));
+            // =========================================
+            // SOCIAL ACCOUNT UPDATE
+            // =========================================
+            if (login_source === null || login_source === void 0 ? void 0 : login_source.trim()) {
+                const social_account = Object.assign(Object.assign(Object.assign(Object.assign({}, ((email === null || email === void 0 ? void 0 : email.trim()) && { email })), ((login_source === null || login_source === void 0 ? void 0 : login_source.trim()) && { source: login_source })), ((social_auth === null || social_auth === void 0 ? void 0 : social_auth.trim()) && { token: social_auth })), (((_b = (fullName || name)) === null || _b === void 0 ? void 0 : _b.trim()) && {
+                    fullName: fullName || name
+                }));
+                const accountIndex = (_d = (_c = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _c === void 0 ? void 0 : _c.social_account) === null || _d === void 0 ? void 0 : _d.findIndex((info) => (info === null || info === void 0 ? void 0 : info.source) === login_source);
+                if (Object.keys(social_account).length > 0) {
+                    if (accountIndex !== -1) {
+                        editObj.$set[`social_account.${accountIndex}`] = social_account;
+                    }
+                    else {
+                        editObj.$push = {
+                            social_account
+                        };
+                    }
+                }
             }
-            else {
-                editObj.$push = { social_account: social_account };
+            // =========================================
+            // NOTHING TO UPDATE
+            // =========================================
+            if (Object.keys(editObj.$set).length === 0 &&
+                !editObj.$push) {
+                return {
+                    status: true,
+                    data: findUser.data
+                };
             }
-            const response = yield (0, db_helpers_1.findAndUpdatePushOrSet)(model, { _id: (_c = findUser.data) === null || _c === void 0 ? void 0 : _c._id }, editObj);
-            //return update result
-            if (response.status) {
-                return { status: true, data: response.data };
+            // =========================================
+            // UPDATE USER
+            // =========================================
+            yield model.updateOne({ _id: findUser.data._id }, editObj);
+            // =========================================
+            // GET LATEST USER
+            // =========================================
+            const updatedUser = yield model
+                .findById(findUser.data._id)
+                .lean();
+            if (!updatedUser) {
+                return {
+                    status: false,
+                    data: null
+                };
             }
-            else {
-                return { status: false, data: null };
+            // =========================================
+            // CHECK ONBOARDING
+            // =========================================
+            const is_onboarding = [
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.email,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.hearAboutUs,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.howFellingLately,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.feelThatWay,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.likeToFellMore,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.helpFeelBetter,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.stopFeelBetter,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.timeYouCommit,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.goalStartWith,
+                updatedUser === null || updatedUser === void 0 ? void 0 : updatedUser.fullName
+            ].every((value) => value !== undefined &&
+                value !== null &&
+                String(value).trim() !== '');
+            if (updatedUser.is_onboarding !== is_onboarding) {
+                yield model.updateOne({ _id: updatedUser._id }, {
+                    $set: {
+                        is_onboarding
+                    }
+                });
+                updatedUser.is_onboarding = is_onboarding;
             }
+            const findUserr = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: updatedUser._id });
+            // console.log(findUserr,"findUserr")
+            return {
+                status: true,
+                data: findUserr.status ? findUserr.data : findUser.data
+            };
         }
         catch (error) {
-            console.log(error, "error update_device_idd");
-            return { status: false };
+            console.log(error, "error update_social_info");
+            return {
+                status: false,
+                data: null
+            };
         }
-    }), //ends
+    }),
     login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { email, password, language, timeZone } = data;
         const queryObject = { email, isVerified: true, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
@@ -177,8 +303,9 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
-        const { login_source, social_auth, email, name = undefined, language, timeZone } = data;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
+        const { login_source, social_auth, email, name = undefined, language, timeZone, fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
+        // console.log(data,"dattttaaaa")
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -207,16 +334,17 @@ const UserAuthHandler = {
         //if account already existed then update details and return token with login success
         if (findUser.status) {
             //challenges logic start
-            const data = findUser === null || findUser === void 0 ? void 0 : findUser.data;
-            yield user_auth_model_1.default.findOneAndUpdate({ _id: data === null || data === void 0 ? void 0 : data._id }, { $set: { timeZone: timeZone } });
-            yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: data }, {
+            // console.log(goalStartWith,"goalStartWith")
+            const existingUserData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
+            // console.log(existingUserData,"datatatatta")
+            yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData: existingUserData }, {
                 attempts: 3,
                 backoff: {
                     type: 'exponential',
                     delay: 1000
                 },
                 removeOnComplete: true,
-                jobId: data === null || data === void 0 ? void 0 : data._id.toString(),
+                jobId: existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData._id.toString(),
             });
             // const challengesDetails = await commonHelper.challengsFn(data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -239,14 +367,14 @@ const UserAuthHandler = {
             //     }
             // }
             //end
-            if (!((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.profilePic) || ((_c = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _c === void 0 ? void 0 : _c.profilePic) == '') {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: (_d = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _d === void 0 ? void 0 : _d._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } });
+            if (!(existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData.profilePic) || (existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData.profilePic) == '') {
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } });
             }
-            if (!((_e = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _e === void 0 ? void 0 : _e.language) || ((_f = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _f === void 0 ? void 0 : _f.language) == '') {
-                yield user_auth_model_1.default.findOneAndUpdate({ _id: (_g = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _g === void 0 ? void 0 : _g._id }, { $set: { language } });
+            if (!(existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData.language) || (existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData.language) == '') {
+                yield user_auth_model_1.default.findOneAndUpdate({ _id: existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData._id }, { $set: { language } });
             }
             //if account deactivate by admin throw error 
-            if (((_h = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _h === void 0 ? void 0 : _h.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_j = findUser.data) === null || _j === void 0 ? void 0 : _j.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
+            if (((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_c = findUser.data) === null || _c === void 0 ? void 0 : _c.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.ADMIN) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "deactivated_account"), null, statusCodes_1.default.API_ERROR);
             }
             //update social account array 
@@ -254,14 +382,15 @@ const UserAuthHandler = {
             if (!updateSocialInfo.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "login_error"), null, statusCodes_1.default.API_ERROR);
             }
-            commonHelper.keysDeleteFromObject(findUser === null || findUser === void 0 ? void 0 : findUser.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_k = findUser.data) === null || _k === void 0 ? void 0 : _k._id, (_l = findUser.data) === null || _l === void 0 ? void 0 : _l.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, findUser === null || findUser === void 0 ? void 0 : findUser.data), { access_token, refresh_token });
+            const updatedUserDoc = updateSocialInfo.data;
+            commonHelper.keysDeleteFromObject(updatedUserDoc);
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)(updatedUserDoc === null || updatedUserDoc === void 0 ? void 0 : updatedUserDoc._id, updatedUserDoc === null || updatedUserDoc === void 0 ? void 0 : updatedUserDoc.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const userDataResponse = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, updatedUserDoc), { access_token, refresh_token });
             //if account deactivated by user then activate it again 
-            if (((_m = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _m === void 0 ? void 0 : _m.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && ((_o = findUser.data) === null || _o === void 0 ? void 0 : _o.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
-                yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: (_p = findUser.data) === null || _p === void 0 ? void 0 : _p._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
+            if ((updatedUserDoc === null || updatedUserDoc === void 0 ? void 0 : updatedUserDoc.status) == workflow_constant_1.USER_STATUS.DEACTIVATED && (updatedUserDoc === null || updatedUserDoc === void 0 ? void 0 : updatedUserDoc.deactivateBy) === workflow_constant_1.DEACTIVATE_BY.USER) {
+                yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: updatedUserDoc === null || updatedUserDoc === void 0 ? void 0 : updatedUserDoc._id }, { status: workflow_constant_1.USER_STATUS.ACTIVE, deactivateBy: '' });
             }
-            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userDataResponse, statusCodes_1.default.SUCCESS);
         }
         else {
             //if not exist then register new user 
@@ -271,16 +400,26 @@ const UserAuthHandler = {
                         source: login_source,
                         email: email,
                         token: social_auth,
-                        fullName: name
+                        name: name
                     }
                 ],
                 email,
-                fullName: name ? name : commonHelper.getFirstNameFromEmail(email),
+                fullName: fullName,
                 account_source: login_source,
                 isVerified: true,
                 language: language || 'en',
                 profilePic: 'file/file-1777357630130.webp',
+                hearAboutUs,
+                howFellingLately,
+                feelThatWay,
+                likeToFellMore,
+                helpFeelBetter,
+                stopFeelBetter,
+                timeYouCommit,
+                goalStartWith,
+                timeZone
             };
+            console.log(newObj, "newObj>>>>>>>>>>>>>>>");
             const userRef = new user_auth_model_1.default(newObj);
             const result = yield (0, db_helpers_1.createOne)(userRef);
             if (!result.status) {
@@ -294,7 +433,7 @@ const UserAuthHandler = {
                     delay: 1000
                 },
                 removeOnComplete: true,
-                jobId: (_q = result === null || result === void 0 ? void 0 : result.data) === null || _q === void 0 ? void 0 : _q._id.toString(),
+                jobId: (_d = result === null || result === void 0 ? void 0 : result.data) === null || _d === void 0 ? void 0 : _d._id.toString(),
             });
             // const challengesDetails = await commonHelper.challengsFn(result?.data);
             // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -317,8 +456,26 @@ const UserAuthHandler = {
             // }
             //end
             commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
-            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_r = result.data) === null || _r === void 0 ? void 0 : _r._id, (_s = result.data) === null || _s === void 0 ? void 0 : _s.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
-            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token });
+            const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_e = result.data) === null || _e === void 0 ? void 0 : _e._id, (_f = result.data) === null || _f === void 0 ? void 0 : _f.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
+            const is_onboarding = [
+                (_g = result === null || result === void 0 ? void 0 : result.data) === null || _g === void 0 ? void 0 : _g.email,
+                (_h = result === null || result === void 0 ? void 0 : result.data) === null || _h === void 0 ? void 0 : _h.hearAboutUs,
+                (_j = result === null || result === void 0 ? void 0 : result.data) === null || _j === void 0 ? void 0 : _j.howFellingLately,
+                (_k = result === null || result === void 0 ? void 0 : result.data) === null || _k === void 0 ? void 0 : _k.feelThatWay,
+                (_l = result === null || result === void 0 ? void 0 : result.data) === null || _l === void 0 ? void 0 : _l.likeToFellMore,
+                (_m = result === null || result === void 0 ? void 0 : result.data) === null || _m === void 0 ? void 0 : _m.helpFeelBetter,
+                (_o = result === null || result === void 0 ? void 0 : result.data) === null || _o === void 0 ? void 0 : _o.stopFeelBetter,
+                (_p = result === null || result === void 0 ? void 0 : result.data) === null || _p === void 0 ? void 0 : _p.timeYouCommit,
+                (_q = result === null || result === void 0 ? void 0 : result.data) === null || _q === void 0 ? void 0 : _q.goalStartWith,
+                (_r = result === null || result === void 0 ? void 0 : result.data) === null || _r === void 0 ? void 0 : _r.fullName
+            ].every(value => value !== undefined &&
+                value !== null &&
+                String(value).trim() !== '');
+            if (((_s = result === null || result === void 0 ? void 0 : result.data) === null || _s === void 0 ? void 0 : _s.is_onboarding) !== is_onboarding) {
+                yield user_auth_model_1.default.updateOne({ _id: (_t = result.data) === null || _t === void 0 ? void 0 : _t._id }, { $set: { is_onboarding } });
+            }
+            const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token, is_onboarding: is_onboarding });
+            console.log(userData, "userrrrrrrrrdatatatus");
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
     }),
@@ -540,27 +697,39 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true, is_onboarding }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
     //ends
-    toggleBiometric: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            // find user
-            const user = yield user_auth_model_1.default.findOne({
-                _id: commonHelper.convertToObjectId(userId),
-                status: workflow_constant_1.USER_STATUS.ACTIVE,
-            });
-            if (!user) {
-                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null);
-            }
-            // toggle value
-            user.is_biometric = !user.is_biometric;
-            yield user.save();
-            return (0, response_util_1.showResponse)(true, "Biometric status updated successfully", {
-                is_biometric: user.is_biometric,
-            }, statusCodes_1.default.SUCCESS);
-        }
-        catch (_a) {
-            return (0, response_util_1.showResponse)(false, "err while updating status", null);
-        }
-    }),
+    // toggleBiometric: async (userId: string): Promise<ApiResponse> => {
+    //     try {
+    //         // find user
+    //         const user = await userAuthModel.findOne({
+    //             _id: commonHelper.convertToObjectId(userId),
+    //             status: USER_STATUS.ACTIVE,
+    //         });
+    //         if (!user) {
+    //             return showResponse(
+    //                 false,
+    //                 responseMessage.common.data_not_found,
+    //                 null
+    //             );
+    //         }
+    //         // toggle value
+    //         user.is_biometric = !user.is_biometric;
+    //         await user.save();
+    //         return showResponse(
+    //             true,
+    //             "Biometric status updated successfully",
+    //             {
+    //                 is_biometric: user.is_biometric,
+    //             },
+    //             statusCodes.SUCCESS
+    //         );
+    //     } catch {
+    //         return showResponse(
+    //             false,
+    //             "err while updating status",
+    //             null
+    //         );
+    //     }
+    // },
     forgotPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const { email } = data;

@@ -14,6 +14,7 @@ import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userAuthModel from "../../modules/UserAuth/user.auth.model";
 import userThemeEngagementModel from "../UserModules/user.themeEngagement.model";
+import { sendTopicNotification } from "../../services/notification.service";
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 
 const AdminUserHandler = {
@@ -206,7 +207,19 @@ const AdminUserHandler = {
 
         if (parsedStatus === USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = DEACTIVATE_BY.ADMIN
+            const res = await sendTopicNotification(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {})
+            console.log(res, 'res1')
         }//ends
+
+        if (parsedStatus === USER_STATUS.DELETED) {
+            const res = await sendTopicNotification(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {})
+            console.log(res, 'res2')
+        }
+
+        if (parsedStatus === USER_STATUS.ACTIVE) {
+            const res = await sendTopicNotification(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {})
+            console.log(res, 'res3')
+        }
 
         const response = await findOneAndUpdate(userModel, queryObject, editObj);
         if (!response.status) {
@@ -271,7 +284,6 @@ const AdminUserHandler = {
         const all_users = await getCount(userModel, { status: { $ne: USER_STATUS.DELETED } })
         const active_users = await getCount(userModel, { status: USER_STATUS.ACTIVE })
         const deactivated_users = await getCount(userModel, { status: USER_STATUS.DEACTIVATED });
-        console.log(fetch_data_date, 'fetch_data_date')
         const journelPieChart = await userJournalModel.aggregate([
             {
                 $match: {

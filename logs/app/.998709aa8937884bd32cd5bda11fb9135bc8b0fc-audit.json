@@ -6,11 +6,6 @@
     "auditLog": "logs/app/.998709aa8937884bd32cd5bda11fb9135bc8b0fc-audit.json",
     "files": [
         {
-            "date": 1779955194024,
-            "name": "logs/app/app-2026-05-28.log",
-            "hash": "b4ffd9115da397f81a9be64224a6f31f5c6678dc1dace544a01f836b66764dea"
-        },
-        {
             "date": 1780032308501,
             "name": "logs/app/app-2026-05-29.log",
             "hash": "e0de1f6afdf19cd580c0b10ad1673dc367e2193b9f6b001c3d60d6b699ff5b96"
@@ -18,7 +13,24 @@
         {
             "date": 1780291775382,
             "name": "logs/app/app-2026-06-01.log",
+<<<<<<< HEAD
+            "hash": "749f24a36aa77eb7b8bc5889eda5b25e7c1da768997fe0520b9e500a22eed6ed"
+        },
+        {
+            "date": 1780378854193,
+            "name": "logs/app/app-2026-06-02.log",
+            "hash": "21fee7c746ba20aaddb0a2b2bd3f455852ba6cab15334099e8fa9fc5bdd7bdda"
+=======
             "hash": "7b15f114402bb8a6036244c3eaffe045f5c5fd5f7619b789bcbdb3bb489c3a20"
+<<<<<<< Updated upstream
+>>>>>>> b7e28e49da74d96c36dedd6d86661414519cce4f
+=======
+        },
+        {
+            "date": 1780398231767,
+            "name": "logs/app/app-2026-06-02.log",
+            "hash": "d9b8a888f5577c96d92c2c3879a1df2157381297aa5a6515ad2b70a5089e68ad"
+>>>>>>> Stashed changes
         }
     ],
     "hashType": "sha256"

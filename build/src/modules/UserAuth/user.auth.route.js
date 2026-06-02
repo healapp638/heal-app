@@ -38,11 +38,11 @@ router.post('/magicLinkLogin', (req, res) => __awaiter(void 0, void 0, void 0, f
     const result = yield controller.magicLinkLogin({ email, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith, fullName, language, timeZone, code });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.post('/toggle_biometric', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const controller = new user_auth_controller_1.default(req, res);
-    const result = yield controller.toggleBiometric();
-    return (0, response_util_1.showOutput)(res, result, result.code);
-}));
+// router.post('/toggle_biometric', verifyTokenUser, async (req: Request | any, res: Response) => {
+//     const controller = new UserAuthController(req, res)
+//     const result: ApiResponse = await controller.toggleBiometric();
+//     return showOutput(res, result, result.code)
+// })
 router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password, language, timeZone } = req.body;
     const controller = new user_auth_controller_1.default(req, res);
@@ -50,9 +50,9 @@ router.post('/login', rate_limit_middleware_1.ratLimiting, (req, res) => __await
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/social_login', multer.addToMulter.none(), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { login_source, social_auth, email, name, os_type, language, timeZone } = req.body;
+    const { login_source, social_auth, email, name, os_type, language, timeZone, fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = req.body;
     const userAuthController = new user_auth_controller_1.default(req, res);
-    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language, timeZone);
+    const result = yield userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language, timeZone, fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/forgot_password', (req, res) => __awaiter(void 0, void 0, void 0, function* () {

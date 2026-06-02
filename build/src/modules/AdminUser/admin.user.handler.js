@@ -60,6 +60,7 @@ const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenge
 const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
 const user_auth_model_2 = __importDefault(require("../../modules/UserAuth/user.auth.model"));
 const user_themeEngagement_model_1 = __importDefault(require("../UserModules/user.themeEngagement.model"));
+const notification_service_1 = require("../../services/notification.service");
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 const AdminUserHandler = {
     getUsersList: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -231,7 +232,17 @@ const AdminUserHandler = {
         const editObj = { status: parsedStatus, deactivate_by: '' };
         if (parsedStatus === workflow_constant_1.USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = workflow_constant_1.DEACTIVATE_BY.ADMIN;
+            const res = yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {});
+            console.log(res, 'res1');
         } //ends
+        if (parsedStatus === workflow_constant_1.USER_STATUS.DELETED) {
+            const res = yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {});
+            console.log(res, 'res2');
+        }
+        if (parsedStatus === workflow_constant_1.USER_STATUS.ACTIVE) {
+            const res = yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {});
+            console.log(res, 'res3');
+        }
         const response = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, editObj);
         if (!response.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.user_account_update_error, null, statusCodes_1.default.API_ERROR);
@@ -287,7 +298,6 @@ const AdminUserHandler = {
         const all_users = yield (0, db_helpers_1.getCount)(user_auth_model_1.default, { status: { $ne: workflow_constant_1.USER_STATUS.DELETED } });
         const active_users = yield (0, db_helpers_1.getCount)(user_auth_model_1.default, { status: workflow_constant_1.USER_STATUS.ACTIVE });
         const deactivated_users = yield (0, db_helpers_1.getCount)(user_auth_model_1.default, { status: workflow_constant_1.USER_STATUS.DEACTIVATED });
-        console.log(fetch_data_date, 'fetch_data_date');
         const journelPieChart = yield user_journel_model_1.default.aggregate([
             {
                 $match: {

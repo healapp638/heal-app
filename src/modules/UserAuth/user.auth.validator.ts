@@ -37,7 +37,7 @@ export const validateSendMagicLink = (user: any) => {
         stopFeelBetter: joi.string().optional().allow(''),
         timeYouCommit: joi.string().optional().allow(''),
         goalStartWith: joi.string().optional().allow(''),
-        fullName: joi.string().required().allow(''),
+        fullName: joi.string().optional().allow(''),
         email: joi.string().trim().email().required(),
         language: joi.string().optional().valid(...Object.values(languages)).allow(''),
     }).validate(user)
@@ -53,7 +53,7 @@ export const validateSendMagicLinkLogin = (user: any) => {
         stopFeelBetter: joi.string().optional().allow(''),
         timeYouCommit: joi.string().optional().allow(''),
         goalStartWith: joi.string().optional().allow(''),
-        fullName: joi.string().required().allow(''),
+        fullName: joi.string().max(40).required().allow(''),
         email: joi.string().trim().email().required(),
         language: joi.string().optional().valid(...Object.values(languages)).allow(''),
         timeZone: joi.string().optional().allow(''),
@@ -116,6 +116,15 @@ export const validateSocialLogin = (user: any) => {
         os_type: joi.string().optional().allow(''),
         language: joi.string().optional().allow(''),
         timeZone: joi.string().optional().allow(''),
+        fullName:joi.string().optional().allow(''),
+        hearAboutUs: joi.string().optional().allow(''),
+        howFellingLately: joi.string().optional().allow(''),
+        feelThatWay: joi.string().optional().allow(''),
+        likeToFellMore: joi.string().optional().allow(''),
+        helpFeelBetter: joi.string().optional().allow(''),
+        stopFeelBetter: joi.string().optional().allow(''),
+        timeYouCommit: joi.string().optional().allow(''),
+        goalStartWith: joi.string().optional().allow(''),
     }).validate(user)
 }
 

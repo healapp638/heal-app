@@ -31,11 +31,11 @@ router.post('/magicLinkLogin', async (req: Request | any, res: Response) => {
     return showOutput(res, result, result.code)
 })
 
-router.post('/toggle_biometric', verifyTokenUser, async (req: Request | any, res: Response) => {
-    const controller = new UserAuthController(req, res)
-    const result: ApiResponse = await controller.toggleBiometric();
-    return showOutput(res, result, result.code)
-})
+// router.post('/toggle_biometric', verifyTokenUser, async (req: Request | any, res: Response) => {
+//     const controller = new UserAuthController(req, res)
+//     const result: ApiResponse = await controller.toggleBiometric();
+//     return showOutput(res, result, result.code)
+// })
 
 router.post('/login', ratLimiting, async (req: Request | any, res: Response) => {
     const { email, password, language, timeZone } = req.body;
@@ -45,9 +45,9 @@ router.post('/login', ratLimiting, async (req: Request | any, res: Response) => 
 })
 
 router.post('/social_login', multer.addToMulter.none(), async (req: Request | any, res: Response) => {
-    const { login_source, social_auth, email, name, os_type, language, timeZone } = req.body;
+    const { login_source, social_auth, email, name, os_type, language, timeZone,fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = req.body;
     const userAuthController = new UserAuthController(req, res)
-    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language, timeZone);
+    const result: ApiResponse = await userAuthController.socialLogin(login_source, social_auth, email, name, os_type, language, timeZone,fullName, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith);
     return showOutput(res, result, result.code)
 })
 
