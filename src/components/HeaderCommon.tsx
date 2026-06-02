@@ -24,6 +24,7 @@ interface HeaderCommonProps {
   onRightPress?: () => void;
   tintColor?: string;
   viewStyle?: any;
+  rightIconStyle?: any;
 }
 const HeaderCommon: React.FC<HeaderCommonProps> = ({
   title,
@@ -34,6 +35,7 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
   onRightPress,
   tintColor,
   viewStyle,
+  rightIconStyle,
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
@@ -117,10 +119,13 @@ const HeaderCommon: React.FC<HeaderCommonProps> = ({
             <Image
               source={rightIcon}
               tintColor={activeTintColor}
-              style={{
-                height: 21,
-                width: 21,
-              }} // Reusing same icon size constraints
+              style={[
+                {
+                  height: 21,
+                  width: 21,
+                },
+                { ...rightIconStyle },
+              ]} // Reusing same icon size constraints
               resizeMode="contain"
             />
           </TouchableOpacity>

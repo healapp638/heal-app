@@ -92,7 +92,7 @@
     "allSetB": "You’re All Set,",
     "creatingSpaceTitle": "Creating your space...",
     "takeMinuteSubtitle": "Setting up everything for you...",
-    "welcomeSentence1": "Welcome to Heal! We’re here to support you on your journey towards clarity & Connection.",
+    "welcomeSentence1": "Welcome to Heal! We’re here to support you on your journey towards clarity & connection.",
     "welcomeSentence2": "It’s okay to feel stuck sometimes, you’re not alone in this. Take a moment to breath and know you’ve made an important step today.",
     "startHealing": "Begin your journey",
     "seeBetterSubtitle": "This helps us understand you better.",
@@ -342,7 +342,7 @@
     "journalSubtitle": "Your private space",
     "searchPlaceholder": "Search...",
     "welcomeToSpace": "Welcome to your space",
-    "journalWelcomeDesc": "This place is yours. Write down what you feel; I'm here to listen with kindness.",
+    "journalWelcomeDesc": "This place is yours. Write down what you feel",
     "journalDetails": "Details",
     "journalEntryTitle": "Title",
     "addJournalHeaderTitle": "New Entry",
@@ -592,6 +592,7 @@
     "startMyJourney": "Start My Journey",
     "monthlyPriceInfo": "Just CHF 10.00 per month. Billed monthly and renews automatically unless canceled in the App Store.",
     "startMy3DayFreeTrial": "Start My 3-Day Free Trial",
-    "yearlyPriceInfoNew": "3 days free, then CHF 48.00 per year. Billed yearly and renews automatically unless canceled in the App Store."
+    "yearlyPriceInfoNew": "3 days free, then CHF 48.00 per year. Billed yearly and renews automatically unless canceled in the App Store.",
+    "close": "Close"
   }
 }

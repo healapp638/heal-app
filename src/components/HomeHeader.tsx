@@ -104,7 +104,7 @@ const HomeHeader = ({
           </View>
         </View>
       )}
-      {showCrown && (
+      {/* {showCrown && (
         <Pressable
           onPress={(...args: any) => {
             triggerHaptic('impactMedium');
@@ -121,7 +121,7 @@ const HomeHeader = ({
             resizeMode="contain"
           />
         </Pressable>
-      )}
+      )} */}
     </View>
   );
 };

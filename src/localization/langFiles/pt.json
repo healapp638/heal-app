@@ -342,7 +342,7 @@
     "journalSubtitle": "Seu espaço privado",
     "searchPlaceholder": "Pesquisar...",
     "welcomeToSpace": "Bem-vindo ao seu espaço",
-    "journalWelcomeDesc": "Este lugar é seu. Escreva o que sente; estou aqui para ouvir com bondade.",
+    "journalWelcomeDesc": "Este lugar é seu. Escreva o que sente",
     "journalDetails": "Detalhes",
     "journalEntryTitle": "Título",
     "addJournalHeaderTitle": "Nova Entrada",
@@ -589,6 +589,7 @@
     "startMyJourney": "Começar minha jornada",
     "monthlyPriceInfo": "Apenas CHF 10.00 por mês. Cobrado mensalmente e renovado automaticamente, a menos que seja cancelado na App Store.",
     "startMy3DayFreeTrial": "Começar minha avaliação gratuita de 3 dias",
-    "yearlyPriceInfoNew": "3 dias grátis, depois CHF 48.00 por ano. Cobrado anualmente e renovado automaticamente, a menos que seja cancelado na App Store."
+    "yearlyPriceInfoNew": "3 dias grátis, depois CHF 48.00 por ano. Cobrado anualmente e renovado automaticamente, a menos que seja cancelado na App Store.",
+    "close": "Fechar"
   }
 }

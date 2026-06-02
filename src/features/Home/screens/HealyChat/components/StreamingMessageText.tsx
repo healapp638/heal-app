@@ -11,6 +11,7 @@ interface StreamingMessageTextProps {
   isLatest: boolean;
   style: any;
   onComplete?: () => void;
+  showDisclaimer?: boolean;
 }
 
 const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
@@ -18,13 +19,14 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   isLatest,
   style,
   onComplete,
+  showDisclaimer,
 }) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = useStyle(colors);
 
   const [displayedText, setDisplayedText] = useState('');
-  const [isDone, setIsDone] = useState(!isLatest);
+  const [, setIsDone] = useState(!isLatest);
 
   useEffect(() => {
     if (isLatest && text) {
@@ -48,7 +50,7 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
       setDisplayedText(text);
       setIsDone(true);
     }
-  }, [text, isLatest]);
+  }, [text, isLatest, onComplete]);
 
   return (
     <View style={{ alignItems: 'flex-start', width: '100%' }}>
@@ -60,9 +62,11 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
           tintColor={colors.primary}
           resizeMode="contain"
         />
-        <SolidText style={styles.disclaimerText}>
-          {localization.appkeys.healyIsAiAndCanMakeMistakes || "Healy is AI and can make mistakes.\nPlease double-check responses."}
-        </SolidText>
+        {showDisclaimer && (
+          <SolidText style={styles.disclaimerText}>
+            {localization.appkeys.healyIsAiAndCanMakeMistakes || "Healy is AI and can make mistakes.\nPlease double-check responses."}
+          </SolidText>
+        )}
       </View>
     </View>
   );

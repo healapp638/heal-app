@@ -7,6 +7,7 @@ import {
   ScrollView,
   ActivityIndicator,
   StyleSheet,
+  Alert,
 } from 'react-native';
 import Animated, {
   FadeInUp,
@@ -220,6 +221,7 @@ const ThemeMixes = () => {
                       updateCache,
                     );
                     triggerHaptic('impactMedium');
+
                     postApi(
                       {
                         endpoint: endpoints.add_user_theme,

@@ -29,6 +29,7 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   useEffect(() => {
+    notifee.requestPermission();
     AppUtils.disableFontScale();
     checkUpdate();
     getLanguage();

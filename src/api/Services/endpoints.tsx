@@ -50,4 +50,6 @@ export const endpoints = {
   getRandomQuestions: '/user/healyChat/getRandomQuestions',
   progress_tracker_list: '/user/auth/progress_tracker_list',
   delete_deactivate: '/user/auth/delete_deactivate',
+  claimStreak: '/user/auth/claimStreak',
+  theme_engagement_create: '/user/modules/theme_engagement_create',
 };

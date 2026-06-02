@@ -1,4 +1,11 @@
-import { Alert, Image, View, TouchableOpacity, Text } from 'react-native';
+import {
+  Alert,
+  Image,
+  View,
+  TouchableOpacity,
+  Text,
+  Platform,
+} from 'react-native';
 import React, { useCallback, useContext, useRef } from 'react';
 import SolidView from '../../../../components/SolidView';
 import {
@@ -163,7 +170,7 @@ const Welcome = () => {
             resizeMode="contain"
             style={styles.phoneImage}
           />
-          <View style={{ flex: 1 }} />
+          <View style={{ flex: Platform.OS == 'ios' ? 0.8 : 1 }} />
           <SolidText style={styles.title}>
             {localization.appkeys?.healingStarts}
           </SolidText>

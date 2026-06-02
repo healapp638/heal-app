@@ -45,7 +45,7 @@ const useSocialLogin = () => {
       login_source: source,
       social_auth: uID,
       email: email,
-      name: name,
+      name: onboardingAnswers?.fullName || name || '',
       os_type: Platform.OS,
       language: AppUtils.getLanguageCode(appLanguage),
       timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -64,21 +64,7 @@ const useSocialLogin = () => {
       { endpoint: endpoints.social_login, data: payload },
       {
         onSuccess: (response: any) => {
-          if (response?.data?.is_profile_completed == false) {
-            dispatch(setToken(response?.data?.access_token));
-            dispatch(setRefreshToken(response?.data?.refresh_token));
-            dispatch(setUser(response?.data));
-            dispatch(setAuth(true));
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: AppRoutes.CompleteProfile,
-                  params: { userData: response?.data },
-                } as never,
-              ],
-            });
-          } else if (response?.data?.is_onboarding === false) {
+          if (response?.data?.is_onboarding === false) {
             dispatch(setUser(response?.data));
             dispatch(setToken(response?.data?.access_token));
             dispatch(setRefreshToken(response?.data?.refresh_token));

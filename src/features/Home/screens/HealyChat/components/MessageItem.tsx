@@ -10,48 +10,17 @@ interface MessageItemProps {
   logoSource: any;
   tintColor: string;
   onComplete: () => void;
+  showDisclaimer?: boolean;
 }
 
-// Time formatter matching design layout (11:54 AM, 2:20 PM)
-const formatTime = (dateString?: string) => {
-  if (!dateString) return '';
-  try {
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return '';
 
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-    return `${hours}:${minutesStr} ${ampm}`;
-  } catch {
-    return '';
-  }
-};
-
-const getMessageTime = (item: any) => {
-  if (item.time) return item.time;
-  const formatted = formatTime(item.createdAt);
-  if (formatted) return formatted;
-
-  // Default to current time for optimistic messages
-  const date = new Date();
-  let hours = date.getHours();
-  const minutes = date.getMinutes();
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-  return `${hours}:${minutesStr} ${ampm}`;
-};
 
 const MessageItemComponent: React.FC<MessageItemProps> = ({
   item,
   isLatestAssistant,
   styles,
   onComplete,
+  showDisclaimer,
 }) => {
   const isUser = item.role === 'user';
 
@@ -78,6 +47,7 @@ const MessageItemComponent: React.FC<MessageItemProps> = ({
             isLatest={isLatestAssistant}
             style={styles.messageText}
             onComplete={onComplete}
+            showDisclaimer={showDisclaimer}
           />
         </View>
       )}
@@ -93,6 +63,7 @@ export const MessageItem = React.memo(
       prevProps.item._id === nextProps.item._id &&
       prevProps.item.message === nextProps.item.message &&
       prevProps.isLatestAssistant === nextProps.isLatestAssistant &&
+      prevProps.showDisclaimer === nextProps.showDisclaimer &&
       prevProps.styles === nextProps.styles &&
       prevProps.logoSource === nextProps.logoSource &&
       prevProps.tintColor === nextProps.tintColor

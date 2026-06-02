@@ -13,7 +13,6 @@ import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 
 // Custom Hooks
-import { useKeyboardHeight } from './hooks/useKeyboardHeight';
 import { useHealyChat } from './hooks/useHealyChat';
 
 // Extracted Components
@@ -45,11 +44,10 @@ const HealyChat = () => {
     setConversationId,
     startNewChat,
     shouldScrollOnLayout,
-    setShouldScrollOnLayout,
-
     randomQuestion,
     loadMorePastMessages,
     isPaginationLoading,
+    firstAssistantMessageId,
   } = useHealyChat(flatListRef);
 
   const handleScroll = useCallback(
@@ -69,15 +67,21 @@ const HealyChat = () => {
     ({ item, index }: { item: any; index: number }) => {
       const isUser = item.role === 'user';
       const isLatestAssistant =
-         !isUser &&
+        !isUser &&
         index === messages.length - 1 &&
         item._id !== lastStreamedId &&
         shouldAnimateNext;
+
+      const showDisclaimer =
+        !isUser &&
+        (item._id === firstAssistantMessageId ||
+          item.id === firstAssistantMessageId);
 
       return (
         <MessageItem
           item={item}
           isLatestAssistant={isLatestAssistant}
+          showDisclaimer={showDisclaimer}
           styles={styles}
           logoSource={images.h}
           tintColor={colors.primary}
@@ -97,6 +101,7 @@ const HealyChat = () => {
       colors.primary,
       setLastStreamedId,
       setShouldAnimateNext,
+      firstAssistantMessageId,
     ],
   );
 
@@ -119,6 +124,10 @@ const HealyChat = () => {
             onRightPress={() => {
               Keyboard.dismiss();
               setIsDrawerOpen(true);
+            }}
+            rightIconStyle={{
+              height: 18,
+              width: 18,
             }}
             viewStyle={{ marginBottom: 0 }}
           />

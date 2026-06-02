@@ -24,15 +24,17 @@ import ChallengeCard from '../../../../components/ChallengeCard';
 import ModuleCard from '../../../../components/ModuleCard';
 import style from './style';
 import PremiumModal from '../../../../modals/PremiumModal';
+import StreakModal from '../../../../modals/StreakModal';
 import JournalCard from '../../../../components/JournalCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
-import { store } from '../../../../redux/Store/store';
 import useGetApi from '../../../../hooks/useGetApi';
+import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import { setModuleSubModule } from '../../../../redux/Reducers/tempData';
+import messaging from '@react-native-firebase/messaging';
 const Home = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -42,6 +44,8 @@ const Home = () => {
   const user = useSelector((state: any) => state.userData.user);
 
   const [showCreditsModal, setShowCreditsModal] = React.useState(false);
+  const [showStreakModal, setShowStreakModal] = React.useState(false);
+  const { mutate: postApi } = usePostApi();
 
   const userName = user?.fullName || 'User';
   const { data: startedModulesData, refetch: refetchStarted } = useGetApi(
@@ -66,6 +70,29 @@ const Home = () => {
     refetchRandomQuestions();
   }, [refetchRandomQuestions]);
 
+  React.useEffect(() => {
+    if (user?._id) {
+      messaging()
+        .unsubscribeFromTopic(user._id)
+        .then(() => {
+          return messaging()
+            .subscribeToTopic(user._id)
+            .then(() => {
+              // console.log(
+              //   'FCM Subscription Status: Subscribed successfully to topic',
+              //   user._id,
+              // );
+            });
+        })
+        .catch(error => {
+          // console.log(
+          //   'FCM Subscription Status: Failed to update topic subscription',
+          //   error,
+          // );
+        });
+    }
+  }, [user?._id]);
+
   useFocusEffect(
     React.useCallback(() => {
       refetchRandomQuestions();
@@ -79,6 +106,20 @@ const Home = () => {
     '"If you don\'t throw yourself into something, you\'ll never know what you could have had."';
   useFocusEffect(
     React.useCallback(() => {
+      postApi(
+        {
+          endpoint: endpoints.claimStreak,
+          data: {},
+        },
+        {
+          onSuccess: () => {
+            dispatch(getUserDetail() as any);
+          },
+          onError: (error: any) => {
+            console.log('claimStreak error', error);
+          },
+        },
+      );
       dispatch(getUserDetail() as any);
       refetchStarted();
       refetchAffirmation();
@@ -86,8 +127,9 @@ const Home = () => {
         // Do something when the screen is unfocused
         // Useful for cleanup functions
       };
-    }, [dispatch, refetchStarted, refetchAffirmation]),
+    }, [dispatch, refetchStarted, refetchAffirmation, postApi]),
   );
+  // console.log(user?.streak_days);
   return (
     <SolidView
       isScrollEnabled={false}
@@ -97,12 +139,10 @@ const Home = () => {
           <HomeHeader
             userName={userName}
             safeSpaceLabel={localization.appkeys?.homeSafeSpace || 'Safe Space'}
-            streakCount={3}
+            streakCount={user?.streak_count}
             showCrown={false}
             onCrownPress={() => setShowCreditsModal(true)}
-            onStreakPress={() =>
-              navigation.navigate(AppRoutes.DailyStreak as never)
-            }
+            onStreakPress={() => setShowStreakModal(true)}
             onCalendarPress={() =>
               navigation.navigate(AppRoutes.Calendar as never)
             }
@@ -190,11 +230,15 @@ const Home = () => {
                     <ModuleCard
                       onPress={() => {
                         triggerHaptic('impactMedium');
-                        dispatch(setModuleSubModule({
-                          ...item,
-                          _id: item.sub_module_id,
-                        }));
-                        return navigation.navigate(AppRoutes.StartedModule as never);
+                        dispatch(
+                          setModuleSubModule({
+                            ...item,
+                            _id: item.sub_module_id,
+                          }),
+                        );
+                        return navigation.navigate(
+                          AppRoutes.StartedModule as never,
+                        );
                       }}
                       background={
                         index === 0 ? images.moduleBack1 : images.moduleBack2
@@ -287,6 +331,11 @@ const Home = () => {
           <PremiumModal
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
+          />
+          <StreakModal
+            visible={showStreakModal}
+            onClose={() => setShowStreakModal(false)}
+            streakCount={user?.streak_count ?? 0}
           />
         </View>
       }

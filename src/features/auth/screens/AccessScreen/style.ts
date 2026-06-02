@@ -51,10 +51,10 @@ const style = (colors: any) =>
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.white,
-      height: Platform.OS === 'ios' ? 52 : 50,
+      height: Platform.OS === 'ios' ? 60 : 54,
       borderRadius: 100,
       width: '90%',
-      marginBottom: Platform.OS == 'ios' ? 22 : 20,
+      marginBottom: Platform.OS == 'ios' ? 20 : 18,
       alignSelf: 'center',
 
       borderWidth: 0.5,
@@ -89,7 +89,7 @@ const style = (colors: any) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingBottom: Platform.OS === 'ios' ? 20 : 10,
+
     },
     footerText: {
       fontFamily: AppFonts.regular,

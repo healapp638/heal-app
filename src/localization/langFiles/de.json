@@ -342,7 +342,7 @@
     "journalSubtitle": "Dein privater Raum",
     "searchPlaceholder": "Suche...",
     "welcomeToSpace": "Willkommen in deinem Raum",
-    "journalWelcomeDesc": "Dieser Ort gehört dir. Schreibe auf, was du fühlst; ich bin hier, um mit Güte zuzuhören.",
+    "journalWelcomeDesc": "Dieser Ort gehört dir. Schreibe auf, was du fühlst",
     "journalDetails": "Details",
     "journalEntryTitle": "Titel",
     "addJournalHeaderTitle": "Neuer Eintrag",
@@ -589,6 +589,7 @@
     "startMyJourney": "Meine Reise beginnen",
     "monthlyPriceInfo": "Nur CHF 10.00 pro Monat. Die Abrechnung erfolgt monatlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird.",
     "startMy3DayFreeTrial": "Starten Sie Ihre 3-tägige kostenlose Testversion",
-    "yearlyPriceInfoNew": "3 Tage kostenlos, danach CHF 48.00 pro Jahr. Die Abrechnung erfolgt jährlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird."
+    "yearlyPriceInfoNew": "3 Tage kostenlos, danach CHF 48.00 pro Jahr. Die Abrechnung erfolgt jährlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird.",
+    "close": "Schließen"
   }
 }

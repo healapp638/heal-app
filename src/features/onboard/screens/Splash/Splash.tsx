@@ -4,6 +4,8 @@ import Video from 'react-native-video';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
 import { useNavigation, useTheme } from '@react-navigation/native';
+import usePostApi from '../../../../hooks/usePostApi';
+import { endpoints } from '../../../../api/Services/endpoints';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import SolidView from '../../../../components/SolidView';
@@ -16,12 +18,27 @@ const Splash = () => {
   const user = useSelector((state: any) => state.userData?.user);
 
   const dispatch = useDispatch();
+  const { mutate: postApi } = usePostApi();
 
   useEffect(() => {
     if (auth) {
-      dispatch(getUserDetail() as any);
+      postApi(
+        {
+          endpoint: endpoints.claimStreak,
+          data: {},
+        },
+        {
+          onSuccess: () => {
+            dispatch(getUserDetail() as any);
+          },
+          onError: (error: any) => {
+            console.log('claimStreak error', error);
+            dispatch(getUserDetail() as any);
+          },
+        },
+      );
     }
-  }, [auth]);
+  }, [auth, postApi, dispatch]);
 
   const handleNavigation = () => {
     if (!auth) {

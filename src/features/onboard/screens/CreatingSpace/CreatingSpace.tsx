@@ -29,7 +29,7 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
-const CHAR_INTERVAL_MS = 27;
+const CHAR_INTERVAL_MS = 18;
 const SENTENCE_PAUSE_MS = 1400;
 const CreatingSpace = () => {
   const { colors, images } = useTheme() as any;

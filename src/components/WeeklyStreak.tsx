@@ -1,29 +1,64 @@
 import React from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
-import AppUtils from '../utils/appUtils';
 import AppFonts from '../constants/fonts';
+
+import { useSelector } from 'react-redux';
 
 const WeeklyStreak = () => {
   const { colors } = useTheme() as any;
   const styles = useStyle(colors);
-  const days = [
-    { day: 'Mo', date: 13, status: 'none' },
-    { day: 'Tu', date: 14, status: 'none' },
-    { day: 'We', date: 15, status: 'completed' },
-    { day: 'Th', date: 16, status: 'active' },
-    { day: 'Fr', date: 17, status: 'none' },
-    { day: 'Sa', date: 18, status: 'none' },
-    { day: 'Su', date: 19, status: 'none' },
-  ];
+  const user = useSelector((state: any) => state.userData?.user);
+  const streakDays = user?.streak_days || [];
+
+  // Get dates of the current week (Monday to Sunday)
+  const getWeekDates = () => {
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 is Sunday, 1 is Monday, etc.
+    const distanceToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + distanceToMonday);
+
+    const weekDates = [];
+    const weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+
+    for (let i = 0; i < 7; i++) {
+      const dayDate = new Date(monday);
+      dayDate.setDate(monday.getDate() + i);
+      weekDates.push({
+        day: weekdays[i],
+        dateObject: dayDate,
+        date: dayDate.getDate(),
+      });
+    }
+    return weekDates;
+  };
+
+  const days = getWeekDates();
+  const today = new Date();
 
   return (
     <View style={styles.container}>
       <View style={styles.row}>
         {days.map((item, index) => {
-          const isActive = item.status === 'active';
-          const isCompleted = item.status === 'completed';
+          const isToday =
+            item.dateObject.getFullYear() === today.getFullYear() &&
+            item.dateObject.getMonth() === today.getMonth() &&
+            item.dateObject.getDate() === today.getDate();
+
+          const isCompletedInStreak = streakDays.some((timestamp: number) => {
+            const streakDate = new Date(timestamp * 1000);
+            return (
+              streakDate.getFullYear() === item.dateObject.getFullYear() &&
+              streakDate.getMonth() === item.dateObject.getMonth() &&
+              streakDate.getDate() === item.dateObject.getDate()
+            );
+          });
+
+          const isActive = isToday;
+          const isCompleted = isCompletedInStreak && !isToday;
 
           return (
             <View key={index} style={styles.dayItem}>
@@ -44,7 +79,7 @@ const WeeklyStreak = () => {
                     width: 30,
                     height: 30,
                     borderRadius: 20,
-                  }, // semi-transparent
+                  },
                   !isActive &&
                     !isCompleted && {
                       backgroundColor: colors.bubbleGray,

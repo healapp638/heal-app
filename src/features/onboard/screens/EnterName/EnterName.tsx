@@ -1,6 +1,10 @@
 import React, { useState, useContext, useCallback, useEffect } from 'react';
 import { Image, Keyboard, View } from 'react-native';
-import { useFocusEffect, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import SolidView from '../../../../components/SolidView';
@@ -10,7 +14,10 @@ import SolidInput from '../../../../components/SolidInput';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-import { setOnboardingAnswer, setOnboardingCurrentScreen } from '../../../../redux/Reducers/userData';
+import {
+  setOnboardingAnswer,
+  setOnboardingCurrentScreen,
+} from '../../../../redux/Reducers/userData';
 import AppUtils from '../../../../utils/appUtils';
 import style from './style';
 
@@ -22,7 +29,7 @@ const EnterName = () => {
   const styles = style(colors);
 
   const savedName = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.fullName ?? ''
+    (state: any) => state.userData?.onboarding?.answers?.fullName ?? '',
   );
 
   const [name, setName] = useState<string>(savedName);
@@ -34,14 +41,15 @@ const EnterName = () => {
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.EnterName));
-    }, [dispatch])
+    }, [dispatch]),
   );
 
   const handleContinue = () => {
     Keyboard.dismiss();
     const trimmedName = name.trim();
     if (!trimmedName) {
-      const toastMessage = localization.appkeys?.toastEnterFullName || 'Please enter your name.';
+      const toastMessage =
+        localization.appkeys?.toastEnterFullName || 'Please enter your name.';
       AppUtils.showToast(toastMessage);
       return;
     }
@@ -97,6 +105,7 @@ const EnterName = () => {
                 viewStyle={styles.inputStyle}
                 textInputStyle={styles.inputText}
                 maxLength={40}
+                autoFocus={true}
               />
             </View>
 

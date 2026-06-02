@@ -82,7 +82,13 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
                 marginTop: Platform.OS == 'ios' ? 1 : 3,
               }}
             >
-              <SolidText maxFontScale={1} style={styles.timelineTitle}>
+              <SolidText
+                maxFontScale={1}
+                style={{
+                  ...styles.timelineTitle,
+                  textDecorationLine: 'line-through',
+                }}
+              >
                 {localization.appkeys?.installTheApp || 'Install the app'}
               </SolidText>
               <SolidText maxFontScale={1} style={styles.timelineSub}>

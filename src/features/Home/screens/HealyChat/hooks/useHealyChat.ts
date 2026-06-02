@@ -267,6 +267,11 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
     refetchRandomQuestions();
   }, [dispatch, refetchRandomQuestions]);
 
+  const firstAssistantMessage = allMessages.find(msg => msg.role !== 'user');
+  const firstAssistantMessageId = firstAssistantMessage
+    ? firstAssistantMessage._id || firstAssistantMessage.id
+    : null;
+
   return {
     messages,
     isSending,
@@ -287,5 +292,6 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
     isPaginationLoading,
     allMessagesLength: allMessages.length,
     visibleCount,
+    firstAssistantMessageId,
   };
 };

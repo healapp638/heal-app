@@ -27,11 +27,16 @@ import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
 import PremiumModal from '../../../../modals/PremiumModal';
 import useGetApi from '../../../../hooks/useGetApi';
+import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import getEnvVars from '../../../../../env';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import { useDispatch } from 'react-redux';
-import { setModuleTheme, setModuleSubModule, setModuleSource } from '../../../../redux/Reducers/tempData';
+import {
+  setModuleTheme,
+  setModuleSubModule,
+  setModuleSource,
+} from '../../../../redux/Reducers/tempData';
 
 const Modules = () => {
   const dispatch = useDispatch();
@@ -39,6 +44,7 @@ const Modules = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
   const styles = style(colors);
+  const { mutate: postApi } = usePostApi();
   const [themes, setThemes] = useState<any[]>([]);
   const [startedModules, setStartedModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
@@ -215,10 +221,12 @@ const Modules = () => {
           }}
           onPress={() => {
             triggerHaptic('impactMedium');
-            dispatch(setModuleSubModule({
-              ...item,
-              _id: item.sub_module_id,
-            }));
+            dispatch(
+              setModuleSubModule({
+                ...item,
+                _id: item.sub_module_id,
+              }),
+            );
             dispatch(setModuleSource('dashboard'));
             navigation.navigate(AppRoutes.StartedModule as never);
           }}
@@ -325,12 +333,29 @@ const Modules = () => {
       <ModuleThemeCard
         item={item}
         onPress={() => {
+          triggerHaptic('impactMedium');
+          postApi(
+            {
+              endpoint: endpoints.theme_engagement_create,
+              data: {
+                theme_id: item._id || item.id,
+              },
+            },
+            {
+              onSuccess: (res: any) => {
+                // console.log('theme_engagement_create success', res);
+              },
+              onError: (error: any) => {
+                // console.log('theme_engagement_create error', error);
+              },
+            },
+          );
           dispatch(setModuleTheme(item));
           return navigation.navigate(AppRoutes.ModuleThemeDetail as never);
         }}
       />
     ),
-    [navigation, dispatch],
+    [navigation, dispatch, postApi],
   );
   const keyExtractor = useCallback(
     (item: any, index: number) => (item.id || index).toString(),
