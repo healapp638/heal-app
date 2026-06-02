@@ -16,14 +16,18 @@
             "hash": "805813950560cbf938905eaaf158411c50d1a58fe43f2963e62a3861795190af"
         },
         {
-            "date": 1780290037477,
+            "date": 1780291775384,
             "name": "logs/system/system-2026-06-01.log",
+<<<<<<< HEAD
             "hash": "732b1361f0baf998b855c9406dcb4a6eb83ae598109c0d66925b29b842296ee0"
         },
         {
             "date": 1780378854195,
             "name": "logs/system/system-2026-06-02.log",
             "hash": "5a40082b21c149782b2030aa88b3d9a6af305719177c124ac776e42aa4f26215"
+=======
+            "hash": "50a2d9e6fc9cf4f39c8ec841ed52f30073413eaa17d2f26e7ebc2c0ddb21a6b7"
+>>>>>>> b7e28e49da74d96c36dedd6d86661414519cce4f
         }
     ],
     "hashType": "sha256"

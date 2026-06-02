@@ -17,6 +17,7 @@ import userModuleStartLessonModel from "./user.module.start.lesson.model";
 import adminMcqexerciseModel from "../AdminExercise/admin.mcqexercise.model";
 import userMcqanswerExerciseModel from "./user.mcqanswer.exercise.model";
 import responseMessages from "../../constants/responseMessages";
+import userThemeEngagementModel from "./user.themeEngagement.model";
 
 const UserCommonHandler = {
 
@@ -88,6 +89,10 @@ const UserCommonHandler = {
         if (theme.length === 0) {
             return showResponse(false, getMessage(userLang || 'en', 'theme_not_found'), null, statusCodes.NOT_FOUND);
         }
+
+        //calculate user enagement of each theme
+        await userThemeEngagementModel.create({ theme_id: convertToObjectId(theme_id), user_id: userId, theme_name: theme[0].title });
+
 
 
         const match: any = {

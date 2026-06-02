@@ -54,37 +54,42 @@ const user_auth_model_1 = __importDefault(require("../../modules/UserAuth/user.a
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const services_1 = __importDefault(require("../../services"));
+const user_journel_model_1 = __importDefault(require("../UserJournel/user.journel.model"));
+const user_modules_complete_phase_model_1 = __importDefault(require("../UserModules/user.modules.complete.phase.model"));
+const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenges/user.weekly.challenges.model"));
+const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
+const user_auth_model_2 = __importDefault(require("../../modules/UserAuth/user.auth.model"));
+const user_themeEngagement_model_1 = __importDefault(require("../UserModules/user.themeEngagement.model"));
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 const AdminUserHandler = {
     getUsersList: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { sort_column = 'createdAt', sort_direction = 'desc', page, limit, search_key = '', status } = data;
+        // const queryObject: any = {
+        //     status: { $ne: USER_STATUS.DELETED },
+        //     $or: [
+        //         { email: { $regex: search_key, $options: 'i' } },
+        //         { fullName: { $regex: search_key, $options: 'i' } },
+        //     ],
+        //     isVerified: true
+        // }
+        // if used social login n project 
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED },
-            $or: [
-                { email: { $regex: search_key, $options: 'i' } },
-                { fullName: { $regex: search_key, $options: 'i' } },
-            ],
-            isVerified: true
+            $and: [
+                {
+                    $or: [
+                        { email: { $regex: search_key, $options: 'i' } },
+                        { name: { $regex: search_key, $options: 'i' } }
+                    ]
+                },
+                {
+                    $or: [
+                        { account_source: { $ne: "email" } }, // Allow all non-email accounts
+                        { $and: [{ account_source: "email" }, { is_verified: true }] } // Email accounts must be verified
+                    ]
+                }
+            ]
         };
-        //if used social login n project 
-        // const queryObject: any = {
-        //     user_type: ROLE.USER, // 3 for users
-        //     status: { $ne: USER_STATUS.DELETED },
-        //     $and: [
-        //         {
-        //             $or: [
-        //                 { email: { $regex: search_key, $options: 'i' } },
-        //                 { name: { $regex: search_key, $options: 'i' } }
-        //             ]
-        //         },
-        //         {
-        //             $or: [
-        //                 { account_source: { $ne: "email" } }, // Allow all non-email accounts
-        //                 { $and: [{ account_source: "email" }, { is_verified: true }] } // Email accounts must be verified
-        //             ]
-        //         }
-        //     ]
-        // };
         if (status) {
             queryObject.status = status;
         }
@@ -116,10 +121,103 @@ const AdminUserHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.data_retreive_sucess, { result, totalCount }, statusCodes_1.default.SUCCESS);
     }),
     getUserDetails: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        var _a, _b, _c, _d;
         const getResponse = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: user_id, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } }, { password: 0 });
+        const userData = getResponse === null || getResponse === void 0 ? void 0 : getResponse.data;
         if (!getResponse.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.invalid_user, null, statusCodes_1.default.API_ERROR);
         }
+        //calculate progress start
+        const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(user_id),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $lookup: {
+                    from: "phases",
+                    localField: "phase_id",
+                    foreignField: "_id",
+                    as: "phase"
+                }
+            },
+            {
+                $unwind: "$phase"
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: "$phase.points" }
+                }
+            }
+        ]);
+        const completedWeeklyChallenges = yield user_weekly_challenges_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(user_id),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        const completedDailyChallenges = yield user_daily_challenges_model_1.default.aggregate([
+            {
+                $match: {
+                    user_id: commonHelper.convertToObjectId(user_id),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                    isCompleted: true
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    total_points: { $sum: '$points' }
+                }
+            }
+        ]);
+        const startOfDay = (0, moment_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || 'America/New_York').startOf('day').toDate();
+        const endOfDay = (0, moment_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || 'America/New_York').endOf('day').toDate();
+        const totalJournels = yield user_journel_model_1.default.countDocuments({
+            user_id: commonHelper.convertToObjectId(user_id),
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+            createdAt: { $gte: startOfDay, $lte: endOfDay }
+        });
+        const totalJournelEarnedPoints = totalJournels > 0
+            ? ((totalJournels - 1) * 10) + 25
+            : 0;
+        const total_earned_points = (((_a = CompletedPhases[0]) === null || _a === void 0 ? void 0 : _a.total_points) || 0) + (((_b = completedWeeklyChallenges[0]) === null || _b === void 0 ? void 0 : _b.total_points) || 0) + (((_c = completedDailyChallenges[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0) + totalJournelEarnedPoints || 0 + (userData === null || userData === void 0 ? void 0 : userData.streak_credit) || 0;
+        const pointThresholds = [
+            99, 235, 460, 740, 1070, 1450, 1875, 2345,
+            2860, 3415, 4015, 4650, 5325, 6040, 6795,
+            7590, 8420, 9290, 10195, 11140, 12120,
+            13135, 14185, 15270, 16390, 17545,
+            18730, 19955, 21215, 22505
+        ];
+        const total_points = (_d = pointThresholds.find((curelem) => total_earned_points < curelem)) !== null && _d !== void 0 ? _d : 22505;
+        const completedPercentage = total_points > 0
+            ? (Math.round((total_earned_points / total_points) * 100))
+            : 0;
+        // Calculate level
+        const totalLevels = 30;
+        let currentLevel = total_earned_points < 99 ? 1 : total_earned_points < 235 ? 2 : total_earned_points < 460 ? 3 : total_earned_points < 740 ? 4 : total_earned_points < 1070 ? 5 : total_earned_points < 1450 ? 6 : total_earned_points < 1875 ? 7 : total_earned_points < 2345 ? 8 : total_earned_points < 2860 ? 9 : total_earned_points < 3415 ? 10 : total_earned_points < 4015 ? 11 : total_earned_points < 4650 ? 12 : total_earned_points < 5325 ? 13 : total_earned_points < 6040 ? 14 : total_earned_points < 6795 ? 15 : total_earned_points < 7590 ? 16 : total_earned_points < 8420 ? 17 : total_earned_points < 9290 ? 18 : total_earned_points < 10195 ? 19 : total_earned_points < 11140 ? 20 : total_earned_points < 12120 ? 21 : total_earned_points < 13135 ? 22 : total_earned_points < 14185 ? 23 : total_earned_points < 15270 ? 24 : total_earned_points < 16390 ? 25 : total_earned_points < 17545 ? 26 : total_earned_points < 18730 ? 27 : total_earned_points < 19955 ? 28 : total_earned_points < 21215 ? 29 : total_earned_points < 22505 ? 30 : 31;
+        // Edge case fix
+        if (currentLevel === 0)
+            currentLevel = 1;
+        if (currentLevel > totalLevels)
+            currentLevel = totalLevels;
+        getResponse.data.total_earned_points = total_earned_points;
+        getResponse.data.total_points = total_points;
+        getResponse.data.currentLevel = currentLevel;
+        getResponse.data.completedPercentage = completedPercentage;
+        //calculating progress end
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.users.user_detail, getResponse.data, statusCodes_1.default.SUCCESS);
     }),
     updateUserStatus: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -143,53 +241,119 @@ const AdminUserHandler = {
     }),
     getDashboardData: (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (past_day = 'MAX') {
         // Calculate the timestamps for 30 days ago, 180 days ago, and 365 days ago
-        const thirtyDaysAgo = (0, moment_1.default)().subtract(30, 'days').unix(); //last 30 days timestamp
-        const sixMonthAgo = (0, moment_1.default)().subtract(180, 'days').unix(); //last 180 days timestamp
-        const oneYearAgo = (0, moment_1.default)().subtract(365, 'days').unix(); //last 365 days timestamp
-        const maxDate = (0, moment_1.default)().unix(); //today timestamp
+        const thirtyDaysAgo = (0, moment_1.default)().subtract(30, 'days').toDate(); //last 30 days timestamp
+        const sixMonthAgo = (0, moment_1.default)().subtract(180, 'days').toDate(); //last 180 days timestamp
+        const oneYearAgo = (0, moment_1.default)().subtract(365, 'days').toDate(); //last 365 days timestamp
+        const maxDate = (0, moment_1.default)().toDate(); //today timestamp
         const dates = {
             '1M': { $gte: thirtyDaysAgo }, //greater then last  1 month  date users registeration data
             '6M': { $gte: sixMonthAgo }, //greater then last 6 month  date users registeration data
             '1Y': { $gte: oneYearAgo }, //greater then last year date users registeration data
             'MAX': { $lte: maxDate }, //if max then less then equal to current date users data
         };
-        const fetch_data_date = dates[past_day];
+        const fetch_data_date = dates[past_day] || dates["1M"];
         const dashboard = yield user_auth_model_1.default.aggregate([
             {
                 $match: {
-                    user_type: workflow_constant_1.ROLE.USER,
-                    createdAt: fetch_data_date // Filter documents within the last 30 days
-                }
-            },
-            {
-                $addFields: {
-                    created_date: { $toDate: { $multiply: ["$createdAt", 1000] } } // Convert timestamp to date format
+                    createdAt: fetch_data_date
                 }
             },
             {
                 $group: {
-                    _id: { $dayOfMonth: "$created_date" }, // Group by day of the month
-                    count: { $sum: 1 } // Count documents for each day
+                    _id: {
+                        $dateToString: {
+                            format: "%Y-%m-%d",
+                            date: "$createdAt"
+                        }
+                    },
+                    count: {
+                        $sum: 1
+                    }
                 }
             },
             {
                 $project: {
-                    _id: 0, // Exclude _id field
-                    day: "$_id",
+                    _id: 0,
+                    date: "$_id",
                     count: 1
                 }
             },
             {
-                $sort: { day: 1 } // Sort by day of the month
+                $sort: {
+                    date: 1
+                }
             }
         ]);
         const all_users = yield (0, db_helpers_1.getCount)(user_auth_model_1.default, { status: { $ne: workflow_constant_1.USER_STATUS.DELETED } });
         const active_users = yield (0, db_helpers_1.getCount)(user_auth_model_1.default, { status: workflow_constant_1.USER_STATUS.ACTIVE });
         const deactivated_users = yield (0, db_helpers_1.getCount)(user_auth_model_1.default, { status: workflow_constant_1.USER_STATUS.DEACTIVATED });
+        console.log(fetch_data_date, 'fetch_data_date');
+        const journelPieChart = yield user_journel_model_1.default.aggregate([
+            {
+                $match: {
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                    createdAt: fetch_data_date
+                }
+            },
+            {
+                $group: {
+                    _id: '$feeling.en',
+                    count: { $sum: 1 }
+                }
+            }, {
+                $addFields: {
+                    feeling: '$_id',
+                    _id: 0
+                }
+            }
+        ]);
+        const hearAboutUsPieChart = yield user_auth_model_2.default.aggregate([
+            {
+                $match: {
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                    createdAt: fetch_data_date
+                }
+            },
+            {
+                $group: {
+                    _id: "$hearAboutUs",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $addFields: {
+                    hearAboutUs: "$_id",
+                    _id: 0
+                }
+            }
+        ]);
+        const userEngagementOnThemeChart = yield user_themeEngagement_model_1.default.aggregate([
+            {
+                $match: {
+                    createdAt: fetch_data_date,
+                    status: workflow_constant_1.USER_STATUS.ACTIVE
+                }
+            },
+            {
+                $group: {
+                    _id: "$theme_name",
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $addFields: {
+                    theme_name: "$_id",
+                    _id: 0
+                }
+            }
+        ]);
         const user_summary = {
             all_users: all_users.data,
             active_users: active_users.data,
-            deactivated_users: deactivated_users.data
+            deactivated_users: deactivated_users.data,
+            journelPieChart,
+            hearAboutUsPieChart,
+            userEngagementOnThemeChart
         };
         return (0, response_util_1.showResponse)(true, 'Dashboard data is here', { user_summary, dashboard }, statusCodes_1.default.SUCCESS);
     }),

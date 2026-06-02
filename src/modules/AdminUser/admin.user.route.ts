@@ -22,7 +22,6 @@ router.get('/details', verifyTokenAdmin, async (req: Request | any, res: Respons
     const controller = new AdminUserController(req, res)
     const result: ApiResponse = await controller.getUserDetails(user_id);
     return showOutput(res, result, result.code)
-
 })
 
 router.put('/status', verifyTokenAdmin, async (req: Request | any, res: Response) => {
@@ -30,16 +29,14 @@ router.put('/status', verifyTokenAdmin, async (req: Request | any, res: Response
     const controller = new AdminUserController(req, res)
     const result: ApiResponse = await controller.updateUserStatus({ user_id, status });
     return showOutput(res, result, result.code)
-
-})
+});
 
 router.get('/dashboard', verifyTokenAdmin, async (req: Request | any, res: Response) => {
     const { past_day } = req.query
     const controller = new AdminUserController(req, res)
     const result: ApiResponse = await controller.getDashboardData(past_day);
     return showOutput(res, result, result.code)
-
-})
+});
 
 // router.post('/send/multiple/notifications', verifyTokenAdmin, async (req: Request | any, res: Response) => {
 //     // const { } = req.body
