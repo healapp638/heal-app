@@ -314,6 +314,7 @@ const UserAuthHandler = {
 
     social_login: async (data: any) => {
         const { login_source, social_auth, email, name = undefined, language, timeZone,hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
+        console.log(data,"dattttaaaa")
         const queryObject = {
             status: { $ne: USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -508,7 +509,7 @@ const UserAuthHandler = {
        }
 
             const userData = { is_after_social_login: false, account_type, is_profile_completed: true, ...result?.data, access_token, refresh_token,is_onboarding:is_onboarding }
-
+            console.log(userData,"userrrrrrrrrdatatatus")
             return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
         }
     },

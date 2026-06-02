@@ -306,6 +306,7 @@ const UserAuthHandler = {
     social_login: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4;
         const { login_source, social_auth, email, name = undefined, language, timeZone, hearAboutUs, howFellingLately, feelThatWay, likeToFellMore, helpFeelBetter, stopFeelBetter, timeYouCommit, goalStartWith } = data;
+        console.log(data, "dattttaaaa");
         const queryObject = {
             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, //user not deleted
             $or: [
@@ -475,6 +476,7 @@ const UserAuthHandler = {
                 yield user_auth_model_1.default.updateOne({ _id: (_4 = result.data) === null || _4 === void 0 ? void 0 : _4._id }, { $set: { is_onboarding } });
             }
             const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token, is_onboarding: is_onboarding });
+            console.log(userData, "userrrrrrrrrdatatatus");
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
     }),
