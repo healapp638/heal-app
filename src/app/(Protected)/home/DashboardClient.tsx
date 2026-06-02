@@ -117,10 +117,10 @@ export default function DashboardClient() {
 
           {/* Row 2: Signup Trend & Theme Engagement */}
           <Row gutter={[20, 20]}>
-            <Col xs={24} lg={16}>
+            <Col xs={24} >
               <RegistrationAreaChart data={signupData} />
             </Col>
-            <Col xs={24} lg={8}>
+            <Col xs={24} >
               <ThemeEngagementChart data={themeData} />
             </Col>
           </Row>

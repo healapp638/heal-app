@@ -225,9 +225,9 @@ export function DonutChart({
           <p className="font-medium text-sm">No details recorded</p>
         </div>
       ) : (
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 my-auto">
+        <div className="flex flex-col items-center justify-center gap-6 my-auto">
           {/* Chart SVG */}
-          <div className="relative w-36 h-36 flex-shrink-0">
+          <div className="relative w-48 h-48 flex-shrink-0">
             <svg viewBox="0 0 100 100" className="w-full h-full transform -rotate-90">
               <circle
                 cx={center}
@@ -268,14 +268,14 @@ export function DonutChart({
             
             {/* Center Label */}
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <span className="text-[10px] font-bold text-black! uppercase tracking-widest truncate max-w-[80px]">
+              <span className="text-xs font-bold text-black! uppercase tracking-widest truncate max-w-[120px]">
                 {hoveredSlice ? hoveredSlice.label : totalLabel}
               </span>
-              <span className="text-2xl font-black text-black!">
+              <span className="text-3xl font-black text-black!">
                 {hoveredSlice ? hoveredSlice.value : total}
               </span>
               {hoveredSlice && (
-                <span className="text-[10px] text-black! font-bold">
+                <span className="text-xs text-black! font-bold">
                   {((hoveredSlice.value / total) * 100).toFixed(0)}%
                 </span>
               )}
@@ -283,7 +283,7 @@ export function DonutChart({
           </div>
 
           {/* Legends */}
-          <div className="flex flex-col gap-2 flex-grow min-w-0 w-full">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full">
             {chartData.map((slice, i) => {
               const isSelected = hoveredSlice?.label === slice.label;
               return (
@@ -366,7 +366,7 @@ export function ThemeEngagementChart({ data }: { data: { theme_name: string; cou
             <div key={index} className="group flex flex-col gap-1.5">
               <div className="flex justify-between items-center text-sm font-medium">
                 <div className="flex items-center gap-2">
-                  <span className="p-1.5 rounded-lg  flex items-center justify-center">
+                  <span className="p-1.5 rounded-lg bg-white! flex items-center justify-center">
                     {getThemeIcon(item.theme_name)}
                   </span>
                   <span className="text-black! capitalize font-bold">{item.theme_name}</span>
