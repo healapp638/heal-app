@@ -74,8 +74,8 @@ export default function UserDetail() {
                 <Col span={24}>
                     <Card className="shadow-sm border-none! bg-white! overflow-hidden" styles={{ body: { padding: 0 } }}>
                         <div className="h-32 bg-linear-to-r from-maincolor to-secondary-light" />
-                        <div className="px-8 pb-8 -mt-1 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                            <div className="flex flex-col md:flex-row items-end gap-6">
+                        <div className="px-8 pb-8 -mt-1 flex flex-col lg:flex-row items-center lg:items-end justify-between gap-6">
+                            <div className="flex flex-col lg:flex-row justify-center items-center lg:items-end  lg:gap-6">
                                 <Avatar
                                     size={140}
                                     src={`${FILE_URL}${userDataResult.profilePic}`}
@@ -125,35 +125,35 @@ export default function UserDetail() {
                             Personal <span className="text-maincolor">Information</span>
                         </h1>
                         <div className="flex flex-col gap-4 px-4 py-2">
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Email :</p>
                                 <p className="text-gray-600">{userDataResult.email}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Country :</p>
                                 <p className="text-gray-600">{userDataResult.country || "N/A"}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Language :</p>
                                 <p className="text-gray-600">{userDataResult.language || "N/A"}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Birth Date :</p>
                                 <p className="text-gray-600">{formattedDateOnly(userDataResult.dob)}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Account Source :</p>
                                 <p className="text-gray-600">{userDataResult.account_source || "N/A"}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Joined On :</p>
                                 <p className="text-gray-600">{formattedDateOnly(userDataResult.createdAt)}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full border-t border-gray-100 pt-3">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full border-t border-gray-100 pt-3">
                                 <p className="font-semibold text-black">Current Level :</p>
                                 <p className="text-gray-600 font-bold bg-gray-50 px-2 py-0.5 rounded border border-gray-100">Level {userDataResult.currentLevel ?? 1}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-semibold text-black">Points Progress :</p>
                                 <p className="text-gray-600 font-medium">
                                     <span className="font-bold text-maincolor">{userDataResult.total_earned_points ?? 0}</span> / {userDataResult.total_points ?? 0} XP ({userDataResult.completedPercentage ?? 0}%)
@@ -173,11 +173,11 @@ export default function UserDetail() {
                                 <p className="font-medium text-black">What brings you here?</p>
                                 <p className="text-gray-600">{userDataResult.bringsYouHere || "Not specified"}</p>
                             </div> */}
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">How are you feeling lately?</p>
                                 <p className="text-gray-600">{userDataResult.howFellingLately || "N/A"}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">What would you like to feel more?</p>
                                 <p className="text-gray-600">{userDataResult.likeToFellMore || "N/A"}</p>
                             </div>
@@ -185,11 +185,11 @@ export default function UserDetail() {
                                 <p className="font-medium text-black">How you describe yourself?</p>
                                 <p className="text-gray-600">{userDataResult.startShowingOfYourSelf || "N/A"}</p>
                             </div> */}
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Time commitment</p>
                                 <p className="text-gray-600">{userDataResult.timeYouCommit || "N/A"}</p>
                             </div>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
                                 <p className="font-medium text-black">Found us via</p>
                                 <p className="text-gray-600">{userDataResult.hearAboutUs || "N/A"}</p>
                             </div>
