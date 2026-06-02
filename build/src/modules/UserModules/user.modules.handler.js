@@ -90,7 +90,7 @@ const UserCommonHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(userLang || 'en', 'theme_not_found'), null, statusCodes_1.default.NOT_FOUND);
         }
         //calculate user enagement of each theme
-        yield user_themeEngagement_model_1.default.create({ theme_id: (0, common_helper_1.convertToObjectId)(theme_id), user_id: userId, theme_name: theme[0].title });
+        // await userThemeEngagementModel.create({ theme_id: convertToObjectId(theme_id), user_id: userId, theme_name: theme[0].title });
         const match = {
             themeId: (0, common_helper_1.convertToObjectId)(theme_id),
             status: workflow_constant_1.USER_STATUS.ACTIVE
@@ -992,6 +992,24 @@ const UserCommonHandler = {
         const last = subModules[subModules.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { subModules, nextCursor }, statusCodes_1.default.SUCCESS);
+    }),
+    themeEngagementCreate: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
+        const { theme_id } = data;
+        const theme = yield admin_theme_model_1.default.aggregate([
+            { $match: { _id: (0, common_helper_1.convertToObjectId)(theme_id), status: workflow_constant_1.USER_STATUS.ACTIVE } },
+            {
+                $addFields: {
+                    title: `$title.en`,
+                    description: `$description.en`
+                }
+            }
+        ]);
+        if (theme.length === 0) {
+            return (0, response_util_1.showResponse)(false, 'Theme not found', null, statusCodes_1.default.NOT_FOUND);
+        }
+        //calculate user enagement of each theme
+        yield user_themeEngagement_model_1.default.create({ theme_id: (0, common_helper_1.convertToObjectId)(theme_id), user_id: userId, theme_name: theme[0].title });
+        return (0, response_util_1.showResponse)(true, 'Theme engagement created successfully', null, statusCodes_1.default.SUCCESS);
     })
 };
 exports.default = UserCommonHandler;

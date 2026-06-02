@@ -912,6 +912,50 @@
 				]
 			}
 		},
+		"/user/modules/theme_engagement_create": {
+			"post": {
+				"operationId": "ThemeEngagementCreate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"User Modules Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"theme_id": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"theme_id"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/journal/create_journal": {
 			"post": {
 				"operationId": "CreateJournal",

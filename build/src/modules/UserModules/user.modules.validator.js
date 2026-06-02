@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateStartSubModuleList = exports.validateStartLesson = exports.validateCompletePhase = exports.validateCompleteLesson = exports.validateExerciseList = exports.validateExerciseDetailList = exports.validateExcerciseMcqAnswerList = exports.validateExerciseMcqList = exports.validateAddMcqAnswer = exports.validatePhaseList = exports.validateModuleList = void 0;
+exports.validateThemeEngagementCreate = exports.validateStartSubModuleList = exports.validateStartLesson = exports.validateCompletePhase = exports.validateCompleteLesson = exports.validateExerciseList = exports.validateExerciseDetailList = exports.validateExcerciseMcqAnswerList = exports.validateExerciseMcqList = exports.validateAddMcqAnswer = exports.validatePhaseList = exports.validateModuleList = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validateModuleList = (data) => {
     const schema = joi_1.default.object({
@@ -100,3 +100,10 @@ const validateStartSubModuleList = (data) => {
     return schema.validate(data);
 };
 exports.validateStartSubModuleList = validateStartSubModuleList;
+const validateThemeEngagementCreate = (data) => {
+    const schema = joi_1.default.object({
+        theme_id: joi_1.default.string().required(),
+    });
+    return schema.validate(data);
+};
+exports.validateThemeEngagementCreate = validateThemeEngagementCreate;

@@ -153,6 +153,16 @@ let UserModulesController = class UserModulesController extends tsoa_1.Controlle
             return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
         });
     }
+    themeEngagementCreate(body) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_modules_validator_1.validateThemeEngagementCreate)(body);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.API_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_modules_handler_1.default.themeEngagementCreate);
+            return wrappedFunc(body, this.userId); // Invoking the wrapped function 
+        });
+    }
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -265,6 +275,14 @@ __decorate([
     __metadata("design:paramtypes", [String, Number]),
     __metadata("design:returntype", Promise)
 ], UserModulesController.prototype, "endSubModuleList", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Post)("/theme_engagement_create"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserModulesController.prototype, "themeEngagementCreate", null);
 UserModulesController = __decorate([
     (0, tsoa_1.Tags)('User Modules Routes'),
     (0, tsoa_1.Route)('/user/modules'),

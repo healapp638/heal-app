@@ -5,7 +5,7 @@ import handler from '../UserModules/user.modules.handler'
 import { tryCatchWrapper } from '../../utils/config.util';
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes';
-import { validateAddMcqAnswer, validateCompleteLesson, validateExcerciseMcqAnswerList, validateExerciseDetailList, validateExerciseList, validateExerciseMcqList, validateModuleList, validatePhaseList, validateStartLesson, validateStartSubModuleList } from './user.modules.validator';
+import { validateAddMcqAnswer, validateCompleteLesson, validateExcerciseMcqAnswerList, validateExerciseDetailList, validateExerciseList, validateExerciseMcqList, validateModuleList, validatePhaseList, validateStartLesson, validateStartSubModuleList, validateThemeEngagementCreate } from './user.modules.validator';
 
 @Tags('User Modules Routes')
 @Route('/user/modules')
@@ -149,6 +149,17 @@ export default class UserModulesController extends Controller {
         }
         const wrappedFunc = tryCatchWrapper(handler.endSubModuleList);
         return wrappedFunc({ cursor, limit }, this.userId); // Invoking the wrapped function 
+    }
+
+    @Security('Bearer')
+    @Post("/theme_engagement_create")
+    public async themeEngagementCreate(@Body() body: { theme_id: string }): Promise<ApiResponse> {
+        const validate = validateThemeEngagementCreate(body);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.API_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.themeEngagementCreate);
+        return wrappedFunc(body, this.userId); // Invoking the wrapped function 
     }
 
 }

@@ -91,7 +91,7 @@ const UserCommonHandler = {
         }
 
         //calculate user enagement of each theme
-        await userThemeEngagementModel.create({ theme_id: convertToObjectId(theme_id), user_id: userId, theme_name: theme[0].title });
+        // await userThemeEngagementModel.create({ theme_id: convertToObjectId(theme_id), user_id: userId, theme_name: theme[0].title });
 
 
 
@@ -1124,6 +1124,25 @@ const UserCommonHandler = {
         const last = subModules[subModules.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModules, nextCursor }, statusCodes.SUCCESS);
+    },
+
+    themeEngagementCreate: async (data: any, userId: string): Promise<ApiResponse> => {
+        const { theme_id } = data;
+        const theme = await adminThemeModel.aggregate([
+            { $match: { _id: convertToObjectId(theme_id), status: USER_STATUS.ACTIVE } },
+            {
+                $addFields: {
+                    title: `$title.en`,
+                    description: `$description.en`
+                }
+            }
+        ]);
+        if (theme.length === 0) {
+            return showResponse(false, 'Theme not found', null, statusCodes.NOT_FOUND);
+        }
+        //calculate user enagement of each theme
+        await userThemeEngagementModel.create({ theme_id: convertToObjectId(theme_id), user_id: userId, theme_name: theme[0].title });
+        return showResponse(true, 'Theme engagement created successfully', null, statusCodes.SUCCESS);
     }
 
 }

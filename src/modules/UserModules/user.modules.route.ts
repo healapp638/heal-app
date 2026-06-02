@@ -91,5 +91,12 @@ router.get('/end_sub_module_list', verifyTokenUser, async (req: Request | any, r
     return showOutput(res, result, result.code)
 });
 
+router.post('/theme_engagement_create', verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { theme_id } = req.body;
+    const controller = new UserModulesController(req, res)
+    const result: ApiResponse = await controller.themeEngagementCreate({ theme_id });
+    return showOutput(res, result, result.code)
+});
+
 
 export default router

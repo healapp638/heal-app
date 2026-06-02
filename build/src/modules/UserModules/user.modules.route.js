@@ -90,4 +90,10 @@ router.get('/end_sub_module_list', verifyTokenUser, (req, res) => __awaiter(void
     const result = yield controller.endSubModuleList(cursor, limit);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/theme_engagement_create', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { theme_id } = req.body;
+    const controller = new user_modules_controller_1.default(req, res);
+    const result = yield controller.themeEngagementCreate({ theme_id });
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

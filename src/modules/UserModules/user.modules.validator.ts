@@ -94,3 +94,11 @@ export const validateStartSubModuleList = (data: any) => {
     });
     return schema.validate(data);
 }
+
+export const validateThemeEngagementCreate = (data: any) => {
+    const schema = Joi.object({
+        theme_id: Joi.string().required(),
+        
+    });
+    return schema.validate(data);
+}
