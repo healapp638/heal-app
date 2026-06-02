@@ -10,7 +10,7 @@ import adminPhasesModel from "../modules/AdminPhases/admin.phases.model";
 // import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
 // import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
 import { connection as connectDB } from "../configs/mongoose.config";
-import { DB, initializeAwsCredential } from "../constants/app.constant";
+import { DB, initializeAwsCredential, REDIS_CREDENTIAL } from "../constants/app.constant";
 import adminExelModel from "../modules/AdminCommon/admin.exel.model";
 import { sendTopicNotification } from "../services/notification.service";
 import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
@@ -34,8 +34,8 @@ console.log("Worker DB URI BEFORE AWS:", DB.MONGODB_URI);
 
 // ✅ Redis connection
 const redisConnection = new IORedis({
-    host: "127.0.0.1",
-    port: 6379,
+    host: REDIS_CREDENTIAL.REDIS_HOST || 'redis',
+    port: REDIS_CREDENTIAL.PORT || 6379,
     maxRetriesPerRequest: null,
 });
 
@@ -218,14 +218,14 @@ const startWorker = async () => {
                         );
                         console.log("📌 Phase:", phase._id);
 
-                        
+
                         // ======================================================
                         // STEP 1
                         // NORMAL CONTENT TYPE
                         // ======================================================
 
                         const step1Title = row["exercise_title_step1"];
-                        const step1Description =row["exercise_description_step1"];
+                        const step1Description = row["exercise_description_step1"];
 
                         // create even if mcq empty
                         if (step1Title) {
@@ -235,14 +235,14 @@ const startWorker = async () => {
                             await safeUpsert(
                                 adminMcqexerciseModel,
                                 {
-                                    phase_id:phase._id,
+                                    phase_id: phase._id,
                                     "title.en": step1Title.trim(),
                                 },
                                 {
-                                    phase_id:phase._id,
+                                    phase_id: phase._id,
                                     title: await getTranslatedObj(step1Title),
                                     // optional
-                                    description:await getTranslatedObj(step1Description || ""),
+                                    description: await getTranslatedObj(step1Description || ""),
                                     // empty
                                     mcq: [],
                                 }
@@ -254,7 +254,7 @@ const startWorker = async () => {
                         // MCQ TYPE
                         // ======================================================
 
-                        for (let step = 2;step <= 20;step++) {
+                        for (let step = 2; step <= 20; step++) {
 
                             const exerciseTitle = row[`exercise_title_step${step}`];
 
@@ -267,7 +267,7 @@ const startWorker = async () => {
 
                             const mcqOptions: any[] = [];
 
-                            for (let i = 1;i <= 10;i++) {
+                            for (let i = 1; i <= 10; i++) {
 
                                 const optionText = row[`mcq${i}_step${step}`];
 
@@ -302,7 +302,7 @@ const startWorker = async () => {
                             );
                         }
 
-                    await initializeAwsCredential();
+                        await initializeAwsCredential();
                     } catch (rowErr) {
                         console.error("❌ Row failed, skipping:", rowErr);
                         continue;
@@ -319,7 +319,7 @@ const startWorker = async () => {
                     message,
                     {},
                 );
-                console.log(noti,"noti")
+                console.log(noti, "noti")
                 console.log(`✅ Job ${job.id} completed`);
             } catch (err) {
                 console.error("❌ Job error:", err);
@@ -422,42 +422,42 @@ const startAffirmationWorker = async () => {
                         // ================= CHECK DUPLICATE =================
 
                         const existingAffirmation =
-                        await userAffirmationModel.findOne({
+                            await userAffirmationModel.findOne({
 
-                       "affirmation.en": {
-                        $regex: `^${affirmation}$`,
-                        $options: "i",
-                        },
+                                "affirmation.en": {
+                                    $regex: `^${affirmation}$`,
+                                    $options: "i",
+                                },
 
-                        status: {
-                        $ne: USER_STATUS.DELETED,
-                        },
-                        });
+                                status: {
+                                    $ne: USER_STATUS.DELETED,
+                                },
+                            });
 
                         if (existingAffirmation) {
 
-                        console.log(
-                        "⚠️ Duplicate affirmation skipped:",
-                        affirmation
-                        );
+                            console.log(
+                                "⚠️ Duplicate affirmation skipped:",
+                                affirmation
+                            );
 
-                        continue;
+                            continue;
                         }
 
-                       // ================= SAVE =================
+                        // ================= SAVE =================
 
-                       const savedAffirmation =
-                       await userAffirmationModel.create({
+                        const savedAffirmation =
+                            await userAffirmationModel.create({
 
-                        affirmation:
-                       translatedAffirmation,
+                                affirmation:
+                                    translatedAffirmation,
 
-                       type: "Admin",
+                                type: "Admin",
 
-                       user_id: [],
-                       });
+                                user_id: [],
+                            });
 
-                      console.log("✅ Saved:",savedAffirmation._id);
+                        console.log("✅ Saved:", savedAffirmation._id);
 
                     } catch (rowError) {
 

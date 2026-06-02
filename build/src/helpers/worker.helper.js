@@ -42,8 +42,8 @@ console.log("Worker DB URI BEFORE AWS:", app_constant_1.DB.MONGODB_URI);
 // bootstrap().catch(console.error);
 // ✅ Redis connection
 const redisConnection = new ioredis_1.default({
-    host: "127.0.0.1",
-    port: 6379,
+    host: app_constant_1.REDIS_CREDENTIAL.REDIS_HOST || 'redis',
+    port: app_constant_1.REDIS_CREDENTIAL.PORT || 6379,
     maxRetriesPerRequest: null,
 });
 // ✅ Escape regex (IMPORTANT)

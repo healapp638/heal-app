@@ -22,10 +22,11 @@ const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserC
 const mongoose_config_1 = require("../configs/mongoose.config");
 const langauge_translate_helper_1 = require("./langauge.translate.helper");
 const workflow_constant_1 = require("../constants/workflow.constant");
+const app_constant_1 = require("../constants/app.constant");
 exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     connection: {
-        port: 6379,
-        host: '127.0.0.1',
+        port: app_constant_1.REDIS_CREDENTIAL.PORT || 6379,
+        host: app_constant_1.REDIS_CREDENTIAL.REDIS_HOST || 'redis',
         maxRetriesPerRequest: null,
     }
 });
@@ -111,8 +112,8 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
     }
 }), {
     connection: {
-        port: 6379,
-        host: '127.0.0.1',
+        port: app_constant_1.REDIS_CREDENTIAL.PORT,
+        host: app_constant_1.REDIS_CREDENTIAL.REDIS_HOST,
         maxRetriesPerRequest: null,
     }
 });

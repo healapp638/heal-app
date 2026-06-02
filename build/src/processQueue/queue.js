@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.affirmationQueue = exports.excelQueue = void 0;
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
+const app_constant_1 = require("../constants/app.constant");
 const connection = new ioredis_1.default({
-    host: "127.0.0.1",
-    port: 6379,
+    host: app_constant_1.REDIS_CREDENTIAL.REDIS_HOST,
+    port: app_constant_1.REDIS_CREDENTIAL.PORT,
 });
 exports.excelQueue = new bullmq_1.Queue("excel-import", {
     connection,

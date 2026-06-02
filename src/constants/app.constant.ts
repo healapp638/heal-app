@@ -84,7 +84,7 @@ const LOGS = {
 };
 
 const REDIS_CREDENTIAL = {
-  URI: process.env.REDIS_HOST || 'redis',
+  REDIS_HOST: process.env.REDIS_HOST || 'redis',
   PORT: Number(process.env.REDIS_PORT) || 6379
 };
 

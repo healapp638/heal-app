@@ -7,11 +7,12 @@ import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.cha
 import { connection as connectDB } from "../configs/mongoose.config";
 import { translateText } from "./langauge.translate.helper";
 import { languages } from "../constants/workflow.constant";
+import { REDIS_CREDENTIAL } from "../constants/app.constant";
 
 export const ChallengesQueue = new Queue('challenges', {
     connection: {
-        port: 6379,
-        host: '127.0.0.1',
+        port: REDIS_CREDENTIAL.PORT || 6379,
+        host: REDIS_CREDENTIAL.REDIS_HOST || 'redis',
         maxRetriesPerRequest: null,
     }
 })
@@ -131,8 +132,8 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
     }
 }, {
     connection: {
-        port: 6379,
-        host: '127.0.0.1',
+        port: REDIS_CREDENTIAL.PORT,
+        host: REDIS_CREDENTIAL.REDIS_HOST,
         maxRetriesPerRequest: null,
     }
 });
