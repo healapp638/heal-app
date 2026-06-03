@@ -1,6 +1,6 @@
 import services from "../services";
 import dotenv from "dotenv";
-import path from "path";
+// import path from "path";
 import { AwsCredential, AppConstant, DbConstant, EmailConstant, SMSConstant, StripeCredential, AgoraCredential } from "../utils/interfaces.util";
 import { getEnvironmentParams } from "../utils/config.util";
 const envConfig = dotenv.config();
