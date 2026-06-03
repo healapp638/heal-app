@@ -15,9 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DATABASE_URI = exports.initializeAwsCredential = exports.AGORA_CREDENTIAL = exports.SMS_CREDENTIAL = exports.EMAIL_CREDENTIAL = exports.AWS_CREDENTIAL = exports.LOGS = exports.REDIS_CREDENTIAL = exports.APP = exports.DB = exports.STRIPE_CREDENTIAL = void 0;
 const services_1 = __importDefault(require("../services"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const path_1 = __importDefault(require("path"));
 const config_util_1 = require("../utils/config.util");
-const envConfig = dotenv_1.default.config({ path: path_1.default.resolve(__dirname, "../../.env") });
+const envConfig = dotenv_1.default.config();
 if (envConfig.error) {
     console.log("noenvfileee");
     throw new Error("No .Env File Found");
