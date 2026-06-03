@@ -110,15 +110,22 @@ function extractSubscriptionData(revenueCatData: any) {
  */
 function verifyWebhookSignature(payload: any, signature: string): boolean {
     try {
+        console.log(payload, signature, 'payload signature')
         const expectedSignature = crypto
             .createHmac('sha256', REVENUECAT_WEBHOOK_SECRET)
             .update(JSON.stringify(payload))
             .digest('hex');
         
-        return crypto.timingSafeEqual(
-            Buffer.from(signature),
-            Buffer.from(expectedSignature)
-        );
+        const sigBuffer = Buffer.from(signature || '');
+        const expectedSigBuffer = Buffer.from(expectedSignature);
+        
+        if (sigBuffer.length !== expectedSigBuffer.length) {
+            console.log('Signature length mismatch')
+            return false;
+        }
+        console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
+        
+        return crypto.timingSafeEqual(sigBuffer, expectedSigBuffer);
     } catch (error) {
         console.error('Signature verification failed:', error);
         return false;
