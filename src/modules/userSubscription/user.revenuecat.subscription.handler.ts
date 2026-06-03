@@ -29,11 +29,11 @@ const REVENUECAT_EVENT_TYPES = {
 
 /**
  * Fetch user subscription info from RevenueCat API
- * This calls RevenueCat's REST API to get the latest subscription status[citation:4]
+ * This calls RevenueCat's REST API to get the latest subscription status
  */
 async function fetchRevenueCatSubscription(appUserId: string) {
     try {
-        // Using RevenueCat API v1 (recommended for subscription checks)[citation:9]
+        // Using RevenueCat API v1 (recommended for subscription checks)
         const url = `https://api.revenuecat.com/v1/subscribers/${appUserId}`;
         
         const response = await fetch(url, {
@@ -56,7 +56,7 @@ async function fetchRevenueCatSubscription(appUserId: string) {
 }
 
 /**
- * Extract subscription data from RevenueCat response[citation:4]
+ * Extract subscription data from RevenueCat response
  */
 function extractSubscriptionData(revenueCatData: any) {
     try {
@@ -106,7 +106,7 @@ function extractSubscriptionData(revenueCatData: any) {
 }
 
 /**
- * Verify RevenueCat webhook signature for security[citation:1][citation:8]
+ * Verify RevenueCat webhook signature for security
  */
 function verifyWebhookSignature(payload: any, signature: string): boolean {
     try {
@@ -134,14 +134,14 @@ const UserSubscriptionHandler = {
     },
     
     // ============= REVENUECAT WEBHOOK HANDLER (ONE FOR BOTH PLATFORMS) =============
-    // This is called by RevenueCat whenever a subscription event happens[citation:4]
+    // This is called by RevenueCat whenever a subscription event happens
     // Set this URL in RevenueCat Dashboard → Integrations → Webhooks
     
     revenueCatWebhook: async (data: any, signature: string): Promise<ApiResponse> => {
         try {
             console.log("📨 RevenueCat webhook received");
             
-            // Verify webhook signature (security)[citation:8]
+            // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature)) {
                 console.error("❌ Invalid webhook signature");
                 return showResponse(false, "Invalid webhook signature", null, statusCodes.VALIDATION_ERROR);
@@ -196,9 +196,12 @@ const UserSubscriptionHandler = {
                 return showResponse(true, "Webhook logged (user not found)", null, statusCodes.SUCCESS);
             }
             
-            // Process based on event type[citation:4]
+            // Process based on event type
             if (eventType === REVENUECAT_EVENT_TYPES.INITIAL_PURCHASE ||
                 eventType === REVENUECAT_EVENT_TYPES.RENEWAL) {
+
+                    console.log("Processing initial purchase or renewal");
+                    console.log(eventType,"eventType")
                 
                 // Get full subscription details from RevenueCat
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
@@ -296,7 +299,7 @@ const UserSubscriptionHandler = {
                 }, statusCodes.SUCCESS);
             }
             
-            // If local shows expired, verify with RevenueCat (in case it renewed)[citation:4]
+            // If local shows expired, verify with RevenueCat (in case it renewed)
             console.log("Verifying with RevenueCat...");
             const revenueCatData = await fetchRevenueCatSubscription(user_id);
             
