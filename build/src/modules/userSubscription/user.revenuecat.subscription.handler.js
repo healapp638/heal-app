@@ -190,10 +190,10 @@ const UserSubscriptionHandler = {
                 console.error("❌ Invalid webhook signature");
                 return (0, response_util_1.showResponse)(false, "Invalid webhook signature", null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            console.log(data, 'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            // console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             const event = data.event;
-            const customerInfo = data.customer_info;
-            const userId = customerInfo === null || customerInfo === void 0 ? void 0 : customerInfo.app_user_id;
+            // const customerInfo = data.customer_info;
+            const userId = event === null || event === void 0 ? void 0 : event.app_user_id;
             const eventType = event === null || event === void 0 ? void 0 : event.type;
             console.log(`Event: ${eventType} for user: ${userId}`);
             if (!userId) {
