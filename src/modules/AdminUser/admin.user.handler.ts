@@ -15,6 +15,7 @@ import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.mo
 import userAuthModel from "../../modules/UserAuth/user.auth.model";
 import userThemeEngagementModel from "../UserModules/user.themeEngagement.model";
 import { sendTopicNotification } from "../../services/notification.service";
+import axios from "axios";
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 
 const AdminUserHandler = {
@@ -459,7 +460,75 @@ const AdminUserHandler = {
     // // -------------------- SET CACHE --------------------
     // await setCache(cacheKey,responseData, 60);
     // return showResponse(true, responseMessage?.common?.data_retreive_sucess,responseData,statusCodes.SUCCESS);
-    // }
+    // },
+
+    overviewAnalytics: async (): Promise<ApiResponse> => {
+    try {
+        const response = await axios.get(
+            `https://api.revenuecat.com/v2/projects/${process.env.REVENUECAT_PROJECT_ID}/metrics/overview`,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            }
+        );
+        return showResponse(true,"RevenueCat overview fetched successfully",response.data,statusCodes.SUCCESS);
+    } catch (error: any) {
+
+        return showResponse(false,error?.message || "Unable to fetch analytics",null,statusCodes.API_ERROR);
+    }
+},
+
+mrrAnalytics: async (): Promise<ApiResponse> => {
+    try {
+
+        const response = await axios.get(
+            `https://api.revenuecat.com/v2/projects/${process.env.REVENUECAT_PROJECT_ID}/charts/mrr`,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            }
+        );
+        return showResponse(true,"MRR analytics fetched successfully",response.data,statusCodes.SUCCESS);
+
+    } catch (error: any) {
+        return showResponse(false,error?.message || "Unable to fetch MRR analytics",null,statusCodes.API_ERROR);
+    }
+},
+
+churnAnalytics: async (): Promise<ApiResponse> => {
+    try {
+        const response = await axios.get(
+            `https://api.revenuecat.com/v2/projects/${process.env.REVENUECAT_PROJECT_ID}/charts/churn`,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            }
+        );
+        return showResponse(true,"Churn analytics fetched successfully",response.data,statusCodes.SUCCESS);
+
+    } catch (error: any) {
+        return showResponse(false,error?.message || "Unable to fetch churn analytics",null,statusCodes.API_ERROR);
+    }
+},
+
+customerSubscriptionDetails: async (appUserId: string): Promise<ApiResponse> => {
+    try {
+        const response = await axios.get(
+            `https://api.revenuecat.com/v1/subscribers/${appUserId}`,
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            }
+        );
+        return showResponse(true,"Customer details fetched successfully",response.data,statusCodes.SUCCESS);
+    } catch (error: any) {
+        return showResponse(false,error?.message || "Unable to fetch customer details",null,statusCodes.API_ERROR);
+    }
+}
 }
 
 export default AdminUserHandler 

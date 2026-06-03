@@ -89,4 +89,25 @@ router.post('/upload/process_file_admin', verifyTokenAdmin, (req, res) => __awai
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 // --- MULTIPART UPLOAD ROUTES END---
+router.get('/overviewAnalytics', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new admin_user_controller_1.default(req, res);
+    const result = yield controller.overviewAnalytics();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/mrrAnalytics', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new admin_user_controller_1.default(req, res);
+    const result = yield controller.mrrAnalytics();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/churnAnalytics', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new admin_user_controller_1.default(req, res);
+    const result = yield controller.churnAnalytics();
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
+router.get('/customerSubscriptionDetails', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user_id } = req.query;
+    const controller = new admin_user_controller_1.default(req, res);
+    const result = yield controller.customerSubscriptionDetails(user_id);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 exports.default = router;

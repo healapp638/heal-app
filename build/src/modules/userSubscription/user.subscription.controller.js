@@ -25,10 +25,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const tsoa_1 = require("tsoa");
-const user_subscription_handler_1 = __importDefault(require("./user.subscription.handler"));
-const user_subscription_validator_1 = require("./user.subscription.validator");
-const response_util_1 = require("../../utils/response.util");
-const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const user_revenuecat_subscription_handler_1 = __importDefault(require("./user.revenuecat.subscription.handler"));
 const config_util_1 = require("../../utils/config.util");
 let UserSubscriptionController = class UserSubscriptionController extends tsoa_1.Controller {
     constructor(req, res) {
@@ -38,102 +35,55 @@ let UserSubscriptionController = class UserSubscriptionController extends tsoa_1
         this.userId = req.body.user ? req.body.user.id : '';
     }
     /**
-        * Ios webhook url
-        */
-    iosSubscriptionWebhook(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_subscription_handler_1.default.iosSubscriptionWebhook);
-            return wrappedFunc(request); // Pass the request object directly to the function
-        });
-    }
-    //ends
-    /**
-    * initialPurchasedSubscription for iOS
-    */
-    initialPurchasedIosSubscription(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                const { package_name, original_transaction_id, signedPayload } = request;
-                console.log(' ✅ Request coming in controller initial_purchased_ios_subscription');
-                // Validate the request
-                const validate = (0, user_subscription_validator_1.validateInitialPurchasedIosSubscription)(request);
-                if (validate.error) {
-                    return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
-                }
-                console.log(' ✅ Request coming in controller initial_purchased_ios_subscription 111');
-                // Wrap the function call in try-catch for error handling
-                const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_subscription_handler_1.default.initialPurchasedIosSubscription);
-                return yield wrappedFunc({ package_name, original_transaction_id, signedPayload }, this.userId); // Pass the request object directly to the function
-            }
-            catch (error) {
-                // Handle any unexpected errors that happen during the process
-                console.log('❌ Error in initialPurchasedIosSubscription controller:', error);
-                return (0, response_util_1.showResponse)(false, 'An unexpected error occurred. Please try again later.', null, statusCodes_1.default.API_ERROR);
-            }
-        });
-    }
-    //ends
-    /**
-    * initialPurchased Android Subscription
-    */
-    initialPurchasedAndroidSubscription(request) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const { plan_name, purchase_token } = request;
-            const validate = (0, user_subscription_validator_1.validateInitialPurchasedAndroidSubscription)(request);
-            if (validate.error) {
-                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
-            }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_subscription_handler_1.default.initialPurchasedAndroidSubscription);
-            return wrappedFunc({ plan_name, purchase_token }, this.userId); // Pass the request object directly to the function
-        });
-    }
-    //ends
-    /**
-     * Create Credit
+     * RevenueCat Webhook
      */
-    addCredit(request) {
+    revenueCatWebhook(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { package_name, transaction_id } = request;
-            if (!package_name || !transaction_id) {
-                return (0, response_util_1.showResponse)(false, "package_name and transaction_id required", null, statusCodes_1.default.VALIDATION_ERROR);
-            }
-            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_subscription_handler_1.default.addCredit);
-            return wrappedFunc({ package_name, transaction_id }, this.userId);
+            const signature = this.req.headers['x-revenuecat-signature'] || '';
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_revenuecat_subscription_handler_1.default.revenueCatWebhook);
+            return yield wrappedFunc(request, signature);
+        });
+    }
+    /**
+     * Check Subscription Status
+     */
+    checkSubscriptionStatus() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_revenuecat_subscription_handler_1.default.checkRevenueCatSubscriptionStatus);
+            return yield wrappedFunc(this.userId);
+        });
+    }
+    /**
+     * Sync After Purchase
+     */
+    syncAfterPurchase() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_revenuecat_subscription_handler_1.default.syncAfterPurchase);
+            return yield wrappedFunc(this.userId);
         });
     }
 };
 __decorate([
-    (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/ios_subscription_webhook"),
+    (0, tsoa_1.Post)("/revenuecat_webhook"),
     __param(0, (0, tsoa_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
-], UserSubscriptionController.prototype, "iosSubscriptionWebhook", null);
+], UserSubscriptionController.prototype, "revenueCatWebhook", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/initial_purchased_ios_subscription"),
-    __param(0, (0, tsoa_1.Body)()),
+    (0, tsoa_1.Get)("/subscription_status"),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UserSubscriptionController.prototype, "initialPurchasedIosSubscription", null);
+], UserSubscriptionController.prototype, "checkSubscriptionStatus", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/initial_purchased_android_subscription"),
-    __param(0, (0, tsoa_1.Body)()),
+    (0, tsoa_1.Post)("/sync_purchase"),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UserSubscriptionController.prototype, "initialPurchasedAndroidSubscription", null);
-__decorate([
-    (0, tsoa_1.Security)('Bearer'),
-    (0, tsoa_1.Post)("/addCredit"),
-    __param(0, (0, tsoa_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], UserSubscriptionController.prototype, "addCredit", null);
+], UserSubscriptionController.prototype, "syncAfterPurchase", null);
 UserSubscriptionController = __decorate([
     (0, tsoa_1.Tags)('User Subscription Routes'),
     (0, tsoa_1.Route)('/user/subscription'),

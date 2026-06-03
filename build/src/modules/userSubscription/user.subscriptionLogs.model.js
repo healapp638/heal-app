@@ -36,6 +36,41 @@ const subscriptionLogsSchema = new mongoose_1.Schema({
         type: Object,
         default: {},
     },
+    // NEW: Credit pack specific fields (if you have credit purchases)
+    transaction_id: {
+        type: String,
+        default: "",
+        index: true, // Add index to prevent duplicate transactions
+    },
+    credits_added: {
+        type: Number,
+        default: 0,
+    },
+    amount: {
+        type: Number,
+        default: 0,
+    },
+    currency: {
+        type: String,
+        default: "USD",
+    },
+    // NEW: RevenueCat specific identifiers
+    original_transaction_id: {
+        type: String,
+        default: "",
+        index: true, // For looking up by transaction ID
+    },
+    revenuecat_id: {
+        type: String,
+        default: "",
+        index: true, // For looking up by RevenueCat user ID
+    },
+    // NEW: Store platform info
+    store: {
+        type: String,
+        enum: ['', 'app_store', 'play_store', 'stripe', 'revenuecat'],
+        default: '',
+    }
 }, {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },

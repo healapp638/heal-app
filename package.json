@@ -19,7 +19,6 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "worker": "ts-node src/helpers/bullMqWorker.ts",
-  
     "api": "node build/src/server.js",
     "bull-worker": "node build/src/helpers/bullMqWorker.js",
     "excel-worker": "node build/src/helpers/worker.helper.js"
@@ -73,6 +72,7 @@
     "nodemailer": "^6.9.16",
     "openai": "^6.36.0",
     "redis": "^5.10.0",
+    "revenuecat": "^1.0.0",
     "sharp": "^0.33.5",
     "swagger-ui-express": "^5.0.1",
     "translatte": "^3.0.1",

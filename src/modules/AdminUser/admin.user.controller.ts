@@ -194,6 +194,37 @@ export default class AdminUserController extends Controller {
 
     //     }
     //     //ends
+
+      @Security("Bearer")
+  @Get("/overviewAnalytics")
+  public async overviewAnalytics(): Promise<ApiResponse> {
+    const wrappedFunc = tryCatchWrapper(handler.overviewAnalytics);
+    return wrappedFunc();
+  }
+
+  @Security("Bearer")
+  @Get("/mrrAnalytics")
+  public async mrrAnalytics(): Promise<ApiResponse> {
+    const wrappedFunc = tryCatchWrapper(handler.mrrAnalytics);
+    return wrappedFunc();
+  }
+
+  @Security("Bearer")
+  @Get("/churnAnalytics")
+  public async churnAnalytics(): Promise<ApiResponse> {
+    const wrappedFunc = tryCatchWrapper(handler.churnAnalytics);
+    return wrappedFunc();
+  }
+
+  @Security("Bearer")
+  @Get("/customerSubscriptionDetails")
+  public async customerSubscriptionDetails(@Query() user_id: string): Promise<ApiResponse> {
+
+    const wrappedFunc = tryCatchWrapper(handler.customerSubscriptionDetails);
+    return wrappedFunc(user_id);
+  }
+
+
 }
 
 

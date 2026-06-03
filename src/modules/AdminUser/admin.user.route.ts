@@ -98,6 +98,30 @@ router.post('/upload/process_file_admin', verifyTokenAdmin, async (req: Request 
 
 // --- MULTIPART UPLOAD ROUTES END---
 
+router.get('/overviewAnalytics', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const controller = new AdminUserController(req, res)
+    const result: ApiResponse = await controller.overviewAnalytics();
+    return showOutput(res, result, result.code)
+});
+
+router.get('/mrrAnalytics', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const controller = new AdminUserController(req, res)
+    const result: ApiResponse = await controller.mrrAnalytics();
+    return showOutput(res, result, result.code)
+});
+
+router.get('/churnAnalytics', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+    const controller = new AdminUserController(req, res)
+    const result: ApiResponse = await controller.churnAnalytics();
+    return showOutput(res, result, result.code)
+});
+
+router.get('/customerSubscriptionDetails', verifyTokenAdmin, async (req: Request | any, res: Response) => {
+        const { user_id } = req.query
+    const controller = new AdminUserController(req, res)
+    const result: ApiResponse = await controller.customerSubscriptionDetails(user_id);
+    return showOutput(res, result, result.code)
+});
 
 
 export default router

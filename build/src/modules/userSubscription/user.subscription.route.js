@@ -18,28 +18,43 @@ const response_util_1 = require("../../utils/response.util");
 const middlewares_1 = __importDefault(require("../../middlewares"));
 const { verifyTokenUser } = middlewares_1.default.auth;
 const router = express_1.default.Router();
-router.post('/initial_purchased_ios_subscription', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { package_name, original_transaction_id, signedPayload } = req.body;
+router.post('/revenuecat_webhook', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const controller = new user_subscription_controller_1.default(req, res);
-    console.log(' ✅ Request coming in route initial_purchased_ios_subscription');
-    const result = yield controller.initialPurchasedIosSubscription({ package_name, original_transaction_id, signedPayload });
+    const result = yield controller.revenueCatWebhook(req.body);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.post('/initial_purchased_android_subscription', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { plan_name, purchase_token } = req.body;
+router.get('/subscription_status', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const controller = new user_subscription_controller_1.default(req, res);
-    const result = yield controller.initialPurchasedAndroidSubscription({ plan_name, purchase_token });
+    const result = yield controller.checkSubscriptionStatus();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.post('/ios_subscription_webhook', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/sync_purchase', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const controller = new user_subscription_controller_1.default(req, res);
-    const result = yield controller.iosSubscriptionWebhook(req.body);
+    const result = yield controller.syncAfterPurchase();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.post('/addCredit', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { package_name, transaction_id } = req.body;
-    const controller = new user_subscription_controller_1.default(req, res);
-    const result = yield controller.addCredit({ package_name, transaction_id });
-    return (0, response_util_1.showOutput)(res, result, result.code);
-}));
+// router.post('/initial_purchased_ios_subscription', verifyTokenUser, async (req: Request | any, res: Response) => {
+//     const { package_name, original_transaction_id, signedPayload } = req.body;
+//     const controller = new UserSubscriptionController(req, res)
+//     console.log(' ✅ Request coming in route initial_purchased_ios_subscription');
+//     const result: ApiResponse = await controller.initialPurchasedIosSubscription({ package_name, original_transaction_id, signedPayload });
+//     return showOutput(res, result, result.code)
+// })
+// router.post('/initial_purchased_android_subscription', verifyTokenUser, async (req: Request | any, res: Response) => {
+//     const { plan_name, purchase_token } = req.body;
+//     const controller = new UserSubscriptionController(req, res)
+//     const result: ApiResponse = await controller.initialPurchasedAndroidSubscription({ plan_name, purchase_token });
+//     return showOutput(res, result, result.code)
+// })
+// router.post('/ios_subscription_webhook', async (req: Request | any, res: Response) => {
+//     const controller = new UserSubscriptionController(req, res)
+//     const result: ApiResponse = await controller.iosSubscriptionWebhook(req.body);
+//     return showOutput(res, result, result.code)
+// })
+// router.post('/addCredit', verifyTokenUser, async (req: Request | any, res: Response) => {
+//     const { package_name, transaction_id } = req.body;
+//     const controller = new UserSubscriptionController(req, res);
+//     const result: ApiResponse = await controller.addCredit({ package_name, transaction_id });
+//     return showOutput(res, result, result.code);
+// });
 exports.default = router;

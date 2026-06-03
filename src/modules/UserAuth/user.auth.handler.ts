@@ -21,6 +21,7 @@ import moment from "moment-timezone";
 // import moment from "moment";
 import userDeeplinkModel from "../UserAffirmation/user.deeplink.model";
 
+
 const UserAuthHandler = {
     // update_social_info: async (findUser: any, model: any, data: any) => {
     //     try {
@@ -96,23 +97,8 @@ const UserAuthHandler = {
 
 update_social_info: async (findUser: any, model: any, data: any) => {
     try {
-        const {
-            login_source,
-            social_auth,
-            email,
-            name,
-            fullName,
-            hearAboutUs,
-            howFellingLately,
-            feelThatWay,
-            likeToFellMore,
-            helpFeelBetter,
-            stopFeelBetter,
-            timeYouCommit,
-            goalStartWith,
-            language,
-            timeZone
-        } = data;
+        const {login_source,social_auth,email,name,fullName,hearAboutUs,howFellingLately,feelThatWay,likeToFellMore,
+            helpFeelBetter,stopFeelBetter,timeYouCommit,goalStartWith,language,timeZone} = data;
 
         const editObj: any = {
             $set: {}
@@ -129,7 +115,6 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             }),
             ...(language?.trim() && { language }),
             ...(timeZone?.trim() && { timeZone }),
-
             ...(hearAboutUs?.trim() && { hearAboutUs }),
             ...(howFellingLately?.trim() && { howFellingLately }),
             ...(feelThatWay?.trim() && { feelThatWay }),
@@ -1758,6 +1743,7 @@ const STREAK_REWARDS: any = {
         );
     }
 }
+
 
 }
 

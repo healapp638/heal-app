@@ -61,6 +61,7 @@ const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges
 const user_auth_model_2 = __importDefault(require("../../modules/UserAuth/user.auth.model"));
 const user_themeEngagement_model_1 = __importDefault(require("../UserModules/user.themeEngagement.model"));
 const notification_service_1 = require("../../services/notification.service");
+const axios_1 = __importDefault(require("axios"));
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 const AdminUserHandler = {
     getUsersList: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -454,6 +455,58 @@ const AdminUserHandler = {
     // // -------------------- SET CACHE --------------------
     // await setCache(cacheKey,responseData, 60);
     // return showResponse(true, responseMessage?.common?.data_retreive_sucess,responseData,statusCodes.SUCCESS);
-    // }
+    // },
+    overviewAnalytics: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`https://api.revenuecat.com/v2/projects/${process.env.REVENUECAT_PROJECT_ID}/metrics/overview`, {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "RevenueCat overview fetched successfully", response.data, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Unable to fetch analytics", null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    mrrAnalytics: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`https://api.revenuecat.com/v2/projects/${process.env.REVENUECAT_PROJECT_ID}/charts/mrr`, {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "MRR analytics fetched successfully", response.data, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Unable to fetch MRR analytics", null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    churnAnalytics: () => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`https://api.revenuecat.com/v2/projects/${process.env.REVENUECAT_PROJECT_ID}/charts/churn`, {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "Churn analytics fetched successfully", response.data, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Unable to fetch churn analytics", null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    customerSubscriptionDetails: (appUserId) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            const response = yield axios_1.default.get(`https://api.revenuecat.com/v1/subscribers/${appUserId}`, {
+                headers: {
+                    Authorization: `Bearer ${process.env.REVENUECAT_API_KEY}`
+                }
+            });
+            return (0, response_util_1.showResponse)(true, "Customer details fetched successfully", response.data, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Unable to fetch customer details", null, statusCodes_1.default.API_ERROR);
+        }
+    })
 };
 exports.default = AdminUserHandler;
