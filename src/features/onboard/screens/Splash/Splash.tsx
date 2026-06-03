@@ -72,15 +72,27 @@ const Splash = () => {
           ],
         });
       } else {
-        navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: AppRoutes.NonAuthStack,
-              params: { screen: AppRoutes.BottomTab },
-            } as never,
-          ],
-        });
+        if (user?.user_subscription?.is_subscribed == 1) {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: AppRoutes.NonAuthStack,
+                params: { screen: AppRoutes.BottomTab },
+              } as never,
+            ],
+          });
+        } else {
+          navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: AppRoutes.NonAuthStack,
+                params: { screen: AppRoutes.Premium },
+              } as never,
+            ],
+          });
+        }
       }
     }
   };

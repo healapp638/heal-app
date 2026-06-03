@@ -83,8 +83,6 @@ export default function MainStack() {
     }
   }, [netInfo.isConnected]);
 
-
-
   // Use refs for values needed inside handleUrl to avoid stale closures
   const loginMagicLinkRef = useRef(loginMagicLink);
   const dispatchRef = useRef(dispatch);
@@ -130,7 +128,7 @@ export default function MainStack() {
       const queryString = url.split('?')[1];
       if (queryString) {
         const pairs = queryString.split('&');
-        pairs.forEach((pair) => {
+        pairs.forEach(pair => {
           const [key, value] = pair.split('=');
           if (key) {
             params[decodeURIComponent(key)] = decodeURIComponent(value || '');
@@ -205,7 +203,6 @@ export default function MainStack() {
       if (email) {
         currentDispatch(setEmail(email));
 
-
         currentLoginMagicLink(
           {
             endpoint: endpoints.magicLinkLogin,
@@ -252,18 +249,32 @@ export default function MainStack() {
                   ],
                 });
               } else {
+                if (response?.data?.user_subscription?.is_subscribed == 1) {
+                  currentNavigation.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: AppRoutes.NonAuthStack,
+                        params: {
+                          screen: AppRoutes.BottomTab,
+                        },
+                      } as never,
+                    ],
+                  });
+                } else {
+                  currentNavigation.reset({
+                    index: 0,
+                    routes: [
+                      {
+                        name: AppRoutes.NonAuthStack,
+                        params: {
+                          screen: AppRoutes.Offer,
+                        },
+                      } as never,
+                    ],
+                  });
+                }
                 // Navigate/Reset to NonAuthStack Offer screen
-                currentNavigation.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: AppRoutes.NonAuthStack,
-                      params: {
-                        screen: AppRoutes.Offer,
-                      },
-                    } as never,
-                  ],
-                });
               }
             },
             onError: (error: any) => {
@@ -283,13 +294,13 @@ export default function MainStack() {
                 ],
               });
             },
-          }
+          },
         );
       }
     };
 
     // Cold start: only fires once when the app is launched from a killed state
-    Linking.getInitialURL().then((url) => {
+    Linking.getInitialURL().then(url => {
       if (url) {
         handleUrl(url);
       }
@@ -314,9 +325,6 @@ export default function MainStack() {
       subscription.remove();
     };
   }, []);
-
-
-
 
   return (
     <>

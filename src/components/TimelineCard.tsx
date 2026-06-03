@@ -20,58 +20,117 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
   selectedPlan,
 }) => {
   return (
-    <View style={styles.timelineCard}>
-      <View style={styles.timelineLeft}>
-        <Image
-          source={selectedPlan === 'monthly' ? images.premium2 : images.premium}
-          style={
-            selectedPlan === 'monthly'
-              ? styles.premiumImage2
-              : styles.premiumImage
-          }
-          resizeMode="contain"
-        />
-      </View>
+    <View
+      style={[
+        styles.timelineCard,
+        selectedPlan === 'monthly' && {
+          paddingHorizontal: Platform.OS === 'ios' ? 20 : 16,
+          paddingVertical: 20,
+        },
+      ]}
+    >
+      {selectedPlan !== 'monthly' && (
+        <View style={styles.timelineLeft}>
+          <Image
+            source={images.premium}
+            style={styles.premiumImage}
+            resizeMode="contain"
+          />
+        </View>
+      )}
 
-      <View style={styles.timelineRight}>
+      <View
+        style={[
+          styles.timelineRight,
+          selectedPlan === 'monthly' && { paddingLeft: 0 },
+        ]}
+      >
         {selectedPlan === 'monthly' ? (
           <>
             <View
               style={{
-                ...styles.timelineItem,
-                marginTop: Platform.OS == 'ios' ? 1 : 3,
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                marginBottom: 18,
               }}
             >
-              <SolidText maxFontScale={1} style={styles.timelineTitle}>
-                {localization.appkeys?.feelBetterEveryDay ||
-                  'Feel Better Every Day'}
-              </SolidText>
-              <SolidText maxFontScale={1} style={styles.timelineSub}>
-                {localization.appkeys?.feelBetterEveryDaySub ||
-                  'Small daily actions designed to help you feel more balanced, calm and fulfilled.'}
-              </SolidText>
+              <Image
+                source={images.check}
+                style={{
+                  width: 18,
+                  height: 18,
+                  marginRight: 10,
+                  marginTop: Platform.OS === 'ios' ? 2 : 4,
+                }}
+                resizeMode="contain"
+              />
+              <View style={{ flex: 1 }}>
+                <SolidText maxFontScale={1} style={styles.timelineTitle}>
+                  {localization.appkeys?.feelBetterEveryDay ||
+                    'Feel Better Every Day'}
+                </SolidText>
+                <SolidText maxFontScale={1} style={styles.timelineSub}>
+                  {localization.appkeys?.feelBetterEveryDaySub ||
+                    'Small daily actions designed to help you feel more balanced, calm and fulfilled.'}
+                </SolidText>
+              </View>
             </View>
 
-            <View style={styles.timelineItemCenter}>
-              <SolidText maxFontScale={1} style={styles.timelineTitle}>
-                {localization.appkeys?.buildBetterHabits ||
-                  'Build Better Habits'}
-              </SolidText>
-              <SolidText maxFontScale={1} style={styles.timelineSub}>
-                {localization.appkeys?.buildBetterHabitsSub ||
-                  'Create simple habits that support your mental wellbeing and personal growth.'}
-              </SolidText>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                marginBottom: 18,
+              }}
+            >
+              <Image
+                source={images.check}
+                style={{
+                  width: 18,
+                  height: 18,
+                  marginRight: 10,
+                  marginTop: Platform.OS === 'ios' ? 2 : 4,
+                }}
+                resizeMode="contain"
+              />
+              <View style={{ flex: 1 }}>
+                <SolidText maxFontScale={1} style={styles.timelineTitle}>
+                  {localization.appkeys?.buildBetterHabits ||
+                    'Build Better Habits'}
+                </SolidText>
+                <SolidText maxFontScale={1} style={styles.timelineSub}>
+                  {localization.appkeys?.buildBetterHabitsSub ||
+                    'Create simple habits that support your mental wellbeing and personal growth.'}
+                </SolidText>
+              </View>
             </View>
 
-            <View style={styles.timelineItem}>
-              <SolidText maxFontScale={1} style={styles.timelineTitle}>
-                {localization.appkeys?.becomeBestSelf ||
-                  'Become Your Best Self'}
-              </SolidText>
-              <SolidText maxFontScale={1} style={styles.timelineSub}>
-                {localization.appkeys?.becomeBestSelfSub ||
-                  'Unlock your potential and grow into the person you want to be.'}
-              </SolidText>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+              }}
+            >
+              <Image
+                source={images.check}
+                style={{
+                  width: 18,
+                  height: 18,
+                  marginRight: 10,
+                  marginTop: Platform.OS === 'ios' ? 2 : 4,
+                }}
+                resizeMode="contain"
+              />
+              <View style={{ flex: 1 }}>
+                <SolidText maxFontScale={1} style={styles.timelineTitle}>
+                  {localization.appkeys?.becomeBestSelf ||
+                    'Become Your Best Self'}
+                </SolidText>
+                <SolidText maxFontScale={1} style={styles.timelineSub}>
+                  {localization.appkeys?.becomeBestSelfSub ||
+                    'Unlock your potential and grow into the person you want to be.'}
+                </SolidText>
+              </View>
             </View>
           </>
         ) : (

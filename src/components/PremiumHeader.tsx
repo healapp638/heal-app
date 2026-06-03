@@ -17,6 +17,7 @@ const PremiumHeader: React.FC<PremiumHeaderProps> = ({
     <View>
       {showCloseBtn ? (
         <TouchableOpacity
+          hitSlop={20}
           style={styles.closeBtn}
           onPress={(...args: any) => {
             return (onClose as any)(...args);

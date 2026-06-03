@@ -52,4 +52,5 @@ export const endpoints = {
   delete_deactivate: '/user/auth/delete_deactivate',
   claimStreak: '/user/auth/claimStreak',
   theme_engagement_create: '/user/modules/theme_engagement_create',
+  sync_purchase: '/user/subscription/sync_purchase',
 };

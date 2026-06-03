@@ -2371,6 +2371,23 @@
     redux-thunk "^3.1.0"
     reselect "^5.1.0"
 
+"@revenuecat/purchases-js-hybrid-mappings@18.8.0":
+  version "18.8.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-js-hybrid-mappings/-/purchases-js-hybrid-mappings-18.8.0.tgz#da46340c70c66a33a571e16d1758a9fb0a900349"
+  integrity sha512-wGFEhf/n2AF9HmBd88UBrhISvxvi1Yrw8LtXtcdnZJ7akWI+W/Oo6PL44HsiptuWQBw2UYDeoL7ZKZhgBk7mTA==
+  dependencies:
+    "@revenuecat/purchases-js" "1.41.1"
+
+"@revenuecat/purchases-js@1.41.1":
+  version "1.41.1"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-js/-/purchases-js-1.41.1.tgz#c764c8660df8943e2167c58f6b0605095b49381f"
+  integrity sha512-v6vunZZ4YnQhR/O4W3cVhw3iE8O8fhloNA9Al3KU6ABiH6YGjflJiOhjbTp8JG78eUOlYUFYZwEU8H0VXSuiYA==
+
+"@revenuecat/purchases-typescript-internal@18.8.0":
+  version "18.8.0"
+  resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-18.8.0.tgz#5ba0007a25411eeaa2156c08bc36b09f5a13a970"
+  integrity sha512-y8p8wa0HFhfu0Rel/dp2aPpw+xhvPN0HlcQbK84B5+rzXCpIIpHONv2grgOtUlVWq6amv4lAn9rmooVr8xa50g==
+
 "@sideway/address@^4.1.5":
   version "4.1.5"
   resolved "https://registry.yarnpkg.com/@sideway/address/-/address-4.1.5.tgz#4bc149a0076623ced99ca8208ba780d65a99b9d5"
@@ -6659,6 +6676,21 @@ react-native-orientation-locker@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/react-native-orientation-locker/-/react-native-orientation-locker-1.7.0.tgz#47ef2b9c24618e40f0a521f184b51270e576b028"
   integrity sha512-2PhG4UyRJktb3KCTISStuu8/q+Q3q3oPesGg9DhdY0b6Cu/ZzxkCvkbJte2TPWRYkS0JpClimvqVaonulGvDrA==
+
+react-native-purchases-ui@^10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-purchases-ui/-/react-native-purchases-ui-10.2.0.tgz#daf47d41b81dde73cedb7d81bd14795fa70eb36f"
+  integrity sha512-bpSmlPCOVYvDBoJE12M6s0RyixsUAj2Q7ZSff37Et3RwcKz1SkIiQk2TQeNDc9ET0PtGuZf77dA1m03d+EjT9Q==
+  dependencies:
+    "@revenuecat/purchases-typescript-internal" "18.8.0"
+
+react-native-purchases@^10.2.0:
+  version "10.2.0"
+  resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-10.2.0.tgz#5bf23e96c448b5f14789b3f931d68a7b232da388"
+  integrity sha512-pIofFf1njbFTko5NTC+5Jv9U6lpUD6iPyHINUjMtIeIGNfQoudYTdctFSTIC/ahHHmX9SGf1QNkUHuJ1Qw5CLg==
+  dependencies:
+    "@revenuecat/purchases-js-hybrid-mappings" "18.8.0"
+    "@revenuecat/purchases-typescript-internal" "18.8.0"
 
 react-native-reanimated@^4.3.0:
   version "4.3.1"

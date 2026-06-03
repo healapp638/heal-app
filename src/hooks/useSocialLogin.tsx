@@ -91,15 +91,27 @@ const useSocialLogin = () => {
             dispatch(setLastLoginType(source));
             dispatch(setSocialEmail(email));
             dispatch(getUserDetail() as any);
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: AppRoutes.NonAuthStack,
-                  params: { screen: AppRoutes.Offer },
-                } as never,
-              ],
-            });
+            if (response?.data?.user_subscription?.is_subscribed == 1) {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.NonAuthStack,
+                    params: { screen: AppRoutes.BottomTab },
+                  } as never,
+                ],
+              });
+            } else {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.NonAuthStack,
+                    params: { screen: AppRoutes.Offer },
+                  } as never,
+                ],
+              });
+            }
           }
         },
         onError: (error: any) => {

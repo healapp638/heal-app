@@ -41,6 +41,7 @@ import useGetApi from '../../hooks/useGetApi';
 import { endpoints } from '../../api/Services/endpoints';
 import { useSelector } from 'react-redux';
 import SuccessModal from '../../modals/SuccessModal';
+import messaging from '@react-native-firebase/messaging';
 
 export default function NonAuthStack() {
   useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {});

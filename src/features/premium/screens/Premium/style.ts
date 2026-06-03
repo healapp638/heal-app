@@ -175,7 +175,7 @@ const style = (colors: any, appLanguage: any) =>
       fontSize: AppUtils.fontSize(12),
       color: '#666',
       textAlign: 'center',
-      marginBottom: hp(4),
+      marginBottom: hp(2),
       includeFontPadding: false,
     },
     actionBtn: {

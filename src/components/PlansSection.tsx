@@ -7,12 +7,16 @@ interface PlansSectionProps {
   styles: any;
   selectedPlan: 'monthly' | 'yearly';
   setSelectedPlan: (plan: 'monthly' | 'yearly') => void;
+  monthlyPrice?: string;
+  yearlyPrice?: string;
 }
 const PlansSection: React.FC<PlansSectionProps> = ({
   localization,
   styles,
   selectedPlan,
   setSelectedPlan,
+  monthlyPrice,
+  yearlyPrice,
 }) => {
   return (
     <View style={styles.plansContainer}>
@@ -29,7 +33,7 @@ const PlansSection: React.FC<PlansSectionProps> = ({
           {localization.appkeys?.monthly}
         </SolidText>
         <SolidText maxFontScale={1} style={styles.planPrice}>
-          {localization.appkeys?.monthlyPrice}
+          {monthlyPrice || localization.appkeys?.monthlyPrice}
         </SolidText>
       </TouchableOpacity>
 
@@ -51,7 +55,7 @@ const PlansSection: React.FC<PlansSectionProps> = ({
           {localization.appkeys?.yearly}
         </SolidText>
         <SolidText maxFontScale={1} style={styles.planPrice}>
-          {localization.appkeys?.yearlyPrice}
+          {yearlyPrice || localization.appkeys?.yearlyPrice}
         </SolidText>
         <SolidText maxFontScale={1} style={styles.planFreeTrial}>
           {localization.appkeys?.threeDaysFree}

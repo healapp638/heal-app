@@ -183,6 +183,7 @@ const LightTheme = {
     fireGif: require('../assets/fireGif.gif'),
     newChat: require('../assets/newChat.png'),
     premium2: require('../assets/premium2.png'),
+    check: require('../assets/check.png'),
   },
 };
 
@@ -370,6 +371,7 @@ const DarkTheme = {
     newChat: require('../assets/newChat.png'),
     fireGif: require('../assets/fireGif.gif'),
     premium2: require('../assets/premium2.png'),
+    check: require('../assets/check.png'),
   },
 };
 export { LightTheme, DarkTheme };

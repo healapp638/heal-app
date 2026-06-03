@@ -20,6 +20,10 @@ import TimelineCard from '../components/TimelineCard';
 import ReminderToggle from '../components/ReminderToggle';
 import PlansSection from '../components/PlansSection';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
+import { useSubscription } from '../hooks/useSubscription';
+import { triggerHaptic } from '../hooks/useHaptic';
+import usePostApi from '../hooks/usePostApi';
+import { endpoints } from '../api/Services/endpoints';
 
 interface PremiumModalProps {
   visible: boolean;
@@ -30,6 +34,8 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const navigation = useNavigation();
+  const { purchasePlan, packages } = useSubscription();
+  const { mutate: syncPurchaseApi } = usePostApi();
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   const styles = useStyles(colors, appLanguage);
 
@@ -37,6 +43,50 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>(
     'yearly',
   );
+
+  const formatPrice = (price: number, priceString: string) => {
+    const symbol = priceString.replace(/[0-9.,\s]/g, '').trim();
+    const isSymbolFirst = priceString.startsWith(symbol);
+    return isSymbolFirst ? `${symbol} ${price.toFixed(2)}` : `${price.toFixed(2)} ${symbol}`;
+  };
+
+  const getDynamicPrices = () => {
+    let monthlyPrice = undefined;
+    let yearlyPrice = undefined;
+
+    if (packages) {
+      if (packages.monthly) {
+        monthlyPrice = packages.monthly.product.priceString + '/month';
+      }
+      if (packages.yearly) {
+        const annualProduct = packages.yearly.product;
+        const monthlyRate = annualProduct.price / 12;
+        yearlyPrice = `${formatPrice(monthlyRate, annualProduct.priceString)}/months`;
+      }
+    }
+
+    return { monthlyPrice, yearlyPrice };
+  };
+
+  const { monthlyPrice, yearlyPrice } = getDynamicPrices();
+
+  const getPriceInfoText = () => {
+    if (selectedPlan === 'monthly') {
+      const defaultText = localization.appkeys?.monthlyPriceInfo || '';
+      if (packages?.monthly) {
+        const priceStr = packages.monthly.product.priceString;
+        return defaultText.replace(/CHF\s*10\.00/gi, priceStr);
+      }
+      return defaultText;
+    } else {
+      const defaultText = localization.appkeys?.yearlyPriceInfoNew || '';
+      if (packages?.yearly) {
+        const priceStr = packages.yearly.product.priceString;
+        return defaultText.replace(/CHF\s*48\.00/gi, priceStr);
+      }
+      return defaultText;
+    }
+  };
   const [showCloseBtn, setShowCloseBtn] = useState(false);
 
   useEffect(() => {
@@ -108,11 +158,13 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 onToggle={() => setReminderEnabled(!reminderEnabled)}
               />
 
-              <PlansSection
+               <PlansSection
                 localization={localization}
                 styles={styles}
                 selectedPlan={selectedPlan}
                 setSelectedPlan={setSelectedPlan}
+                monthlyPrice={monthlyPrice}
+                yearlyPrice={yearlyPrice}
               />
 
               <SolidBtn
@@ -124,23 +176,21 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                     ? localization.appkeys?.startMyJourney
                     : localization.appkeys?.startMy3DayFreeTrial
                 }
-                onPress={() => {
-                  onClose();
-                  // navigation.reset({
-                  //   index: 0,
-                  //   routes: [
-                  //     {
-                  //       name: AppRoutes.BottomTab as never,
-                  //     },
-                  //   ],
-                  // });
+                onPress={async () => {
+                  triggerHaptic('impactMedium');
+                  const success = await purchasePlan(selectedPlan);
+                  if (success) {
+                    syncPurchaseApi({
+                      endpoint: endpoints.sync_purchase,
+                      data: {},
+                    });
+                    onClose();
+                  }
                 }}
               />
 
               <SolidText style={styles.priceInfo}>
-                {selectedPlan === 'monthly'
-                  ? localization.appkeys?.monthlyPriceInfo
-                  : localization.appkeys?.yearlyPriceInfoNew}
+                {getPriceInfoText()}
               </SolidText>
 
               <TouchableOpacity style={styles.promoBtn}>

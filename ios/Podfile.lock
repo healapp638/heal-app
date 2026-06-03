@@ -179,6 +179,11 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
+  - PurchasesHybridCommon (18.8.0):
+    - RevenueCat (= 5.74.0)
+  - PurchasesHybridCommonUI (18.8.0):
+    - PurchasesHybridCommon (= 18.8.0)
+    - RevenueCatUI (= 5.74.0)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2747,6 +2752,9 @@ PODS:
   - ReactNativeLocalization (2.3.2):
     - React-Core
   - RecaptchaInterop (101.0.0)
+  - RevenueCat (5.74.0)
+  - RevenueCatUI (5.74.0):
+    - RevenueCat (= 5.74.0)
   - RNAppleAuthentication (2.4.2):
     - React-Core
   - RNCAsyncStorage (2.2.0):
@@ -3146,6 +3154,12 @@ PODS:
     - React-Core
     - RNNotifee/NotifeeCore (= 9.1.8)
   - RNNotifee/NotifeeCore (9.1.8):
+    - React-Core
+  - RNPaywalls (10.2.0):
+    - PurchasesHybridCommonUI (= 18.8.0)
+    - React-Core
+  - RNPurchases (10.2.0):
+    - PurchasesHybridCommon (= 18.8.0)
     - React-Core
   - RNReactNativeHapticFeedback (3.0.0):
     - boost
@@ -3614,6 +3628,8 @@ DEPENDENCIES:
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
+  - RNPaywalls (from `../node_modules/react-native-purchases-ui`)
+  - RNPurchases (from `../node_modules/react-native-purchases`)
   - RNReactNativeHapticFeedback (from `../node_modules/react-native-haptic-feedback`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -3655,7 +3671,11 @@ SPEC REPOS:
     - nanopb
     - PromisesObjC
     - PromisesSwift
+    - PurchasesHybridCommon
+    - PurchasesHybridCommonUI
     - RecaptchaInterop
+    - RevenueCat
+    - RevenueCatUI
     - SDWebImage
     - SDWebImageAVIFCoder
     - SDWebImageSVGCoder
@@ -3859,6 +3879,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-localize"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
+  RNPaywalls:
+    :path: "../node_modules/react-native-purchases-ui"
+  RNPurchases:
+    :path: "../node_modules/react-native-purchases"
   RNReactNativeHapticFeedback:
     :path: "../node_modules/react-native-haptic-feedback"
   RNReanimated:
@@ -3913,6 +3937,8 @@ SPEC CHECKSUMS:
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
+  PurchasesHybridCommon: e723f7c9b109be51f7ec6c85a104791369f1b562
+  PurchasesHybridCommonUI: 50cad0cd7729da2195b74edc618e605a89705bc6
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: c4b9e2fd0ab200e3af72b013ed6113187c607077
   RCTRequired: e97dd5dafc1db8094e63bc5031e0371f092ae92a
@@ -3987,6 +4013,8 @@ SPEC CHECKSUMS:
   ReactCommon: e5df435ef0892875b7d503fbe3ec73a1a3712049
   ReactNativeLocalization: 79b100588f6d7a68852b982ccbe57e329e8bb5a7
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RevenueCat: efcd02bf9b14ffce229e57dc6863a2513136b9ca
+  RevenueCatUI: c0eba5eccdd3eedd3d69ce8d552a445ebe62eff0
   RNAppleAuthentication: 820bf306af1585c32ce698c82ed26c302e162e51
   RNCAsyncStorage: fd44f4b03e007e642e98df6726737bc66e9ba609
   RNCMaskedView: d707a83784c67099b54b37d056ababb2767ce15e
@@ -4003,6 +4031,8 @@ SPEC CHECKSUMS:
   RNImageCropPicker: 5432d75a3bc7209dc8b6ab189fcfe19bd6339fb9
   RNLocalize: c46dd4008dc8990a098fcafd6ee051122a1ccfda
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
+  RNPaywalls: 39a8ca5ad9aa780e79c3efbf266ce2a0f4023d35
+  RNPurchases: 814d23250d91856382f2d1d7c5e255b3d6b4b8ef
   RNReactNativeHapticFeedback: 8f6dc89cf13406a754487d8f8bd6df4d6feb789b
   RNReanimated: cb3821bfdcb8e387ee53eed0d1b88f77e3da1c00
   RNScreens: 3714e1b55dd60397b7c71f898351c29b9ae8cc5d

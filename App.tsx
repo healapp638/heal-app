@@ -18,6 +18,7 @@ import { ToastProvider } from './src/utils/ToastManager';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { navigationRef } from './src/utils/navigationRef';
+import { SubscriptionProvider } from './src/hooks/useSubscription';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -84,18 +85,20 @@ function App(): React.JSX.Element {
 
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            <LocalizationProvider>
-              <QueryClientProvider client={queryClient}>
-                <NavigationContainer
-                  ref={navigationRef}
-                  theme={theme == 'dark' ? DarkTheme : LightTheme}
-                >
-                  <ToastProvider>
-                    <MainStack />
-                  </ToastProvider>
-                </NavigationContainer>
-              </QueryClientProvider>
-            </LocalizationProvider>
+            <SubscriptionProvider>
+              <LocalizationProvider>
+                <QueryClientProvider client={queryClient}>
+                  <NavigationContainer
+                    ref={navigationRef}
+                    theme={theme == 'dark' ? DarkTheme : LightTheme}
+                  >
+                    <ToastProvider>
+                      <MainStack />
+                    </ToastProvider>
+                  </NavigationContainer>
+                </QueryClientProvider>
+              </LocalizationProvider>
+            </SubscriptionProvider>
           </PersistGate>
         </Provider>
       </KeyboardProvider>
