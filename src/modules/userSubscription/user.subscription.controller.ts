@@ -23,9 +23,13 @@ export default class UserSubscriptionController extends Controller {
      */
     @Post("/revenuecat_webhook")
     public async revenueCatWebhook(@Body() request: any): Promise<ApiResponse> {
+        console.log("📨 Webhook Headers received:", this.req.headers);
         const signature = this.req.headers['x-revenuecat-signature'] as string || '';
+        const authorization = this.req.headers['authorization'] as string || '';
+        
+        // Pass both signature and authorization to the handler for flexibility
         const wrappedFunc = tryCatchWrapper(handler.revenueCatWebhook);
-        return await wrappedFunc(request, signature); 
+        return await wrappedFunc(request, signature, authorization); 
     }
 
     /**

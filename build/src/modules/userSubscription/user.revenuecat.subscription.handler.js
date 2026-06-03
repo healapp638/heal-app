@@ -146,9 +146,16 @@ function extractSubscriptionData(revenueCatData) {
 /**
  * Verify RevenueCat webhook signature for security
  */
-function verifyWebhookSignature(payload, signature) {
+function verifyWebhookSignature(payload, signature, authorization) {
     try {
         console.log(payload, signature, 'payload signature');
+        // 1. Check if they used the Authorization header instead of HMAC signature
+        const expectedAuth = authorization === null || authorization === void 0 ? void 0 : authorization.replace('Bearer ', '').trim();
+        if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
+            console.log('✅ Validated using Authorization header');
+            return true;
+        }
+        // 2. Otherwise try HMAC signature validation
         const expectedSignature = crypto_1.default
             .createHmac('sha256', REVENUECAT_WEBHOOK_SECRET)
             .update(JSON.stringify(payload))
@@ -175,11 +182,11 @@ const UserSubscriptionHandler = {
     // ============= REVENUECAT WEBHOOK HANDLER (ONE FOR BOTH PLATFORMS) =============
     // This is called by RevenueCat whenever a subscription event happens
     // Set this URL in RevenueCat Dashboard → Integrations → Webhooks
-    revenueCatWebhook: (data, signature) => __awaiter(void 0, void 0, void 0, function* () {
+    revenueCatWebhook: (data, signature, authorization) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             console.log("📨 RevenueCat webhook received");
             // Verify webhook signature (security)
-            if (!verifyWebhookSignature(data, signature)) {
+            if (!verifyWebhookSignature(data, signature, authorization)) {
                 console.error("❌ Invalid webhook signature");
                 return (0, response_util_1.showResponse)(false, "Invalid webhook signature", null, statusCodes_1.default.VALIDATION_ERROR);
             }
