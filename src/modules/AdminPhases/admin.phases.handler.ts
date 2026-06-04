@@ -31,6 +31,15 @@ const phaseHandler = {
                 obj.reflection[lang] = translatedReflection;
             })
         );
+
+        const existingPhase = await adminPhasesModel.findOne({
+            subModuleId: convertToObjectId(subModuleId),
+            "title.en": obj.title["en"]
+        });
+        if (existingPhase) {
+            return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+        }
+
         const createPhase = await adminPhasesModel.create({
             title: obj.title,
             points: points,
@@ -49,6 +58,18 @@ const phaseHandler = {
         if (!isModuleExist) {
             return showResponse(false, responseMessage.common.phase_not_found, null, statusCodes.API_ERROR)
         }
+
+        if (title && lang === 'en') {
+            const existingPhase = await adminPhasesModel.findOne({
+                _id: { $ne: convertToObjectId(phaseId) },
+                subModuleId: isModuleExist.subModuleId,
+                "title.en": title
+            });
+            if (existingPhase) {
+                return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+            }
+        }
+
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
             ...(reflection && { [`reflection.${lang}`]: reflection }),

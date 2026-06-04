@@ -36,6 +36,13 @@ const CommonHandler = {
             })
         );
 
+        const existingTheme = await adminThemeModel.findOne({
+            "title.en": obj.title["en"]
+        });
+        if (existingTheme) {
+            return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+        }
+
         const createTheme = await adminThemeModel.create({
             title: obj.title,
             description: obj.description,
@@ -51,6 +58,17 @@ const CommonHandler = {
 
     updateTheme: async (data: any): Promise<ApiResponse> => {
         const { title, description, imgUrl, lang, themeId } = data
+
+        if (title && lang === 'en') {
+            const existingTheme = await adminThemeModel.findOne({
+                _id: { $ne: convertToObjectId(themeId) },
+                "title.en": title
+            });
+            if (existingTheme) {
+                return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+            }
+        }
+
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
             ...(description && { [`description.${lang}`]: description }),
@@ -274,12 +292,12 @@ const CommonHandler = {
 
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminThemeModel, aggregate, page, limit)
         const result = await adminThemeModel.aggregate(aggregation)
         return showResponse(true, responseMessage.common.data_retreive_sucess, { result, totalCount,excel_format:
-                "https://d2aanhz0ffna0r.cloudfront.net/Heal%20Love%20Excel%203.xlsx" }, statusCodes.SUCCESS)
+                "https://d2aanhz0ffna0r.cloudfront.net/format%20of%20excel.xlsx" }, statusCodes.SUCCESS)
     },
 
     themeDetails: async (data: any): Promise<ApiResponse> => {

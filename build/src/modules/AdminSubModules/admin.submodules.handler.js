@@ -36,6 +36,13 @@ const CommonHandler = {
             obj.title[lang] = translatedTitle;
             obj.description[lang] = translatedDescription;
         })));
+        const existingSubmodule = yield admin_submodules_model_1.default.findOne({
+            moduleId: (0, common_helper_1.convertToObjectId)(moduleId),
+            "title.en": obj.title["en"]
+        });
+        if (existingSubmodule) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+        }
         const createTheme = yield admin_submodules_model_1.default.create({
             title: obj.title,
             moduleId: (0, common_helper_1.convertToObjectId)(moduleId),
@@ -51,6 +58,16 @@ const CommonHandler = {
         const isModuleExist = yield admin_submodules_model_1.default.findOne({ _id: subModuleId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.module_not_found, null, statusCodes_1.default.API_ERROR);
+        }
+        if (title && lang === 'en') {
+            const existingSubmodule = yield admin_submodules_model_1.default.findOne({
+                _id: { $ne: (0, common_helper_1.convertToObjectId)(subModuleId) },
+                moduleId: isModuleExist.moduleId,
+                "title.en": title
+            });
+            if (existingSubmodule) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
         }
         const obj = Object.assign(Object.assign({}, (title && { [`title.${lang}`]: title })), (description && { [`description.${lang}`]: description }));
         const updateTheme = yield admin_submodules_model_1.default.findByIdAndUpdate(subModuleId, { $set: obj }, { new: true });

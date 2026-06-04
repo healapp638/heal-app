@@ -34,6 +34,13 @@ const CommonHandler = {
             obj.title[lang] = translatedTitle;
         })));
         console.log(obj, 'FINAL obj ✅'); // now it will have data
+        const existingModule = yield admin_modules_model_1.default.findOne({
+            themeId: (0, common_helper_1.convertToObjectId)(themeId),
+            "title.en": obj.title["en"]
+        });
+        if (existingModule) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+        }
         const createTheme = yield admin_modules_model_1.default.create({
             title: obj.title,
             themeId: (0, common_helper_1.convertToObjectId)(themeId),
@@ -48,6 +55,16 @@ const CommonHandler = {
         const isModuleExist = yield admin_modules_model_1.default.findOne({ _id: moduleId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!isModuleExist) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.module_not_found, null, statusCodes_1.default.API_ERROR);
+        }
+        if (title && lang === 'en') {
+            const existingModule = yield admin_modules_model_1.default.findOne({
+                _id: { $ne: (0, common_helper_1.convertToObjectId)(moduleId) },
+                themeId: isModuleExist.themeId,
+                "title.en": title
+            });
+            if (existingModule) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
         }
         const obj = Object.assign({}, (title && { [`title.${lang}`]: title }));
         const updateTheme = yield admin_modules_model_1.default.findByIdAndUpdate(moduleId, { $set: obj }, { new: true });

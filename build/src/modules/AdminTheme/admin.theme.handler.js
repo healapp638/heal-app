@@ -40,6 +40,12 @@ const CommonHandler = {
             obj.title[lang] = translatedTitle;
             obj.description[lang] = translatedDescription;
         })));
+        const existingTheme = yield admin_theme_model_1.default.findOne({
+            "title.en": obj.title["en"]
+        });
+        if (existingTheme) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+        }
         const createTheme = yield admin_theme_model_1.default.create({
             title: obj.title,
             description: obj.description,
@@ -52,6 +58,15 @@ const CommonHandler = {
     }),
     updateTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { title, description, imgUrl, lang, themeId } = data;
+        if (title && lang === 'en') {
+            const existingTheme = yield admin_theme_model_1.default.findOne({
+                _id: { $ne: (0, common_helper_1.convertToObjectId)(themeId) },
+                "title.en": title
+            });
+            if (existingTheme) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+        }
         const obj = Object.assign(Object.assign(Object.assign({}, (title && { [`title.${lang}`]: title })), (description && { [`description.${lang}`]: description })), (imgUrl && { imgUrl }));
         const updateTheme = yield admin_theme_model_1.default.findByIdAndUpdate(themeId, { $set: obj }, { new: true });
         if (!updateTheme) {
@@ -182,11 +197,11 @@ const CommonHandler = {
                     title: { $regex: search, $options: 'i' },
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_theme_model_1.default, aggregate, page, limit);
         const result = yield admin_theme_model_1.default.aggregate(aggregation);
-        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount, excel_format: "https://d2aanhz0ffna0r.cloudfront.net/Heal%20Love%20Excel%203.xlsx" }, statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { result, totalCount, excel_format: "https://d2aanhz0ffna0r.cloudfront.net/format%20of%20excel.xlsx" }, statusCodes_1.default.SUCCESS);
     }),
     themeDetails: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { themeId, lang } = data;

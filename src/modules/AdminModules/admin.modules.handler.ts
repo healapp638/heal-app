@@ -31,6 +31,14 @@ const CommonHandler = {
 
         console.log(obj, 'FINAL obj ✅'); // now it will have data
 
+        const existingModule = await adminModulesModel.findOne({
+            themeId: convertToObjectId(themeId),
+            "title.en": obj.title["en"]
+        });
+        if (existingModule) {
+            return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+        }
+
         const createTheme = await adminModulesModel.create({
             title: obj.title,
             themeId: convertToObjectId(themeId),
@@ -49,6 +57,18 @@ const CommonHandler = {
         if (!isModuleExist) {
             return showResponse(false, responseMessage.common.module_not_found, null, statusCodes.API_ERROR)
         }
+
+        if (title && lang === 'en') {
+            const existingModule = await adminModulesModel.findOne({
+                _id: { $ne: convertToObjectId(moduleId) },
+                themeId: isModuleExist.themeId,
+                "title.en": title
+            });
+            if (existingModule) {
+                return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+            }
+        }
+
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
         };

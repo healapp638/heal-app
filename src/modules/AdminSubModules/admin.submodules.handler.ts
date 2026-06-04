@@ -31,6 +31,15 @@ const CommonHandler = {
                 obj.description[lang] = translatedDescription;
             })
         );
+
+        const existingSubmodule = await adminSubmodulesModel.findOne({
+            moduleId: convertToObjectId(moduleId),
+            "title.en": obj.title["en"]
+        });
+        if (existingSubmodule) {
+            return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+        }
+
         const createTheme = await adminSubmodulesModel.create({
             title: obj.title,
             moduleId: convertToObjectId(moduleId),
@@ -49,6 +58,18 @@ const CommonHandler = {
         if (!isModuleExist) {
             return showResponse(false, responseMessage.common.module_not_found, null, statusCodes.API_ERROR)
         }
+
+        if (title && lang === 'en') {
+            const existingSubmodule = await adminSubmodulesModel.findOne({
+                _id: { $ne: convertToObjectId(subModuleId) },
+                moduleId: isModuleExist.moduleId,
+                "title.en": title
+            });
+            if (existingSubmodule) {
+                return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+            }
+        }
+
         const obj: any = {
             ...(title && { [`title.${lang}`]: title }),
             ...(description && { [`description.${lang}`]: description }),
