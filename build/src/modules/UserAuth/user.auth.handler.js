@@ -1003,6 +1003,15 @@ const UserAuthHandler = {
         }
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.file_upload_success, s3Upload === null || s3Upload === void 0 ? void 0 : s3Upload.data, statusCodes_1.default.SUCCESS);
     }),
+    uploadFileAdmin: (data) => __awaiter(void 0, void 0, void 0, function* () {
+        const { file } = data;
+        const s3Upload = yield services_1.default.awsService.uploadFileToS3Theme([file]);
+        console.log(s3Upload, 's3Upload');
+        if (!s3Upload.status) {
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.file_upload_error, {}, statusCodes_1.default.FILE_UPLOAD_ERROR);
+        }
+        return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.file_upload_success, s3Upload === null || s3Upload === void 0 ? void 0 : s3Upload.data, statusCodes_1.default.SUCCESS);
+    }),
     getUserDetailsUser: (userId) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, social_account: 0, otp: 0 });

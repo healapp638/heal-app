@@ -8,10 +8,11 @@ const subscriptionLogsSchema = new mongoose_1.Schema({
     subscription_status: {
         type: String,
     },
-    stripe_customer_id: {
-        type: String,
-        default: ""
-    },
+    // stripe_customer_id:
+    // {
+    //     type: String,
+    //     default: ""
+    // },
     user_id: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: 'user',
@@ -24,15 +25,19 @@ const subscriptionLogsSchema = new mongoose_1.Schema({
         type: Object,
         default: {},
     },
-    stripe_event: {
-        type: Object,
-        default: {},
-    },
-    ios_event: {
-        type: Object,
-        default: {},
-    },
-    android_event: {
+    // stripe_event: {
+    //     type: Object,
+    //     default: {},
+    // },
+    // ios_event: {
+    //     type: Object,
+    //     default: {},
+    // },
+    // android_event: {
+    //     type: Object,
+    //     default: {},
+    // },
+    revenuecat_event: {
         type: Object,
         default: {},
     },
@@ -60,11 +65,11 @@ const subscriptionLogsSchema = new mongoose_1.Schema({
         default: "",
         index: true, // For looking up by transaction ID
     },
-    revenuecat_id: {
-        type: String,
-        default: "",
-        index: true, // For looking up by RevenueCat user ID
-    },
+    // revenuecat_id: {
+    //     type: String,
+    //     default: "",
+    //     index: true, // For looking up by RevenueCat user ID
+    // },
     // NEW: Store platform info
     store: {
         type: String,

@@ -128,6 +128,13 @@ router.post('/upload_file', multer.addToMulter.single('file'), async (req: Reque
 
 })
 
+router.post('/upload_file_admin', multer.addToMulter.single('file'), async (req: Request | any, res: Response) => {
+    const controller = new UserAuthController(req, res)
+    const result: ApiResponse = await controller.uploadFileAdmin(req.file as Express.Multer.File);
+    return showOutput(res, result, result.code)
+
+})
+
 router.get('/details_user', verifyTokenUser, async (req: Request | any, res: Response) => {
     const controller = new UserAuthController(req, res)
     const result: ApiResponse = await controller.getUserDetailsUser();

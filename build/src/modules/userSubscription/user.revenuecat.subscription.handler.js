@@ -66,7 +66,17 @@ const REVENUECAT_EVENT_TYPES = {
     RENEWAL: 'RENEWAL',
     CANCELLATION: 'CANCELLATION',
     EXPIRATION: 'EXPIRATION',
-    BILLING_ISSUE: 'BILLING_ISSUE'
+    BILLING_ISSUE: 'BILLING_ISSUE',
+    UNCANCELLATION: 'UNCANCELLATION',
+    NON_RENEWING_PURCHASE: 'NON_RENEWING_PURCHASE',
+    SUBSCRIPTION_PAUSED: 'SUBSCRIPTION_PAUSED',
+    PRODUCT_CHANGE: 'PRODUCT_CHANGE',
+    TRANSFER: 'TRANSFER',
+    SUBSCRIPTION_EXTENDED: 'SUBSCRIPTION_EXTENDED',
+    TEMPORARY_ENTITLEMENT_GRANT: 'TEMPORARY_ENTITLEMENT_GRANT',
+    REFUND_REVERSED: 'REFUND_REVERSED',
+    VIRTUAL_CURRENCY_TRANSACTION: 'VIRTUAL_CURRENCY_TRANSACTION',
+    EXPERIMENT_ENROLLMENT: 'EXPERIMENT_ENROLLMENT'
 };
 // ============= HELPER FUNCTIONS =============
 /**
@@ -109,9 +119,14 @@ function extractSubscriptionData(revenueCatData) {
         let activeProductId = null;
         for (const [entitlementId, entitlement] of Object.entries(entitlements)) {
             const ent = entitlement;
-            if (ent.expires_date && new Date(ent.expires_date).getTime() > Date.now()) {
+            const expiresDate = ent.expires_date;
+            // Entitlement is active if:
+            // 1. There is no expiry date (e.g. lifetime entitlement)
+            // OR
+            // 2. The expiry date is in the future
+            if (expiresDate === null || (expiresDate && new Date(expiresDate).getTime() > Date.now())) {
                 activeEntitlement = ent;
-                activeProductId = entitlementId;
+                activeProductId = ent.product_identifier || entitlementId;
                 break;
             }
         }
@@ -127,7 +142,9 @@ function extractSubscriptionData(revenueCatData) {
         return {
             isSubscribed: true,
             productId: activeProductId,
-            expiryDate: Math.floor(new Date(activeEntitlement.expires_date).getTime() / 1000),
+            expiryDate: activeEntitlement.expires_date
+                ? Math.floor(new Date(activeEntitlement.expires_date).getTime() / 1000)
+                : 2147483647, // Far future for lifetime/permanent access
             purchaseDate: Math.floor(new Date(activeEntitlement.purchase_date).getTime() / 1000),
             willRenew: activeEntitlement.will_renew || false
         };
@@ -216,6 +233,10 @@ const UserSubscriptionHandler = {
             const logData = {
                 subscription_status: eventType,
                 type: "revenuecat",
+                amount: (event === null || event === void 0 ? void 0 : event.price) || 0,
+                currency: (event === null || event === void 0 ? void 0 : event.currency) || "",
+                store: (event === null || event === void 0 ? void 0 : event.store) || "",
+                package_name: (event === null || event === void 0 ? void 0 : event.product_id) || "",
                 revenuecat_event: {
                     event_type: eventType,
                     event_timestamp: event === null || event === void 0 ? void 0 : event.timestamp,
@@ -225,7 +246,7 @@ const UserSubscriptionHandler = {
             };
             if (userDetails) {
                 logData.user_id = userId;
-                logData.package_name = data.product_id;
+                logData.package_name = (event === null || event === void 0 ? void 0 : event.product_id) || "";
             }
             yield user_subscriptionLogs_model_1.default.create(logData);
             if (!userDetails) {
@@ -233,19 +254,25 @@ const UserSubscriptionHandler = {
             }
             // Process based on event type
             if (eventType === REVENUECAT_EVENT_TYPES.INITIAL_PURCHASE ||
-                eventType === REVENUECAT_EVENT_TYPES.RENEWAL) {
-                console.log("Processing initial purchase or renewal");
-                console.log(eventType, "eventType");
+                eventType === REVENUECAT_EVENT_TYPES.RENEWAL ||
+                eventType === REVENUECAT_EVENT_TYPES.UNCANCELLATION ||
+                eventType === REVENUECAT_EVENT_TYPES.NON_RENEWING_PURCHASE ||
+                eventType === REVENUECAT_EVENT_TYPES.PRODUCT_CHANGE ||
+                eventType === REVENUECAT_EVENT_TYPES.TRANSFER ||
+                eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_EXTENDED ||
+                eventType === REVENUECAT_EVENT_TYPES.TEMPORARY_ENTITLEMENT_GRANT ||
+                eventType === REVENUECAT_EVENT_TYPES.REFUND_REVERSED) {
+                console.log(`Processing active subscription/entitlement event: ${eventType}`);
                 // Get full subscription details from RevenueCat
                 const revenueCatData = yield fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
                 const updateData = {
-                    'user_subscription.is_subscribed': 1,
-                    'user_subscription.purchased_in_device': data.store || 'revenuecat',
-                    'user_subscription.package_name': subscriptionData.productId,
-                    'user_subscription.original_transaction_id': data.transaction_id || "",
-                    'user_subscription.cancelled_on_unix': 0,
-                    'user_subscription.purchased_on_unix': subscriptionData.purchaseDate,
+                    'user_subscription.is_subscribed': subscriptionData.isSubscribed ? 1 : 0,
+                    'user_subscription.purchased_in_device': (event === null || event === void 0 ? void 0 : event.store) || 'revenuecat',
+                    'user_subscription.package_name': subscriptionData.productId || (event === null || event === void 0 ? void 0 : event.product_id) || "",
+                    'user_subscription.original_transaction_id': (event === null || event === void 0 ? void 0 : event.original_transaction_id) || (event === null || event === void 0 ? void 0 : event.transaction_id) || "",
+                    'user_subscription.cancelled_on_unix': subscriptionData.willRenew ? 0 : (eventType === REVENUECAT_EVENT_TYPES.UNCANCELLATION ? 0 : (0, moment_1.default)().unix()),
+                    'user_subscription.purchased_on_unix': subscriptionData.purchaseDate || Math.floor(new Date((event === null || event === void 0 ? void 0 : event.purchased_at_ms) || (event === null || event === void 0 ? void 0 : event.timestamp)).getTime() / 1000) || 0,
                     'user_subscription.next_payment_unix': subscriptionData.expiryDate,
                     'user_subscription.revenuecat_id': userId,
                     'user_subscription.revenuecat_data': revenueCatData,
@@ -256,33 +283,62 @@ const UserSubscriptionHandler = {
                         webhook_data: data
                     }
                 };
+                if (eventType === REVENUECAT_EVENT_TYPES.UNCANCELLATION) {
+                    updateData['user_subscription.cancelled_on_unix'] = 0;
+                }
                 yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, { $set: updateData });
-                console.log(`✅ Subscription activated for user ${userId}`);
-                return (0, response_util_1.showResponse)(true, "Subscription activated", null, statusCodes_1.default.SUCCESS);
+                console.log(`✅ Subscription processed/updated for user ${userId} on event ${eventType}`);
+                return (0, response_util_1.showResponse)(true, `Subscription updated on ${eventType}`, null, statusCodes_1.default.SUCCESS);
             }
-            else if (eventType === REVENUECAT_EVENT_TYPES.CANCELLATION) {
+            else if (eventType === REVENUECAT_EVENT_TYPES.CANCELLATION ||
+                eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED) {
+                // For cancellation or pause, the user still retains access until their expiry date.
+                const revenueCatData = yield fetchRevenueCatSubscription(userId);
                 yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
                     $set: {
                         'user_subscription.cancelled_on_unix': (0, moment_1.default)().unix(),
-                        'user_subscription.revenuecat_data': yield fetchRevenueCatSubscription(userId),
+                        'user_subscription.revenuecat_data': revenueCatData,
                         'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
                     }
                 });
-                return (0, response_util_1.showResponse)(true, "Cancellation recorded", null, statusCodes_1.default.SUCCESS);
+                console.log(`✅ Event ${eventType} recorded for user ${userId}`);
+                return (0, response_util_1.showResponse)(true, `${eventType} recorded`, null, statusCodes_1.default.SUCCESS);
             }
-            else if (eventType === REVENUECAT_EVENT_TYPES.EXPIRATION) {
-                yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
-                    $set: {
-                        'user_subscription.is_subscribed': 0,
-                        'user_subscription.package_name': "",
-                        'user_subscription.next_payment_unix': 0,
-                        'user_subscription.cancelled_on_unix': 0,
-                        'user_subscription.revenuecat_data': yield fetchRevenueCatSubscription(userId),
-                        'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
-                    }
-                });
-                return (0, response_util_1.showResponse)(true, "Expiration recorded", null, statusCodes_1.default.SUCCESS);
+            else if (eventType === REVENUECAT_EVENT_TYPES.EXPIRATION ||
+                eventType === REVENUECAT_EVENT_TYPES.BILLING_ISSUE) {
+                // EXPIRATION and sometimes BILLING_ISSUE mean the user no longer has access.
+                const revenueCatData = yield fetchRevenueCatSubscription(userId);
+                const subscriptionData = extractSubscriptionData(revenueCatData);
+                if (subscriptionData.isSubscribed) {
+                    // Still active on some other entitlement (e.g. grace period, user purchased another plan)
+                    yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
+                        $set: {
+                            'user_subscription.is_subscribed': 1,
+                            'user_subscription.package_name': subscriptionData.productId,
+                            'user_subscription.next_payment_unix': subscriptionData.expiryDate,
+                            'user_subscription.revenuecat_data': revenueCatData,
+                            'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
+                        }
+                    });
+                }
+                else {
+                    // Fully expired
+                    yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
+                        $set: {
+                            'user_subscription.is_subscribed': 0,
+                            'user_subscription.package_name': "",
+                            'user_subscription.next_payment_unix': 0,
+                            'user_subscription.cancelled_on_unix': 0,
+                            'user_subscription.revenuecat_data': revenueCatData,
+                            'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
+                        }
+                    });
+                }
+                console.log(`✅ Event ${eventType} processed for user ${userId}`);
+                return (0, response_util_1.showResponse)(true, `${eventType} processed`, null, statusCodes_1.default.SUCCESS);
             }
+            // For VIRTUAL_CURRENCY_TRANSACTION, EXPERIMENT_ENROLLMENT or any other unhandled event, they are logged at the start
+            console.log(`Log-only event: ${eventType} recorded for user: ${userId}`);
             return (0, response_util_1.showResponse)(true, `Event ${eventType} logged`, null, statusCodes_1.default.SUCCESS);
         }
         catch (error) {

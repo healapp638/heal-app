@@ -109,15 +109,15 @@ router.get('/themeCategoryDetails', verifyTokenAdmin, (req, res) => __awaiter(vo
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/createHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { categoryTheme_id, imgUrl } = req.body;
+    const { categoryTheme_id, imgUrl, homeImgUrl } = req.body;
     const controller = new admin_hometheme_controller_1.default(req, res);
-    const result = yield controller.createHomeTheme({ categoryTheme_id, imgUrl });
+    const result = yield controller.createHomeTheme({ categoryTheme_id, imgUrl, homeImgUrl });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.post('/updateHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { hometheme_id, imgUrl } = req.body;
+    const { hometheme_id, imgUrl, homeImgUrl } = req.body;
     const controller = new admin_hometheme_controller_1.default(req, res);
-    const result = yield controller.updateHomeTheme({ hometheme_id, imgUrl });
+    const result = yield controller.updateHomeTheme({ hometheme_id, imgUrl, homeImgUrl });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.delete('/deleteHomeTheme', verifyTokenAdmin, (req, res) => __awaiter(void 0, void 0, void 0, function* () {

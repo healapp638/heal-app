@@ -113,16 +113,16 @@ router.get('/themeCategoryDetails', verifyTokenAdmin, async (req: Request | any,
 });
 
 router.post('/createHomeTheme', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const {categoryTheme_id, imgUrl } = req.body
+    const {categoryTheme_id, imgUrl,homeImgUrl } = req.body
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.createHomeTheme({ categoryTheme_id,imgUrl });
+    const result: ApiResponse = await controller.createHomeTheme({ categoryTheme_id,imgUrl,homeImgUrl });
     return showOutput(res, result, result.code)
 });
 
 router.post('/updateHomeTheme', verifyTokenAdmin, async (req: Request | any, res: Response) => {
-    const { hometheme_id, imgUrl} = req.body
+    const { hometheme_id, imgUrl,homeImgUrl} = req.body
     const controller = new ModuleController(req, res)
-    const result: ApiResponse = await controller.updateHomeTheme({ hometheme_id, imgUrl });
+    const result: ApiResponse = await controller.updateHomeTheme({ hometheme_id, imgUrl,homeImgUrl });
     return showOutput(res, result, result.code)
 });
 

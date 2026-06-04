@@ -273,6 +273,16 @@ export default class UserAuthController extends Controller {
 
 
     /**
+ * Upload a file admin
+ */
+    @Post("/upload_file_admin")
+    public async uploadFileAdmin(@UploadedFile() file: Express.Multer.File): Promise<ApiResponse> {
+        return handler.uploadFileAdmin({ file })
+    }
+    //ends
+
+
+    /**
 * Get User info
 */
     @Security('Bearer')

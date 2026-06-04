@@ -11,6 +11,7 @@ export const validateCreateHomeTheme = (common: any) => {
     return joi.object({
         categoryTheme_id:joi.string().trim().required(),
         imgUrl: joi.string().trim().required(),
+        homeImgUrl: joi.string().trim().required(),
     }).validate(common)
 }
 
@@ -27,6 +28,7 @@ export const validateUpdateHometheme = (common: any) => {
     return joi.object({
         hometheme_id: joi.string().optional().allow(''),
         imgUrl: joi.string().optional().allow(''),
+        homeImgUrl: joi.string().optional().allow(''),
     }).validate(common)
 }
 export const validateAffirmation = (common: any) => {

@@ -8,11 +8,11 @@ const subscriptionLogsSchema = new Schema(
         subscription_status: { //just store at initital purchase time
             type: String,
         },
-        stripe_customer_id:
-        {
-            type: String,
-            default: ""
-        },
+        // stripe_customer_id:
+        // {
+        //     type: String,
+        //     default: ""
+        // },
         user_id:
         {
             type: Schema.Types.ObjectId,
@@ -26,15 +26,19 @@ const subscriptionLogsSchema = new Schema(
             type: Object,
             default: {},
         },
-        stripe_event: {
-            type: Object,
-            default: {},
-        },
-        ios_event: {
-            type: Object,
-            default: {},
-        },
-        android_event: {
+        // stripe_event: {
+        //     type: Object,
+        //     default: {},
+        // },
+        // ios_event: {
+        //     type: Object,
+        //     default: {},
+        // },
+        // android_event: {
+        //     type: Object,
+        //     default: {},
+        // },
+        revenuecat_event:{
             type: Object,
             default: {},
         },
@@ -63,11 +67,11 @@ const subscriptionLogsSchema = new Schema(
             default: "",
             index: true, // For looking up by transaction ID
         },
-        revenuecat_id: {
-            type: String,
-            default: "",
-            index: true, // For looking up by RevenueCat user ID
-        },
+        // revenuecat_id: {
+        //     type: String,
+        //     default: "",
+        //     index: true, // For looking up by RevenueCat user ID
+        // },
         
         // NEW: Store platform info
         store: {

@@ -2620,6 +2620,48 @@
 				}
 			}
 		},
+		"/user/auth/upload_file_admin": {
+			"post": {
+				"operationId": "UploadFileAdmin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Upload a file admin",
+				"tags": [
+					"User Auth Routes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
 		"/user/auth/details_user": {
 			"get": {
 				"operationId": "GetUserDetailsUser",
@@ -5093,6 +5135,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"homeImgUrl": {
+										"type": "string"
+									},
 									"imgUrl": {
 										"type": "string"
 									},
@@ -5101,6 +5146,7 @@
 									}
 								},
 								"required": [
+									"homeImgUrl",
 									"imgUrl",
 									"categoryTheme_id"
 								],
@@ -5141,6 +5187,9 @@
 						"application/json": {
 							"schema": {
 								"properties": {
+									"homeImgUrl": {
+										"type": "string"
+									},
 									"imgUrl": {
 										"type": "string"
 									},
@@ -5149,6 +5198,7 @@
 									}
 								},
 								"required": [
+									"homeImgUrl",
 									"imgUrl",
 									"hometheme_id"
 								],

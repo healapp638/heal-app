@@ -118,6 +118,11 @@ router.post('/upload_file', multer.addToMulter.single('file'), (req, res) => __a
     const result = yield controller.uploadFile(req.file);
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.post('/upload_file_admin', multer.addToMulter.single('file'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const controller = new user_auth_controller_1.default(req, res);
+    const result = yield controller.uploadFileAdmin(req.file);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.get('/details_user', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const controller = new user_auth_controller_1.default(req, res);
     const result = yield controller.getUserDetailsUser();

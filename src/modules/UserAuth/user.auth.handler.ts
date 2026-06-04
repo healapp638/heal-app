@@ -1195,6 +1195,16 @@ update_social_info: async (findUser: any, model: any, data: any) => {
         return showResponse(true, responseMessage.common.file_upload_success, s3Upload?.data, statusCodes.SUCCESS)
     },
 
+    uploadFileAdmin: async (data: any): Promise<ApiResponse> => {
+        const { file } = data;
+        const s3Upload = await services.awsService.uploadFileToS3Theme([file])
+        console.log(s3Upload, 's3Upload')
+        if (!s3Upload.status) {
+            return showResponse(false, responseMessage?.common.file_upload_error, {}, statusCodes.FILE_UPLOAD_ERROR);
+        }
+        return showResponse(true, responseMessage.common.file_upload_success, s3Upload?.data, statusCodes.SUCCESS)
+    },
+
     getUserDetailsUser: async (userId: string): Promise<ApiResponse> => {
         const result = await findOne(userAuthModel, { _id: userId }, { password: 0, createdAt: 0, updatedAt: 0, social_account: 0, otp: 0 });
         const language = result?.data?.language || 'en';

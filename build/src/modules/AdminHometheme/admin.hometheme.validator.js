@@ -17,6 +17,7 @@ const validateCreateHomeTheme = (common) => {
     return joi_1.default.object({
         categoryTheme_id: joi_1.default.string().trim().required(),
         imgUrl: joi_1.default.string().trim().required(),
+        homeImgUrl: joi_1.default.string().trim().required(),
     }).validate(common);
 };
 exports.validateCreateHomeTheme = validateCreateHomeTheme;
@@ -33,6 +34,7 @@ const validateUpdateHometheme = (common) => {
     return joi_1.default.object({
         hometheme_id: joi_1.default.string().optional().allow(''),
         imgUrl: joi_1.default.string().optional().allow(''),
+        homeImgUrl: joi_1.default.string().optional().allow(''),
     }).validate(common);
 };
 exports.validateUpdateHometheme = validateUpdateHometheme;

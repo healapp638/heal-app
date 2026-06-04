@@ -74,7 +74,7 @@ export default class AdminThemeController extends Controller {
 
         @Security('Bearer')
     @Post('/createHomeTheme')
-    public async createHomeTheme(@Body() request: { categoryTheme_id:string,imgUrl: string }): Promise<ApiResponse> {
+    public async createHomeTheme(@Body() request: { categoryTheme_id:string,imgUrl: string,homeImgUrl:string }): Promise<ApiResponse> {
         const validate = validateCreateHomeTheme(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
@@ -85,7 +85,7 @@ export default class AdminThemeController extends Controller {
 
     @Security('Bearer')
     @Post('/updateHomeTheme')
-    public async updateHomeTheme(@Body() request: { hometheme_id: string, imgUrl: string }): Promise<ApiResponse> {
+    public async updateHomeTheme(@Body() request: { hometheme_id: string, imgUrl: string,homeImgUrl:string }): Promise<ApiResponse> {
         const validate = validateUpdateHometheme(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

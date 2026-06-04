@@ -117,10 +117,11 @@ const CommonHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, themeDetails[0], statusCodes_1.default.SUCCESS);
     }),
     createHomeTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { categoryTheme_id, imgUrl } = data;
+        const { categoryTheme_id, imgUrl, homeImgUrl } = data;
         const createTheme = yield admin_hometheme_model_1.default.create({
             categoryTheme_id: categoryTheme_id,
-            imgUrl
+            imgUrl,
+            homeImgUrl
         });
         if (!createTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.save_failed, null, statusCodes_1.default.API_ERROR);
@@ -128,8 +129,8 @@ const CommonHandler = {
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, null, statusCodes_1.default.SUCCESS);
     }),
     updateHomeTheme: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        const { hometheme_id, imgUrl } = data;
-        const obj = Object.assign({}, (imgUrl && { imgUrl }));
+        const { hometheme_id, imgUrl, homeImgUrl } = data;
+        const obj = Object.assign(Object.assign({}, (imgUrl && { imgUrl })), (homeImgUrl && { homeImgUrl }));
         const updateTheme = yield admin_hometheme_model_1.default.findByIdAndUpdate(hometheme_id, { $set: obj }, { new: true });
         if (!updateTheme) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.update_failed, null, statusCodes_1.default.API_ERROR);

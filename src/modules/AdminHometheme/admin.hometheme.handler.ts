@@ -155,11 +155,12 @@ const CommonHandler = {
         return showResponse(true, responseMessage.common.data_retreive_sucess, themeDetails[0], statusCodes.SUCCESS)
     },
     createHomeTheme: async (data: any): Promise<ApiResponse> => {
-        const { categoryTheme_id, imgUrl } = data;
+        const { categoryTheme_id, imgUrl, homeImgUrl } = data;
 
         const createTheme = await adminHomethemeModel.create({
             categoryTheme_id: categoryTheme_id,
-            imgUrl
+            imgUrl,
+            homeImgUrl
         });
 
         if (!createTheme) {
@@ -170,9 +171,10 @@ const CommonHandler = {
     },
 
     updateHomeTheme: async (data: any): Promise<ApiResponse> => {
-        const { hometheme_id, imgUrl } = data
+        const { hometheme_id, imgUrl, homeImgUrl } = data
         const obj: any = {
-            ...(imgUrl && { imgUrl })
+            ...(imgUrl && { imgUrl }),
+            ...(homeImgUrl && { homeImgUrl })
         };
         const updateTheme = await adminHomethemeModel.findByIdAndUpdate(
             hometheme_id,

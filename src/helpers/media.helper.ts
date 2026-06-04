@@ -23,6 +23,30 @@ const convertImageToWebp = async (imageInBuffer: any) => {
     });
 };
 
+const createImageVersions = async (imageBuffer: Buffer) => {
+    const original = await sharp(imageBuffer)
+        .rotate()
+        .webp({ quality: 50 })
+        .toBuffer();
+
+    const thumbnail = await sharp(imageBuffer)
+        .rotate()
+        .resize({
+            width: 400,
+            withoutEnlargement: true,
+        })
+        .webp({
+            quality: 30,
+            effort: 6,
+        })
+        .toBuffer();
+
+    return {
+        original,
+        thumbnail,
+    };
+};
+
 function readFileAsyncChunks(filePath: string, bufferSize = 64 * 1024) { //64kb each chunk size
     return new Promise((resolve) => {
         const stream = fs.createReadStream(filePath, { highWaterMark: bufferSize }); //each chunk buffer size will be 64 kb max
@@ -290,6 +314,7 @@ export {
     // exportJsonToExcel,
     convertImageToWebp,
     readFileAsyncChunks,
-    createVideoThumbnail
+    createVideoThumbnail,
+    createImageVersions
 
 }

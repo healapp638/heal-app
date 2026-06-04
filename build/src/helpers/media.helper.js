@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createVideoThumbnail = exports.convertImageToWebp = void 0;
+exports.createImageVersions = exports.createVideoThumbnail = exports.convertImageToWebp = void 0;
 exports.readFileAsyncChunks = readFileAsyncChunks;
 // import { Parser } from 'json2csv'
 // import mm from 'music-metadata'
@@ -38,6 +38,28 @@ const convertImageToWebp = (imageInBuffer) => __awaiter(void 0, void 0, void 0, 
     });
 });
 exports.convertImageToWebp = convertImageToWebp;
+const createImageVersions = (imageBuffer) => __awaiter(void 0, void 0, void 0, function* () {
+    const original = yield (0, sharp_1.default)(imageBuffer)
+        .rotate()
+        .webp({ quality: 50 })
+        .toBuffer();
+    const thumbnail = yield (0, sharp_1.default)(imageBuffer)
+        .rotate()
+        .resize({
+        width: 400,
+        withoutEnlargement: true,
+    })
+        .webp({
+        quality: 30,
+        effort: 6,
+    })
+        .toBuffer();
+    return {
+        original,
+        thumbnail,
+    };
+});
+exports.createImageVersions = createImageVersions;
 function readFileAsyncChunks(filePath, bufferSize = 64 * 1024) {
     return new Promise((resolve) => {
         const stream = fs_1.default.createReadStream(filePath, { highWaterMark: bufferSize }); //each chunk buffer size will be 64 kb max

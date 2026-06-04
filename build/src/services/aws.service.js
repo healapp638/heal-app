@@ -45,7 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.processUploadedVideoAdmin = exports.completeMultipartUpload = exports.getMultipartPresignedUrl = exports.initiateMultipartUpload = exports.awsFaceRekognitionFunctions = exports.uploadQueueMediaToS3 = exports.uploadThumbnail = exports.uploadToS3 = exports.uploadToS3ExcelSheet = exports.uploadFileToS3 = exports.uploadVideoAndTranscode = exports.sendSMSService = exports.unlinkFromS3Bucket = exports.getSecretFromAWS = exports.postParameterToAWS = exports.getParameterFromAWS = void 0;
+exports.uploadThemeToS3 = exports.uploadFileToS3Theme = exports.processUploadedVideoAdmin = exports.completeMultipartUpload = exports.getMultipartPresignedUrl = exports.initiateMultipartUpload = exports.awsFaceRekognitionFunctions = exports.uploadQueueMediaToS3 = exports.uploadThumbnail = exports.uploadToS3 = exports.uploadToS3ExcelSheet = exports.uploadFileToS3 = exports.uploadVideoAndTranscode = exports.sendSMSService = exports.unlinkFromS3Bucket = exports.getSecretFromAWS = exports.postParameterToAWS = exports.getParameterFromAWS = void 0;
 const node_cache_1 = __importDefault(require("node-cache"));
 const app_constant_1 = require("../constants/app.constant");
 // import * as fsHelper from '../helpers/fs.helper'
@@ -257,6 +257,60 @@ const uploadFileToS3 = (fileArray) => __awaiter(void 0, void 0, void 0, function
     });
 });
 exports.uploadFileToS3 = uploadFileToS3;
+const uploadFileToS3Theme = (fileArray) => __awaiter(void 0, void 0, void 0, function* () {
+    const files = Array.isArray(fileArray) ? fileArray : [fileArray];
+    console.log(files, 'files');
+    return new Promise((resolve) => {
+        var _a;
+        try {
+            const webpFilesArray = [];
+            const promises = files.map(file => {
+                console.log(file, 'file');
+                const mime_type = file === null || file === void 0 ? void 0 : file.mimetype.split("/")[0];
+                if (mime_type == "image" && !file.originalname.endsWith(".psd")) {
+                    return mediaHelper.convertImageToWebp(file === null || file === void 0 ? void 0 : file.buffer).then(imageNewBuffer => {
+                        if (imageNewBuffer) {
+                            webpFilesArray.push({
+                                fieldname: file.fieldname,
+                                originalname: `${file.originalname}.webp`,
+                                encoding: file.encoding,
+                                mimetype: file.mimetype,
+                                buffer: imageNewBuffer,
+                                size: file.size,
+                            });
+                        }
+                    });
+                }
+                else {
+                    webpFilesArray.push(file);
+                    return Promise.resolve(); // Return a resolved promise if no conversion is needed
+                }
+            });
+            Promise.all(promises).then(() => {
+                var _a;
+                if (webpFilesArray.length > 0) {
+                    uploadThemeToS3(webpFilesArray).then(filesResponse => {
+                        var _a;
+                        resolve((0, response_util_1.showResponse)(true, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.file_upload_success, filesResponse, statusCodes_1.default.SUCCESS));
+                    }).catch(error => {
+                        var _a;
+                        resolve((0, response_util_1.showResponse)(false, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.file_upload_error, error, statusCodes_1.default.API_ERROR));
+                    });
+                }
+                else {
+                    resolve((0, response_util_1.showResponse)(false, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.file_upload_error, null, statusCodes_1.default.API_ERROR));
+                }
+            }).catch(error => {
+                var _a;
+                resolve((0, response_util_1.showResponse)(false, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.file_upload_error, error, statusCodes_1.default.API_ERROR));
+            });
+        }
+        catch (err) {
+            resolve((0, response_util_1.showResponse)(false, (_a = responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common) === null || _a === void 0 ? void 0 : _a.file_upload_error, err, statusCodes_1.default.API_ERROR));
+        }
+    });
+});
+exports.uploadFileToS3Theme = uploadFileToS3Theme;
 const uploadQueueMediaToS3 = (files) => __awaiter(void 0, void 0, void 0, function* () {
     const s3 = new aws_sdk_1.default.S3({
         accessKeyId: yield app_constant_1.AWS_CREDENTIAL.ACCESSID,
@@ -429,6 +483,67 @@ const uploadToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.uploadToS3 = uploadToS3;
+const uploadThemeToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const s3 = new aws_sdk_1.default.S3({
+            accessKeyId: yield app_constant_1.AWS_CREDENTIAL.ACCESSID,
+            secretAccessKey: yield app_constant_1.AWS_CREDENTIAL.AWS_SECRET,
+            region: yield app_constant_1.AWS_CREDENTIAL.REGION,
+        });
+        const bucketName = yield app_constant_1.AWS_CREDENTIAL.BUCKET_NAME;
+        const uploadPromises = files.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+            var _a, _b;
+            const bufferImage = key ? file : file.buffer;
+            // Non-image files
+            if (!((_a = file === null || file === void 0 ? void 0 : file.mimetype) === null || _a === void 0 ? void 0 : _a.includes("image")) ||
+                ((_b = file === null || file === void 0 ? void 0 : file.originalname) === null || _b === void 0 ? void 0 : _b.endsWith(".psd"))) {
+                const ext = path_1.default.extname(file.originalname);
+                const fileName = `${file.fieldname}-${Date.now()}${ext}`;
+                const uploadResult = yield s3
+                    .upload({
+                    Bucket: bucketName,
+                    Key: `${file.fieldname}/${fileName}`,
+                    Body: bufferImage,
+                    ContentType: file.mimetype,
+                })
+                    .promise();
+                return {
+                    image: uploadResult.Key,
+                    thumbnail: null,
+                };
+            }
+            // Image files
+            const { original, thumbnail } = yield mediaHelper.createImageVersions(bufferImage);
+            const timestamp = Date.now();
+            const originalKey = `${file.fieldname}/${timestamp}-${file.originalname.replace(/\.[^/.]+$/, "")}.webp`;
+            const thumbnailKey = `${file.fieldname}/thumb-${timestamp}-${file.originalname.replace(/\.[^/.]+$/, "")}.webp`;
+            yield Promise.all([
+                s3.upload({
+                    Bucket: bucketName,
+                    Key: originalKey,
+                    Body: original,
+                    ContentType: "image/webp",
+                }).promise(),
+                s3.upload({
+                    Bucket: bucketName,
+                    Key: thumbnailKey,
+                    Body: thumbnail,
+                    ContentType: "image/webp",
+                }).promise(),
+            ]);
+            return {
+                image: originalKey,
+                thumbnail: thumbnailKey,
+            };
+        }));
+        return yield Promise.all(uploadPromises);
+    }
+    catch (error) {
+        console.error("uploadToS3 error", error);
+        return [];
+    }
+});
+exports.uploadThemeToS3 = uploadThemeToS3;
 const unlinkFromS3Bucket = (urls) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const fileUrls = Array.isArray(urls) ? urls : [urls];

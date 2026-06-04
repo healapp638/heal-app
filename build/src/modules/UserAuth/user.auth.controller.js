@@ -259,6 +259,15 @@ let UserAuthController = class UserAuthController extends tsoa_1.Controller {
     }
     //ends
     /**
+ * Upload a file admin
+ */
+    uploadFileAdmin(file) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return user_auth_handler_1.default.uploadFileAdmin({ file });
+        });
+    }
+    //ends
+    /**
 * Get User info
 */
     getUserDetailsUser() {
@@ -441,6 +450,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserAuthController.prototype, "uploadFile", null);
+__decorate([
+    (0, tsoa_1.Post)("/upload_file_admin"),
+    __param(0, (0, tsoa_1.UploadedFile)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserAuthController.prototype, "uploadFileAdmin", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("/details_user"),
