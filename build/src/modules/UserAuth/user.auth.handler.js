@@ -1261,7 +1261,13 @@ const UserAuthHandler = {
             // ALREADY CLAIMED TODAY
             // =========================================
             if (user.last_streak_date === today) {
-                return (0, response_util_1.showResponse)(true, "Streak already claimed today", null, statusCodes_1.default.SUCCESS);
+                return (0, response_util_1.showResponse)(true, "Streak already claimed today", {
+                    is_hit: true,
+                    streak_count: user.streak_count || 0,
+                    streak_credit: user.streak_credit || 0,
+                    rewardXP: 0,
+                    streak_days: user.streak_days || []
+                }, statusCodes_1.default.SUCCESS);
             }
             let streakCount = user.streak_count || 0;
             let streakDays = user.streak_days || [];
@@ -1303,6 +1309,7 @@ const UserAuthHandler = {
                 }
             });
             return (0, response_util_1.showResponse)(true, "Streak claimed successfully", {
+                is_hit: false,
                 streak_count: streakCount,
                 streak_credit: streakCredit,
                 rewardXP,

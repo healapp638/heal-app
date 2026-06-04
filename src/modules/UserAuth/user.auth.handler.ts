@@ -1567,7 +1567,13 @@ const STREAK_REWARDS: any = {
             return showResponse(
                 true,
                 "Streak already claimed today",
-                null,
+                {
+                    is_hit: true,
+                    streak_count: user.streak_count || 0,
+                    streak_credit: user.streak_credit || 0,
+                    rewardXP: 0,
+                    streak_days: user.streak_days || []
+                },
                 statusCodes.SUCCESS
             );
         }
@@ -1633,6 +1639,7 @@ const STREAK_REWARDS: any = {
             true,
             "Streak claimed successfully",
             {
+                is_hit:false,
                 streak_count: streakCount,
                 streak_credit: streakCredit,
                 rewardXP,
