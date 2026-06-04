@@ -87,7 +87,7 @@ const AdminUserHandler = {
                 {
                     $or: [
                         { account_source: { $ne: "email" } }, // Allow all non-email accounts
-                        { $and: [{ account_source: "email" }, { is_verified: true }] } // Email accounts must be verified
+                        { $and: [{ account_source: "email" }] } // Email accounts must be verified
                     ]
                 }
             ]
