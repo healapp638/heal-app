@@ -1,6 +1,6 @@
 const messages: any = {
     en: {
-        challenges_completed_successfully: "Challenges completed successfully",
+        challenges_completed_successfully: "Challenge completed successfully",
         USER_NOT_FOUND: "User not found",
         INVALID_CREDENTIALS: "Invalid email or password",
         email_already_exists: "Email already exists",

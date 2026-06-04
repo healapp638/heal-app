@@ -245,7 +245,7 @@ const UserAuthHandler = {
                 delay: 1000
             },
             removeOnComplete: true,
-            jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString(),
+            jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString().concat(Date.now().toString()),
         });
         const is_user_social_login = !!userData.social_account.length;
         const is_simple_login = !!userData.password;
@@ -344,29 +344,8 @@ const UserAuthHandler = {
                     delay: 1000
                 },
                 removeOnComplete: true,
-                jobId: existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData._id.toString(),
+                jobId: existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData._id.toString().concat(Date.now().toString()),
             });
-            // const challengesDetails = await commonHelper.challengsFn(data);
-            // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-            // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-            // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-            // const payload: any = challengesDetails?.payload;
-            // if (isOnBoardingComplete && !isDailyChallengeExist) {
-            //     const res = await generateUserChallengesDaily(payload, data?._id);
-            //     console.log(res, 'res')
-            //     const result = await userDailyChallengesModel.insertMany(res.data)
-            //     if (result) {
-            //         await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-            //     const res = await generateUserChallengesWeekly(payload, data?._id)
-            //     const result = await userWeeklyChallengesModel.insertMany(res.data)
-            //     if (result) {
-            //         await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            //end
             if (!(existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData.profilePic) || (existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData.profilePic) == '') {
                 yield user_auth_model_1.default.findOneAndUpdate({ _id: existingUserData === null || existingUserData === void 0 ? void 0 : existingUserData._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } });
             }
@@ -433,28 +412,8 @@ const UserAuthHandler = {
                     delay: 1000
                 },
                 removeOnComplete: true,
-                jobId: (_d = result === null || result === void 0 ? void 0 : result.data) === null || _d === void 0 ? void 0 : _d._id.toString(),
+                jobId: (_d = result === null || result === void 0 ? void 0 : result.data) === null || _d === void 0 ? void 0 : _d._id.toString().concat(Date.now().toString()),
             });
-            // const challengesDetails = await commonHelper.challengsFn(result?.data);
-            // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-            // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-            // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-            // const payload: any = challengesDetails?.payload;
-            // if (isOnBoardingComplete && !isDailyChallengeExist) {
-            //     const res = await generateUserChallengesDaily(payload, result?.data?._id);
-            //     const results = await userDailyChallengesModel.insertMany(res.data)
-            //     if (results) {
-            //         await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-            //     const res = await generateUserChallengesWeekly(payload, result?.data?._id);
-            //     const results = await userWeeklyChallengesModel.insertMany(res.data)
-            //     if (results) {
-            //         await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            //end
             commonHelper.keysDeleteFromObject(result === null || result === void 0 ? void 0 : result.data);
             const { access_token, refresh_token } = yield (0, auth_util_1.generateAccessRefreshToken)((_e = result.data) === null || _e === void 0 ? void 0 : _e._id, (_f = result.data) === null || _f === void 0 ? void 0 : _f.user_type, interfaces_util_1.tokenUserTypeInterface.USER);
             const is_onboarding = [
@@ -631,11 +590,12 @@ const UserAuthHandler = {
             if (!(existingUser === null || existingUser === void 0 ? void 0 : existingUser.profilePic) || (existingUser === null || existingUser === void 0 ? void 0 : existingUser.profilePic) === '') {
                 updateData.profilePic = 'file/file-1777357630130.webp';
             }
-            const updateRes = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: existingUser._id }, updateData);
-            if (!updateRes.status) {
+            // const updateRes = await findOneAndUpdate(userAuthModel, { _id: existingUser._id }, updateData);
+            const updateRes = yield user_auth_model_1.default.findOneAndUpdate({ _id: existingUser._id }, { $set: updateData }, { new: true });
+            if (!updateRes) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
             }
-            userData = updateRes.data;
+            userData = updateRes;
         }
         else {
             updateData.profilePic = 'file/file-1777357630130.webp';
@@ -655,7 +615,7 @@ const UserAuthHandler = {
                 delay: 1000
             },
             removeOnComplete: true,
-            jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString(),
+            jobId: userData === null || userData === void 0 ? void 0 : userData._id.toString().concat(Date.now().toString()),
         });
         const is_user_social_login = !!((_a = userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
         const is_simple_login = !!userData.password;
@@ -696,40 +656,6 @@ const UserAuthHandler = {
         }
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true, is_onboarding }, userData), { access_token, refresh_token }), statusCodes_1.default.SUCCESS);
     }), //ends
-    //ends
-    // toggleBiometric: async (userId: string): Promise<ApiResponse> => {
-    //     try {
-    //         // find user
-    //         const user = await userAuthModel.findOne({
-    //             _id: commonHelper.convertToObjectId(userId),
-    //             status: USER_STATUS.ACTIVE,
-    //         });
-    //         if (!user) {
-    //             return showResponse(
-    //                 false,
-    //                 responseMessage.common.data_not_found,
-    //                 null
-    //             );
-    //         }
-    //         // toggle value
-    //         user.is_biometric = !user.is_biometric;
-    //         await user.save();
-    //         return showResponse(
-    //             true,
-    //             "Biometric status updated successfully",
-    //             {
-    //                 is_biometric: user.is_biometric,
-    //             },
-    //             statusCodes.SUCCESS
-    //         );
-    //     } catch {
-    //         return showResponse(
-    //             false,
-    //             "err while updating status",
-    //             null
-    //         );
-    //     }
-    // },
     forgotPassword: (data) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         const { email } = data;
@@ -1104,28 +1030,8 @@ const UserAuthHandler = {
                 delay: 1000
             },
             removeOnComplete: true,
-            jobId: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString(),
+            jobId: userDetails === null || userDetails === void 0 ? void 0 : userDetails._id.toString().concat(Date.now().toString()),
         });
-        // const challengesDetails = await commonHelper.challengsFn(userDetails);
-        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-        // const payload: any = challengesDetails?.payload;
-        // if (isOnBoardingComplete && !isDailyChallengeExist) {
-        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
-        //     const result = await userDailyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
-        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        //end
         const is_onboarding = [
             userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.email,
             userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.hearAboutUs,

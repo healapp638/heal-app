@@ -485,7 +485,14 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
         yield (0, mongoose_config_1.connection)();
         //daily logic 
         const startOfDay = (0, moment_1.default)().startOf('day').toDate();
-        const findUser = yield user_auth_model_1.default.find({ lastDailyChallengeGeneratedDate: { $lt: startOfDay }, isVerified: true });
+        const findUser = yield user_auth_model_1.default.find({
+            isVerified: true,
+            $or: [
+                { lastDailyChallengeGeneratedDate: { $exists: false } },
+                { lastDailyChallengeGeneratedDate: { $lt: startOfDay } },
+                { lastDailyChallengeGeneratedDate: null }
+            ]
+        });
         if (findUser.length > 0) {
             yield Promise.all(findUser.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
                 var _a;
@@ -532,7 +539,14 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
         }
         //weerkly section
         const startOfWeek = (0, moment_1.default)().startOf('week').toDate();
-        const findUserWeekly = yield user_auth_model_1.default.find({ lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek }, isVerified: true });
+        const findUserWeekly = yield user_auth_model_1.default.find({
+            isVerified: true,
+            $or: [
+                { lastWeeklyChallengeGeneratedDate: { $exists: false } },
+                { lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek } },
+                { lastWeeklyChallengeGeneratedDate: null }
+            ]
+        });
         if (findUserWeekly.length > 0) {
             yield Promise.all(findUserWeekly.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
                 var _a;
@@ -584,7 +598,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('*/5 * * * *', () => {
+    node_cron_1.default.schedule('*/30 * * * * *', () => {
         generateChallenges();
     });
 };
