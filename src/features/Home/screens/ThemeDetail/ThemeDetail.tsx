@@ -86,69 +86,72 @@ const ThemeDetail = () => {
     [SCREEN_WIDTH],
   );
 
-  const renderItem = React.useCallback(({ item }: { item: any }) => {
-    return (
-      <GridThemeCard
-        image={{
-          uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
-        }}
-        isSelected={
-          optimisticThemeId
-            ? optimisticThemeId === item._id
-            : item.isSelected ||
-              user?.homeTheme === item._id ||
-              user?.homeTheme?._id === item._id
-        }
-        onPress={() => {
-          setOptimisticThemeId(item._id);
-          // Update ALL theme listing caches instantly
-          const updateCache = (oldData: any) => {
-            if (!oldData) return oldData;
-            return {
-              ...oldData,
-              pages: oldData.pages.map((page: any) => ({
-                ...page,
-                data: {
-                  ...page.data,
-                  result: page.data.result.map((theme: any) => ({
-                    ...theme,
-                    isSelected: theme._id === item._id,
-                  })),
-                },
-              })),
+  const renderItem = React.useCallback(
+    ({ item }: { item: any }) => {
+      return (
+        <GridThemeCard
+          image={{
+            uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+          }}
+          isSelected={
+            optimisticThemeId
+              ? optimisticThemeId === item._id
+              : item.isSelected ||
+                user?.homeTheme === item._id ||
+                user?.homeTheme?._id === item._id
+          }
+          onPress={() => {
+            setOptimisticThemeId(item._id);
+            // Update ALL theme listing caches instantly
+            const updateCache = (oldData: any) => {
+              if (!oldData) return oldData;
+              return {
+                ...oldData,
+                pages: oldData.pages.map((page: any) => ({
+                  ...page,
+                  data: {
+                    ...page.data,
+                    result: page.data.result.map((theme: any) => ({
+                      ...theme,
+                      isSelected: theme._id === item._id,
+                    })),
+                  },
+                })),
+              };
             };
-          };
 
-          queryClient.setQueriesData(
-            { queryKey: ['getHomeThemeListing'] },
-            updateCache,
-          );
-          queryClient.setQueriesData(
-            { queryKey: ['getHomeThemeListingByCategory'] },
-            updateCache,
-          );
-          triggerHaptic('impactMedium');
-          postApi(
-            {
-              endpoint: endpoints.add_user_theme,
-              data: {
-                homeTheme_id: item._id,
+            queryClient.setQueriesData(
+              { queryKey: ['getHomeThemeListing'] },
+              updateCache,
+            );
+            queryClient.setQueriesData(
+              { queryKey: ['getHomeThemeListingByCategory'] },
+              updateCache,
+            );
+            triggerHaptic('impactMedium');
+            postApi(
+              {
+                endpoint: endpoints.add_user_theme,
+                data: {
+                  homeTheme_id: item._id,
+                },
               },
-            },
-            {
-              onSuccess: () => {
-                dispatch(getUserDetail() as any);
-                setToastMsg('Theme selected successfully!');
+              {
+                onSuccess: () => {
+                  dispatch(getUserDetail() as any);
+                  setToastMsg('Theme selected successfully!');
+                },
+                onError: (error: any) => {
+                  setToastMsg(error.message);
+                },
               },
-              onError: (error: any) => {
-                setToastMsg(error.message);
-              },
-            },
-          );
-        }}
-      />
-    );
-  }, [optimisticThemeId, user?.homeTheme, queryClient, postApi, dispatch]);
+            );
+          }}
+        />
+      );
+    },
+    [optimisticThemeId, user?.homeTheme, queryClient, postApi, dispatch],
+  );
   return (
     <SolidView
       view={
@@ -192,7 +195,7 @@ const ThemeDetail = () => {
               initialNumToRender={15}
               maxToRenderPerBatch={15}
               windowSize={5}
-              removeClippedSubviews={Platform.OS === 'android'}
+              removeClippedSubviews={true}
               ListEmptyComponent={() =>
                 !isLoading ? (
                   <View

@@ -128,7 +128,8 @@ const ThemeMixes = () => {
             <FlatList
               data={forYouResult}
               extraData={optimisticThemeId}
-              keyExtractor={(item, index) => index?.toString()}
+              keyExtractor={item => item._id}
+              removeClippedSubviews={true}
               numColumns={3}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={[

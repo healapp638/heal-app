@@ -61,10 +61,10 @@ const GridThemeCard = ({
       <View
         style={[
           styles.innerContainer,
-          isSelected && {
+          {
             borderWidth: 2.5,
-            borderColor: colors.primary,
-            padding: 2,
+            borderColor: isSelected ? colors.primary : 'transparent',
+            padding: isSelected ? 2 : 0,
           },
         ]}
       >
@@ -75,10 +75,7 @@ const GridThemeCard = ({
             width: '100%',
             height: '100%',
           }}
-          imageStyle={[
-            styles.imageStyle,
-            isSelected && { borderRadius: 15 },
-          ]}
+          imageStyle={[styles.imageStyle, isSelected && { borderRadius: 15 }]}
           resizeMode="cover"
         >
           <Pressable
