@@ -29,7 +29,9 @@ const Challenges = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
-  const activeTab = useSelector((state: any) => state.tempData.challengesActiveTab);
+  const activeTab = useSelector(
+    (state: any) => state.tempData.challengesActiveTab,
+  );
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const user = useSelector((state: any) => state.userData.user);
 
@@ -130,7 +132,7 @@ const Challenges = () => {
 
             <DailyWeeklyToggle
               activeTab={activeTab}
-              onTabChange={(tab) => dispatch(setChallengesActiveTab(tab))}
+              onTabChange={tab => dispatch(setChallengesActiveTab(tab))}
               dailyLabel={localization.appkeys?.daily || 'Daily'}
               weeklyLabel={localization.appkeys?.weekly || 'Weekly'}
             />
@@ -172,7 +174,7 @@ const Challenges = () => {
                   }}
                 >
                   {localization.appkeys?.fetchingChallenges ||
-                    'Preparing your daily journey...'}
+                    'Preparing your challenges...'}
                 </SolidText>
               </View>
             ) : (

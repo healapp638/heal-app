@@ -5,6 +5,8 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import Toast from '../../../../components/Toast';
 import { useTheme, useNavigation, useRoute } from '@react-navigation/native';
@@ -66,7 +68,25 @@ const ThemeDetail = () => {
   );
   const themeItems =
     themeDataApi?.pages?.flatMap(page => page?.data?.result || []) || [];
-  const renderItem = ({ item }: { item: any }) => {
+
+  const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+  const getItemLayout = React.useCallback(
+    (data: any, index: number) => {
+      const CARD_WIDTH = (SCREEN_WIDTH - 28) / 3 - 12;
+      const CARD_HEIGHT = CARD_WIDTH / 0.75;
+      const ROW_HEIGHT = CARD_HEIGHT + 12;
+      const row = Math.floor(index / 3);
+      return {
+        length: ROW_HEIGHT,
+        offset: ROW_HEIGHT * row,
+        index,
+      };
+    },
+    [SCREEN_WIDTH],
+  );
+
+  const renderItem = React.useCallback(({ item }: { item: any }) => {
     return (
       <GridThemeCard
         image={{
@@ -125,11 +145,10 @@ const ThemeDetail = () => {
               },
             },
           );
-          // setShowCreditsModal(true);
         }}
       />
     );
-  };
+  }, [optimisticThemeId, user?.homeTheme, queryClient, postApi, dispatch]);
   return (
     <SolidView
       view={
@@ -169,6 +188,11 @@ const ThemeDetail = () => {
                 },
               ]}
               showsVerticalScrollIndicator={false}
+              getItemLayout={getItemLayout}
+              initialNumToRender={15}
+              maxToRenderPerBatch={15}
+              windowSize={5}
+              removeClippedSubviews={Platform.OS === 'android'}
               ListEmptyComponent={() =>
                 !isLoading ? (
                   <View

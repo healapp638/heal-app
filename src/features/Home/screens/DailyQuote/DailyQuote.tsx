@@ -237,15 +237,12 @@ const DailyQuote = () => {
   return (
     <SolidView
       edges={[]}
-      containerStyle={{
-        backgroundColor: 'transparent',
-      }}
+      backgroundImage={homeThemeUrl}
       view={
         <View
           style={[
             styles.container,
             {
-              backgroundColor: 'transparent',
               height: SCREEN_HEIGHT,
             },
           ]}

@@ -318,26 +318,10 @@ const SavedDailyQuote = () => {
     );
   };
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      {homeThemeUrl && (
-        <ImageBackground
-          source={{
-            uri: homeThemeUrl,
-          }}
-          style={StyleSheet.absoluteFillObject}
-          resizeMode="cover"
-        />
-      )}
-      <SolidView
-        edges={[]}
-        containerStyle={{
-          backgroundColor: 'transparent',
-        }}
-        view={
+    <SolidView
+      edges={[]}
+      backgroundImage={homeThemeUrl}
+      view={
           <View
             style={[
               styles.container,
@@ -442,7 +426,6 @@ const SavedDailyQuote = () => {
           </View>
         }
       />
-    </View>
   );
 };
 export default SavedDailyQuote;

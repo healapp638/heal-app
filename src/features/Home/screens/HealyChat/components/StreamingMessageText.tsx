@@ -55,19 +55,19 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   return (
     <View style={{ alignItems: 'flex-start', width: '100%' }}>
       <SolidText style={style}>{displayedText}</SolidText>
-      <View style={styles.disclaimerContainer}>
-        <Image
-          source={images.h}
-          style={styles.disclaimerLogo}
-          tintColor={colors.primary}
-          resizeMode="contain"
-        />
-        {showDisclaimer && (
+      {showDisclaimer && (
+        <View style={styles.disclaimerContainer}>
+          <Image
+            source={images.h}
+            style={styles.disclaimerLogo}
+            tintColor={colors.primary}
+            resizeMode="contain"
+          />
           <SolidText style={styles.disclaimerText}>
             {localization.appkeys.healyIsAiAndCanMakeMistakes || "Healy is AI and can make mistakes.\nPlease double-check responses."}
           </SolidText>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   );
 };

@@ -47,7 +47,9 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
   const formatPrice = (price: number, priceString: string) => {
     const symbol = priceString.replace(/[0-9.,\s]/g, '').trim();
     const isSymbolFirst = priceString.startsWith(symbol);
-    return isSymbolFirst ? `${symbol} ${price.toFixed(2)}` : `${price.toFixed(2)} ${symbol}`;
+    return isSymbolFirst
+      ? `${symbol} ${price.toFixed(2)}`
+      : `${price.toFixed(2)} ${symbol}`;
   };
 
   const getDynamicPrices = () => {
@@ -61,7 +63,10 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
       if (packages.yearly) {
         const annualProduct = packages.yearly.product;
         const monthlyRate = annualProduct.price / 12;
-        yearlyPrice = `${formatPrice(monthlyRate, annualProduct.priceString)}/months`;
+        yearlyPrice = `${formatPrice(
+          monthlyRate,
+          annualProduct.priceString,
+        )}/month`;
       }
     }
 
@@ -158,7 +163,7 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 onToggle={() => setReminderEnabled(!reminderEnabled)}
               />
 
-               <PlansSection
+              <PlansSection
                 localization={localization}
                 styles={styles}
                 selectedPlan={selectedPlan}

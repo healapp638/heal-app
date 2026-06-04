@@ -47,7 +47,7 @@ const style = (colors: any) =>
     title: {
       fontSize: AppUtils.fontSize(26),
       textAlign: 'center',
-      marginTop: 20,
+      marginTop:Platform.OS=='ios'?70: 40,
       fontFamily: AppFonts.reco,
       color: colors.brown,
       includeFontPadding: false,

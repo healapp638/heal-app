@@ -105,7 +105,7 @@ const EnterName = () => {
                 viewStyle={styles.inputStyle}
                 textInputStyle={styles.inputText}
                 maxLength={40}
-                autoFocus={true}
+                // autoFocus={true}
               />
             </View>
 

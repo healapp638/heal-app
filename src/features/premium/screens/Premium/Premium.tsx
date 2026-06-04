@@ -62,7 +62,7 @@ const Premium = () => {
         yearlyPrice = `${formatPrice(
           monthlyRate,
           annualProduct.priceString,
-        )}/months`;
+        )}/month`;
       }
     }
 
@@ -116,52 +116,50 @@ const Premium = () => {
             showCloseBtn={showCloseBtn}
             onClose={() => {
               triggerHaptic('impactMedium');
+              navigation.goBack();
+              // Alert.alert(
+              //   localization.appkeys?.logoutDescription || 'Logout',
+              //   '',
+              //   [
+              //     {
+              //       text: localization.appkeys?.cancel || 'Cancel',
+              //       style: 'cancel',
+              //     },
+              //     {
+              //       text: localization.appkeys?.logout || 'Logout',
+              //       style: 'destructive',
+              //       onPress: () => {
+              //         triggerHaptic('impactMedium');
 
-              Alert.alert(
-                localization.appkeys?.logoutDescription || 'Logout',
-                '',
-                [
-                  {
-                    text: localization.appkeys?.cancel || 'Cancel',
-                    style: 'cancel',
-                  },
-                  {
-                    text: localization.appkeys?.logout || 'Logout',
-                    style: 'destructive',
-                    onPress: () => {
-                      triggerHaptic('impactMedium');
-
-                      dispatch(clearOnboardingProgress());
-                      dispatch(setAuth(false));
-                      dispatch(setUser({}));
-                      dispatch(setToken(null));
-                      dispatch(clearModuleParams());
-                      queryClient.clear();
-                      navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: AppRoutes.AuthStack as never,
-                            params: {
-                              screen: AppRoutes.AccessScreen,
-                            },
-                          },
-                        ],
-                      });
-                    },
-                  },
-                ],
-              );
+              //         dispatch(clearOnboardingProgress());
+              //         dispatch(setAuth(false));
+              //         dispatch(setUser({}));
+              //         dispatch(setToken(null));
+              //         dispatch(clearModuleParams());
+              //         queryClient.clear();
+              //         navigation.reset({
+              //           index: 0,
+              //           routes: [
+              //             {
+              //               name: AppRoutes.AuthStack as never,
+              //               params: {
+              //                 screen: AppRoutes.AccessScreen,
+              //               },
+              //             },
+              //           ],
+              //         });
+              //       },
+              //     },
+              //   ],
+              // );
             }}
             styles={styles}
             images={images}
           />
 
           <SolidText style={styles.title}>
-            {localization.appkeys?.howTrialWorks}
-          </SolidText>
-          <SolidText style={styles.subtitle}>
-            {localization.appkeys?.notChargedToday}
+            {/* {localization.appkeys?.howTrialWorks} */}
+            Healing starts with you
           </SolidText>
 
           <TimelineCard
@@ -183,6 +181,8 @@ const Premium = () => {
             />
           )}
 
+          <View style={{ flex: 0.8 }} />
+
           <PlansSection
             localization={localization}
             styles={styles}
@@ -191,7 +191,7 @@ const Premium = () => {
             monthlyPrice={monthlyPrice}
             yearlyPrice={yearlyPrice}
           />
-          <View style={{ flex: 1 }} />
+          <View style={{ height: 10 }} />
           <SolidBtn
             maxFontScale={1}
             btnStyle={styles.actionBtn}
@@ -205,25 +205,25 @@ const Premium = () => {
             disabled={purchasing}
             onPress={async () => {
               triggerHaptic('impactMedium');
-              setPurchasing(true);
-              const success = await purchasePlan(selectedPlan);
-              if (success) {
-                syncPurchaseApi({
-                  endpoint: endpoints.sync_purchase,
-                  data: {},
-                });
-                setPurchasing(false);
-                navigation.reset({
-                  index: 0,
-                  routes: [
-                    {
-                      name: AppRoutes.BottomTab as never,
-                    },
-                  ],
-                });
-              } else {
-                setPurchasing(false);
-              }
+              // setPurchasing(true);
+              // const success = await purchasePlan(selectedPlan);
+              // if (success) {
+              //   syncPurchaseApi({
+              //     endpoint: endpoints.sync_purchase,
+              //     data: {},
+              //   });
+              //   setPurchasing(false);
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.BottomTab as never,
+                  },
+                ],
+              });
+              // } else {
+              //   setPurchasing(false);
+              // }
             }}
           />
 

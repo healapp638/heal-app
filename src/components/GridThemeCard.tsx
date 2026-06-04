@@ -117,4 +117,4 @@ const styles = StyleSheet.create({
     tintColor: 'white',
   },
 });
-export default GridThemeCard;
+export default React.memo(GridThemeCard);

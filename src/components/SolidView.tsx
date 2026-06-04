@@ -9,6 +9,7 @@ import {
   Pressable,
   Image,
   TouchableOpacity,
+  ImageBackground,
 } from 'react-native';
 import { useTheme, useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -32,6 +33,7 @@ interface SolidViewProps {
   containerStyle?: ViewStyle;
   edges?: any;
   behavior?: 'padding' | 'height' | 'position';
+  backgroundImage?: string | null;
 }
 const SolidView: React.FC<SolidViewProps> = ({
   viewStyle,
@@ -47,12 +49,30 @@ const SolidView: React.FC<SolidViewProps> = ({
   containerStyle,
   edges = ['top'],
   behavior,
+  backgroundImage,
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
   const styles = style(colors);
   return (
     <SafeAreaView style={[styles.safeArea, containerStyle]} edges={edges}>
+      {backgroundImage ? (
+        <>
+          <ImageBackground
+            source={{ uri: backgroundImage }}
+            style={StyleSheet.absoluteFillObject}
+            resizeMode="cover"
+          />
+          <View
+            style={[
+              StyleSheet.absoluteFillObject,
+              {
+                backgroundColor: 'rgba(0,0,0,0.25)',
+              },
+            ]}
+          />
+        </>
+      ) : null}
       {isScrollEnabled ? (
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
@@ -76,7 +96,13 @@ const SolidView: React.FC<SolidViewProps> = ({
           style={{
             flex: 1,
           }}
-          behavior={behavior !== undefined ? behavior : (Platform.OS === 'ios' ? 'padding' : undefined)}
+          behavior={
+            behavior !== undefined
+              ? behavior
+              : Platform.OS === 'ios'
+              ? 'padding'
+              : undefined
+          }
           keyboardVerticalOffset={
             keyboardVerticalOffset !== undefined
               ? keyboardVerticalOffset

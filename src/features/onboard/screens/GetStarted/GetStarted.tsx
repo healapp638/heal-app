@@ -29,7 +29,6 @@ const GetStarted = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const flatListRef = useRef<FlatList>(null);
-  const [currentIndex, setCurrentIndex] = useState(0);
   const testimonials = [
     localization.appkeys?.testimonial1,
     localization.appkeys?.testimonial2,
@@ -37,17 +36,48 @@ const GetStarted = () => {
     localization.appkeys?.testimonial4,
     localization.appkeys?.testimonial5,
   ];
+  const testimonialsCount = testimonials.length;
+  const extendedTestimonials = [
+    ...testimonials,
+    ...testimonials,
+    ...testimonials,
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(testimonialsCount);
+
+  const handleScrollEnd = useCallback(
+    (event: any) => {
+      const contentOffset = event.nativeEvent.contentOffset.x;
+      const itemWidth = width * 0.9;
+      const index = Math.round(contentOffset / itemWidth);
+
+      if (index < testimonialsCount) {
+        const newIndex = index + testimonialsCount;
+        flatListRef.current?.scrollToIndex({ index: newIndex, animated: false });
+        setCurrentIndex(newIndex);
+      } else if (index >= 2 * testimonialsCount) {
+        const newIndex = index - testimonialsCount;
+        flatListRef.current?.scrollToIndex({ index: newIndex, animated: false });
+        setCurrentIndex(newIndex);
+      } else {
+        setCurrentIndex(index);
+      }
+    },
+    [testimonialsCount],
+  );
+
   useEffect(() => {
     const timer = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % testimonials.length;
-      setCurrentIndex(nextIndex);
+      const nextIndex = currentIndex + 1;
       flatListRef.current?.scrollToIndex({
         index: nextIndex,
-        animated: false,
+        animated: true,
       });
-    }, 3000);
+      setCurrentIndex(nextIndex);
+    }, 2000); // 2000ms to slide faster
     return () => clearInterval(timer);
-  }, [currentIndex, testimonials.length]);
+  }, [currentIndex, testimonialsCount]);
+
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.GetStarted));
@@ -85,8 +115,14 @@ const GetStarted = () => {
               horizontal
               pagingEnabled
               showsHorizontalScrollIndicator={false}
-              data={testimonials}
+              data={extendedTestimonials}
               keyExtractor={(_, index) => index.toString()}
+              initialScrollIndex={testimonialsCount}
+              getItemLayout={(_, index) => ({
+                length: width * 0.9,
+                offset: width * 0.9 * index,
+                index,
+              })}
               renderItem={({ item }) => (
                 <View style={styles.testimonialSlide}>
                   <Image
@@ -97,12 +133,7 @@ const GetStarted = () => {
                   <SolidText style={styles.quote}>{item}</SolidText>
                 </View>
               )}
-              onMomentumScrollEnd={event => {
-                const index = Math.floor(
-                  event.nativeEvent.contentOffset.x / (width * 0.9),
-                );
-                setCurrentIndex(index);
-              }}
+              onMomentumScrollEnd={handleScrollEnd}
             />
           </View>
           <View

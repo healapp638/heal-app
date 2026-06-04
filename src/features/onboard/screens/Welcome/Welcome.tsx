@@ -170,14 +170,15 @@ const Welcome = () => {
             resizeMode="contain"
             style={styles.phoneImage}
           />
-          <View style={{ flex: Platform.OS == 'ios' ? 0.8 : 1 }} />
           <SolidText style={styles.title}>
             {localization.appkeys?.healingStarts}
           </SolidText>
+          <View style={{ flex: Platform.OS == 'ios' ? 0.8 : 1 }} />
           <SolidBtn
             titleTxt={localization.appkeys?.welcome}
             btnStyle={styles.btn}
             onPress={() => {
+              dispatch(clearOnboardingProgress());
               return navigation.navigate(AppRoutes.GetStarted as never);
             }}
           />

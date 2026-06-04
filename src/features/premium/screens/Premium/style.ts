@@ -30,6 +30,7 @@ const style = (colors: any, appLanguage: any) =>
       fontFamily: AppFonts.recoMedium,
       color: colors.brown,
       includeFontPadding: false,
+      marginBottom:20
     },
     subtitle: {
       fontFamily: AppFonts.regular,
@@ -182,7 +183,7 @@ const style = (colors: any, appLanguage: any) =>
       width: '90%',
 
       marginBottom: 25,
-      marginTop: 45,
+
     },
     actionBtnText: {
       fontFamily: AppFonts.semiBold,

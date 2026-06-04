@@ -302,6 +302,7 @@
     "timeAfternoon": "après-midi",
     "timeEvening": "soir",
     "timeNight": "nuit",
+    "fetchingChallenges": "Préparation de vos défis...",
     "dailyChallenges": "Défis Quotidiens",
     "progressDayByDay": "Progrès jour après jour",
     "daily": "Quotidien",

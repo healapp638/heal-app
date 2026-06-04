@@ -136,7 +136,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
-   
+
+    sourceSets {
+        release {
+            jniLibs.srcDirs += ["${project.rootDir}/../node_modules/react-native-worklets/android/build/intermediates/cmake/release/obj"]
+        }
+    }
+
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->

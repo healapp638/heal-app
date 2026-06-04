@@ -1,6 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
+import { hp } from '../../../../utils/dimension';
 
 const style = (colors: any) =>
   StyleSheet.create({
@@ -44,14 +45,14 @@ const style = (colors: any) =>
     },
     socialButtonsContainer: {
       width: '100%',
-      marginBottom: 20,
+marginTop:Platform.OS=='ios'?  hp(4):hp(8)
     },
     socialBtn: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: colors.white,
-      height: Platform.OS === 'ios' ? 60 : 54,
+      height: Platform.OS === 'ios' ? 70 : 60,
       borderRadius: 100,
       width: '90%',
       marginBottom: Platform.OS == 'ios' ? 20 : 18,
@@ -89,7 +90,7 @@ const style = (colors: any) =>
       flexDirection: 'row',
       justifyContent: 'center',
       alignItems: 'center',
-
+marginBottom: 20
     },
     footerText: {
       fontFamily: AppFonts.regular,

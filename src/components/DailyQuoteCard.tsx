@@ -91,6 +91,7 @@ const DailyQuoteCard = ({
                 }}
                 style={StyleSheet.absoluteFillObject}
                 resizeMode="cover"
+                fadeDuration={0}
               />
               <View
                 style={[

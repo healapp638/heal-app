@@ -62,6 +62,8 @@ const HealyChat = () => {
 
   // Removed getDynamicWelcomeText to display the random question directly as welcome text
 
+  const lastAiMessageIndex = messages.map(m => m.role !== 'user').lastIndexOf(true);
+
   // Memoized render bubble item to prevent full re-renders of the list cells
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => {
@@ -72,10 +74,7 @@ const HealyChat = () => {
         item._id !== lastStreamedId &&
         shouldAnimateNext;
 
-      const showDisclaimer =
-        !isUser &&
-        (item._id === firstAssistantMessageId ||
-          item.id === firstAssistantMessageId);
+      const showDisclaimer = !isUser && index === lastAiMessageIndex;
 
       return (
         <MessageItem
@@ -101,7 +100,7 @@ const HealyChat = () => {
       colors.primary,
       setLastStreamedId,
       setShouldAnimateNext,
-      firstAssistantMessageId,
+      lastAiMessageIndex,
     ],
   );
 

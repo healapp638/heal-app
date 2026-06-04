@@ -302,6 +302,7 @@
     "timeAfternoon": "днем",
     "timeEvening": "вечером",
     "timeNight": "ночью",
+    "fetchingChallenges": "Подготовка ваших челенджей...",
     "dailyChallenges": "Ежедневные челенджи",
     "progressDayByDay": "Прогресс день за днем",
     "daily": "Ежедневно",

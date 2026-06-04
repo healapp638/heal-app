@@ -1787,6 +1787,11 @@
   resolved "https://registry.yarnpkg.com/@jsamr/react-native-li/-/react-native-li-2.3.1.tgz#12a5b5f6e3971cec77b96bee58104eed0ae9314a"
   integrity sha512-Qbo4NEj48SQ4k8FZJHFE2fgZDKTWaUGmVxcIQh3msg5JezLdTMMHuRRDYctfdHI6L0FZGObmEv3haWbIvmol8w==
 
+"@logrocket/react-native@^3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@logrocket/react-native/-/react-native-3.1.1.tgz#70b8886a5a3d00df9d927ca2ad7bded6aaf89dce"
+  integrity sha512-I6hQkX614JyS9qu2IXCiWgH5gPY0ZCdforCiSM7Iw4Xx8yE766M2BzREIqaeGH05EMl7k8Gv9Z8yeMA/5EOpCQ==
+
 "@native-html/css-processor@1.11.0":
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/@native-html/css-processor/-/css-processor-1.11.0.tgz#27d02e5123b0849f4986d44060ba3f235a15f552"
@@ -2387,6 +2392,11 @@
   version "18.8.0"
   resolved "https://registry.yarnpkg.com/@revenuecat/purchases-typescript-internal/-/purchases-typescript-internal-18.8.0.tgz#5ba0007a25411eeaa2156c08bc36b09f5a13a970"
   integrity sha512-y8p8wa0HFhfu0Rel/dp2aPpw+xhvPN0HlcQbK84B5+rzXCpIIpHONv2grgOtUlVWq6amv4lAn9rmooVr8xa50g==
+
+"@shopify/flash-list@^2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@shopify/flash-list/-/flash-list-2.3.1.tgz#d4f90b1471a741a97c07d9aadbfaf200e92c86f7"
+  integrity sha512-7oktg2NQR7KAODjFoDaWe8/OBzyYbdTE3zQTrUBMxjIbxHTHN7UXRX1hX3DHk8KvtkgQdRfZOV8Gjj2l4fGrXw==
 
 "@sideway/address@^4.1.5":
   version "4.1.5"
