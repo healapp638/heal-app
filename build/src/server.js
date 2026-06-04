@@ -50,7 +50,7 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
         .then(() => {
         // Start cronjobs
         node_cron_1.default.schedule(
-        // "0 4 * * *",
+        // "*/2 * * * *",
         "0 2 * * *", cronjob_func_1.generateAffirmation, {
             noOverlap: true,
         });

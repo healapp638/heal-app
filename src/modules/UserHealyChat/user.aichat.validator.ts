@@ -32,6 +32,13 @@ export const validateAiSupportResponse = (request: { message: string }) => {
     return schema.validate(request)
 }
 
+export const validateDeleteConversation = (request: { conversation_id: string }) => {
+    const schema = Joi.object({
+        conversation_id: Joi.string().required(),
+    })
+    return schema.validate(request)
+}
+
 export const validateConversationListing = (conversation:any) => {
     const schema = Joi.object({
         page: Joi.number().optional(),

@@ -40,7 +40,7 @@ export const verifyToken = async (req: Request) => {
     try {
 
         let token: any = req.headers['access_token'] || req.headers['authorization'] || req.headers['Authorization'];
-        console.log(token, "token token token1")
+        // console.log(token, "token token token1")
 
         if (!token) {
             return showResponse(false, "Token not present in headers ", {}, statusCodes.AUTH_TOKEN_ERROR);

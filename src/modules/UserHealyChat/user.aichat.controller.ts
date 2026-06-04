@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Body, Security,Get, Query } from 'tsoa'
+import { Route, Controller, Tags, Post, Body, Security,Get, Query, Delete } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../UserHealyChat/user.aichat.handler'
 import { showResponse } from '../../utils/response.util';
 import statusCodes from '../../constants/statusCodes'
 import { tryCatchWrapper } from '../../utils/config.util';
-import { validateAiSupportResponse, validateConversationListing, validateGetMessageList, validatesendMessage } from './user.aichat.validator';
+import { validateAiSupportResponse, validateConversationListing, validateDeleteConversation, validateGetMessageList, validatesendMessage } from './user.aichat.validator';
 
 @Tags('User Healy Chat Routes')
 @Route('/user/healyChat')  
@@ -80,6 +80,22 @@ export default class UserHealyChatController extends Controller {
 
         const wrappedFunc = tryCatchWrapper(handler.aiSupportResponse);
         return wrappedFunc(request,this.userId); // Invoking the wrapped function 
+    }
+
+    /**
+     * delete conversation
+     */
+    @Security('Bearer')
+    @Delete("deleteConversation")
+    public async deleteConversation(@Query() conversation_id: string): Promise<ApiResponse> {
+
+        const validate = validateDeleteConversation({conversation_id});
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+
+        const wrappedFunc = tryCatchWrapper(handler.deleteConversation);
+        return wrappedFunc(conversation_id,this.userId); // Invoking the wrapped function 
     }
 
     /**

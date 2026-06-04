@@ -41,6 +41,12 @@ router.post('/aiSupportResponse', verifyTokenUser, (req, res) => __awaiter(void 
     const result = yield controller.aiSupportResponse({ message });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
+router.delete('/deleteConversation', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { conversation_id } = req.query;
+    const controller = new user_aichat_controller_1.default(req, res);
+    const result = yield controller.deleteConversation(conversation_id);
+    return (0, response_util_1.showOutput)(res, result, result.code);
+}));
 router.get('/getConversationList', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { page, limit, search, sort_column, sort_direction } = req.query;
     const controller = new user_aichat_controller_1.default(req, res);

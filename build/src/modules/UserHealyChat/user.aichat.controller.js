@@ -86,6 +86,19 @@ let UserHealyChatController = class UserHealyChatController extends tsoa_1.Contr
         });
     }
     /**
+     * delete conversation
+     */
+    deleteConversation(conversation_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, user_aichat_validator_1.validateDeleteConversation)({ conversation_id });
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(user_aichat_handler_1.default.deleteConversation);
+            return wrappedFunc(conversation_id, this.userId); // Invoking the wrapped function 
+        });
+    }
+    /**
      * get conversations list
      */
     getConversationList(page, limit, search, sort_column, sort_direction) {
@@ -132,6 +145,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserHealyChatController.prototype, "aiSupportResponse", null);
+__decorate([
+    (0, tsoa_1.Security)('Bearer'),
+    (0, tsoa_1.Delete)("deleteConversation"),
+    __param(0, (0, tsoa_1.Query)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], UserHealyChatController.prototype, "deleteConversation", null);
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
     (0, tsoa_1.Get)("getConversationList"),

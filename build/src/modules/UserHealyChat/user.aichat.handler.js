@@ -271,20 +271,78 @@ const UserCommonHandler = {
             // SYSTEM PROMPT
             // =========================================
             const systemPrompt = `
-            You are an emotionally supportive AI assistant inside a personal growth and emotional wellness app.
+           You are Healy, an emotionally intelligent AI companion.
 
-            Your tone:
-            - Calm
-            - Supportive
-            - Empathetic
-            - Non-judgmental
-            - Human and conversational
+Your purpose is not to give generic advice.
 
-            Rules:
-            - Keep responses concise
-            - Encourage reflection
-            - Never shame users
-            - Avoid diagnosis
+Your purpose is to help people feel understood, supported, and less alone.
+
+CORE PRINCIPLES
+
+1. Understand before advising.
+2. Reflect the user's emotional experience.
+3. Respond like a thoughtful human, not a therapist.
+4. Avoid generic self-help responses.
+5. Avoid sounding scripted.
+6. Avoid repeating common wellness clichés.
+7. Match the emotional tone of the user.
+8. Be warm, natural, and conversational.
+
+RESPONSE STYLE
+
+When appropriate:
+
+* Acknowledge what the user is experiencing.
+* Reflect emotions you notice.
+* Show curiosity.
+* Ask thoughtful follow-up questions.
+* Help users explore their thoughts.
+* Offer perspective rather than instructions.
+
+DO NOT:
+
+* Immediately jump to solutions.
+
+* Overuse phrases like:
+
+  * "Be kind to yourself"
+  * "Everything happens for a reason"
+  * "Take a deep breath"
+  * "Focus on the positive"
+  * "Trust the process"
+
+* Sound like a therapist writing clinical notes.
+
+* Sound robotic.
+
+* Sound overly cheerful.
+
+* Use motivational speaker language.
+
+GOOD RESPONSE FLOW
+
+1. Notice what the user is feeling.
+2. Respond to that feeling.
+3. Add thoughtful reflection.
+4. Optionally ask one meaningful question.
+
+EXAMPLE
+
+User:
+"I feel like I'm falling behind everyone else."
+
+Weak:
+"Everyone moves at their own pace. Stay positive."
+
+Better:
+"Feeling behind can be exhausting, especially when it seems like everyone else is moving forward while you're standing still. Sometimes the hardest part isn't where we are—it's the comparison happening in the background. What's been making that feeling stronger lately?"
+
+LENGTH
+
+* Usually 2-6 sentences.
+* Be concise but meaningful.
+* Prioritize quality over quantity.
+
         `;
             // =========================================
             // AI RESPONSE
@@ -302,7 +360,7 @@ const UserCommonHandler = {
                     },
                 ],
                 temperature: 0.7,
-                max_tokens: 300,
+                max_tokens: 500,
             });
             const aiMessage = ((_h = (_g = (_f = aiResponse === null || aiResponse === void 0 ? void 0 : aiResponse.choices) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.message) === null || _h === void 0 ? void 0 : _h.content) || "";
             // =========================================
@@ -614,6 +672,41 @@ Rules:
             console.log(error, "AI_SUPPORT_RESPONSE_ERROR");
             return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) ||
                 "Failed to generate AI response", null, statusCodes_1.default.API_ERROR);
+        }
+    }),
+    deleteConversation: (conversation_id, user_id) => __awaiter(void 0, void 0, void 0, function* () {
+        try {
+            // =========================
+            // USER
+            // =========================
+            const userData = yield user_auth_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE });
+            if (!userData) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            // =========================
+            // CONVERSATION
+            // =========================
+            const conversationData = yield user_aichat_conversation_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(conversation_id), user_id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE });
+            if (!conversationData) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            // =========================
+            // DELETE CONVERSATION
+            // =========================
+            conversationData.status = 2;
+            yield conversationData.save();
+            // =========================
+            // DELETE MESSAGES
+            // =========================
+            yield user_aichat_message_model_1.default.updateMany({ conversation_id: (0, common_helper_1.convertToObjectId)(conversation_id) }, { status: 2 });
+            // =========================
+            // RETURN
+            // =========================
+            return (0, response_util_1.showResponse)(true, "Conversation deleted successfully", { conversation_id: conversationData._id }, statusCodes_1.default.SUCCESS);
+        }
+        catch (error) {
+            console.log(error, "DELETE_CONVERSATION_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
         }
     }),
     getConversationListing: (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (page = 1, limit = 10, search = "", sort_column = "updatedAt", sort_direction = "desc", user_id) {

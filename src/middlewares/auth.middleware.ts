@@ -8,7 +8,7 @@ import responseMessages from '../constants/responseMessages';
 export const verifyTokenUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const decoded: ApiResponse = await verifyToken(req)
-        console.log(decoded, "decoded decoded decoded")
+        // console.log(decoded, "decoded decoded decoded")
 
         if (decoded.status && decoded?.data?.user_type == 'user') {
             req.body.user = decoded.data;

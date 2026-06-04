@@ -1480,6 +1480,42 @@
 				}
 			}
 		},
+		"/user/healyChat/deleteConversation": {
+			"delete": {
+				"operationId": "DeleteConversation",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ApiResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "delete conversation",
+				"tags": [
+					"User Healy Chat Routes"
+				],
+				"security": [
+					{
+						"Bearer": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "conversation_id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/user/healyChat/getConversationList": {
 			"get": {
 				"operationId": "GetConversationList",

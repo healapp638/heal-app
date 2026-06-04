@@ -50,7 +50,7 @@ const verifyToken = (req) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j;
     try {
         let token = req.headers['access_token'] || req.headers['authorization'] || req.headers['Authorization'];
-        console.log(token, "token token token1");
+        // console.log(token, "token token token1")
         if (!token) {
             return (0, response_util_1.showResponse)(false, "Token not present in headers ", {}, statusCodes_1.default.AUTH_TOKEN_ERROR);
         }

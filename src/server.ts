@@ -41,7 +41,7 @@ const init = async () => {
 
       // Start cronjobs
       cron.schedule(
-        // "0 4 * * *",
+        // "*/2 * * * *",
         "0 2 * * *",
         generateAffirmation,
         {

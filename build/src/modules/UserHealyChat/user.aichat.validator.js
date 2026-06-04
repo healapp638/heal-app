@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateConversationListing = exports.validateAiSupportResponse = exports.validateMessageHistory = exports.validateGetMessageList = exports.validatesendMessage = void 0;
+exports.validateConversationListing = exports.validateDeleteConversation = exports.validateAiSupportResponse = exports.validateMessageHistory = exports.validateGetMessageList = exports.validatesendMessage = void 0;
 const joi_1 = __importDefault(require("joi"));
 const validatesendMessage = (request) => {
     const schema = joi_1.default.object({
@@ -37,6 +37,13 @@ const validateAiSupportResponse = (request) => {
     return schema.validate(request);
 };
 exports.validateAiSupportResponse = validateAiSupportResponse;
+const validateDeleteConversation = (request) => {
+    const schema = joi_1.default.object({
+        conversation_id: joi_1.default.string().required(),
+    });
+    return schema.validate(request);
+};
+exports.validateDeleteConversation = validateDeleteConversation;
 const validateConversationListing = (conversation) => {
     const schema = joi_1.default.object({
         page: joi_1.default.number().optional(),

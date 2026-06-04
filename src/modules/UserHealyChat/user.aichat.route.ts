@@ -33,6 +33,13 @@ router.post('/aiSupportResponse',verifyTokenUser, async (req: Request | any, res
     return showOutput(res, result, result.code)
 })
 
+router.delete('/deleteConversation',verifyTokenUser, async (req: Request | any, res: Response) => {
+    const { conversation_id } = req.query;
+    const controller = new UserHealyChatController(req, res)
+    const result: ApiResponse = await controller.deleteConversation(conversation_id);
+    return showOutput(res, result, result.code)
+})
+
 router.get('/getConversationList',verifyTokenUser, async (req: Request | any, res: Response) => {
     const {page,limit,search,sort_column,sort_direction} = req.query;
     const controller = new UserHealyChatController(req, res)
