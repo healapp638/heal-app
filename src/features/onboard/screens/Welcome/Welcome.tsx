@@ -170,10 +170,11 @@ const Welcome = () => {
             resizeMode="contain"
             style={styles.phoneImage}
           />
-          <SolidText style={styles.title}>
-            {localization.appkeys?.healingStarts}
-          </SolidText>
-          <View style={{ flex: Platform.OS == 'ios' ? 0.8 : 1 }} />
+          <View style={{ flex: 1, justifyContent: 'center', minHeight: 60 }}>
+            <SolidText style={styles.title}>
+              {localization.appkeys?.healingStarts}
+            </SolidText>
+          </View>
           <SolidBtn
             titleTxt={localization.appkeys?.welcome}
             btnStyle={styles.btn}

@@ -47,13 +47,12 @@ const style = (colors: any) =>
     title: {
       fontSize: AppUtils.fontSize(26),
       textAlign: 'center',
-      marginTop:Platform.OS=='ios'?70: 40,
       fontFamily: AppFonts.reco,
       color: colors.brown,
       includeFontPadding: false,
     },
     btn: {
-      marginTop: 30,
+      marginTop:-1
     },
     footerText: {
       fontSize: AppUtils.fontSize(14),

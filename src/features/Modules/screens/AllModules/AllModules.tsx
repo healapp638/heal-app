@@ -21,7 +21,14 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import useGetApi from '../../../../hooks/useGetApi';
 import style from './style';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { useDispatch } from 'react-redux';
+import {
+  setModuleSubModule,
+  setModuleSource,
+} from '../../../../redux/Reducers/tempData';
+
 const AllModules = () => {
+  const dispatch = useDispatch();
   const { colors } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
@@ -89,21 +96,18 @@ const AllModules = () => {
         onPress={() => {
           triggerHaptic('impactMedium');
           // if (type === 'finished') return;
-          navigation.navigate(
-            AppRoutes.StartedModule as never,
-            {
-              module: item.module,
-              subModule: {
-                ...item,
-                _id: item.sub_module_id,
-              },
-              source: 'all',
-            } as never,
+          dispatch(
+            setModuleSubModule({
+              ...item,
+              _id: item.sub_module_id,
+            }),
           );
+          dispatch(setModuleSource('all'));
+          navigation.navigate(AppRoutes.StartedModule as never);
         }}
       />
     ),
-    [type, styles.cardContainer, navigation, localization.appkeys],
+    [type, styles.cardContainer, navigation, localization.appkeys, dispatch],
   );
   const keyExtractor = useCallback(
     (item: any, index: number) => (item._id || index).toString(),
