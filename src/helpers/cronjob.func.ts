@@ -567,7 +567,14 @@ const generateChallenges = async () => {
     await connectDB()
     //daily logic 
     const startOfDay = moment().startOf('day').toDate();
-    const findUser = await userAuthModel.find({ lastDailyChallengeGeneratedDate: { $lt: startOfDay }, isVerified: true })
+    const findUser = await userAuthModel.find({
+      isVerified: true,
+      $or: [
+        { lastDailyChallengeGeneratedDate: { $exists: false } },
+        { lastDailyChallengeGeneratedDate: { $lt: startOfDay } },
+        { lastDailyChallengeGeneratedDate: null }
+      ]
+    });
     if (findUser.length > 0) {
       await Promise.all(findUser.map(async (curelem: any) => {
         //challenges logic start
@@ -632,7 +639,15 @@ const generateChallenges = async () => {
 
     //weerkly section
     const startOfWeek = moment().startOf('week').toDate();
-    const findUserWeekly = await userAuthModel.find({ lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek }, isVerified: true })
+    const findUserWeekly = await userAuthModel.find({
+      isVerified: true,
+      $or: [
+        { lastWeeklyChallengeGeneratedDate: { $exists: false } },
+        { lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek } },
+        { lastWeeklyChallengeGeneratedDate: null }
+      ]
+    });
+
     if (findUserWeekly.length > 0) {
       await Promise.all(findUserWeekly.map(async (curelem: any) => {
         //challenges logic start
@@ -699,7 +714,7 @@ const generateChallenges = async () => {
 }
 
 export const scheduleCroneJOb = () => {
-  nodeCron.schedule('*/5 * * * *', () => {
+  nodeCron.schedule('*/30 * * * * *', () => {
     generateChallenges()
   })
 }

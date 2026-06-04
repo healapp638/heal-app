@@ -266,7 +266,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 delay: 1000
             },
             removeOnComplete: true,
-            jobId: userData?._id.toString(),
+            jobId: userData?._id.toString().concat(Date.now().toString()),
 
         });
 
@@ -379,29 +379,8 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                     delay: 1000
                 },
                 removeOnComplete: true,
-                jobId: existingUserData?._id.toString(),
+                jobId: existingUserData?._id.toString().concat(Date.now().toString()),
             });
-            // const challengesDetails = await commonHelper.challengsFn(data);
-            // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-            // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-            // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-            // const payload: any = challengesDetails?.payload;
-            // if (isOnBoardingComplete && !isDailyChallengeExist) {
-            //     const res = await generateUserChallengesDaily(payload, data?._id);
-            //     console.log(res, 'res')
-            //     const result = await userDailyChallengesModel.insertMany(res.data)
-            //     if (result) {
-            //         await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-            //     const res = await generateUserChallengesWeekly(payload, data?._id)
-            //     const result = await userWeeklyChallengesModel.insertMany(res.data)
-            //     if (result) {
-            //         await userAuthModel.findOneAndUpdate({ _id: data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            //end
 
             if (!existingUserData?.profilePic || existingUserData?.profilePic == '') {
                 await userAuthModel.findOneAndUpdate({ _id: existingUserData?._id }, { $set: { profilePic: 'file/file-1777357630130.webp' } })
@@ -480,28 +459,8 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                     delay: 1000
                 },
                 removeOnComplete: true,
-                jobId: result?.data?._id.toString(),
+                jobId: result?.data?._id.toString().concat(Date.now().toString()),
             });
-            // const challengesDetails = await commonHelper.challengsFn(result?.data);
-            // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-            // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-            // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-            // const payload: any = challengesDetails?.payload;
-            // if (isOnBoardingComplete && !isDailyChallengeExist) {
-            //     const res = await generateUserChallengesDaily(payload, result?.data?._id);
-            //     const results = await userDailyChallengesModel.insertMany(res.data)
-            //     if (results) {
-            //         await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-            //     const res = await generateUserChallengesWeekly(payload, result?.data?._id);
-            //     const results = await userWeeklyChallengesModel.insertMany(res.data)
-            //     if (results) {
-            //         await userAuthModel.findOneAndUpdate({ _id: result?.data?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-            //     }
-            // }
-            //end
 
             commonHelper.keysDeleteFromObject(result?.data)
             const { access_token, refresh_token } = await generateAccessRefreshToken(result.data?._id, result.data?.user_type, tokenUserTypeInterface.USER)
@@ -762,11 +721,12 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             if (!existingUser?.profilePic || existingUser?.profilePic === '') {
                 updateData.profilePic = 'file/file-1777357630130.webp';
             }
-            const updateRes = await findOneAndUpdate(userAuthModel, { _id: existingUser._id }, updateData);
-            if (!updateRes.status) {
+            // const updateRes = await findOneAndUpdate(userAuthModel, { _id: existingUser._id }, updateData);
+            const updateRes = await userAuthModel.findOneAndUpdate({ _id: existingUser._id }, { $set: updateData }, { new: true });
+            if (!updateRes) {
                 return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR);
             }
-            userData = updateRes.data;
+            userData = updateRes;
         } else {
             updateData.profilePic = 'file/file-1777357630130.webp';
             const newObj = new userAuthModel(updateData);
@@ -787,7 +747,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 delay: 1000
             },
             removeOnComplete: true,
-            jobId: userData?._id.toString(),
+            jobId: userData?._id.toString().concat(Date.now().toString()),
         });
 
         const is_user_social_login = !!userData.social_account?.length;
@@ -839,47 +799,6 @@ update_social_info: async (findUser: any, model: any, data: any) => {
         return showResponse(true, getMessage(language || 'en', "login_success"), { is_after_social_login: false, account_type, is_profile_completed: true, is_onboarding, ...userData, access_token, refresh_token }, statusCodes.SUCCESS);
     },//ends
 
-
-
-
-    //ends
-    // toggleBiometric: async (userId: string): Promise<ApiResponse> => {
-    //     try {
-    //         // find user
-    //         const user = await userAuthModel.findOne({
-    //             _id: commonHelper.convertToObjectId(userId),
-    //             status: USER_STATUS.ACTIVE,
-    //         });
-
-    //         if (!user) {
-    //             return showResponse(
-    //                 false,
-    //                 responseMessage.common.data_not_found,
-    //                 null
-    //             );
-    //         }
-
-    //         // toggle value
-    //         user.is_biometric = !user.is_biometric;
-
-    //         await user.save();
-
-    //         return showResponse(
-    //             true,
-    //             "Biometric status updated successfully",
-    //             {
-    //                 is_biometric: user.is_biometric,
-    //             },
-    //             statusCodes.SUCCESS
-    //         );
-    //     } catch {
-    //         return showResponse(
-    //             false,
-    //             "err while updating status",
-    //             null
-    //         );
-    //     }
-    // },
 
     forgotPassword: async (data: any): Promise<ApiResponse> => {
         const { email } = data;
@@ -1314,28 +1233,9 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 delay: 1000
             },
             removeOnComplete: true,
-            jobId: userDetails?._id.toString(),
+            jobId: userDetails?._id.toString().concat(Date.now().toString()),
         })
-        // const challengesDetails = await commonHelper.challengsFn(userDetails);
-        // const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
-        // const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
-        // const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
-        // const payload: any = challengesDetails?.payload;
-        // if (isOnBoardingComplete && !isDailyChallengeExist) {
-        //     const res = await generateUserChallengesDaily(payload, userDetails?._id.toString());
-        //     const result = await userDailyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        // if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-        //     const res = await generateUserChallengesWeekly(payload, userDetails?._id.toString())
-        //     const result = await userWeeklyChallengesModel.insertMany(res.data)
-        //     if (result) {
-        //         await userAuthModel.findOneAndUpdate({ _id: userDetails?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } })
-        //     }
-        // }
-        //end
+
         const is_onboarding = [
             userOnboarding?.email,
             userOnboarding?.hearAboutUs,

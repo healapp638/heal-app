@@ -22,12 +22,71 @@ const moment_1 = __importDefault(require("moment"));
 const messages_1 = require("../../helpers/messages");
 const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
 const common_helper_1 = require("../../helpers/common.helper");
+// import { ChallengesQueue } from "../../helpers/bullMqWorker";
 const UserChallengesHandler = {
     list: (userId, challenge_type) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e;
-        const userLang = yield user_auth_model_1.default.findOne({ _id: userId });
+        const userLang = yield user_auth_model_1.default.findOne({ _id: userId }).lean();
         const user_language = (userLang === null || userLang === void 0 ? void 0 : userLang.language) || 'en';
-        const isOnBoardingComplete = !!((userLang === null || userLang === void 0 ? void 0 : userLang.bringsYouHere) && (userLang === null || userLang === void 0 ? void 0 : userLang.howFellingLately) && (userLang === null || userLang === void 0 ? void 0 : userLang.likeToFellMore) && (userLang === null || userLang === void 0 ? void 0 : userLang.timeYouCommit) && (userLang === null || userLang === void 0 ? void 0 : userLang.startShowingOfYourSelf));
+        // const isOnBoardingComplete = !!(userLang?.bringsYouHere && userLang?.howFellingLately && userLang?.likeToFellMore && userLang?.timeYouCommit && userLang?.startShowingOfYourSelf);
+        const isOnBoardingComplete = [
+            userLang === null || userLang === void 0 ? void 0 : userLang.email,
+            userLang === null || userLang === void 0 ? void 0 : userLang.hearAboutUs,
+            userLang === null || userLang === void 0 ? void 0 : userLang.howFellingLately,
+            userLang === null || userLang === void 0 ? void 0 : userLang.feelThatWay,
+            userLang === null || userLang === void 0 ? void 0 : userLang.likeToFellMore,
+            userLang === null || userLang === void 0 ? void 0 : userLang.helpFeelBetter,
+            userLang === null || userLang === void 0 ? void 0 : userLang.stopFeelBetter,
+            userLang === null || userLang === void 0 ? void 0 : userLang.timeYouCommit,
+            userLang === null || userLang === void 0 ? void 0 : userLang.goalStartWith,
+            userLang === null || userLang === void 0 ? void 0 : userLang.fullName
+        ].every(value => value !== undefined &&
+            value !== null &&
+            String(value).trim() !== '');
+        // const isDailyExist = await userDailyChallengesModel.countDocuments({
+        //     user_id: convertToObjectId(userId),
+        //     createdAt: {
+        //         $gte: moment().startOf('day').toDate(),
+        //         $lte: moment().endOf('day').toDate()
+        //     },
+        //     status: USER_STATUS.ACTIVE
+        // });
+        // const isWeeklyExist = await userWeeklyChallengesModel.countDocuments({
+        //     user_id: convertToObjectId(userId),
+        //     createdAt: {
+        //         $gte: moment().startOf('week').toDate(),
+        //         $lte: moment().endOf('week').toDate()
+        //     },
+        //     status: USER_STATUS.ACTIVE
+        // });
+        // if (isDailyExist == 0 && isOnBoardingComplete) {
+        //     setTimeout(async () => {
+        //         // challenges logic start
+        //         await ChallengesQueue.add('challenges', { userLang }, {
+        //             attempts: 3,
+        //             backoff: {
+        //                 type: 'exponential',
+        //                 delay: 1000
+        //             },
+        //             removeOnComplete: true,
+        //             jobId: userLang?._id.toString(),
+        //         });
+        //     }, 5000)
+        // }
+        // if (isWeeklyExist == 0 && isOnBoardingComplete) {
+        //     setTimeout(async () => {
+        //         // challenges logic start
+        //         await ChallengesQueue.add('challenges', { userLang }, {
+        //             attempts: 3,
+        //             backoff: {
+        //                 type: 'exponential',
+        //                 delay: 1000
+        //             },
+        //             removeOnComplete: true,
+        //             jobId: userLang?._id.toString(),
+        //         });
+        //     }, 5000)
+        // }
         if (challenge_type == 'daily') {
             const dailyChallenges = yield user_daily_challenges_model_1.default.aggregate([
                 {
@@ -57,6 +116,9 @@ const UserChallengesHandler = {
                         challenge_type: 1,
                         end_date_unix: 1,
                     }
+                },
+                {
+                    $limit: 3
                 }
             ]);
             if (dailyChallenges.length == 0 && isOnBoardingComplete) {
@@ -93,6 +155,9 @@ const UserChallengesHandler = {
                         challenge_type: 1,
                         end_date_unix: 1,
                     }
+                },
+                {
+                    $limit: 3
                 }
             ]);
             if (weeklyChallenges.length == 0 && isOnBoardingComplete) {

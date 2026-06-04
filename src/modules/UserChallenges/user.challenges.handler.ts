@@ -9,15 +9,81 @@ import moment from "moment";
 import { getMessage } from "../../helpers/messages";
 import userAuthModel from "../UserAuth/user.auth.model";
 import { convertToObjectId } from "../../helpers/common.helper";
+// import { ChallengesQueue } from "../../helpers/bullMqWorker";
 
 
 const UserChallengesHandler = {
 
 
     list: async (userId: string, challenge_type: string): Promise<ApiResponse> => {
-        const userLang = await userAuthModel.findOne({ _id: userId });
+        const userLang = await userAuthModel.findOne({ _id: userId }).lean();
         const user_language = userLang?.language || 'en';
-        const isOnBoardingComplete = !!(userLang?.bringsYouHere && userLang?.howFellingLately && userLang?.likeToFellMore && userLang?.timeYouCommit && userLang?.startShowingOfYourSelf);
+        // const isOnBoardingComplete = !!(userLang?.bringsYouHere && userLang?.howFellingLately && userLang?.likeToFellMore && userLang?.timeYouCommit && userLang?.startShowingOfYourSelf);
+        const isOnBoardingComplete = [
+            userLang?.email,
+            userLang?.hearAboutUs,
+            userLang?.howFellingLately,
+            userLang?.feelThatWay,
+            userLang?.likeToFellMore,
+            userLang?.helpFeelBetter,
+            userLang?.stopFeelBetter,
+            userLang?.timeYouCommit,
+            userLang?.goalStartWith,
+            userLang?.fullName
+        ].every(
+            value =>
+                value !== undefined &&
+                value !== null &&
+                String(value).trim() !== ''
+        );
+
+        // const isDailyExist = await userDailyChallengesModel.countDocuments({
+        //     user_id: convertToObjectId(userId),
+        //     createdAt: {
+        //         $gte: moment().startOf('day').toDate(),
+        //         $lte: moment().endOf('day').toDate()
+        //     },
+        //     status: USER_STATUS.ACTIVE
+        // });
+
+        // const isWeeklyExist = await userWeeklyChallengesModel.countDocuments({
+        //     user_id: convertToObjectId(userId),
+        //     createdAt: {
+        //         $gte: moment().startOf('week').toDate(),
+        //         $lte: moment().endOf('week').toDate()
+        //     },
+        //     status: USER_STATUS.ACTIVE
+        // });
+
+        // if (isDailyExist == 0 && isOnBoardingComplete) {
+        //     setTimeout(async () => {
+        //         // challenges logic start
+        //         await ChallengesQueue.add('challenges', { userLang }, {
+        //             attempts: 3,
+        //             backoff: {
+        //                 type: 'exponential',
+        //                 delay: 1000
+        //             },
+        //             removeOnComplete: true,
+        //             jobId: userLang?._id.toString(),
+        //         });
+        //     }, 5000)
+        // }
+
+        // if (isWeeklyExist == 0 && isOnBoardingComplete) {
+        //     setTimeout(async () => {
+        //         // challenges logic start
+        //         await ChallengesQueue.add('challenges', { userLang }, {
+        //             attempts: 3,
+        //             backoff: {
+        //                 type: 'exponential',
+        //                 delay: 1000
+        //             },
+        //             removeOnComplete: true,
+        //             jobId: userLang?._id.toString(),
+        //         });
+        //     }, 5000)
+        // }
 
         if (challenge_type == 'daily') {
             const dailyChallenges = await userDailyChallengesModel.aggregate([
@@ -48,10 +114,13 @@ const UserChallengesHandler = {
                         challenge_type: 1,
                         end_date_unix: 1,
                     }
+                },
+                {
+                    $limit: 3
                 }
             ]);
             if (dailyChallenges.length == 0 && isOnBoardingComplete) {
-                return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, { isUnderProgress: true }, statusCodes.SUCCESS)
+                return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, { isUnderProgress: true }, statusCodes.SUCCESS);
             }
             return showResponse(true, responseMessage?.common?.challenges_fetched_successfully, dailyChallenges, statusCodes.SUCCESS)
         }
@@ -84,6 +153,9 @@ const UserChallengesHandler = {
                         challenge_type: 1,
                         end_date_unix: 1,
                     }
+                },
+                {
+                    $limit: 3
                 }
             ]);
             if (weeklyChallenges.length == 0 && isOnBoardingComplete) {
