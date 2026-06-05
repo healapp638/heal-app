@@ -294,6 +294,7 @@ export default function AddMcqExercise() {
                 </div>
             </div>
             <Table
+                rowKey="_id"
                 dataSource={mcqExercises}
                 columns={columns}
                 pagination={{

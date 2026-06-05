@@ -235,6 +235,7 @@ const Category = () => {
                 </div>
             </div>
             <Table
+                rowKey="_id"
                 dataSource={CategoryList}
                 columns={columns}
                 onRow={(record) => ({
@@ -257,9 +258,9 @@ const Category = () => {
                 bordered
                 className='cursor-pointer!'
             />
-            <AddCategoryModal openModal={openAddModal} setOpenModal={setOpenAddModal} selectedLanguage={selectedLanguage} categoryId={selectedCategory} />
-            <AddCategoryModal openModal={openViewModal} setOpenModal={setOpenViewModal} selectedLanguage={selectedLanguage} categoryId={selectedCategory} isView={true} />
-            <AddCategoryModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} selectedLanguage={selectedLanguage} categoryId={selectedCategory} isUpdate={true} />
+            <AddCategoryModal openModal={openAddModal} setOpenModal={setOpenAddModal} selectedLanguage={selectedLanguage} onClose={() => setSelectedCategory("")} />
+            <AddCategoryModal openModal={openViewModal} setOpenModal={setOpenViewModal} selectedLanguage={selectedLanguage} categoryId={selectedCategory} isView={true} onClose={() => setSelectedCategory("")} />
+            <AddCategoryModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} selectedLanguage={selectedLanguage} categoryId={selectedCategory} isUpdate={true} onClose={() => setSelectedCategory("")} />
             <DeleteModal title='Category' openDeleteModal={openDeleteModal} setopenDeleteModal={setOpenDeleteModal} handleDelete={handleDeleteCategory} loading={isDeleting} />
         </div>
     )

@@ -239,6 +239,7 @@ export default function Module() {
                 </div>
             </div>
             <Table
+                rowKey="_id"
                 dataSource={ThemeListData}
                 columns={columns}
                 onRow={(record) => ({

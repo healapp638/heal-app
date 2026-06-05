@@ -25,21 +25,26 @@ interface AddCategoryModalProps {
 
 interface CategoryDetail {
     imgUrl: string;
+    homeImgUrl?: string;
+}
 
+interface UploadedThemeImage {
+    image: string;
+    thumbnail: string;
 }
 
 const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, categoryID, homeThemeId, onClose }: AddCategoryModalProps) => {
 
     const [form] = Form.useForm();
     const [fileList, setFileList] = React.useState<any[]>([]);
-    const [fileUrl, setFileUrl] = React.useState<string>("");
+    const [fileUrl, setFileUrl] = React.useState<UploadedThemeImage | null>(null);
     const fileListRef = React.useRef<any[]>([]);
 
     const handleCancel = () => {
         form.resetFields();
         setOpenModal(false);
         setFileList([]);
-        setFileUrl("");
+        setFileUrl(null);
         fileListRef.current = [];
         if (onClose) onClose();
     }
@@ -84,7 +89,8 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
         }
 
         const body = {
-            imgUrl: fileUrl,
+            imgUrl: fileUrl?.image,
+            homeImgUrl: fileUrl?.thumbnail,
             categoryTheme_id: categoryID,
             ...(isUpdate && { hometheme_id: homeThemeId }),
         };
@@ -116,7 +122,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
     }
 
     const { mutateAsync: addMediaFile, isPending: fileuploadLoading } = useAppMutate({
-        mutationKey: [MUTATION_KEYS.UPLOAD_FILE],
+        mutationKey: [MUTATION_KEYS.UPLOAD_FILE, isUpdate ? 'update' : isView ? 'view' : 'add'],
         showSuccessToast: false,
         showErrorToast: true,
         onSuccess(data: any) {
@@ -125,7 +131,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
         },
         onError() {
             setFileList([]);
-            setFileUrl("");
+            setFileUrl(null);
             form.setFieldValue("imgUrl", "");
             fileListRef.current = [];
         },
@@ -140,7 +146,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
         return await tryCatchWrapper(
             async () => {
                 const res = await addMediaFile({
-                    url: ENDPOINTS.COMMON.UPLOAD_FILE,
+                    url: ENDPOINTS.COMMON.THEME_UPLOAD_FILE,
                     method: "POST",
                     body: formData,
                 });
@@ -155,7 +161,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
                 onError() {
                     console.error('Failed to upload file');
                     setFileList([]);
-                    setFileUrl("");
+                    setFileUrl(null);
                     form.setFieldValue("imgUrl", "");
                     fileListRef.current = [];
                 }
@@ -194,7 +200,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
         setFileList(validFiles);
         fileListRef.current = validFiles;
         if (validFiles.length === 0) {
-            setFileUrl("");
+            setFileUrl(null);
             form.setFieldValue("imgUrl", "");
         }
     };
@@ -210,7 +216,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
         if (!openModal) {
             form.resetFields();
             setFileList([]);
-            setFileUrl("");
+            setFileUrl(null);
             fileListRef.current = [];
         }
     }, [openModal, form]);
@@ -221,7 +227,10 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
                 imgUrl: categoryDetailData?.imgUrl
             });
             if (categoryDetailData?.imgUrl) {
-                setFileUrl(categoryDetailData.imgUrl);
+                setFileUrl({
+                    image: categoryDetailData.imgUrl,
+                    thumbnail: categoryDetailData.homeImgUrl || ""
+                });
                 setFileList([
                     {
                         uid: '-1',

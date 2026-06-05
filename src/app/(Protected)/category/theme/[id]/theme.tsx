@@ -43,7 +43,6 @@ const HomeTheme = () => {
     const [openViewModal, setOpenViewModal] = React.useState(false);
     const [selectedHomeTheme, setSelectedHomeTheme] = React.useState("");
 
-
     const getSerialNumber = React.useCallback((index: number) => {
         return (pagination.current - 1) * pagination.pageSize + index + 1;
     }, [pagination]);
@@ -66,7 +65,6 @@ const HomeTheme = () => {
         }
     })
     const homeThemeList = listHomeTheme?.data?.result
-
 
     const { mutateAsync: DeleteHomeTheme, isPending: isDeleting } = useAppMutate({
         mutationKey: [MUTATION_KEYS.HOMETHEME_DELETE],
@@ -222,6 +220,7 @@ const HomeTheme = () => {
                 </div>
             </div>
             <Table
+                rowKey="_id"
                 dataSource={homeThemeList}
                 columns={columns}
                 pagination={{
@@ -241,9 +240,9 @@ const HomeTheme = () => {
                 bordered
                 className='cursor-pointer!'
             />
-            <AddHomeThemeModal openModal={openAddModal} setOpenModal={setOpenAddModal} homeThemeId={selectedHomeTheme} categoryID={categoryId} />
-            <AddHomeThemeModal openModal={openViewModal} setOpenModal={setOpenViewModal} homeThemeId={selectedHomeTheme} isView={true} />
-            <AddHomeThemeModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} homeThemeId={selectedHomeTheme} isUpdate={true} />
+            <AddHomeThemeModal openModal={openAddModal} setOpenModal={setOpenAddModal} categoryID={categoryId} onClose={() => setSelectedHomeTheme("")} />
+            <AddHomeThemeModal openModal={openViewModal} setOpenModal={setOpenViewModal} homeThemeId={selectedHomeTheme} isView={true} onClose={() => setSelectedHomeTheme("")} />
+            <AddHomeThemeModal openModal={openUpdateModal} setOpenModal={setOpenUpdateModal} homeThemeId={selectedHomeTheme} isUpdate={true} onClose={() => setSelectedHomeTheme("")} />
             <DeleteModal title='HomeTheme' openDeleteModal={openDeleteModal} setopenDeleteModal={setOpenDeleteModal} handleDelete={handleDeleteHomeTheme} loading={isDeleting} />
         </div>
     )

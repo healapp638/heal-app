@@ -121,7 +121,7 @@ const AddThemeModal = ({ openModal, setOpenModal, isUpdate, isView, themeId, onC
     }
 
     const { mutateAsync: addMediaFile ,isPending:fileuploadLoading} = useAppMutate({
-        mutationKey: [MUTATION_KEYS.UPLOAD_FILE],
+        mutationKey: [MUTATION_KEYS.UPLOAD_FILE, isUpdate ? 'update' : isView ? 'view' : 'add'],
         showSuccessToast: false,
         showErrorToast: true,
         onSuccess(data: any) {

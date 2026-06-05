@@ -13,6 +13,7 @@ interface contactDetailProps {
     openModal: boolean;
     setOpenModal: (value: boolean) => void;
     isView?: boolean;
+    isReply?:boolean;
     ContactID: string;
 }
 interface ContactUsProps {
@@ -23,7 +24,7 @@ interface ContactUsProps {
     };
 }
 
-export default function ContactModule({ openModal, setOpenModal, isView, ContactID }: contactDetailProps) {
+export default function ContactModule({ openModal, setOpenModal, isReply,isView, ContactID }: contactDetailProps) {
 
     const [form] = Form.useForm();
 
@@ -74,18 +75,16 @@ export default function ContactModule({ openModal, setOpenModal, isView, Contact
 
 
     React.useEffect(() => {
-        if (contactUsDetail?.data) {
+        if (openModal && contactUsDetail?.data) {
             form.setFieldsValue(contactUsDetail.data);
         }
-    }, [contactUsDetail, form]);
+    }, [openModal, contactUsDetail, form]);
 
     React.useEffect(() => {
         if (!openModal) {
             form.resetFields();
         }
     }, [openModal, form]);
-
-
 
     return (
         <div>
@@ -97,42 +96,53 @@ export default function ContactModule({ openModal, setOpenModal, isView, Contact
                 footer={false}
                 centered
             >
-                <div className="flex flex-col justify-center text-center ">
-                    
-                    <h1 className="text-2xl font-bold text-white">
-                        Contact <span className="text-maincolor">Us</span>
-                    </h1>
+                <h1 className="text-3xl font-bold text-center text-black">
+                    Contact <span className="text-maincolor">Us</span>
+                </h1>
+                <div className='bg-white rounded-lg p-6 my-5'>
                     <Form
+                        form={form}
                         layout="vertical"
                         autoComplete='off'
+                        className='w-[95%] mx-auto!'
                         requiredMark={false}
-                        form={form}
                     >
                         {isView && <>
-                            <Form.Item label={<span className="font-bold text-white">Name:</span>} name="name">
-                                <Input readOnly={isView} placeholder="Name" className="border-0 bg-gray! outline-none border-radius-lg" />
+                            <Form.Item label={<span className='text-black font-semibold text-md'>Name :</span>} name="name">
+                                <Input
+                                    disabled={isView}
+                                    placeholder="Name"
+                                    className="text-black! bg-white! border-maincolor! border-[1.5px] rounded-lg p-2"
+                                />
                             </Form.Item>
-                            <Form.Item label={<span className="font-bold text-white">Email:</span>} name="email">
-                                <Input readOnly={isView} placeholder="Email" className="border-0 bg-gray! outline-none border-radius-lg" />
+                            <Form.Item label={<span className='text-black font-semibold text-md'>Email :</span>} name="email">
+                                <Input
+                                    disabled={isView}
+                                    placeholder="Email"
+                                    className="text-black! bg-white! border-maincolor! border-[1.5px] rounded-lg p-2"
+                                />
                             </Form.Item>
-                            <Form.Item label={<span className="font-bold text-white">Message:</span>} name="message">
-                                <Input.TextArea readOnly={isView} placeholder="Message" rows={4} className="border-0 bg-gray! outline-none border-radius-lg" />
+                            <Form.Item label={<span className='text-black font-semibold text-md'>Message :</span>} name="message">
+                                <Input.TextArea
+                                    disabled={isView}
+                                    placeholder="Message"
+                                    className="text-black! bg-white! border-maincolor! border-[1.5px] rounded-lg p-2"
+                                />
                             </Form.Item>
                         </>
                         }
-                        {!isView &&
+                        {isReply &&
                             <Form.Item label={<span className="font-bold text-white">Reply:</span>} name="reply">
                                 <Input.TextArea placeholder="Reply" rows={4} className="border-0 bg-gray! outline-none border-radius-lg" />
                             </Form.Item>
                         }
-                        <Form.Item>
+                        <Form.Item className="flex justify-center">
                             <AppButton isLoading={isPending} onClick={() => isView ? setOpenModal(false) : handleReply()} className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg w-32! border-transparent! border-none! outline-none!  shadow-none! text-center!" >
                                 {isView ? "OK" : "Submit"}
                             </AppButton>
                         </Form.Item>
                     </Form>
                 </div>
-
             </Modal>
         </div>
     )

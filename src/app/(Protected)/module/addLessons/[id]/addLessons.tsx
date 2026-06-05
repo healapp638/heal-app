@@ -309,6 +309,7 @@ export default function AddLessons() {
                 </div>
             </div>
             <Table
+                rowKey="_id"
                 dataSource={listLessonsData}
                 columns={columns}
                 onRow={(record) => ({

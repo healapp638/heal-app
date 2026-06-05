@@ -276,6 +276,7 @@ export default function AddModule() {
             </div>
 
             <Table
+                rowKey="_id"
                 columns={columns}
                 dataSource={ModuleListData}
                 onRow={(record) => ({

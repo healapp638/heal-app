@@ -218,9 +218,9 @@ const Affirmation = () => {
                 </div>
             </div>
             <Table
+                rowKey="_id"
                 dataSource={affiliationListData}
                 columns={columns}
-                rowKey="_id"
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,

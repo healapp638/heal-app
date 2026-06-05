@@ -301,6 +301,7 @@ export default function AddPhase() {
             </div>
 
             <Table
+                rowKey="_id"
                 dataSource={PhaseListData}
                 columns={columns}
                 onRow={(record) => ({
