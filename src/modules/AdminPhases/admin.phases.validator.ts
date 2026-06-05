@@ -13,6 +13,7 @@ export const validateCreatePhase = (common: any) => {
 export const validateUpdatePhase = (common: any) => {
     return joi.object({
         title: joi.string().optional().allow(''),
+        reflection: joi.string().optional().allow(''),
         points: joi.number().optional(),
         phaseId: joi.string().trim().required(),
         lang: joi.string().trim().required().valid(...Object.values(languages)),

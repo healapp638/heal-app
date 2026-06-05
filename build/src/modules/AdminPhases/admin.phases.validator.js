@@ -18,6 +18,7 @@ exports.validateCreatePhase = validateCreatePhase;
 const validateUpdatePhase = (common) => {
     return joi_1.default.object({
         title: joi_1.default.string().optional().allow(''),
+        reflection: joi_1.default.string().optional().allow(''),
         points: joi_1.default.number().optional(),
         phaseId: joi_1.default.string().trim().required(),
         lang: joi_1.default.string().trim().required().valid(...Object.values(workflow_constant_1.languages)),

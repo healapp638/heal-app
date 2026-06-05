@@ -263,6 +263,15 @@ const exerciseHandler = {
     try {
         const {title, description, phase_id, mcq = []} = data;
 
+        const existingExercise = await adminMcqexerciseModel.findOne({
+            "title.en": title,
+            status: { $ne: USER_STATUS.DELETED }
+        });
+
+        if (existingExercise) {
+            return showResponse(false, responseMessage.common.already_existed, null, statusCodes.VALIDATION_ERROR);
+        }
+
         const obj: any = {
             title: {},
             description: {},
@@ -371,6 +380,23 @@ updateMcqExercise: async (data: any): Promise<ApiResponse> => {
                 null,
                 statusCodes.NOT_FOUND
             );
+        }
+
+        if (title) {
+            const duplicateExercise = await adminMcqexerciseModel.findOne({
+                _id: { $ne: convertToObjectId(mcqexercise_id) },
+                "title.en": title,
+                status: { $ne: USER_STATUS.DELETED }
+            });
+
+            if (duplicateExercise) {
+                return showResponse(
+                    false,
+                    responseMessage.common.already_existed,
+                    null,
+                    statusCodes.VALIDATION_ERROR
+                );
+            }
         }
 
         const langs = Object.values(languages);

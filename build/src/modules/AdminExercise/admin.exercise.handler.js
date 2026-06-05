@@ -231,6 +231,13 @@ const exerciseHandler = {
     createmcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
         try {
             const { title, description, phase_id, mcq = [] } = data;
+            const existingExercise = yield admin_mcqexercise_model_1.default.findOne({
+                "title.en": title,
+                status: { $ne: workflow_constant_1.USER_STATUS.DELETED }
+            });
+            if (existingExercise) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
             const obj = {
                 title: {},
                 description: {},
@@ -285,6 +292,16 @@ const exerciseHandler = {
             });
             if (!existingExercise) {
                 return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);
+            }
+            if (title) {
+                const duplicateExercise = yield admin_mcqexercise_model_1.default.findOne({
+                    _id: { $ne: (0, common_helper_1.convertToObjectId)(mcqexercise_id) },
+                    "title.en": title,
+                    status: { $ne: workflow_constant_1.USER_STATUS.DELETED }
+                });
+                if (duplicateExercise) {
+                    return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.already_existed, null, statusCodes_1.default.VALIDATION_ERROR);
+                }
             }
             const langs = Object.values(workflow_constant_1.languages);
             const updateData = {};
