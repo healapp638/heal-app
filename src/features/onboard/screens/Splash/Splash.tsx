@@ -22,21 +22,21 @@ const Splash = () => {
 
   useEffect(() => {
     if (auth) {
-      postApi(
-        {
-          endpoint: endpoints.claimStreak,
-          data: {},
-        },
-        {
-          onSuccess: () => {
-            dispatch(getUserDetail() as any);
-          },
-          onError: (error: any) => {
-            console.log('claimStreak error', error);
-            dispatch(getUserDetail() as any);
-          },
-        },
-      );
+      // postApi(
+      //   {
+      //     endpoint: endpoints.claimStreak,
+      //     data: {},
+      //   },
+      //   {
+      //     onSuccess: () => {
+      //       dispatch(getUserDetail() as any);
+      //     },
+      //     onError: (error: any) => {
+      //       console.log('claimStreak error', error);
+      //       dispatch(getUserDetail() as any);
+      //     },
+      //   },
+      // );
     }
   }, [auth, postApi, dispatch]);
 

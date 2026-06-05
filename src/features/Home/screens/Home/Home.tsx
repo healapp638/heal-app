@@ -45,6 +45,10 @@ const Home = () => {
 
   const [showCreditsModal, setShowCreditsModal] = React.useState(false);
   const [showStreakModal, setShowStreakModal] = React.useState(false);
+  const [streakModalMode, setStreakModalMode] = React.useState<
+    'claim' | 'view'
+  >('view');
+  const [streakModalCount, setStreakModalCount] = React.useState(0);
   const { mutate: postApi } = usePostApi();
 
   const userName = user?.fullName || 'User';
@@ -112,7 +116,36 @@ const Home = () => {
           data: {},
         },
         {
-          onSuccess: () => {
+          onSuccess: (res: any) => {
+            console.log(res);
+            if (!res?.data?.is_hit) {
+              const apiCount =
+                res?.data?.streak_count ??
+                res?.data?.user?.streak_count ??
+                res?.data?.data?.streak_count;
+
+              let targetCount;
+              if (typeof apiCount === 'number') {
+                targetCount = apiCount;
+              } else {
+                const today = new Date();
+                const streakDays = user?.streak_days || [];
+                const isTodayClaimed = streakDays.some((timestamp: number) => {
+                  const streakDate = new Date(timestamp * 1000);
+                  return (
+                    streakDate.getFullYear() === today.getFullYear() &&
+                    streakDate.getMonth() === today.getMonth() &&
+                    streakDate.getDate() === today.getDate()
+                  );
+                });
+                const currentCount = user?.streak_count ?? 0;
+                targetCount = isTodayClaimed ? currentCount : currentCount + 1;
+              }
+
+              setStreakModalMode('claim');
+              setStreakModalCount(targetCount);
+              setShowStreakModal(true);
+            }
             dispatch(getUserDetail() as any);
           },
           onError: (error: any) => {
@@ -142,7 +175,11 @@ const Home = () => {
             streakCount={user?.streak_count}
             showCrown={false}
             onCrownPress={() => setShowCreditsModal(true)}
-            onStreakPress={() => setShowStreakModal(true)}
+            onStreakPress={() => {
+              setStreakModalMode('view');
+              setStreakModalCount(user?.streak_count ?? 0);
+              setShowStreakModal(true);
+            }}
             onCalendarPress={() =>
               navigation.navigate(AppRoutes.Calendar as never)
             }
@@ -335,7 +372,8 @@ const Home = () => {
           <StreakModal
             visible={showStreakModal}
             onClose={() => setShowStreakModal(false)}
-            streakCount={user?.streak_count ?? 0}
+            streakCount={streakModalCount}
+            mode={streakModalMode}
           />
         </View>
       }

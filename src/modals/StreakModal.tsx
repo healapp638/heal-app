@@ -22,14 +22,24 @@ interface StreakModalProps {
   visible: boolean;
   onClose: () => void;
   streakCount?: number;
+  mode?: 'claim' | 'view';
 }
 
-const OutlinedNumber = ({ number }: { number: number | string }) => {
+const OutlinedNumber = ({
+  number,
+  mode = 'view',
+}: {
+  number: number | string;
+  mode?: 'claim' | 'view';
+}) => {
   const { images } = useTheme() as any;
-  const [displayNumber, setDisplayNumber] = useState(0);
-  const scaleAnim = useRef(new Animated.Value(0)).current;
   const targetNumber =
     typeof number === 'number' ? number : parseInt(number, 10) || 0;
+
+  const [displayNumber, setDisplayNumber] = useState(
+    mode === 'view' ? targetNumber : targetNumber > 0 ? targetNumber - 1 : 0,
+  );
+  const scaleAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     // 1. Scale and fade-in animation (0 to 1)
@@ -40,21 +50,29 @@ const OutlinedNumber = ({ number }: { number: number | string }) => {
       useNativeDriver: true,
     }).start();
 
+    if (mode === 'view') {
+      setDisplayNumber(targetNumber);
+      return;
+    }
+
     // 2. Smooth numeric count-up animation
+    const startVal = targetNumber > 0 ? targetNumber - 1 : 0;
     let startTimestamp: number | null = null;
     const duration = 1000; // 1 second
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-      setDisplayNumber(Math.floor(progress * targetNumber));
+      setDisplayNumber(
+        startVal + Math.floor(progress * (targetNumber - startVal)),
+      );
       if (progress < 1) {
         requestAnimationFrame(step);
       }
     };
 
     requestAnimationFrame(step);
-  }, [targetNumber, scaleAnim]);
+  }, [targetNumber, scaleAnim, mode]);
 
   return (
     <Animated.View
@@ -98,7 +116,8 @@ const OutlinedNumber = ({ number }: { number: number | string }) => {
 const StreakModal = ({
   visible,
   onClose,
-  streakCount = 3,
+  streakCount = 0,
+  mode = 'view',
 }: StreakModalProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -162,7 +181,7 @@ const StreakModal = ({
 
         <View style={styles.card} testID="streakmodal">
           {/* Centered Flame with Streak Overlay Number */}
-          <OutlinedNumber number={streakCount} />
+          {visible && <OutlinedNumber number={streakCount} mode={mode} />}
 
           {/* Days Progress Row */}
           <View style={styles.daysRow}>
@@ -189,7 +208,11 @@ const StreakModal = ({
           </SolidText>
 
           {/* Close button */}
-          <SolidBtn titleTxt={localization.appkeys?.close || 'Close'} onPress={onClose} btnStyle={styles.btn} />
+          <SolidBtn
+            titleTxt={localization.appkeys?.close || 'Close'}
+            onPress={onClose}
+            btnStyle={styles.btn}
+          />
         </View>
       </View>
     </Modal>
