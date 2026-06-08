@@ -73,7 +73,7 @@ const subscriptionLogsSchema = new mongoose_1.Schema({
     // NEW: Store platform info
     store: {
         type: String,
-        enum: ['', 'app_store', 'play_store', 'stripe', 'revenuecat'],
+        // enum: ['', 'app_store', 'play_store', 'stripe', 'revenuecat'],
         default: '',
     }
 }, {
