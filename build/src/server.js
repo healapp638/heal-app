@@ -185,7 +185,7 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
     let deepLink = `myapp://open?code=${code}`;
     const ua = req.headers["user-agent"] || "";
     const iosStore = `https://apps.apple.com/us/app`;
-    const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
+    const playStore = `https://play.google.com/store/apps/details?id=com.healrn`;
     const fallbackWeb = "https://www.heal-app.com/";
     let storeUrl = fallbackWeb;
     const codeParam = encodeURIComponent(code || "");
@@ -201,7 +201,7 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
         console.log("🤖 Android user detected");
         storeUrl = playStore;
         // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
-        deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=heal;package=com.heal;end`;
+        deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=heal;package=com.healrn;end`;
         // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
         console.log(deepLink, "deepLink android");
     }
@@ -262,7 +262,7 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const ua = req.headers["user-agent"] || "";
     // const iosStore = `https://apps.apple.com/us/app`;
     const iosStore = `https://apps.apple.com/us/app/heal-emotional-companion/id6771270384`;
-    const playStore = `https://play.google.com/store/apps/details?id=com.heal`;
+    const playStore = `https://play.google.com/store/apps/details?id=com.healrn`;
     const fallbackWeb = "https://www.heal-app.com/";
     let storeUrl = fallbackWeb;
     const codeParam = encodeURIComponent(code || "");
@@ -279,7 +279,7 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.log("🤖 Android user detected");
         storeUrl = playStore;
         // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
-        deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=heal;package=com.heal;end`;
+        deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=heal;package=com.healrn;end`;
         // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
         console.log(deepLink, "deepLink android");
     }

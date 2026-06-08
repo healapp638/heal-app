@@ -6,7 +6,7 @@
     ],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.heal",
+      "package_name": "com.healrn",
       "sha256_cert_fingerprints": [
         "50:fb:7b:fe:35:f8:4e:18:5f:ca:03:05:f0:1a:24:9e:ce:d8:23:28:bf:fe:64:3a:d6:08:18:f9:51:b6:6d:27",
         "62:17:2e:3f:56:15:01:1f:58:7c:71:1f:c7:71:8c:d2:f6:33:74:6d:91:3e:35:29:90:bf:89:9f:82:4e:5d:b6",
