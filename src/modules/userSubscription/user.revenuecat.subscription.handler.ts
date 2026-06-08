@@ -251,13 +251,14 @@ const UserSubscriptionHandler = {
                 // Get full subscription details from RevenueCat
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
+                console.log(subscriptionData,'subscriptionData')
                 
                 const updateData: any = {
                     'user_subscription.is_subscribed': subscriptionData.isSubscribed ? 1 : 0,
                     'user_subscription.purchased_in_device': event?.store || 'revenuecat',
                     'user_subscription.package_name': subscriptionData.productId || event?.product_id || "",
                     'user_subscription.original_transaction_id': event?.original_transaction_id || event?.transaction_id || "",
-                    'user_subscription.cancelled_on_unix': subscriptionData.willRenew ? 0 : (eventType === REVENUECAT_EVENT_TYPES.UNCANCELLATION ? 0 : moment().unix()),
+                    'user_subscription.cancelled_on_unix': subscriptionData.willRenew ? 0 : moment().unix(),
                     'user_subscription.purchased_on_unix': subscriptionData.purchaseDate || Math.floor(new Date(event?.purchased_at_ms || event?.timestamp).getTime() / 1000) || 0,
                     'user_subscription.next_payment_unix': subscriptionData.expiryDate,
                     'user_subscription.revenuecat_id': userId,
@@ -285,6 +286,8 @@ const UserSubscriptionHandler = {
             
             else if (eventType === REVENUECAT_EVENT_TYPES.CANCELLATION || 
                      eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED) {
+            console.log(REVENUECAT_EVENT_TYPES.CANCELLATION,"CANCELLATIONnnnnnnnnnnnnnnnnnnnnnnnn")
+            console.log(REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED,"SUBSCRIPTION_PAUSEDdddddddddddddddddddddddddddddd")
                 // For cancellation or pause, the user still retains access until their expiry date.
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
                 await userAuthModel.updateOne(
@@ -303,9 +306,13 @@ const UserSubscriptionHandler = {
             
             else if (eventType === REVENUECAT_EVENT_TYPES.EXPIRATION || 
                      eventType === REVENUECAT_EVENT_TYPES.BILLING_ISSUE) {
+
+            console.log(REVENUECAT_EVENT_TYPES.EXPIRATION,"EXPIRATIONnnnnnnnnnnnnnnnnnnnnnnnn")
+            console.log(REVENUECAT_EVENT_TYPES.BILLING_ISSUE,"BILLING_ISSUEeeeeeeeeeeeeeeeeeeeeeeeee")
                 // EXPIRATION and sometimes BILLING_ISSUE mean the user no longer has access.
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
+                console.log(subscriptionData,"subscriptionData")
                 
                 if (subscriptionData.isSubscribed) {
                     // Still active on some other entitlement (e.g. grace period, user purchased another plan)
@@ -340,7 +347,7 @@ const UserSubscriptionHandler = {
                 console.log(`✅ Event ${eventType} processed for user ${userId}`);
                 return showResponse(true, `${eventType} processed`, null, statusCodes.SUCCESS);
             }
-            
+                      
             // For VIRTUAL_CURRENCY_TRANSACTION, EXPERIMENT_ENROLLMENT or any other unhandled event, they are logged at the start
             console.log(`Log-only event: ${eventType} recorded for user: ${userId}`);
             return showResponse(true, `Event ${eventType} logged`, null, statusCodes.SUCCESS);
