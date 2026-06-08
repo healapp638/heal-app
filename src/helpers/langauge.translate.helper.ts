@@ -69,6 +69,7 @@ export const translateHealyText = async (
             to: targetLanguage,
             format: "text",
         });
+        console.log(translation,"translation----------------------")
 
         return translation;
 
