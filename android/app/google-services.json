@@ -22,11 +22,79 @@
           }
         },
         {
-          "client_id": "81341323740-vaecdrmtvt6colemcolg48mggs6kutl4.apps.googleusercontent.com",
+          "client_id": "81341323740-g8bgu7rbdu6h7llu1s4a62qkjsod6fmp.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.heal",
-            "certificate_hash": "d48239568a0d9a11cda03d1307c48c8255dc42b1"
+            "certificate_hash": "855990eaed6bef9ba816ebd1f7d55c9b6cfb6f47"
+          }
+        },
+        {
+          "client_id": "81341323740-mj7aatd3hcji4k7oriq8erlvndk6ep0d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.heal",
+            "certificate_hash": "f0f7d2402d735ab00ac6abb6789abb8bee9a4f33"
+          }
+        },
+        {
+          "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwQRWhC3UIJo_16AHysw9kBNl8i5Jg8Y4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "81341323740-l50urv5g8cvo5i7fhjqdcnvgc9g0g96o.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "81341323740-mortdk1sobcndmfb4omb5660i2e9r6p7.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.heal"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:81341323740:android:188c017edefb59873a9719",
+        "android_client_info": {
+          "package_name": "com.healrn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "81341323740-8nk0q6ott1ssunfu631t2nllbjtk03um.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healrn",
+            "certificate_hash": "f0f7d2402d735ab00ac6abb6789abb8bee9a4f33"
+          }
+        },
+        {
+          "client_id": "81341323740-g2fuhrb9dgdjfribs72klqbd88luo4tc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healrn",
+            "certificate_hash": "855990eaed6bef9ba816ebd1f7d55c9b6cfb6f47"
+          }
+        },
+        {
+          "client_id": "81341323740-q0gvkl2jq936esgg86p6iue1smgg6tbr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.healrn",
+            "certificate_hash": "960987e0249dc6ccf709bc1f56dffc8f9a0b39a7"
           }
         },
         {

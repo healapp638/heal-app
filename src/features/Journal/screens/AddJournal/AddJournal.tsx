@@ -256,7 +256,7 @@ const AddJournal = () => {
       image: images.thoughtful,
     },
     {
-      id: 'hope',
+      id: 'hopeful',
       label: localization.appkeys?.feelingHope || 'Hope',
       image: images.hope,
     },

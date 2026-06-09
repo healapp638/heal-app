@@ -2,6 +2,9 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { CustomerInfo } from 'react-native-purchases';
 import { purchasesService } from '../utils/purchasesService';
+import Superwall, { SubscriptionStatus } from '@superwall/react-native-superwall';
+import { RCPurchaseController } from '../utils/RCPurchaseController';
+import { SUPERWALL_CONFIG, REVENUECAT_CONFIG } from '../config/purchasesConfig';
 
 interface SubscriptionContextType {
   isPremium: boolean;
@@ -35,10 +38,41 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const setupPurchases = async () => {
       await purchasesService.initialize();
 
+      // Configure Superwall SDK
+      try {
+        const apiKey = SUPERWALL_CONFIG.apiKey;
+        if (apiKey && !apiKey.includes('placeholder')) {
+          console.log('[Superwall] Configuring SDK...');
+          await Superwall.configure({
+            apiKey,
+            purchaseController: new RCPurchaseController(),
+          });
+          console.log('[Superwall] SDK configured successfully.');
+        } else {
+          console.warn('[Superwall] API Key is missing or placeholder. Skipping Superwall configuration.');
+        }
+      } catch (error) {
+        console.error('[Superwall] Failed to configure SDK:', error);
+      }
+
       // Set up listener for customer info updates
       const unsubscribe = purchasesService.addCustomerInfoListener((info) => {
         setCustomerInfo(info);
-        setIsPremium(purchasesService.hasPremiumEntitlement(info));
+        const hasPremium = purchasesService.hasPremiumEntitlement(info);
+        setIsPremium(hasPremium);
+
+        // Sync subscription status with Superwall
+        try {
+          if (hasPremium) {
+            Superwall.shared.setSubscriptionStatus(
+              SubscriptionStatus.Active([REVENUECAT_CONFIG.entitlementId])
+            );
+          } else {
+            Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive());
+          }
+        } catch (error) {
+          console.error('[Superwall] Error syncing subscription status:', error);
+        }
       });
       unsubscribeFn = unsubscribe;
 
@@ -46,6 +80,19 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
       try {
         const premiumActive = await purchasesService.checkPremiumStatus();
         setIsPremium(premiumActive);
+
+        // Sync initial subscription status with Superwall
+        try {
+          if (premiumActive) {
+            Superwall.shared.setSubscriptionStatus(
+              SubscriptionStatus.Active([REVENUECAT_CONFIG.entitlementId])
+            );
+          } else {
+            Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive());
+          }
+        } catch (error) {
+          console.error('[Superwall] Error syncing initial subscription status:', error);
+        }
 
         const offering = await purchasesService.getOfferings();
         if (offering) {
@@ -78,11 +125,35 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
         const info = await purchasesService.login(userId);
         if (info) {
           setCustomerInfo(info);
-          setIsPremium(purchasesService.hasPremiumEntitlement(info));
+          const hasPremium = purchasesService.hasPremiumEntitlement(info);
+          setIsPremium(hasPremium);
+
+          // Identify user in Superwall and sync subscription status
+          try {
+            await Superwall.shared.identify({ userId });
+            if (hasPremium) {
+              Superwall.shared.setSubscriptionStatus(
+                SubscriptionStatus.Active([REVENUECAT_CONFIG.entitlementId])
+              );
+            } else {
+              Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive());
+            }
+          } catch (error) {
+            console.error('[Superwall] Error identifying user:', error);
+          }
         }
       } else if (!auth) {
         console.log('[RevenueCat] Resetting user on logout');
         const info = await purchasesService.logout();
+
+        // Reset Superwall on logout
+        try {
+          await Superwall.shared.reset();
+          Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive());
+        } catch (error) {
+          console.error('[Superwall] Error resetting user:', error);
+        }
+
         if (info) {
           setCustomerInfo(info);
           setIsPremium(purchasesService.hasPremiumEntitlement(info));
@@ -95,6 +166,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     syncUser();
   }, [auth, userId]);
+
 
   const purchasePlan = async (plan: 'monthly' | 'yearly'): Promise<boolean> => {
     try {

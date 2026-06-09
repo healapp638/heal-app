@@ -137,20 +137,7 @@ const EditProfile = () => {
       );
       return;
     }
-    if (!selectedCountry) {
-      AppUtils.showToast(
-        localization.appkeys?.toastSelectCountry ||
-          'Please select your country',
-      );
-      return;
-    }
-    if (!isDobSelected) {
-      AppUtils.showToast(
-        localization.appkeys?.toastSelectBirthDate ||
-          'Please select date of birth',
-      );
-      return;
-    }
+
     const localizedMonths = getLocalizedMonths(localization);
     if (!isAtLeast13YearsOld(selectedDate, localizedMonths)) {
       setAgeModalVisible(true);
@@ -162,8 +149,6 @@ const EditProfile = () => {
     const payload = {
       language: AppUtils.getLanguageCode(appLanguage),
       profilePic: profilePicUrl,
-      dob: formattedDob,
-      country: selectedCountry.name,
       fullName: fullName,
     };
     console.log('appLanguage', appLanguage);
