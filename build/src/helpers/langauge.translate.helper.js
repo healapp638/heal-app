@@ -74,7 +74,7 @@ const translateHealyText = (text, sourceLanguage, targetLanguage) => __awaiter(v
             to: targetLanguage,
             format: "text",
         });
-        console.log(translation, "translation----------------------");
+        // console.log(translation,"translation----------------------")
         return translation;
     }
     catch (error) {

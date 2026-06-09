@@ -27,8 +27,6 @@ import userHomeThemeRoutes from '../modules/UserHomeTheme/user.HomeTheme.route'
 import userHealyChatRoutes from '../modules/UserHealyChat/user.aichat.route'
 import userSubscriptionRoutes from '../modules/userSubscription/user.subscription.route'
 
-
-
 // *********assign order of routes for swagger in last to show on first **********
 
 

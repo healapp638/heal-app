@@ -563,7 +563,6 @@ Return JSON only.
 
 const generateChallenges = async () => {
   try {
-    console.log('start')
     await connectDB()
     //daily logic 
     const startOfDay = moment().startOf('day').toDate();

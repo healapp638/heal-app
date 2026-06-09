@@ -764,7 +764,7 @@ const UserAuthHandler = {
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "password_reset_success"), null, statusCodes_1.default.SUCCESS);
     }),
     getUserDetails: (userId) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d, _e, _f;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
         const result = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0 });
         const userData = result === null || result === void 0 ? void 0 : result.data;
         const is_user_social_login = !!((_a = userData === null || userData === void 0 ? void 0 : userData.social_account) === null || _a === void 0 ? void 0 : _a.length);
@@ -775,6 +775,18 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const language = ((_b = result === null || result === void 0 ? void 0 : result.data) === null || _b === void 0 ? void 0 : _b.language) || 'en';
+        //for user subscription
+        if (((_c = result.data) === null || _c === void 0 ? void 0 : _c.user_subscription) &&
+            ((_e = (_d = result.data) === null || _d === void 0 ? void 0 : _d.user_subscription) === null || _e === void 0 ? void 0 : _e.is_subscribed) == 1) {
+            const addDefaultMin = process.env.SUBSCRIPTION_CHECK_DELAY || 2;
+            const currentUnixWithDelay = (0, moment_timezone_1.default)()
+                .subtract(addDefaultMin, "minutes")
+                .unix();
+            if (currentUnixWithDelay > ((_g = (_f = result.data) === null || _f === void 0 ? void 0 : _f.user_subscription) === null || _g === void 0 ? void 0 : _g.next_payment_unix)) {
+                yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, { "user_subscription.is_subscribed": 0 });
+                result.data.user_subscription.is_subscribed = 0;
+            }
+        }
         //calculate progress start
         const CompletedPhases = yield user_modules_complete_phase_model_1.default.aggregate([
             {
@@ -841,7 +853,7 @@ const UserAuthHandler = {
         const totalJournelEarnedPoints = totalJournels > 0
             ? ((totalJournels - 1) * 10) + 25
             : 0;
-        const total_earned_points = (((_c = CompletedPhases[0]) === null || _c === void 0 ? void 0 : _c.total_points) || 0) + (((_d = completedWeeklyChallenges[0]) === null || _d === void 0 ? void 0 : _d.total_points) || 0) + (((_e = completedDailyChallenges[0]) === null || _e === void 0 ? void 0 : _e.total_points) || 0) + totalJournelEarnedPoints || 0 + (userData === null || userData === void 0 ? void 0 : userData.streak_credit) || 0;
+        const total_earned_points = (((_h = CompletedPhases[0]) === null || _h === void 0 ? void 0 : _h.total_points) || 0) + (((_j = completedWeeklyChallenges[0]) === null || _j === void 0 ? void 0 : _j.total_points) || 0) + (((_k = completedDailyChallenges[0]) === null || _k === void 0 ? void 0 : _k.total_points) || 0) + totalJournelEarnedPoints || 0 + (userData === null || userData === void 0 ? void 0 : userData.streak_credit) || 0;
         // console.log("total_earned_points===========>", total_earned_points);
         // console.log("userData.streak_credit===========>", userData?.streak_credit);
         const pointThresholds = [
@@ -851,7 +863,7 @@ const UserAuthHandler = {
             13135, 14185, 15270, 16390, 17545,
             18730, 19955, 21215, 22505
         ];
-        const total_points = (_f = pointThresholds.find((curelem) => total_earned_points < curelem)) !== null && _f !== void 0 ? _f : 22505;
+        const total_points = (_l = pointThresholds.find((curelem) => total_earned_points < curelem)) !== null && _l !== void 0 ? _l : 22505;
         const completedPercentage = total_points > 0
             ? (Math.round((total_earned_points / total_points) * 100))
             : 0;

@@ -938,6 +938,26 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
         }
         const language = result?.data?.language || 'en';
+
+        //for user subscription
+        if (
+            result.data?.user_subscription &&
+            result.data?.user_subscription?.is_subscribed == 1
+        ) {
+            const addDefaultMin = process.env.SUBSCRIPTION_CHECK_DELAY || 2;
+            const currentUnixWithDelay = moment()
+                .subtract(addDefaultMin, "minutes")
+                .unix();
+            if (
+                currentUnixWithDelay > result.data?.user_subscription?.next_payment_unix
+            ) {
+                await userAuthModel.updateOne(
+                    { _id: commonHelper.convertToObjectId(userId) },
+                    { "user_subscription.is_subscribed": 0 }
+                );
+                result.data.user_subscription.is_subscribed = 0;
+            }
+        }
         //calculate progress start
 
         const CompletedPhases = await userModulesCompletePhaseModel.aggregate([

@@ -481,7 +481,6 @@ Return JSON only.
 exports.generateAffirmation = generateAffirmation;
 const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('start');
         yield (0, mongoose_config_1.connection)();
         //daily logic 
         const startOfDay = (0, moment_1.default)().startOf('day').toDate();
