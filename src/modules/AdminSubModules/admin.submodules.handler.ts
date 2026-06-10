@@ -116,7 +116,7 @@ const CommonHandler = {
                     title: { $regex: search, $options: 'i' },
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminSubmodulesModel, aggregate, page, limit)
         const result = await adminSubmodulesModel.aggregate(aggregation)

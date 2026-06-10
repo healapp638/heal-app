@@ -239,14 +239,15 @@ const UserCommonHandler = {
         }
 
         if (cursor) {
-            const parsedCursor = JSON.parse(cursor);
-            match.$or = [
-                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
-                {
-                    createdAt: new Date(parsedCursor.createdAt),
-                    _id: { $lt: convertToObjectId(parsedCursor._id) }
-                }
-            ]
+            // const parsedCursor = JSON.parse(cursor);
+            // match.$or = [
+            //     { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+            //     {
+            //         createdAt: new Date(parsedCursor.createdAt),
+            //         _id: { $lt: convertToObjectId(parsedCursor._id) }
+            //     }
+            // ]
+            return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases: [], nextCursor:"" }, statusCodes.SUCCESS);
         }
 
         const phases = await adminPhasesModel.aggregate([

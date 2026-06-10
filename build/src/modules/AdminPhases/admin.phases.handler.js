@@ -108,7 +108,7 @@ const phaseHandler = {
                     title: { $regex: search, $options: 'i' },
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ];
         const { totalCount, aggregation } = yield (0, common_helper_1.getCountAndPagination)(admin_phases_model_1.default, aggregate, page, limit);
         const result = yield admin_phases_model_1.default.aggregate(aggregation);

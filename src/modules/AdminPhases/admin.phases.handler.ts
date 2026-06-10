@@ -119,7 +119,7 @@ const phaseHandler = {
                     title: { $regex: search, $options: 'i' },
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ]
         const { totalCount, aggregation } = await getCountAndPagination(adminPhasesModel, aggregate, page, limit)
         const result = await adminPhasesModel.aggregate(aggregation)

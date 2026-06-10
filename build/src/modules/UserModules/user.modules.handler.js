@@ -230,14 +230,15 @@ const UserCommonHandler = {
             subModuleId: (0, common_helper_1.convertToObjectId)(sub_module_id)
         };
         if (cursor) {
-            const parsedCursor = JSON.parse(cursor);
-            match.$or = [
-                { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
-                {
-                    createdAt: new Date(parsedCursor.createdAt),
-                    _id: { $lt: (0, common_helper_1.convertToObjectId)(parsedCursor._id) }
-                }
-            ];
+            // const parsedCursor = JSON.parse(cursor);
+            // match.$or = [
+            //     { createdAt: { $lt: new Date(parsedCursor.createdAt) } },
+            //     {
+            //         createdAt: new Date(parsedCursor.createdAt),
+            //         _id: { $lt: convertToObjectId(parsedCursor._id) }
+            //     }
+            // ]
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { subModule: subModules[0], phases: [], nextCursor: "" }, statusCodes_1.default.SUCCESS);
         }
         const phases = yield admin_phases_model_1.default.aggregate([
             {

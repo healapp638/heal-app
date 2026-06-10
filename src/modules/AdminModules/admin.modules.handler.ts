@@ -105,7 +105,7 @@ const CommonHandler = {
                     title: { $regex: search, $options: 'i' },
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { createdAt: 1 } },
         ];
         const them_details = await adminThemeModel.aggregate([
             { $match: { _id: convertToObjectId(themeId) } },
