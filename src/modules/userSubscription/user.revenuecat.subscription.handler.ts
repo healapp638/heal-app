@@ -241,7 +241,7 @@ const UserSubscriptionHandler = {
                 eventType === REVENUECAT_EVENT_TYPES.UNCANCELLATION ||
                 eventType === REVENUECAT_EVENT_TYPES.NON_RENEWING_PURCHASE ||
                 eventType === REVENUECAT_EVENT_TYPES.PRODUCT_CHANGE ||
-                eventType === REVENUECAT_EVENT_TYPES.TRANSFER ||
+                // eventType === REVENUECAT_EVENT_TYPES.TRANSFER ||
                 eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_EXTENDED ||
                 eventType === REVENUECAT_EVENT_TYPES.TEMPORARY_ENTITLEMENT_GRANT ||
                 eventType === REVENUECAT_EVENT_TYPES.REFUND_REVERSED) {

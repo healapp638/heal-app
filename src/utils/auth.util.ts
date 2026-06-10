@@ -13,7 +13,7 @@ import { tokenUserTypeInterface } from './interfaces.util';
 //
 export const generateJwtToken = async (id: string, extras = {}, expiresIn: any = '24h') => {
     const API_SECRET = '!@#$%^&*()'
-    console.log(API_SECRET, "API_SECRET")
+    // console.log(API_SECRET, "API_SECRET")
     return new Promise((res, rej) => {
         jwt.sign({ id, ...extras }, API_SECRET as string, {
             expiresIn

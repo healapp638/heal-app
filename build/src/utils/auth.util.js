@@ -25,7 +25,7 @@ const statusCodes_1 = __importDefault(require("../constants/statusCodes"));
 //
 const generateJwtToken = (id_1, ...args_1) => __awaiter(void 0, [id_1, ...args_1], void 0, function* (id, extras = {}, expiresIn = '24h') {
     const API_SECRET = '!@#$%^&*()';
-    console.log(API_SECRET, "API_SECRET");
+    // console.log(API_SECRET, "API_SECRET")
     return new Promise((res, rej) => {
         jsonwebtoken_1.default.sign(Object.assign({ id }, extras), API_SECRET, {
             expiresIn

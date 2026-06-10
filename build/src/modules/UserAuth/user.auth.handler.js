@@ -530,7 +530,7 @@ const UserAuthHandler = {
             // DEEPLINK URL
             // =========================================
             const deeplink = `https://apidev.heal-app.com/link/${code}?email=${email}&hearAboutUs=${hearAboutUs}&howFellingLately=${howFellingLately}&feelThatWay=${feelThatWay}&likeToFellMore=${likeToFellMore}&helpFeelBetter=${helpFeelBetter}&stopFeelBetter=${stopFeelBetter}&timeYouCommit=${timeYouCommit}&goalStartWith=${goalStartWith}&language=${language}&fullName=${fullName}`;
-            console.log(deeplink, "deeplink");
+            // console.log(deeplink, "deeplink");
             // =========================================
             // EMAIL PAYLOAD
             // =========================================
@@ -591,7 +591,7 @@ const UserAuthHandler = {
                 updateData.profilePic = 'file/file-1777357630130.webp';
             }
             // const updateRes = await findOneAndUpdate(userAuthModel, { _id: existingUser._id }, updateData);
-            const updateRes = yield user_auth_model_1.default.findOneAndUpdate({ _id: existingUser._id }, { $set: updateData }, { new: true });
+            const updateRes = yield user_auth_model_1.default.findOneAndUpdate({ _id: existingUser._id }, { $set: updateData }, { new: true }).lean();
             if (!updateRes) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
             }
