@@ -1,18 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AppState } from 'react-native';
 import { useSelector } from 'react-redux';
 import { CustomerInfo } from 'react-native-purchases';
 import { purchasesService } from '../utils/purchasesService';
-import Superwall, {
-  SubscriptionStatus,
-} from '@superwall/react-native-superwall';
-import { RCPurchaseController } from '../utils/RCPurchaseController';
-import { SUPERWALL_CONFIG, REVENUECAT_CONFIG } from '../config/purchasesConfig';
 
 interface SubscriptionContextType {
   isPremium: boolean;
   isInitializing: boolean;
-  isSuperwallReady: boolean;
   customerInfo: CustomerInfo | null;
   packages: {
     monthly: any;
@@ -42,46 +35,24 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
   const auth = useSelector((state: any) => state.userData?.auth);
   const userId = useSelector((state: any) => state.userData?.user?._id);
 
-  const [isSuperwallReady, setIsSuperwallReady] = useState<boolean>(false);
-
   // Initialize SDK
   useEffect(() => {
     let unsubscribeFn: (() => void) | undefined;
-    let superwallConfigured = false;
-
-    // Helper: Only call Superwall methods after configure has completed
-    const syncSuperwallStatus = (hasPremium: boolean) => {
-      if (!superwallConfigured) return;
-      try {
-        if (hasPremium) {
-          Superwall.shared.setSubscriptionStatus(
-            SubscriptionStatus.Active([REVENUECAT_CONFIG.entitlementId]),
-          );
-        } else {
-          Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive());
-        }
-      } catch (error) {
-        console.error('[Superwall] Error syncing subscription status:', error);
-      }
-    };
 
     const setupPurchases = async () => {
       await purchasesService.initialize();
 
-      // Set up listener for customer info updates (RevenueCat - works independently)
+      // Set up listener for customer info updates (RevenueCat)
       const unsubscribe = purchasesService.addCustomerInfoListener(info => {
         setCustomerInfo(info);
         const hasPremium = purchasesService.hasPremiumEntitlement(info);
         setIsPremium(hasPremium);
-        // Only sync with Superwall if it's already configured
-        syncSuperwallStatus(hasPremium);
       });
       unsubscribeFn = unsubscribe;
 
-      // Fetch initial customer info and offerings (RevenueCat - independent of Superwall)
-      let initialPremiumStatus = false;
+      // Fetch initial customer info and offerings (RevenueCat)
       try {
-        initialPremiumStatus = await purchasesService.checkPremiumStatus();
+        const initialPremiumStatus = await purchasesService.checkPremiumStatus();
         setIsPremium(initialPremiumStatus);
 
         const offering = await purchasesService.getOfferings();
@@ -98,54 +69,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
         );
       } finally {
         setIsInitializing(false);
-      }
-
-      // Configure Superwall SDK AFTER RevenueCat is done (non-blocking)
-      const apiKey = SUPERWALL_CONFIG.apiKey;
-      if (apiKey && !apiKey.includes('placeholder')) {
-        console.log(
-          '[Superwall] Waiting for AppState to be active before configuring SDK...',
-        );
-
-        // Wait for AppState to be active to ensure Android has a valid currentActivity
-        if (AppState.currentState !== 'active') {
-          await new Promise<void>(resolve => {
-            const subscription = AppState.addEventListener(
-              'change',
-              nextAppState => {
-                if (nextAppState === 'active') {
-                  subscription.remove();
-                  resolve();
-                }
-              },
-            );
-          });
-        }
-
-        console.log('[Superwall] Configuring SDK in background...');
-        try {
-          // Do NOT await this promise on Android, as the native SDK sometimes never resolves it
-          Superwall.configure({
-            apiKey,
-            purchaseController: new RCPurchaseController(),
-          }).catch(err =>
-            console.error('[Superwall] Background configure error:', err),
-          );
-
-          console.log('[Superwall] SDK configuration triggered.');
-          superwallConfigured = true;
-
-          // Now sync the subscription status we already fetched
-          syncSuperwallStatus(initialPremiumStatus);
-          setIsSuperwallReady(true);
-        } catch (error) {
-          console.error('[Superwall] Failed to trigger SDK config:', error);
-          setIsSuperwallReady(true);
-        }
-      } else {
-        console.warn(
-          '[Superwall] API Key is missing or placeholder. Skipping Superwall configuration.',
-        );
       }
     };
 
@@ -168,40 +91,10 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
           setCustomerInfo(info);
           const hasPremium = purchasesService.hasPremiumEntitlement(info);
           setIsPremium(hasPremium);
-
-          // Only call Superwall if it's ready (avoid deadlock on awaitConfig)
-          if (isSuperwallReady) {
-            try {
-              await Superwall.shared.identify({ userId });
-              if (hasPremium) {
-                Superwall.shared.setSubscriptionStatus(
-                  SubscriptionStatus.Active([REVENUECAT_CONFIG.entitlementId]),
-                );
-              } else {
-                Superwall.shared.setSubscriptionStatus(
-                  SubscriptionStatus.Inactive(),
-                );
-              }
-            } catch (error) {
-              console.error('[Superwall] Error identifying user:', error);
-            }
-          }
         }
       } else if (!auth) {
         console.log('[RevenueCat] Resetting user on logout');
         const info = await purchasesService.logout();
-
-        // Only reset Superwall if it's ready
-        if (isSuperwallReady) {
-          try {
-            await Superwall.shared.reset();
-            Superwall.shared.setSubscriptionStatus(
-              SubscriptionStatus.Inactive(),
-            );
-          } catch (error) {
-            console.error('[Superwall] Error resetting user:', error);
-          }
-        }
 
         if (info) {
           setCustomerInfo(info);
@@ -214,7 +107,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     syncUser();
-  }, [auth, userId, isSuperwallReady]);
+  }, [auth, userId]);
 
   const purchasePlan = async (plan: 'monthly' | 'yearly'): Promise<boolean> => {
     try {
@@ -263,7 +156,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         isPremium,
         isInitializing,
-        isSuperwallReady,
         customerInfo,
         packages,
         purchasePlan,

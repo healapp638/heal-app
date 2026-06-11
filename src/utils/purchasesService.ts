@@ -26,7 +26,7 @@ class PurchasesService {
       // Configure RevenueCat
       // Set log level before configure so it takes effect immediately
       // Using WARN to suppress noisy 404 from RevenueCat's Paywalls feature
-      // (we use Superwall for paywalls, not RevenueCat Paywalls)
+      // (we use custom screens for paywalls, not RevenueCat Paywalls)
       if (__DEV__) {
         Purchases.setLogLevel(Purchases.LOG_LEVEL.WARN);
       }

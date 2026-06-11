@@ -114,7 +114,6 @@ const EditProfile = () => {
       },
       {
         onSuccess: (response: any) => {
-          console.log('response', response);
           if (response?.data[0]) {
             setProfilePicUrl(response?.data[0]);
           }
@@ -151,7 +150,7 @@ const EditProfile = () => {
       profilePic: profilePicUrl,
       fullName: fullName,
     };
-    console.log('appLanguage', appLanguage);
+
     updateProfileApi(
       {
         endpoint: endpoints.update_profile,

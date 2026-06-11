@@ -32,11 +32,29 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
     if (isLatest && text) {
       setIsDone(false);
       setDisplayedText('');
-      let index = 0;
+      
+      // Split the text into alternating word and whitespace tokens
+      const tokens = text.split(/(\s+)/).filter(Boolean);
+      
+      let tokenIndex = 0;
       const interval = setInterval(() => {
-        if (index < text.length) {
-          setDisplayedText((prev) => prev + text.charAt(index));
-          index++;
+        if (tokenIndex < tokens.length) {
+          // Get text up to the current token index, and trim trailing space to avoid native collapse
+          let nextText = tokens.slice(0, tokenIndex + 1).join('').trimEnd();
+          
+          // Fast-forward tokenIndex past consecutive whitespace tokens if they don't change the trimmed text
+          while (tokenIndex + 1 < tokens.length) {
+            const peekText = tokens.slice(0, tokenIndex + 2).join('').trimEnd();
+            if (peekText === nextText) {
+              tokenIndex++;
+              nextText = peekText;
+            } else {
+              break;
+            }
+          }
+          
+          setDisplayedText(nextText);
+          tokenIndex++;
         } else {
           clearInterval(interval);
           setIsDone(true);
@@ -44,7 +62,8 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
             onComplete();
           }
         }
-      }, 15); // Fluid typing transition
+      }, 45); // Smooth word-by-word streaming transition
+      
       return () => clearInterval(interval);
     } else {
       setDisplayedText(text);

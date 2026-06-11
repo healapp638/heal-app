@@ -15,16 +15,3 @@ export const REVENUECAT_CONFIG = {
   offeringId: 'trial_offering',
 };
 
-export const SUPERWALL_API_KEYS = {
-  apple: 'pk__tn_USnOXf5BdSwBoKXOE', // Replace with your Superwall iOS API Key
-  google: 'pk_IGVZ_hgwIWZ5-1wUISfWd', // Replace with your Superwall Android API Key
-};
-
-export const SUPERWALL_CONFIG = {
-  apiKey: Platform.select({
-    ios: SUPERWALL_API_KEYS.apple,
-    android: SUPERWALL_API_KEYS.google,
-    default: '',
-  }),
-};
-

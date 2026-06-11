@@ -10,9 +10,9 @@ const style = (colors: any) =>
     },
     welcomeContainer: {
       flex: 1,
-      justifyContent: 'center',
+      justifyContent: 'flex-start',
       alignItems: 'center',
-      marginBottom: 100, // Account for footer
+      paddingTop: 120, // Keep a fixed top offset so it doesn't shift when keyboard opens
     },
     logo: {
       width: 70,
