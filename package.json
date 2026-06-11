@@ -52,7 +52,6 @@
     "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-orientation-locker": "^1.7.0",
     "react-native-purchases": "^10.2.0",
-    "react-native-purchases-ui": "^10.2.0",
     "react-native-reanimated": "4.2.0",
     "react-native-render-html": "^6.3.4",
     "react-native-responsive-screen": "^1.4.2",

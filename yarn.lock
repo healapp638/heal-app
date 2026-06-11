@@ -7093,13 +7093,6 @@ react-native-orientation-locker@^1.7.0:
   resolved "https://registry.yarnpkg.com/react-native-orientation-locker/-/react-native-orientation-locker-1.7.0.tgz#47ef2b9c24618e40f0a521f184b51270e576b028"
   integrity sha512-2PhG4UyRJktb3KCTISStuu8/q+Q3q3oPesGg9DhdY0b6Cu/ZzxkCvkbJte2TPWRYkS0JpClimvqVaonulGvDrA==
 
-react-native-purchases-ui@^10.2.0:
-  version "10.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-purchases-ui/-/react-native-purchases-ui-10.2.0.tgz#daf47d41b81dde73cedb7d81bd14795fa70eb36f"
-  integrity sha512-bpSmlPCOVYvDBoJE12M6s0RyixsUAj2Q7ZSff37Et3RwcKz1SkIiQk2TQeNDc9ET0PtGuZf77dA1m03d+EjT9Q==
-  dependencies:
-    "@revenuecat/purchases-typescript-internal" "18.8.0"
-
 react-native-purchases@^10.2.0:
   version "10.2.0"
   resolved "https://registry.yarnpkg.com/react-native-purchases/-/react-native-purchases-10.2.0.tgz#5bf23e96c448b5f14789b3f931d68a7b232da388"

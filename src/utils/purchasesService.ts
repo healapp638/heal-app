@@ -1,6 +1,5 @@
 import { Platform } from 'react-native';
 import Purchases, { CustomerInfo, PurchasesOffering } from 'react-native-purchases';
-import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 import { REVENUECAT_CONFIG } from '../config/purchasesConfig';
 
 class PurchasesService {
@@ -25,12 +24,14 @@ class PurchasesService {
 
     try {
       // Configure RevenueCat
-      Purchases.configure({ apiKey });
-      
-      // Enable debug logs in development mode
+      // Set log level before configure so it takes effect immediately
+      // Using WARN to suppress noisy 404 from RevenueCat's Paywalls feature
+      // (we use Superwall for paywalls, not RevenueCat Paywalls)
       if (__DEV__) {
-        await Purchases.setLogLevel(Purchases.LOG_LEVEL.DEBUG);
+        Purchases.setLogLevel(Purchases.LOG_LEVEL.WARN);
       }
+
+      Purchases.configure({ apiKey });
 
       this.isConfigured = true;
       console.log('[RevenueCat] SDK initialized successfully.');
@@ -76,6 +77,7 @@ class PurchasesService {
 
     try {
       const offerings = await Purchases.getOfferings();
+      console.log(offerings,"offerings==>>>")
       const specificOffering = REVENUECAT_CONFIG.offeringId;
 
       if (specificOffering && offerings.all[specificOffering]) {
@@ -83,8 +85,20 @@ class PurchasesService {
       }
       
       return offerings.current;
-    } catch (error) {
-      console.error('[RevenueCat] Error fetching offerings:', error);
+    } catch (error: any) {
+      const isConfigError = error?.code === 'ConfigurationError' || 
+                            error?.message?.includes('ConfigurationError') ||
+                            String(error).includes('ConfigurationError');
+      
+      if (isConfigError) {
+        console.warn(
+          '[RevenueCat] Dev Warning: Offerings/products are not yet configured in your RevenueCat dashboard for Google Play Store. ' +
+          'Falling back to local localized prices. Error details:',
+          error?.underlyingErrorMessage || error?.message || error
+        );
+      } else {
+        console.error('[RevenueCat] Error fetching offerings:', error);
+      }
       return null;
     }
   }
@@ -129,37 +143,7 @@ class PurchasesService {
     }
   }
 
-  /**
-   * Presents the RevenueCat Paywall.
-   * If a specific offering is required, it fetches it first and presents that specific paywall.
-   */
-  public async presentPaywall(): Promise<boolean> {
-    if (!this.isConfigured) {
-      console.warn('[RevenueCat] SDK not configured. Cannot present paywall.');
-      return false;
-    }
 
-    try {
-      let result: string;
-      const offering = await this.getOfferings();
-      
-      if (offering) {
-        result = await RevenueCatUI.presentPaywall({ offering });
-      } else {
-        result = await RevenueCatUI.presentPaywall();
-      }
-
-      console.log('[RevenueCat] Paywall presentation result:', result);
-
-      if (result === PAYWALL_RESULT.PURCHASED) {
-        return true;
-      }
-      return false;
-    } catch (error) {
-      console.error('[RevenueCat] Error presenting paywall:', error);
-      return false;
-    }
-  }
 
   /**
    * Restores user purchases.
