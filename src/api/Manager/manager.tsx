@@ -74,8 +74,32 @@ const refreshAccessToken = async (): Promise<string> => {
   throw new Error(response.data?.message || 'Token refresh failed');
 };
 
-const logoutUser = async (showToast = true) => {
+let isLoggingOut = false;
+
+store.subscribe(() => {
+  const currentToken = store.getState().userData.token;
+  if (currentToken) {
+    isLoggingOut = false;
+  }
+});
+
+const logoutUser = async (toastMessage: string | boolean | null = 'Session expired. Please log in again.') => {
+  if (isLoggingOut) {
+    return;
+  }
+  const token = store.getState().userData.token;
+  if (!token) {
+    return;
+  }
+  isLoggingOut = true;
   const user = store.getState().userData.user as any;
+  
+  // Clear auth state synchronously to prevent concurrent API response triggers from proceeding
+  store.dispatch(setAuth(false));
+  store.dispatch(setToken(null));
+  store.dispatch(setRefreshToken(null));
+  store.dispatch(setUser({}));
+
   try {
     if (user?._id) {
       await messaging().unsubscribeFromTopic(user._id);
@@ -83,11 +107,13 @@ const logoutUser = async (showToast = true) => {
   } catch (error) {
     console.log('Error unsubscribing from FCM topic', error);
   }
-  store.dispatch(setUser({}));
-  store.dispatch(setAuth(false));
-  store.dispatch(setToken(null));
-  store.dispatch(setRefreshToken(null));
-  showToast && AppUtils.showToast('Session expired. Please log in again.');
+
+  if (toastMessage && typeof toastMessage === 'string') {
+    AppUtils.showToast(toastMessage);
+  } else if (toastMessage === true) {
+    AppUtils.showToast('Session expired. Please log in again.');
+  }
+
   if (navigationRef.isReady()) {
     navigationRef.dispatch(
       CommonActions.reset({
@@ -161,11 +187,9 @@ api.addResponseTransform(async (response: any) => {
       isRefreshing = false;
     }
   } else if (response.status === 409) {
-    AppUtils.showToast('Your account is deactivated by admin!!');
-    logoutUser(false);
+    logoutUser('Your account is deactivated by admin!!');
   } else if (response.status === 410) {
-    AppUtils.showToast('Your account is deleted by admin!!');
-    logoutUser(false);
+    logoutUser('Your account is deleted by admin!!');
   }
 });
 

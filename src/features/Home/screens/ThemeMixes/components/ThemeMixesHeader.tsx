@@ -171,7 +171,8 @@ const ThemeMixesHeader = ({
                         opacity: 0.5,
                       }}
                     >
-                      {localization.appkeys?.noThemeMixesFound || 'No theme mixes found'}
+                      {localization.appkeys?.noThemeMixesFound ||
+                        'No theme mixes found'}
                     </SolidText>
                   </View>
                 ) : null

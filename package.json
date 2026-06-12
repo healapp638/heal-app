@@ -33,7 +33,6 @@
     "@react-navigation/native-stack": "^7.3.25",
     "@reduxjs/toolkit": "^2.8.2",
     "@shopify/flash-list": "^2.3.1",
-    "@superwall/react-native-superwall": "^2.1.7",
     "@tanstack/react-query": "^5.100.5",
     "add": "^2.0.6",
     "apisauce": "^3.2.0",

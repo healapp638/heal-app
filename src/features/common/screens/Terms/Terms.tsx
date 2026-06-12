@@ -4,6 +4,7 @@ import {
   View,
   ActivityIndicator,
   useWindowDimensions,
+  Linking,
 } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -18,6 +19,29 @@ import AppUtils from '../../../../utils/appUtils';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
 import RenderHTML from 'react-native-render-html';
+
+const linkify = (text: string) => {
+  const regex = /(<a[^>]*>[\s\S]*?<\/a>|<[^>]+>)|(https?:\/\/[^\s<>\"]+)/gi;
+  return text.replace(regex, (match, tag, url) => {
+    if (tag) {
+      return match;
+    }
+    let cleanUrl = url;
+    let trailing = '';
+    const entityMatch = cleanUrl.match(/(&[a-zA-Z0-9#]+;)$/);
+    if (entityMatch) {
+      cleanUrl = cleanUrl.slice(0, -entityMatch[0].length);
+      trailing = entityMatch[0] + trailing;
+    }
+    const punctuation = /[.,;:!?]$/;
+    const m = cleanUrl.match(punctuation);
+    if (m) {
+      cleanUrl = cleanUrl.slice(0, -1);
+      trailing = m[0] + trailing;
+    }
+    return `<a href="${cleanUrl}">${cleanUrl}</a>` + trailing;
+  });
+};
 
 const Terms = () => {
   const { colors } = useTheme() as any;
@@ -41,6 +65,7 @@ const Terms = () => {
   );
 
   const content = data?.data?.content || '';
+  const parsedContent = linkify(content);
 
   const tagsStyles = {
     body: {
@@ -58,10 +83,14 @@ const Terms = () => {
       color: colors.brown,
       fontWeight: 'bold' as any,
     },
+    a: {
+      color: colors.primary,
+      textDecorationLine: 'underline' as any,
+    },
   };
 
   const source = {
-    html: content,
+    html: parsedContent,
   };
 
   return (
@@ -84,6 +113,17 @@ const Terms = () => {
                 contentWidth={width}
                 source={source}
                 tagsStyles={tagsStyles}
+                renderersProps={{
+                  a: {
+                    onPress: (event: any, href: string) => {
+                      if (href) {
+                        Linking.openURL(href).catch(err =>
+                          console.error('Failed to open link:', err),
+                        );
+                      }
+                    },
+                  },
+                }}
               />
             </View>
           )}

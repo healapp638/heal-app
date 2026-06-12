@@ -1,9 +1,9 @@
-import { sensitiveData } from "./src/constants/Sensitive/sensitiveData";
+import { sensitiveData } from './src/constants/Sensitive/sensitiveData';
 
 export enum Mode {
-  DEV = "DEV",
-  STAGE = "STAGE",
-  PROD = "PROD"
+  DEV = 'DEV',
+  STAGE = 'STAGE',
+  PROD = 'PROD',
 }
 
 export interface Config {
@@ -21,7 +21,7 @@ export interface Config {
 }
 
 export const config: Config = {
-  mode: Mode.DEV,
+  mode: Mode.PROD,
 
   // Development
   devUrl: sensitiveData.devApiUrl,
@@ -36,14 +36,14 @@ export const config: Config = {
   prodFileUrl: sensitiveData.liveFileUrl,
 
   // Stripe Dev Key
-  devStripeKey: "",
+  devStripeKey: '',
 
   // Stripe Stage Key
-  stageStripeKey: "",
+  stageStripeKey: '',
 
   // Stripe Prod Key
-  prodStripeKey: "",
+  prodStripeKey: '',
 
   // GoogleMapKey
-  googleMapKey: ""
+  googleMapKey: '',
 };

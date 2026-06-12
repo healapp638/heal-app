@@ -110,7 +110,7 @@ const AllModules = () => {
     [type, styles.cardContainer, navigation, localization.appkeys, dispatch],
   );
   const keyExtractor = useCallback(
-    (item: any, index: number) => (item._id || index).toString(),
+    (_item: any, index: number) => index.toString(),
     [],
   );
   const loadMore = () => {

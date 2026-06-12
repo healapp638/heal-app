@@ -10,7 +10,7 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:apidev.heal-app.com</string>
+		<string>applinks:api.heal-app.com</string>
 	</array>
 </dict>
 </plist>

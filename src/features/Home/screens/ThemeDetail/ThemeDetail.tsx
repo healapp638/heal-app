@@ -91,7 +91,7 @@ const ThemeDetail = () => {
       return (
         <GridThemeCard
           image={{
-            uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+            uri: `${getEnvVars().fileUrl}${item.homeImgUrl}`,
           }}
           isSelected={
             optimisticThemeId

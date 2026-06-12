@@ -46,6 +46,14 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
 }) => {
   const [chatText, setChatText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [scrollEnabled, setScrollEnabled] = useState(false);
+  const [inputHeight, setInputHeight] = useState(24);
+
+  const handleContentSizeChange = useCallback((e: any) => {
+    const contentHeight = e.nativeEvent.contentSize.height;
+    setInputHeight(contentHeight);
+    setScrollEnabled(contentHeight >= 120);
+  }, []);
 
   // Speech-to-text state
   const [isListening, setIsListening] = useState(false);
@@ -206,21 +214,27 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
     }
   }, [showMic, handleMicPress, handleSendPress]);
 
-  const handleTextChange = useCallback((text: string) => {
-    setChatText(text);
-    if (isListening && text.trim().length > 0) {
-      Voice.stop().catch(() => {});
-      setIsListening(false);
-    }
-  }, [isListening]);
+  const handleTextChange = useCallback(
+    (text: string) => {
+      setChatText(text);
+      if (isListening && text.trim().length > 0) {
+        Voice.stop().catch(() => {});
+        setIsListening(false);
+      }
+    },
+    [isListening],
+  );
 
   return (
     <View style={styles.footerContainer}>
       {/* Main Input Box */}
       <View style={styles.inputWrapper}>
         <TextInput
-          style={styles.textInput}
-          placeholder={isListening ? 'Listening...' : (isFocused ? '' : placeholder)}
+          style={[
+            styles.textInput,
+            { height: Math.max(24, Math.min(120, inputHeight)) },
+          ]}
+          placeholder={isListening ? 'Listening...' : placeholder}
           placeholderTextColor={isListening ? '#EA4335' : 'rgba(58,33,16,0.4)'}
           value={chatText}
           onChangeText={handleTextChange}
@@ -228,15 +242,14 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           multiline={true}
+          scrollEnabled={scrollEnabled}
+          onContentSizeChange={handleContentSizeChange}
         />
         <TouchableOpacity onPress={handleButtonPress} activeOpacity={0.7}>
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
             <Image
               source={showMic ? micIconSource : sendIconSource}
-              style={[
-                styles.micIcon,
-                isListening && { tintColor: '#EA4335' }
-              ]}
+              style={[styles.micIcon, isListening && { tintColor: '#EA4335' }]}
               resizeMode="contain"
             />
           </Animated.View>

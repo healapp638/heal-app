@@ -40,14 +40,6 @@ const Premium = () => {
     'yearly',
   );
 
-  const formatPrice = (price: number, priceString: string) => {
-    const symbol = priceString.replace(/[0-9.,\s]/g, '').trim();
-    const isSymbolFirst = priceString.startsWith(symbol);
-    return isSymbolFirst
-      ? `${symbol} ${price.toFixed(2)}`
-      : `${price.toFixed(2)} ${symbol}`;
-  };
-
   const getDynamicPrices = () => {
     let monthlyPrice = undefined;
     let yearlyPrice = undefined;
@@ -57,12 +49,7 @@ const Premium = () => {
         monthlyPrice = packages.monthly.product.priceString + '/month';
       }
       if (packages.yearly) {
-        const annualProduct = packages.yearly.product;
-        const monthlyRate = annualProduct.price / 12;
-        yearlyPrice = `${formatPrice(
-          monthlyRate,
-          annualProduct.priceString,
-        )}/month`;
+        yearlyPrice = packages.yearly.product.priceString + '/year';
       }
     }
 

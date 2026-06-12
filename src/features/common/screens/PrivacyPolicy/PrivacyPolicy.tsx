@@ -4,15 +4,37 @@ import style from './style';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import { useFocusEffect, useTheme } from '@react-navigation/native';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, ActivityIndicator, useWindowDimensions, Linking } from 'react-native';
 import { LocalizationContext } from '../../../../localization/localization';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
-import { ActivityIndicator, useWindowDimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import AppUtils from '../../../../utils/appUtils';
 import RenderHTML from 'react-native-render-html';
 import { useQueryClient } from '@tanstack/react-query';
+
+const linkify = (text: string) => {
+  const regex = /(<a[^>]*>[\s\S]*?<\/a>|<[^>]+>)|(https?:\/\/[^\s<>\"]+)/gi;
+  return text.replace(regex, (match, tag, url) => {
+    if (tag) {
+      return match;
+    }
+    let cleanUrl = url;
+    let trailing = '';
+    const entityMatch = cleanUrl.match(/(&[a-zA-Z0-9#]+;)$/);
+    if (entityMatch) {
+      cleanUrl = cleanUrl.slice(0, -entityMatch[0].length);
+      trailing = entityMatch[0] + trailing;
+    }
+    const punctuation = /[.,;:!?]$/;
+    const m = cleanUrl.match(punctuation);
+    if (m) {
+      cleanUrl = cleanUrl.slice(0, -1);
+      trailing = m[0] + trailing;
+    }
+    return `<a href="${cleanUrl}">${cleanUrl}</a>` + trailing;
+  });
+};
 
 const PrivacyPolicy = () => {
   const queryClient = useQueryClient();
@@ -38,6 +60,7 @@ const PrivacyPolicy = () => {
   );
 
   const content = data?.data?.content || '';
+  const parsedContent = linkify(content);
 
   const tagsStyles = {
     body: {
@@ -55,10 +78,14 @@ const PrivacyPolicy = () => {
       color: colors.brown,
       fontWeight: 'bold' as any,
     },
+    a: {
+      color: colors.primary,
+      textDecorationLine: 'underline' as any,
+    },
   };
 
   const source = {
-    html: content,
+    html: parsedContent,
   };
 
   return (
@@ -81,6 +108,17 @@ const PrivacyPolicy = () => {
                 contentWidth={width}
                 source={source}
                 tagsStyles={tagsStyles}
+                renderersProps={{
+                  a: {
+                    onPress: (event: any, href: string) => {
+                      if (href) {
+                        Linking.openURL(href).catch(err =>
+                          console.error('Failed to open link:', err),
+                        );
+                      }
+                    },
+                  },
+                }}
               />
             </View>
           )}

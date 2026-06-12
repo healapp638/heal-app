@@ -191,7 +191,7 @@ const ThemeMixes = () => {
                   key={`${item._id}-${activeCategory}`}
                   isMostPopular={activeCategory === 'most_popular'}
                   image={{
-                    uri: `${getEnvVars().fileUrl}${item.imgUrl}`,
+                    uri: `${getEnvVars().fileUrl}${item.homeImgUrl}`,
                   }}
                   onPress={() => {
                     setOptimisticThemeId(item._id);
