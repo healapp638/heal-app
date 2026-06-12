@@ -8,7 +8,7 @@ import services from "../../services";
 import statusCodes from '../../constants/statusCodes'
 import userAuthModel from "../UserAuth/user.auth.model";
 import { USER_STATUS } from "../../constants/workflow.constant";
-import * as commonHelper from "../../helpers/common.helper";
+
 
 const CommonHandler = {
 
@@ -39,15 +39,17 @@ const CommonHandler = {
         return showResponse(false, responseMessage?.common.parameter_store_post_error, null, statusCodes.API_ERROR);
     },
 
+
     async deleteAccount(data: any): Promise<ApiResponse> {
-    const { email, password } = data;
+    const { email, otp } = data;
     const finduser = await findOne(userAuthModel, {email,status: { $ne: USER_STATUS.DELETED }});
     if (!finduser.status) {
       return showResponse(false,responseMessage.users.not_registered,null,statusCodes.API_ERROR,)
     }
-    const isValid = await commonHelper.verifyBycryptHash(password,finduser?.data?.password,);
-    if (!isValid) {
-      return showResponse(false,"Incorrect password",null,statusCodes.API_ERROR,);
+    
+    // const isValid = await commonHelper.verifyBycryptHash(password,finduser?.data?.password,);
+    if (otp !== finduser?.data?.otp) {
+      return showResponse(false,"Incorrect otp",null,statusCodes.API_ERROR,);
     }
     const status = 2;
     const result = await findOneAndUpdate(userAuthModel,{email,status: { $ne: USER_STATUS.DELETED }},{status},);

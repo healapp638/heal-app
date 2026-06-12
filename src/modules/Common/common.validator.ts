@@ -19,6 +19,6 @@ export const validateGetCommonContent = (common: any) => {
 export const validateDeleteAccount = (user: any) => {
     return joi.object({
         email: joi.string().trim().email().min(4).max(35).required(),
-        password: joi.string().required(),
+        otp: joi.string().required(),
     }).validate(user)
 }

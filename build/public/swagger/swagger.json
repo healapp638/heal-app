@@ -3332,7 +3332,7 @@
 						"application/json": {
 							"schema": {
 								"properties": {
-									"password": {
+									"otp": {
 										"type": "string"
 									},
 									"email": {
@@ -3340,7 +3340,7 @@
 									}
 								},
 								"required": [
-									"password",
+									"otp",
 									"email"
 								],
 								"type": "object"

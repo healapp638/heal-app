@@ -116,7 +116,7 @@ export default class CommonController extends Controller {
 * 
 */
     @Put("/delete_account")
-    public async deleteAccount(@Body() request: { email: string, password: string }): Promise<ApiResponse> {
+    public async deleteAccount(@Body() request: { email: string, otp: string }): Promise<ApiResponse> {
         const validate = validateDeleteAccount(request);
         if (validate.error) {
             return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)

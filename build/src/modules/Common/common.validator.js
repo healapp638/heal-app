@@ -23,7 +23,7 @@ exports.validateGetCommonContent = validateGetCommonContent;
 const validateDeleteAccount = (user) => {
     return joi_1.default.object({
         email: joi_1.default.string().trim().email().min(4).max(35).required(),
-        password: joi_1.default.string().required(),
+        otp: joi_1.default.string().required(),
     }).validate(user);
 };
 exports.validateDeleteAccount = validateDeleteAccount;

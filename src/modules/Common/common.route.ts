@@ -50,9 +50,9 @@ router.get('/test-rejection', async (req: Request | any, res: Response) => {
 })
 
 router.put('/delete_account', async (req: Request | any, res: Response) => {
-    const { email, password } = req.body
+    const { email, otp } = req.body
     const controller = new CommonController(req, res)
-    const result: ApiResponse = await controller.deleteAccount({ email, password });
+    const result: ApiResponse = await controller.deleteAccount({ email, otp });
     return showOutput(res, result, result.code)
 })
 

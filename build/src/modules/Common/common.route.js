@@ -52,9 +52,9 @@ router.get('/test-rejection', (req, res) => __awaiter(void 0, void 0, void 0, fu
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.put('/delete_account', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, password } = req.body;
+    const { email, otp } = req.body;
     const controller = new common_controller_1.default(req, res);
-    const result = yield controller.deleteAccount({ email, password });
+    const result = yield controller.deleteAccount({ email, otp });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 exports.default = router;
