@@ -5,7 +5,7 @@ import logger from "../configs/logger.config";
 
 export const connection = async () => {
 
-  const MONGO_URI =  DB.MONGODB_URI
+  const MONGO_URI =  await DB.MONGODB_URI
   // console.log(MONGO_URI,"MONGODB_URIiiii")
   mongoose.Promise = global.Promise;
 

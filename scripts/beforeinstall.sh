@@ -1,5 +1,5 @@
 #!/bin/bash
-APP_DIR="/var/www/html/Heal-Dev-API"
+APP_DIR="/var/www/html/Heal-Prod-API"
 
 if [ -d "$APP_DIR" ]; then
   echo "Removing old app files except node_modules"
