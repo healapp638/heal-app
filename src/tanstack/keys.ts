@@ -80,6 +80,7 @@ const MUTATION_KEYS = {
     MCQ_EXERCISE_CREATE:"mcq-exercise-create",
     MCQ_EXERCISE_UPDATE:"mcq-exercise-update",
     MCQ_EXERCISE_DELETE:"mcq-exercise-delete",
+    DELETE_ACCOUNT:"delete-account"
 }
 
 export { QUERY_KEYS, MUTATION_KEYS }

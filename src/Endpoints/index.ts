@@ -13,7 +13,8 @@ export const ENDPOINTS = {
     COMMON:{
         UPLOAD_FILE: "user/auth/upload_file",
         THEME_UPLOAD_FILE: "user/auth/upload_file_admin",
-        COMMON_CONTENT:"common/common_content"
+        COMMON_CONTENT:"common/common_content",
+        DELETE_ACCOUNT:"common/delete_account"
     },
     // PRIVATE
     PRIVATE:{

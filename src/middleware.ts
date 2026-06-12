@@ -7,6 +7,7 @@ export function middleware(req: NextRequest) {
 
   const pathname = req.nextUrl.pathname;
 
+  
   // Guest-only routes
   const AUTH_PAGES: string[] = [
     ROUTES.WELCOME.WELCOME,
