@@ -45,7 +45,10 @@ export interface AppConstant {
     SWAGGER_USER_NAME: any
     SWAGGER_PASSWORD: any
     OPENAI_API_KEY: any,
-    GOOGLE_TRANSLATE_API_KEY: any
+    GOOGLE_TRANSLATE_API_KEY: any,
+    REVENUECAT_API_KEY: any,
+    REVENUECAT_WEBHOOK_SECRET: any,
+    HL_GOOGLE_TRANSLATE_API_KEY: any,
 }
 
 export interface DbConstant {

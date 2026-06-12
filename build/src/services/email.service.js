@@ -93,7 +93,7 @@ const nodemail = (to_1, subject_1, body_1, ...args_1) => __awaiter(void 0, [to_1
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.email_sent_success, data, statusCodes_1.default.SUCCESS);
     }
     catch (err) {
-        console.log(err, "mail error");
+        // console.log(err, "mail error");
         return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.email_sent_error, err, statusCodes_1.default.API_ERROR);
     }
 });
@@ -132,13 +132,13 @@ const sendEmail = (emailType_1, recipientEmail_1, body_1, transportMethod_1, ...
         const logoPath = useLocalLogo
             ? path_1.default.join(process.cwd(), './public', 'logo.png')
             : `${app_constant_1.APP.BITBUCKET_URL}/${app_constant_1.APP.PROJECT_LOGO}`;
-        console.log(logoPath, "logoPath");
+        // console.log(logoPath, "logoPath")
         const attachments = useLocalLogo ? [{
                 filename: 'logo.png',
                 path: logoPath,
                 cid: 'unique@Logo',
             }] : [];
-        console.log(magic_link, "magic_link");
+        // console.log(magic_link,"magic_link")
         const email_payload = {
             project_name: app_constant_1.APP.PROJECT_NAME,
             user_name,

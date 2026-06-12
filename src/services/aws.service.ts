@@ -97,7 +97,7 @@ const postParameterToAWS = (input: postParameter) => {
 };
 
 const getSecretFromAWS = async (secret_key_param: string, retries = 3): Promise<any> => {
-
+// console.log(secret_key_param, "secret_key_param")
     const cachedValue = cache.get(secret_key_param);
     if (cachedValue !== undefined) {
         return Promise.resolve(cachedValue);
@@ -114,6 +114,7 @@ const getSecretFromAWS = async (secret_key_param: string, retries = 3): Promise<
                     if (err) {
                         return reject(err);
                     }
+                    // console.log(data, "data")
                     try {
                         const secretKey = JSON.parse(data.SecretString);
                         const response = secretKey[secret_key_param];

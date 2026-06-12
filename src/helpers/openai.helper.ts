@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { APP } from "../constants/app.constant";
 
-const openai = new OpenAI({
+const getOpenAI = () => new OpenAI({
   apiKey: APP.OPENAI_API_KEY,
 });
 
@@ -106,7 +106,7 @@ export const generateUserChallengesDaily = async (payload: GenerateChallengePayl
                         }
                         `;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4.1-nano",
       temperature: 0.4,
 
@@ -250,7 +250,7 @@ export const generateUserChallengesWeekly = async (payload: GenerateChallengePay
                         }
                         `;
 
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4.1-nano",
       temperature: 0.4,
 

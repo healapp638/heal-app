@@ -14,19 +14,9 @@ if (envConfig.error) {
 //2nd parm is project name 
 //3rd parm is project Initial 
 const ENV_PARMAS = getEnvironmentParams(process.env.ENV_MODE, 'HEAL', 'HL')//sds
-console.log(ENV_PARMAS, "Parms_For_Aws_Parameter_store")
 
-const {
-  ADMIN_EMAIL,
-  ACCESSID,
-  REGION,
-  DB_URI,
-  BUCKET,
-  JWT_SECRET,
-  STMP_EMAIL,
-  SMTP_API_KEY,
-  GOOGLE_TRANSLATE_API_KEY
-} = ENV_PARMAS
+
+const {ADMIN_EMAIL,ACCESSID,REGION,DB_URI,BUCKET,JWT_SECRET,STMP_EMAIL,SMTP_API_KEY,GOOGLE_TRANSLATE_API_KEY} = ENV_PARMAS
 let AGORA_CREDENTIAL: AgoraCredential
 let AWS_CREDENTIAL: AwsCredential
 let STRIPE_CREDENTIAL: StripeCredential
@@ -49,6 +39,9 @@ const APP: AppConstant = {
   SWAGGER_PASSWORD: 'Admin@123',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
   GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY || '',
+  REVENUECAT_API_KEY: process.env.REVENUECAT_API_KEY || '',
+  REVENUECAT_WEBHOOK_SECRET: process.env.REVENUECAT_WEBHOOK_SECRET || '',
+  HL_GOOGLE_TRANSLATE_API_KEY: process.env.HL_GOOGLE_TRANSLATE_API_KEY || '',
 };
 
 const DATABASE_URI = {
@@ -68,10 +61,6 @@ const EMAIL_CREDENTIAL: EmailConstant = {
   SMTP_API_KEY: process.env.SMTP_API_KEY || '',
   EMAIL_HOST: process.env.EMAIL_HOST || '',
 }
-console.log(EMAIL_CREDENTIAL, "EMAIL_CREDENTIAL")
-console.log(process.env.SMTP_EMAIL, "process.env.SMTP_EMAIL")
-console.log(process.env.SMTP_API_KEY, "process.env.SMTP_API_KEY")
-console.log(process.env.EMAIL_HOST, "process.env.EMAIL_HOST")
 
 const SMS_CREDENTIAL: SMSConstant = {
   TWILIO_ACCOUNT_SID: '',
@@ -88,50 +77,9 @@ const REDIS_CREDENTIAL = {
   PORT: Number(process.env.REDIS_PORT) || 6379
 };
 
-//***** MAKE SURE FOR  DEV, PROD, AND STAGE ENVIOREMENENT USER ENV_PARMAS THAT ABOVE SHOWS AND SAVE IT IN AWS WITH SAME NAME  ******/
-// const initializeAwsCredential = async () => {
-//   //call this function when paramters are stored to aws 
-//   DB.MONGODB_URI = services.awsService.getSecretFromAWS(DB_URI)
-//   APP.JWT_SECRET = services.awsService.getSecretFromAWS("API_SECRET")
-//   EMAIL_CREDENTIAL.SMTP_EMAIL = services.awsService.getSecretFromAWS(STMP_EMAIL)
-//   EMAIL_CREDENTIAL.SMTP_API_KEY = services.awsService.getSecretFromAWS(SMTP_API_KEY)
-//   AWS_CREDENTIAL = {
-//     ACCESSID: services.awsService.getParameterFromAWS({ name: ACCESSID }),
-//     REGION: services.awsService.getParameterFromAWS({ name: REGION }),
-//     AWS_SECRET: services.awsService.getSecretFromAWS("heal_secret"),
-//     BUCKET_NAME: services.awsService.getParameterFromAWS({ name: BUCKET }),
-//     COLLECTION_ID_AWS_REKOGNITION: process.env.COLLECTION_ID_AWS_REKOGNITION, //use it if want to use image search in project
-//   };
-
-
-//   //************If Twilio Used In Project**************** */
-//   // SMS_CREDENTIAL.TWILIO_ACCOUNT_SID = services.awsService.getSecretFromAWS('TWILIO_ACCOUNT_SID')
-//   // SMS_CREDENTIAL.TWILIO_AUTH_TOKEN = services.awsService.getSecretFromAWS('TWILIO_AUTH_TOKEN')
-
-
-//   //************If Stripe Used In Project**************** */
-//   // STRIPE_CREDENTIAL = {
-//   //   STRIPE_PB_KEY: services.awsService.getParameterFromAWS({ name: ENV_PARMAS.STRIPE_PB_KEY }),
-//   //   STRIPE_SEC_KEY: services.awsService.getParameterFromAWS({ name: ENV_PARMAS.STRIPE_SEC_KEY }),
-//   //   STRIPE_VERSION: '2024-04-10'
-//   // };
-
-// }
 
 //***** MAKE SURE FOR  DEV, PROD, AND STAGE ENVIOREMENENT USER ENV_PARMAS THAT ABOVE SHOWS AND SAVE IT IN AWS WITH SAME NAME  ******/
 const initializeAwsCredential = async () => {
-  console.time("AWS_CREDENTIAL_INIT")
-  console.log("Initializing AWS credentials in parallel...")
-  console.log({
-    GOOGLE_TRANSLATE_API_KEY,
-    STMP_EMAIL,
-    SMTP_API_KEY,
-    DB_URI,
-    JWT_SECRET,
-    ACCESSID,
-    REGION,
-    BUCKET
-  });
   try {
     // call this function when parameters are stored to aws
     const results = await Promise.all([
@@ -142,40 +90,28 @@ const initializeAwsCredential = async () => {
       services.awsService.getSecretFromAWS("heal_secret"),
       services.awsService.getParameterFromAWS({ name: BUCKET }),
       services.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY),
-      // services.awsService.getSecretFromAWS(CLOUDFRONT_URL),
-      // services.awsService.getSecretFromAWS(SWAGGER_USER_NAME),
-      // services.awsService.getSecretFromAWS(SWAGGER_PASSWORD),
+      services.awsService.getSecretFromAWS("OPENAI_API_KEY"),
+      services.awsService.getSecretFromAWS("REVENUECAT_API_KEY"),
+      services.awsService.getSecretFromAWS("REVENUECAT_WEBHOOK_SECRET"),
+      services.awsService.getSecretFromAWS("HL_GOOGLE_TRANSLATE_API_KEY"),
       services.awsService.getParameterFromAWS({ name: STMP_EMAIL }),
       services.awsService.getParameterFromAWS({ name: SMTP_API_KEY }),
     ]);
 
-    const [mongodbUri, jwtSecret,
-      accessId,
-      region,
-      awsSecret,
-      bucketName,
-      googleTranslateApiKey,
-      // swaggerUserName,
-      // swaggerPassword,
-      smtpEmail,
-      // cloudfrontUrl,
-      smtpApiKey,
+    
+    const [ mongodbUri,jwtSecret,accessId,region,awsSecret,bucketName,googleTranslateApiKey,openaiApiKey,revenueCatApiKey,
+      revenueCatWebhookSecret,hlGoogleTranslateApiKey,smtpEmail,smtpApiKey,
     ] = results;
-    // console.log("hhhhhhh", bucketName)
     DB.MONGODB_URI = mongodbUri;
     APP.JWT_SECRET = jwtSecret;
-    // APP.CLOUDFRONT_URL = cloudfrontUrl;
-    // APP.SWAGGER_USER_NAME = swaggerUserName;
-    // APP.SWAGGER_PASSWORD = swaggerPassword;
+    APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
+    APP.REVENUECAT_API_KEY = revenueCatApiKey || APP.REVENUECAT_API_KEY;
+    APP.REVENUECAT_WEBHOOK_SECRET = revenueCatWebhookSecret || APP.REVENUECAT_WEBHOOK_SECRET;
     APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
+    APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
+    APP.HL_GOOGLE_TRANSLATE_API_KEY = hlGoogleTranslateApiKey;
     EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
     EMAIL_CREDENTIAL.SMTP_API_KEY = smtpApiKey;
-    console.log("MONGODB_URI =", DB.MONGODB_URI);
-    // console.log("smtpEmail =", smtpEmail);
-    // console.log("smtpApiKey =", smtpApiKey);
-    // console.log("EMAIL_CREDENTIALllllllll", EMAIL_CREDENTIAL);
-    // console.log(APP.GOOGLE_TRANSLATE_API_KEY, "APP.GOOGLE_TRANSLATE_API_KEY");
-    // console.log("GOOGLE_TRANSLATE_API_KEY", googleTranslateApiKey);
     AWS_CREDENTIAL = {
       ACCESSID: accessId,
       REGION: region,

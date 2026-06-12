@@ -20,7 +20,6 @@ export const ChallengesQueue = new Queue('challenges', {
 export const challengesWorker = new Worker("challenges", async (job: any) => {
     try {
         await connectDB()
-        console.log("BullMQ Worker Started in...")
         const { userData } = job.data;
         const challengesDetails = await challengsFn(userData);
         const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
@@ -137,5 +136,5 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
         maxRetriesPerRequest: null,
     }
 });
-console.log("BullMQ Worker Started...");
+
 

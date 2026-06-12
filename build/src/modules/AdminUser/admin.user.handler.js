@@ -233,16 +233,13 @@ const AdminUserHandler = {
         const editObj = { status: parsedStatus, deactivate_by: '' };
         if (parsedStatus === workflow_constant_1.USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = workflow_constant_1.DEACTIVATE_BY.ADMIN;
-            const res = yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {});
-            console.log(res, 'res1');
+            yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {});
         } //ends
         if (parsedStatus === workflow_constant_1.USER_STATUS.DELETED) {
-            const res = yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {});
-            console.log(res, 'res2');
+            yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {});
         }
         if (parsedStatus === workflow_constant_1.USER_STATUS.ACTIVE) {
-            const res = yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {});
-            console.log(res, 'res3');
+            yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {});
         }
         const response = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, editObj);
         if (!response.status) {

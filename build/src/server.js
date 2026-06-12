@@ -32,16 +32,6 @@ const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation
 const perf_hooks_1 = require("perf_hooks");
 const requestId_middlewear_1 = require("./middlewares/requestId.middlewear");
 const logger_config_1 = __importDefault(require("./configs/logger.config"));
-// import { PubSub } from "@google-cloud/pubsub";
-// import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
-// const pubsub = new PubSub({
-//   projectId: 'manifestnails',
-//   credentials: {
-//     client_email: ab1AndroidSubscriptionFile.client_email,
-//     private_key: ab1AndroidSubscriptionFile.private_key
-//   }
-// });
-// import blocked from "blocked-at";
 const app = (0, express_1.default)();
 app.set('trust proxy', 1);
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -66,11 +56,7 @@ init();
 const h = (0, perf_hooks_1.monitorEventLoopDelay)();
 h.enable();
 setInterval(() => {
-    // console.log('min', h.min / 1e6);
-    // console.log('max', h.max / 1e6);
-    // console.log('mean', h.mean / 1e6);
 }, 50000);
-//  SECURITY MIDDLEWARE
 app.use((0, helmet_1.default)());
 //  CORS CONFIG 
 const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/"];
@@ -191,19 +177,12 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
     const codeParam = encodeURIComponent(code || "");
     const idParam = encodeURIComponent(affirmation_id || "");
     if (/iPhone|iPad|iPod/.test(ua)) {
-        // console.log("📱 iOS user detected");
         storeUrl = iosStore;
-        // deepLink = `myapp://open?code=${code}`;
         deepLink = `myapp://open?code=${codeParam}&affirmation_id=${idParam}`;
-        // console.log(deepLink, "deepLink ioss")
     }
     else if (/Android/.test(ua)) {
-        console.log("🤖 Android user detected");
         storeUrl = playStore;
-        // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
         deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=heal;package=com.healrn;end`;
-        // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
-        console.log(deepLink, "deepLink android");
     }
     // Use a strong random nonce instead of hardcoding in production
     const nonce = "123456";
@@ -252,9 +231,7 @@ app.get("/link/:code/:affirmation_id", (req, res) => __awaiter(void 0, void 0, v
 }));
 app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { code } = req.params;
-    console.log(req.params, "req.params");
     const doc = yield user_deeplink_model_1.default.findOne({ code });
-    // console.log(doc, "doc")
     if (!doc) {
         return res.redirect("https://myapp.com/notfound");
     }
@@ -266,22 +243,13 @@ app.get("/link/:code", (req, res) => __awaiter(void 0, void 0, void 0, function*
     const fallbackWeb = "https://www.heal-app.com/";
     let storeUrl = fallbackWeb;
     const codeParam = encodeURIComponent(code || "");
-    // const idParam = encodeURIComponent(affirmation_id || "");
-    console.log("deeplink");
     if (/iPhone|iPad|iPod/.test(ua)) {
-        console.log("📱 iOS user detected");
         storeUrl = iosStore;
-        // deepLink = `myapp://open?code=${code}`;
         deepLink = `myapp://open?code=${codeParam}`;
-        console.log(deepLink, "deepLink ioss");
     }
     else if (/Android/.test(ua)) {
-        console.log("🤖 Android user detected");
         storeUrl = playStore;
-        // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
         deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=heal;package=com.healrn;end`;
-        // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
-        console.log(deepLink, "deepLink android");
     }
     // Use a strong random nonce instead of hardcoding in production
     const nonce = "123456";

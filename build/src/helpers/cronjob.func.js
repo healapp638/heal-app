@@ -29,7 +29,7 @@ const openai_helper_1 = require("./openai.helper");
 const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const mongoose_config_1 = require("../configs/mongoose.config");
-const openai = new openai_1.default({
+const getOpenAI = () => new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
 // const generateAffirmation = async () => {
@@ -282,7 +282,7 @@ const generateAffirmation = () => __awaiter(void 0, void 0, void 0, function* ()
             const quoteType = Math.random() < 0.8
                 ? "reflective"
                 : "affirmation";
-            const response = yield openai.chat.completions.create({
+            const response = yield getOpenAI().chat.completions.create({
                 model: "gpt-4.1-mini",
                 temperature: 1.1,
                 response_format: {

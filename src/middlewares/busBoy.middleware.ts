@@ -74,7 +74,7 @@ import { Request, Response, NextFunction } from 'express';
 
 const addToBusboy = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log(req.body, "under busboy middleware")
+        // console.log(req.body, "under busboy middleware")
         // const response: any = await busboyMultipleMedia(req);
         // console.log(response?.files.lenght, "lenghtresponse files")
         // req.files = response?.files

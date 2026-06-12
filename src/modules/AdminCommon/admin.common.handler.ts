@@ -152,7 +152,6 @@ excelRead: async (data: any): Promise<ApiResponse> => {
         }
 
         const fileBuffer = file.data || file.buffer;
-        console.log(fileBuffer,"fileBuffer")
 
         // ✅ PUSH TO QUEUE
         const job = await excelQueue.add("process-excel", {
@@ -182,7 +181,7 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
         }
 
         const fileBuffer = file.data || file.buffer;
-        console.log(fileBuffer,"fileBuffer")
+        // console.log(fileBuffer,"fileBuffer")
 
         // ✅ PUSH TO QUEUE
         const job = await affirmationQueue.add("process-affirmationexcel", {
@@ -261,7 +260,7 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
     },
     editAffirmation: async (data: any): Promise<ApiResponse> => {
     const { affirmation_id, affirmation, language } = data;
-    console.log(affirmation,"affirmation")
+
 
     const existingAffirmation = await findOne(userAffirmationModel, {
         _id: convertToObjectId(affirmation_id),
@@ -286,7 +285,6 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
     
         }
     );
-    console.log(update,"update")
 
     return showResponse(
         true,
@@ -298,7 +296,6 @@ addExcelAffirmation: async (data: any): Promise<ApiResponse> => {
 
 deleteAffirmation: async (data:any): Promise<ApiResponse> => {
         const { affirmation_id, status } = data;
-    console.log(affirmation_id,"affirmation_id")
 
     const existingAffirmation = await findOne(userAffirmationModel, {
         _id: affirmation_id,
@@ -312,7 +309,7 @@ deleteAffirmation: async (data:any): Promise<ApiResponse> => {
             statusCodes.NOT_FOUND
         );
     }
-    console.log(affirmation_id,"affirmation_id")
+    // console.log(affirmation_id,"affirmation_id")
 
      await findOneAndUpdate(
         userAffirmationModel,
@@ -333,7 +330,6 @@ affirmationDetail: async (
     affirmation_id: any,
     language: any = "en"
 ): Promise<ApiResponse> => {
-    // console.log(affirmation_id,"affirmation_id")
 
     const result = await userAffirmationModel.aggregate([
         {

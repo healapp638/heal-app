@@ -72,7 +72,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // } // ends busboy
 const addToBusboy = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log(req.body, "under busboy middleware");
+        // console.log(req.body, "under busboy middleware")
         // const response: any = await busboyMultipleMedia(req);
         // console.log(response?.files.lenght, "lenghtresponse files")
         // req.files = response?.files

@@ -29,7 +29,6 @@ const crypto_1 = __importDefault(require("crypto"));
 const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
 const user_daily_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.daily.challenges.model"));
 const bycrptPasswordHash = (stringValue) => {
-    console.log(stringValue, "stringValue");
     return new Promise((resolve, reject) => {
         bcryptjs_1.default.genSalt(10, function (err, salt) {
             if (err) {

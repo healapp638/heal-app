@@ -1,8 +1,9 @@
 import { Translate } from '@google-cloud/translate';
+import { APP } from '../constants/app.constant';
 
 
 const translate = new Translate({
-    key: 'AIzaSyDo-P-1y_BlFP_amUtSxcFtksN_OTkxpi4' // Replace with your actual API key
+    key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
 });
 
 

@@ -879,7 +879,7 @@ const UserSubscriptionHandler = {
 
             // 🔥 AUTO CREATE PLAN (fallback)
             if (!plan) {
-                console.log("⚠️ Plan not found, creating default plan...");
+                // console.log("⚠️ Plan not found, creating default plan...");
                 return showResponse(false, "Invalid credit pack type", null, statusCodes.API_ERROR);
 
                 // plan = await subscriptionPlans.create({
@@ -891,7 +891,7 @@ const UserSubscriptionHandler = {
                 // });
             }
 
-            console.log("PLAN:", plan);
+            // console.log("PLAN:", plan);
 
             if (plan.type !== "credit") {
                 return showResponse(false, "Invalid credit pack type", null, statusCodes.API_ERROR);

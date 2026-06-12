@@ -7,30 +7,15 @@ import adminThemeModel from "../modules/AdminTheme/admin.theme.model";
 import adminModulesModel from "../modules/AdminModules/admin.modules.model";
 import adminSubmodulesModel from "../modules/AdminSubModules/admin.submodules.model";
 import adminPhasesModel from "../modules/AdminPhases/admin.phases.model";
-// import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
-// import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
 import { connection as connectDB } from "../configs/mongoose.config";
-import { DB, initializeAwsCredential, REDIS_CREDENTIAL } from "../constants/app.constant";
+import { initializeAwsCredential, REDIS_CREDENTIAL } from "../constants/app.constant";
 import adminExelModel from "../modules/AdminCommon/admin.exel.model";
 import { sendTopicNotification } from "../services/notification.service";
 import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
 import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.model";
 import adminMcqexerciseModel from "../modules/AdminExercise/admin.mcqexercise.model";
-
 console.log("👷 Worker booting...");
-console.log("Worker DB URI BEFORE AWS:", DB.MONGODB_URI);
-// const bootstrap = async () => {
-//     console.log("Before AWS:", DB.MONGODB_URI);
 
-//     await initializeAwsCredential();
-
-//     console.log("After AWS:", DB.MONGODB_URI);
-
-//     await startWorker();
-//     await startAffirmationWorker();
-// };
-
-// bootstrap().catch(console.error);
 
 // ✅ Redis connection
 const redisConnection = new IORedis({
@@ -38,22 +23,6 @@ const redisConnection = new IORedis({
     port: REDIS_CREDENTIAL.PORT || 6379,
     maxRetriesPerRequest: null,
 });
-
-// ✅ Escape regex (IMPORTANT)
-// const escapeRegex = (text: string) =>
-//     text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-// ✅ Case-insensitive exact match
-// const ciMatch = (value: string) => ({
-//     $regex: new RegExp(`^${escapeRegex(value.trim())}$`, "i"),
-// });
-
-// const normalize = (text: string) =>
-//     (text || "")
-//         .toString()
-//         .trim()
-//         .replace(/\s+/g, " ")
-//         .toLowerCase();
 
 
 // ✅ Safe DB upsert
@@ -117,7 +86,7 @@ const startWorker = async () => {
         "excel-import",
         async (job) => {
             // let themeTitle = "unknown"; // Initialize with default value
-            console.log(`🚀 Processing Job ${job.id}`);
+            // console.log(`🚀 Processing Job ${job.id}`);
 
             try {
                 // ✅ Fix buffer
@@ -134,10 +103,10 @@ const startWorker = async () => {
                     { defval: "" }
                 );
 
-                console.log("📊 Rows:", sheetData.length);
+                // console.log("📊 Rows:", sheetData.length);
 
                 if (!sheetData.length) {
-                    console.log("❌ Empty Excel");
+                    // console.log("❌ Empty Excel");
                     return;
                 }
 
@@ -150,17 +119,14 @@ const startWorker = async () => {
 
                 // Status 1: Start/Pending
                 await updateImportStatus(themeTitle, 1);
-                console.log(`✅ Theme "${themeTitle}" import started - Status: 1`);
 
                 // Status 2: In Progress
                 await updateImportStatus(themeTitle, 2);
-                console.log(`🔄 Theme "${themeTitle}" import in progress - Status: 2`);
 
-                let rowCount = 1;
+                // let rowCount = 1;
 
                 for (const row of sheetData) {
                     try {
-                        console.log(`\n📦 Row ${rowCount++}`);
 
                         // ================= THEME =================
                         if (!row.theme_title) continue;
@@ -216,7 +182,6 @@ const startWorker = async () => {
                                 points: row.phase_points || 0,
                             }
                         );
-                        console.log("📌 Phase:", phase._id);
 
 
                         // ======================================================
@@ -229,8 +194,6 @@ const startWorker = async () => {
 
                         // create even if mcq empty
                         if (step1Title) {
-
-                            console.log("📝 Creating Step 1");
 
                             await safeUpsert(
                                 adminMcqexerciseModel,
@@ -247,7 +210,6 @@ const startWorker = async () => {
                                     mcq: [],
                                 }
                             );
-                            console.log("✅ Step 1 saved");
                         }
                         // ======================================================
                         // STEP 2+
@@ -278,8 +240,6 @@ const startWorker = async () => {
                                 });
                             }
 
-                            console.log(`📝 Creating Step ${step}`);
-
                             // ======================================================
                             // CREATE MCQ
                             // ======================================================
@@ -297,9 +257,6 @@ const startWorker = async () => {
                                 }
                             );
 
-                            console.log(
-                                `✅ Step ${step} saved`
-                            );
                         }
 
                         await initializeAwsCredential();
@@ -313,14 +270,13 @@ const startWorker = async () => {
                 const admin_id = admindata?._id
                 const title = "Excel Import Completed Successfully";
                 const message = "Excel has been successfully imported"
-                const noti = await sendTopicNotification(
+                await sendTopicNotification(
                     `${admin_id}`,
                     title,
                     message,
                     {},
                 );
-                console.log(noti, "noti")
-                console.log(`✅ Job ${job.id} completed`);
+
             } catch (err) {
                 console.error("❌ Job error:", err);
                 const themeTitle = job.data.fileBuffer ? "unknown" : "unknown";
@@ -336,7 +292,7 @@ const startWorker = async () => {
     );
 
     worker.on("completed", (job) => {
-        console.log(`🎉 Job ${job.id} done`);
+        console.log(` Job ${job.id} done`);
     });
 
     worker.on("failed", (job, err) => {
@@ -363,7 +319,6 @@ const startAffirmationWorker = async () => {
         "affirmation-import",
         async (job) => {
 
-            console.log(`🚀 Processing Job ${job.id}`);
 
             try {
 
@@ -387,27 +342,26 @@ const startAffirmationWorker = async () => {
                         { defval: "" }
                     );
 
-                console.log("📊 Total Rows:", sheetData.length);
 
                 if (!sheetData.length) {
-                    console.log("❌ Empty Excel");
+
                     return;
                 }
 
-                let rowCount = 1;
+                // let rowCount = 1;
 
                 // ================= LOOP ROWS =================
                 for (const row of sheetData) {
 
                     try {
 
-                        console.log(`📦 Processing Row ${rowCount++}`);
+
 
                         const affirmation =
                             row?.affirmation?.toString()?.trim();
 
                         if (!affirmation) {
-                            console.log("⚠️ Empty affirmation skipped");
+
                             continue;
                         }
 
@@ -436,17 +390,11 @@ const startAffirmationWorker = async () => {
 
                         if (existingAffirmation) {
 
-                            console.log(
-                                "⚠️ Duplicate affirmation skipped:",
-                                affirmation
-                            );
-
                             continue;
                         }
 
                         // ================= SAVE =================
 
-                        const savedAffirmation =
                             await userAffirmationModel.create({
 
                                 affirmation:
@@ -457,7 +405,6 @@ const startAffirmationWorker = async () => {
                                 user_id: [],
                             });
 
-                        console.log("✅ Saved:", savedAffirmation._id);
 
                     } catch (rowError) {
 
@@ -469,8 +416,6 @@ const startAffirmationWorker = async () => {
                         continue;
                     }
                 }
-
-                console.log(`🎉 Job ${job.id} completed`);
 
             } catch (error) {
 
@@ -490,9 +435,8 @@ const startAffirmationWorker = async () => {
 
     // ================= EVENTS =================
     worker.on("completed", (job) => {
-
         console.log(
-            `🎉 Job ${job.id} completed successfully`
+            ` Job ${job.id} completed successfully`
         );
     });
 

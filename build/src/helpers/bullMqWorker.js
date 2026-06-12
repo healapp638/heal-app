@@ -34,7 +34,6 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
     var _a, _b;
     try {
         yield (0, mongoose_config_1.connection)();
-        console.log("BullMQ Worker Started in...");
         const { userData } = job.data;
         const challengesDetails = yield (0, common_helper_1.challengsFn)(userData);
         const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
@@ -117,4 +116,3 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
         maxRetriesPerRequest: null,
     }
 });
-console.log("BullMQ Worker Started...");

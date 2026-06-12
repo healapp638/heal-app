@@ -65,6 +65,7 @@ const UserSchema = new Schema(
         isWeeklyChallengeInProgress: { type: Boolean, default: false },
         streak_count: { type: Number, default: 0 },
         streak_credit: { type: Number, default: 0 },
+        subs_credit:{ type: Number, default: 0 },
         streak_days:{ type: [Number], default: [] },
         last_streak_date: { type: String, default: "" }, // YYYY-MM-DD in user timezone
         extra_credits:{ type: Number, default: 0 },

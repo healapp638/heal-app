@@ -33,7 +33,7 @@ const CommonHandler = {
             ]);
             obj.title[lang] = translatedTitle;
         })));
-        console.log(obj, 'FINAL obj ✅'); // now it will have data
+        // console.log(obj, 'FINAL obj ✅'); // now it will have data
         const existingModule = yield admin_modules_model_1.default.findOne({
             themeId: (0, common_helper_1.convertToObjectId)(themeId),
             "title.en": obj.title["en"]

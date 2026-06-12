@@ -140,6 +140,7 @@ const postParameterToAWS = (input) => {
 };
 exports.postParameterToAWS = postParameterToAWS;
 const getSecretFromAWS = (secret_key_param_1, ...args_1) => __awaiter(void 0, [secret_key_param_1, ...args_1], void 0, function* (secret_key_param, retries = 3) {
+    // console.log(secret_key_param, "secret_key_param")
     const cachedValue = cache.get(secret_key_param);
     if (cachedValue !== undefined) {
         return Promise.resolve(cachedValue);
@@ -154,6 +155,7 @@ const getSecretFromAWS = (secret_key_param_1, ...args_1) => __awaiter(void 0, [s
                     if (err) {
                         return reject(err);
                     }
+                    // console.log(data, "data")
                     try {
                         const secretKey = JSON.parse(data.SecretString);
                         const response = secretKey[secret_key_param];

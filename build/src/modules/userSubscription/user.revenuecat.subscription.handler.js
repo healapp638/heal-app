@@ -165,7 +165,7 @@ function extractSubscriptionData(revenueCatData) {
  */
 function verifyWebhookSignature(payload, signature, authorization) {
     try {
-        console.log(payload, signature, 'payload signature');
+        // console.log(payload, signature, 'payload signature')
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization === null || authorization === void 0 ? void 0 : authorization.replace('Bearer ', '').trim();
         if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
@@ -183,7 +183,7 @@ function verifyWebhookSignature(payload, signature, authorization) {
             console.log('Signature length mismatch');
             return false;
         }
-        console.log(crypto_1.default.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)');
+        // console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
         return crypto_1.default.timingSafeEqual(sigBuffer, expectedSigBuffer);
     }
     catch (error) {
@@ -201,18 +201,18 @@ const UserSubscriptionHandler = {
     // Set this URL in RevenueCat Dashboard → Integrations → Webhooks
     revenueCatWebhook: (data, signature, authorization) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            console.log("📨 RevenueCat webhook received");
+            // console.log("📨 RevenueCat webhook received");
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
                 console.error("❌ Invalid webhook signature");
                 return (0, response_util_1.showResponse)(false, "Invalid webhook signature", null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            console.log(data, 'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+            // console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             const event = data.event;
             // const customerInfo = data.customer_info;
             const userId = event === null || event === void 0 ? void 0 : event.app_user_id;
             const eventType = event === null || event === void 0 ? void 0 : event.type;
-            console.log(`Event: ${eventType} for user: ${userId}`);
+            // console.log(`Event: ${eventType} for user: ${userId}`);
             if (!userId) {
                 return (0, response_util_1.showResponse)(false, "User ID missing", null, statusCodes_1.default.API_ERROR);
             }
@@ -222,7 +222,7 @@ const UserSubscriptionHandler = {
                 status: { $ne: workflow_constant_1.USER_STATUS.DELETED }
             });
             if (!userDetails) {
-                console.log(`User ${userId} not found, retrying...`);
+                // console.log(`User ${userId} not found, retrying...`);
                 yield UserSubscriptionHandler.sleep(4000);
                 userDetails = yield user_auth_model_1.default.findOne({
                     _id: commonHelper.convertToObjectId(userId),
@@ -262,11 +262,11 @@ const UserSubscriptionHandler = {
                 eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_EXTENDED ||
                 eventType === REVENUECAT_EVENT_TYPES.TEMPORARY_ENTITLEMENT_GRANT ||
                 eventType === REVENUECAT_EVENT_TYPES.REFUND_REVERSED) {
-                console.log(`Processing active subscription/entitlement event: ${eventType}`);
+                // console.log(`Processing active subscription/entitlement event: ${eventType}`);
                 // Get full subscription details from RevenueCat
                 const revenueCatData = yield fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
-                console.log(subscriptionData, 'subscriptionData');
+                // console.log(subscriptionData,'subscriptionData')
                 const updateData = {
                     'user_subscription.is_subscribed': subscriptionData.isSubscribed ? 1 : 0,
                     'user_subscription.purchased_in_device': (event === null || event === void 0 ? void 0 : event.store) || 'revenuecat',
@@ -288,13 +288,13 @@ const UserSubscriptionHandler = {
                     updateData['user_subscription.cancelled_on_unix'] = 0;
                 }
                 yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, { $set: updateData });
-                console.log(`✅ Subscription processed/updated for user ${userId} on event ${eventType}`);
+                // console.log(`✅ Subscription processed/updated for user ${userId} on event ${eventType}`);
                 return (0, response_util_1.showResponse)(true, `Subscription updated on ${eventType}`, null, statusCodes_1.default.SUCCESS);
             }
             else if (eventType === REVENUECAT_EVENT_TYPES.CANCELLATION ||
                 eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED) {
-                console.log(REVENUECAT_EVENT_TYPES.CANCELLATION, "CANCELLATIONnnnnnnnnnnnnnnnnnnnnnnnn");
-                console.log(REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED, "SUBSCRIPTION_PAUSEDdddddddddddddddddddddddddddddd");
+                // console.log(REVENUECAT_EVENT_TYPES.CANCELLATION,"CANCELLATIONnnnnnnnnnnnnnnnnnnnnnnnn")
+                // console.log(REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED,"SUBSCRIPTION_PAUSEDdddddddddddddddddddddddddddddd")
                 // For cancellation or pause, the user still retains access until their expiry date.
                 const revenueCatData = yield fetchRevenueCatSubscription(userId);
                 yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
@@ -304,17 +304,17 @@ const UserSubscriptionHandler = {
                         'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
                     }
                 });
-                console.log(`✅ Event ${eventType} recorded for user ${userId}`);
+                // console.log(`✅ Event ${eventType} recorded for user ${userId}`);
                 return (0, response_util_1.showResponse)(true, `${eventType} recorded`, null, statusCodes_1.default.SUCCESS);
             }
             else if (eventType === REVENUECAT_EVENT_TYPES.EXPIRATION ||
                 eventType === REVENUECAT_EVENT_TYPES.BILLING_ISSUE) {
-                console.log(REVENUECAT_EVENT_TYPES.EXPIRATION, "EXPIRATIONnnnnnnnnnnnnnnnnnnnnnnnn");
-                console.log(REVENUECAT_EVENT_TYPES.BILLING_ISSUE, "BILLING_ISSUEeeeeeeeeeeeeeeeeeeeeeeeee");
+                // console.log(REVENUECAT_EVENT_TYPES.EXPIRATION,"EXPIRATIONnnnnnnnnnnnnnnnnnnnnnnnn")
+                // console.log(REVENUECAT_EVENT_TYPES.BILLING_ISSUE,"BILLING_ISSUEeeeeeeeeeeeeeeeeeeeeeeeee")
                 // EXPIRATION and sometimes BILLING_ISSUE mean the user no longer has access.
                 const revenueCatData = yield fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
-                console.log(subscriptionData, "subscriptionData");
+                // console.log(subscriptionData,"subscriptionData")
                 if (subscriptionData.isSubscribed) {
                     // Still active on some other entitlement (e.g. grace period, user purchased another plan)
                     yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
@@ -340,11 +340,11 @@ const UserSubscriptionHandler = {
                         }
                     });
                 }
-                console.log(`✅ Event ${eventType} processed for user ${userId}`);
+                // console.log(`✅ Event ${eventType} processed for user ${userId}`);
                 return (0, response_util_1.showResponse)(true, `${eventType} processed`, null, statusCodes_1.default.SUCCESS);
             }
             // For VIRTUAL_CURRENCY_TRANSACTION, EXPERIMENT_ENROLLMENT or any other unhandled event, they are logged at the start
-            console.log(`Log-only event: ${eventType} recorded for user: ${userId}`);
+            // console.log(`Log-only event: ${eventType} recorded for user: ${userId}`);
             return (0, response_util_1.showResponse)(true, `Event ${eventType} logged`, null, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
@@ -375,7 +375,7 @@ const UserSubscriptionHandler = {
                 }, statusCodes_1.default.SUCCESS);
             }
             // If local shows expired, verify with RevenueCat (in case it renewed)
-            console.log("Verifying with RevenueCat...");
+            // console.log("Verifying with RevenueCat...");
             const revenueCatData = yield fetchRevenueCatSubscription(user_id);
             if (revenueCatData) {
                 const subscriptionData = extractSubscriptionData(revenueCatData);

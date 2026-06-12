@@ -19,17 +19,6 @@ import { monitorEventLoopDelay } from "perf_hooks";
 import { requestIdMiddleware } from "./middlewares/requestId.middlewear";
 import logger from "./configs/logger.config";
 
-// import { PubSub } from "@google-cloud/pubsub";
-// import ab1AndroidSubscriptionFile from '../public/androidCerts/androidInAppPurchase.json'
-// const pubsub = new PubSub({
-//   projectId: 'manifestnails',
-//   credentials: {
-//     client_email: ab1AndroidSubscriptionFile.client_email,
-//     private_key: ab1AndroidSubscriptionFile.private_key
-//   }
-// });
-// import blocked from "blocked-at";
-
 
 const app: Application = express();
 app.set('trust proxy', 1);
@@ -63,12 +52,9 @@ init();
 const h = monitorEventLoopDelay();
 h.enable();
 setInterval(() => {
-  // console.log('min', h.min / 1e6);
-  // console.log('max', h.max / 1e6);
-  // console.log('mean', h.mean / 1e6);
 }, 50000);
 
-//  SECURITY MIDDLEWARE
+
 app.use(helmet());
 
 //  CORS CONFIG 
@@ -79,7 +65,6 @@ app.use(
     credentials: true,
   })
 );
-
 
 //  RESPONSE COMPRESSION
 app.use(
@@ -109,7 +94,6 @@ const morganFormat = JSON.stringify({    //STEP 3: Morgan logs request
   userAgent: ":user-agent",
   // timestamp: ":date[iso]"
 });
-
 
 app.use(morgan(morganFormat, {
   stream: {
@@ -152,7 +136,6 @@ app.use(express.static("public"));
 app.use(express.static(path.join(__dirname, "/public")));
 app.use("/files", express.static(path.join(__dirname, "/public/uploads")));
 // app.use(rateLimiter); //limit the api hit with specific ip
-
 
 //  SWAGGER
 async function setupSwagger(app: any) {
@@ -220,18 +203,11 @@ app.get("/link/:code/:affirmation_id", async (req, res) => {
   const idParam = encodeURIComponent(affirmation_id || "");
 
   if (/iPhone|iPad|iPod/.test(ua)) {
-    // console.log("📱 iOS user detected");
     storeUrl = iosStore;
-    // deepLink = `myapp://open?code=${code}`;
     deepLink = `myapp://open?code=${codeParam}&affirmation_id=${idParam}`;
-    // console.log(deepLink, "deepLink ioss")
   } else if (/Android/.test(ua)) {
-    console.log("🤖 Android user detected");
     storeUrl = playStore;
-    // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
     deepLink = `intent://open?code=${codeParam}&affirmation_id=${idParam}` + `#Intent;scheme=heal;package=com.healrn;end`;
-    // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
-    console.log(deepLink, "deepLink android")
   }
 
   // Use a strong random nonce instead of hardcoding in production
@@ -289,10 +265,7 @@ app.get("/link/:code/:affirmation_id", async (req, res) => {
 app.get("/link/:code", async (req, res) => {
   const { code } = req.params;
 
-  console.log(req.params, "req.params")
-
   const doc = await userDeeplinkModel.findOne({ code });
-  // console.log(doc, "doc")
   if (!doc) {
     return res.redirect("https://myapp.com/notfound");
   }
@@ -307,21 +280,12 @@ app.get("/link/:code", async (req, res) => {
 
   let storeUrl = fallbackWeb;
   const codeParam = encodeURIComponent(code || "");
-  // const idParam = encodeURIComponent(affirmation_id || "");
-  console.log("deeplink")
   if (/iPhone|iPad|iPod/.test(ua)) {
-    console.log("📱 iOS user detected");
     storeUrl = iosStore;
-    // deepLink = `myapp://open?code=${code}`;
     deepLink = `myapp://open?code=${codeParam}`;
-    console.log(deepLink, "deepLink ioss")
   } else if (/Android/.test(ua)) {
-    console.log("🤖 Android user detected");
     storeUrl = playStore;
-    // deepLink = `intent://open?code=${code}#Intent;scheme=habittime;package=com.habittime;end`;
     deepLink = `intent://open?code=${codeParam}` + `#Intent;scheme=heal;package=com.healrn;end`;
-    // deepLink = `pollture://open?code=${codeParam}&id=${idParam}&type=${typeParam}&graphType=${graphTypeParam}`;
-    console.log(deepLink, "deepLink android")
   }
 
   // Use a strong random nonce instead of hardcoding in production

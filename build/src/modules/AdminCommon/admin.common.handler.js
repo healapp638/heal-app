@@ -122,7 +122,6 @@ const AdminCommonHandler = {
                 return (0, response_util_1.showResponse)(false, "No file data found.", null, statusCodes_1.default.VALIDATION_ERROR);
             }
             const fileBuffer = file.data || file.buffer;
-            console.log(fileBuffer, "fileBuffer");
             // ✅ PUSH TO QUEUE
             const job = yield queue_1.excelQueue.add("process-excel", {
                 fileBuffer
@@ -148,7 +147,7 @@ const AdminCommonHandler = {
                 return (0, response_util_1.showResponse)(false, "No file data found.", null, statusCodes_1.default.VALIDATION_ERROR);
             }
             const fileBuffer = file.data || file.buffer;
-            console.log(fileBuffer, "fileBuffer");
+            // console.log(fileBuffer,"fileBuffer")
             // ✅ PUSH TO QUEUE
             const job = yield queue_1.affirmationQueue.add("process-affirmationexcel", {
                 fileBuffer
@@ -217,7 +216,6 @@ const AdminCommonHandler = {
     }),
     editAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { affirmation_id, affirmation, language } = data;
-        console.log(affirmation, "affirmation");
         const existingAffirmation = yield (0, db_helpers_1.findOne)(user_affirmation_model_1.default, {
             _id: (0, common_helper_1.convertToObjectId)(affirmation_id),
         });
@@ -228,26 +226,23 @@ const AdminCommonHandler = {
         const update = yield (0, db_helpers_1.findOneAndUpdate)(user_affirmation_model_1.default, { _id: (0, common_helper_1.convertToObjectId)(affirmation_id) }, {
             [`affirmation.${language}`]: affirmation,
         });
-        console.log(update, "update");
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.update_sucess, update, statusCodes_1.default.SUCCESS);
     }),
     deleteAffirmation: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { affirmation_id, status } = data;
-        console.log(affirmation_id, "affirmation_id");
         const existingAffirmation = yield (0, db_helpers_1.findOne)(user_affirmation_model_1.default, {
             _id: affirmation_id,
         });
         if (!existingAffirmation) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.NOT_FOUND);
         }
-        console.log(affirmation_id, "affirmation_id");
+        // console.log(affirmation_id,"affirmation_id")
         yield (0, db_helpers_1.findOneAndUpdate)(user_affirmation_model_1.default, { _id: (0, common_helper_1.convertToObjectId)(affirmation_id) }, {
             status
         });
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
     }),
     affirmationDetail: (affirmation_id_1, ...args_1) => __awaiter(void 0, [affirmation_id_1, ...args_1], void 0, function* (affirmation_id, language = "en") {
-        // console.log(affirmation_id,"affirmation_id")
         const result = yield user_affirmation_model_1.default.aggregate([
             {
                 $match: {

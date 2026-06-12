@@ -208,18 +208,15 @@ const AdminUserHandler = {
 
         if (parsedStatus === USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = DEACTIVATE_BY.ADMIN
-            const res = await sendTopicNotification(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {})
-            console.log(res, 'res1')
+            await sendTopicNotification(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {})
         }//ends
 
         if (parsedStatus === USER_STATUS.DELETED) {
-            const res = await sendTopicNotification(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {})
-            console.log(res, 'res2')
+            await sendTopicNotification(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {})
         }
 
         if (parsedStatus === USER_STATUS.ACTIVE) {
-            const res = await sendTopicNotification(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {})
-            console.log(res, 'res3')
+            await sendTopicNotification(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {})
         }
 
         const response = await findOneAndUpdate(userModel, queryObject, editObj);

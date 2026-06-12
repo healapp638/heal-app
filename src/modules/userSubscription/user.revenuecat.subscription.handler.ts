@@ -128,7 +128,7 @@ function extractSubscriptionData(revenueCatData: any) {
  */
 function verifyWebhookSignature(payload: any, signature: string, authorization?: string): boolean {
     try {
-        console.log(payload, signature, 'payload signature')
+        // console.log(payload, signature, 'payload signature')
         
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization?.replace('Bearer ', '').trim();
@@ -150,7 +150,7 @@ function verifyWebhookSignature(payload: any, signature: string, authorization?:
             console.log('Signature length mismatch')
             return false;
         }
-        console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
+        // console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
         
         return crypto.timingSafeEqual(sigBuffer, expectedSigBuffer);
     } catch (error) {
@@ -173,21 +173,21 @@ const UserSubscriptionHandler = {
     
     revenueCatWebhook: async (data: any, signature: string, authorization: string): Promise<ApiResponse> => {
         try {
-            console.log("📨 RevenueCat webhook received");
+            // console.log("📨 RevenueCat webhook received");
             
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
                 console.error("❌ Invalid webhook signature");
                 return showResponse(false, "Invalid webhook signature", null, statusCodes.VALIDATION_ERROR);
             }
-            console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+            // console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             
             const event = data.event;
             // const customerInfo = data.customer_info;
             const userId = event?.app_user_id;
             const eventType = event?.type;
             
-            console.log(`Event: ${eventType} for user: ${userId}`);
+            // console.log(`Event: ${eventType} for user: ${userId}`);
             
             if (!userId) {
                 return showResponse(false, "User ID missing", null, statusCodes.API_ERROR);
@@ -200,7 +200,7 @@ const UserSubscriptionHandler = {
             });
             
             if (!userDetails) {
-                console.log(`User ${userId} not found, retrying...`);
+                // console.log(`User ${userId} not found, retrying...`);
                 await UserSubscriptionHandler.sleep(4000);
                 userDetails = await userAuthModel.findOne({
                     _id: commonHelper.convertToObjectId(userId),
@@ -246,12 +246,12 @@ const UserSubscriptionHandler = {
                 eventType === REVENUECAT_EVENT_TYPES.TEMPORARY_ENTITLEMENT_GRANT ||
                 eventType === REVENUECAT_EVENT_TYPES.REFUND_REVERSED) {
 
-                console.log(`Processing active subscription/entitlement event: ${eventType}`);
+                // console.log(`Processing active subscription/entitlement event: ${eventType}`);
                 
                 // Get full subscription details from RevenueCat
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
-                console.log(subscriptionData,'subscriptionData')
+                // console.log(subscriptionData,'subscriptionData')
                 
                 const updateData: any = {
                     'user_subscription.is_subscribed': subscriptionData.isSubscribed ? 1 : 0,
@@ -280,14 +280,14 @@ const UserSubscriptionHandler = {
                     { $set: updateData }
                 );
                 
-                console.log(`✅ Subscription processed/updated for user ${userId} on event ${eventType}`);
+                // console.log(`✅ Subscription processed/updated for user ${userId} on event ${eventType}`);
                 return showResponse(true, `Subscription updated on ${eventType}`, null, statusCodes.SUCCESS);
             }
             
             else if (eventType === REVENUECAT_EVENT_TYPES.CANCELLATION || 
                      eventType === REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED) {
-            console.log(REVENUECAT_EVENT_TYPES.CANCELLATION,"CANCELLATIONnnnnnnnnnnnnnnnnnnnnnnnn")
-            console.log(REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED,"SUBSCRIPTION_PAUSEDdddddddddddddddddddddddddddddd")
+            // console.log(REVENUECAT_EVENT_TYPES.CANCELLATION,"CANCELLATIONnnnnnnnnnnnnnnnnnnnnnnnn")
+            // console.log(REVENUECAT_EVENT_TYPES.SUBSCRIPTION_PAUSED,"SUBSCRIPTION_PAUSEDdddddddddddddddddddddddddddddd")
                 // For cancellation or pause, the user still retains access until their expiry date.
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
                 await userAuthModel.updateOne(
@@ -300,19 +300,19 @@ const UserSubscriptionHandler = {
                         }
                     }
                 );
-                console.log(`✅ Event ${eventType} recorded for user ${userId}`);
+                // console.log(`✅ Event ${eventType} recorded for user ${userId}`);
                 return showResponse(true, `${eventType} recorded`, null, statusCodes.SUCCESS);
             }
             
             else if (eventType === REVENUECAT_EVENT_TYPES.EXPIRATION || 
                      eventType === REVENUECAT_EVENT_TYPES.BILLING_ISSUE) {
 
-            console.log(REVENUECAT_EVENT_TYPES.EXPIRATION,"EXPIRATIONnnnnnnnnnnnnnnnnnnnnnnnn")
-            console.log(REVENUECAT_EVENT_TYPES.BILLING_ISSUE,"BILLING_ISSUEeeeeeeeeeeeeeeeeeeeeeeeee")
+            // console.log(REVENUECAT_EVENT_TYPES.EXPIRATION,"EXPIRATIONnnnnnnnnnnnnnnnnnnnnnnnn")
+            // console.log(REVENUECAT_EVENT_TYPES.BILLING_ISSUE,"BILLING_ISSUEeeeeeeeeeeeeeeeeeeeeeeeee")
                 // EXPIRATION and sometimes BILLING_ISSUE mean the user no longer has access.
                 const revenueCatData = await fetchRevenueCatSubscription(userId);
                 const subscriptionData = extractSubscriptionData(revenueCatData);
-                console.log(subscriptionData,"subscriptionData")
+                // console.log(subscriptionData,"subscriptionData")
                 
                 if (subscriptionData.isSubscribed) {
                     // Still active on some other entitlement (e.g. grace period, user purchased another plan)
@@ -344,12 +344,12 @@ const UserSubscriptionHandler = {
                         }
                     );
                 }
-                console.log(`✅ Event ${eventType} processed for user ${userId}`);
+                // console.log(`✅ Event ${eventType} processed for user ${userId}`);
                 return showResponse(true, `${eventType} processed`, null, statusCodes.SUCCESS);
             }
                       
             // For VIRTUAL_CURRENCY_TRANSACTION, EXPERIMENT_ENROLLMENT or any other unhandled event, they are logged at the start
-            console.log(`Log-only event: ${eventType} recorded for user: ${userId}`);
+            // console.log(`Log-only event: ${eventType} recorded for user: ${userId}`);
             return showResponse(true, `Event ${eventType} logged`, null, statusCodes.SUCCESS);
             
         } catch (error: any) {
@@ -385,7 +385,7 @@ const UserSubscriptionHandler = {
             }
             
             // If local shows expired, verify with RevenueCat (in case it renewed)
-            console.log("Verifying with RevenueCat...");
+            // console.log("Verifying with RevenueCat...");
             const revenueCatData = await fetchRevenueCatSubscription(user_id);
             
             if (revenueCatData) {

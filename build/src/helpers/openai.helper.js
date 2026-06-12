@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateUserChallengesWeekly = exports.generateUserChallengesDaily = void 0;
 const openai_1 = __importDefault(require("openai"));
 const app_constant_1 = require("../constants/app.constant");
-const openai = new openai_1.default({
+const getOpenAI = () => new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
 const generateUserChallengesDaily = (payload, userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -106,7 +106,7 @@ const generateUserChallengesDaily = (payload, userId) => __awaiter(void 0, void 
                             ]
                         }
                         `;
-        const response = yield openai.chat.completions.create({
+        const response = yield getOpenAI().chat.completions.create({
             model: "gpt-4.1-nano",
             temperature: 0.4,
             messages: [
@@ -236,7 +236,7 @@ const generateUserChallengesWeekly = (payload, userId) => __awaiter(void 0, void
                             ]
                         }
                         `;
-        const response = yield openai.chat.completions.create({
+        const response = yield getOpenAI().chat.completions.create({
             model: "gpt-4.1-nano",
             temperature: 0.4,
             messages: [

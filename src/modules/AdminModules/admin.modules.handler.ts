@@ -29,7 +29,7 @@ const CommonHandler = {
             })
         );
 
-        console.log(obj, 'FINAL obj ✅'); // now it will have data
+        // console.log(obj, 'FINAL obj ✅'); // now it will have data
 
         const existingModule = await adminModulesModel.findOne({
             themeId: convertToObjectId(themeId),

@@ -16,7 +16,7 @@ import nodeCron from "node-cron";
 import { connection as connectDB } from "../configs/mongoose.config";
 
 
-const openai = new OpenAI({
+const getOpenAI = () => new OpenAI({
   apiKey: APP.OPENAI_API_KEY,
 });
 
@@ -314,7 +314,7 @@ const generateAffirmation = async () => {
           : "affirmation";
 
       const response =
-        await openai.chat.completions.create({
+        await getOpenAI().chat.completions.create({
           model: "gpt-4.1-mini",
           temperature: 1.1,
           response_format: {

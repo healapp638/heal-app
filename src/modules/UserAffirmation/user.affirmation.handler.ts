@@ -103,19 +103,420 @@ const affirmationHandler = {
     );
   },
 
-  getAffirmationListing: async (
+//   getAffirmationListing: async (
+//   data: any,
+//   user_id: any,
+// ): Promise<ApiResponse> => {
+
+//   try {
+
+//     const {
+//       page = 1,
+//       limit = 10,
+//     } = data;
+
+//     // ================= USER =================
+//     const userData = await findOne(
+//       userAuthModel,
+//       {
+//         _id: convertToObjectId(user_id),
+//         status: USER_STATUS.ACTIVE,
+//       }
+//     );
+
+//     if (!userData) {
+
+//       return showResponse(
+//         false,
+//         responseMessage.common.not_exist,
+//         null,
+//         statusCodes.NOT_FOUND,
+//       );
+//     }
+
+//     // ================= LANGUAGE =================
+//     const language =
+//       userData?.data?.language || "en";
+
+//     // ================= COMMON QUERY =================
+//     const commonQuery: any = {
+//       status: USER_STATUS.ACTIVE,
+
+//       // hide already viewed affirmations
+//       user_id: {
+//         $nin: [convertToObjectId(user_id)],
+//       },
+//     };
+
+//     // ================= LATEST AI AFFIRMATION =================
+//     let latestAI =
+//       await userAffirmationModel.aggregate([
+
+//         {
+//           $match: {
+//             status: USER_STATUS.ACTIVE,
+//             type: "AI",
+//           },
+//         },
+
+//         {
+//           $sort: {
+//             createdAt: -1,
+//           },
+//         },
+
+//         {
+//           $limit: 1,
+//         },
+
+//         {
+//           $lookup: {
+//             from: "likeaffirmations",
+
+//             let: {
+//               affirmationId: "$_id",
+//             },
+
+//             pipeline: [
+//               {
+//                 $match: {
+//                   $expr: {
+//                     $and: [
+//                       {
+//                         $eq: [
+//                           "$affirmation_id",
+//                           "$$affirmationId",
+//                         ],
+//                       },
+//                       {
+//                         $eq: [
+//                           "$user_id",
+//                           convertToObjectId(user_id),
+//                         ],
+//                       },
+//                       {
+//                         $eq: [
+//                           "$status",
+//                           USER_STATUS.ACTIVE,
+//                         ],
+//                       },
+//                     ],
+//                   },
+//                 },
+//               },
+//             ],
+
+//             as: "likedData",
+//           },
+//         },
+
+//         {
+//           $project: {
+
+//             _id: 1,
+
+//             affirmation: {
+//               $ifNull: [
+//                 `$affirmation.${language}`,
+//                 "$affirmation.en",
+//               ],
+//             },
+
+//             type: 1,
+
+//             createdAt: 1,
+
+//             is_liked: {
+//               $cond: [
+//                 {
+//                   $gt: [
+//                     {
+//                       $size: "$likedData",
+//                     },
+//                     0,
+//                   ],
+//                 },
+//                 true,
+//                 false,
+//               ],
+//             },
+//           },
+//         },
+//       ]);
+
+//     // ================= REMAINING AFFIRMATIONS =================
+//     let excludeIds =
+//       latestAI.map((item: any) => item._id);
+
+//     const aggregate: any = [
+
+//       {
+//         $match: {
+//           ...commonQuery,
+
+//           _id: {
+//             $nin: excludeIds,
+//           },
+//         },
+//       },
+
+//       {
+//         $sort: {
+//           createdAt: -1,
+//         },
+//       },
+
+//       {
+//         $lookup: {
+//           from: "likeaffirmations",
+
+//           let: {
+//             affirmationId: "$_id",
+//           },
+
+//           pipeline: [
+//             {
+//               $match: {
+//                 $expr: {
+//                   $and: [
+//                     {
+//                       $eq: [
+//                         "$affirmation_id",
+//                         "$$affirmationId",
+//                       ],
+//                     },
+//                     {
+//                       $eq: [
+//                         "$user_id",
+//                         convertToObjectId(user_id),
+//                       ],
+//                     },
+//                     {
+//                       $eq: [
+//                         "$status",
+//                         USER_STATUS.ACTIVE,
+//                       ],
+//                     },
+//                   ],
+//                 },
+//               },
+//             },
+//           ],
+
+//           as: "likedData",
+//         },
+//       },
+
+//       {
+//         $project: {
+
+//           _id: 1,
+
+//           affirmation: {
+//             $ifNull: [
+//               `$affirmation.${language}`,
+//               "$affirmation.en",
+//             ],
+//           },
+
+//           type: 1,
+
+//           createdAt: 1,
+
+//           is_liked: {
+//             $cond: [
+//               {
+//                 $gt: [
+//                   {
+//                     $size: "$likedData",
+//                   },
+//                   0,
+//                 ],
+//               },
+//               true,
+//               false,
+//             ],
+//           },
+//         },
+//       },
+//     ];
+
+//     // ================= PAGINATION =================
+//     const {
+//       totalCount,
+//       aggregation,
+//     } = await commonHelper.getCountAndPagination(
+//       userAffirmationModel,
+//       aggregate,
+//       page,
+//       limit,
+//     );
+
+//     let remainingResult =
+//       await userAffirmationModel.aggregate(
+//         aggregation
+//       );
+
+//     // ================= FINAL RESULT =================
+//     let result = [
+//       ...latestAI,
+//       ...remainingResult,
+//     ];
+
+//     // ================= RESET IF ALL USED =================
+//     if (!remainingResult.length) {
+
+//       // remove user from all affirmations
+//       await userAffirmationModel.updateMany(
+//         {
+//           user_id: {
+//             $in: [
+//               convertToObjectId(user_id),
+//             ],
+//           },
+//         },
+//         {
+//           $pull: {
+//             user_id:
+//               convertToObjectId(user_id),
+//           },
+//         }
+//       );
+
+//       // ================= REFETCH AI =================
+//       latestAI =
+//         await userAffirmationModel.aggregate([
+
+//           {
+//             $match: {
+//               status: USER_STATUS.ACTIVE,
+//               type: "AI",
+//             },
+//           },
+
+//           {
+//             $sort: {
+//               createdAt: -1,
+//             },
+//           },
+
+//           {
+//             $limit: 1,
+//           },
+
+//           {
+//             $project: {
+
+//               _id: 1,
+
+//               affirmation: {
+//                 $ifNull: [
+//                   `$affirmation.${language}`,
+//                   "$affirmation.en",
+//                 ],
+//               },
+
+//               type: 1,
+
+//               createdAt: 1,
+
+//               is_liked: false,
+//             },
+//           },
+//         ]);
+
+//       excludeIds =
+//         latestAI.map((item: any) => item._id);
+
+//       // ================= REFETCH REMAINING =================
+//       remainingResult =
+//         await userAffirmationModel.aggregate([
+
+//           {
+//             $match: {
+//               status: USER_STATUS.ACTIVE,
+
+//               _id: {
+//                 $nin: excludeIds,
+//               },
+//             },
+//           },
+
+//           {
+//             $sort: {
+//               createdAt: -1,
+//             },
+//           },
+
+//           {
+//             $limit: Number(limit),
+//           },
+
+//           {
+//             $project: {
+
+//               _id: 1,
+
+//               affirmation: {
+//                 $ifNull: [
+//                   `$affirmation.${language}`,
+//                   "$affirmation.en",
+//                 ],
+//               },
+
+//               type: 1,
+
+//               createdAt: 1,
+
+//               is_liked: {
+//                 $literal: false,
+//               },
+//             },
+//           },
+//         ]);
+
+//       result = [
+//         ...latestAI,
+//         ...remainingResult,
+//       ];
+//     }
+
+//     return showResponse(
+//       true,
+//       responseMessage.common
+//         .data_retreive_sucess,
+//       {
+//         result,
+//         totalCount,
+//       },
+//       statusCodes.SUCCESS,
+//     );
+
+//   } catch (error) {
+
+//     console.log(
+//       error,
+//       "GET_AFFIRMATION_LISTING_ERROR"
+//     );
+
+//     return showResponse(
+//       false,
+//       responseMessage.common.server_error,
+//       null,
+//       statusCodes.API_ERROR,
+//     );
+//   }
+// },
+getAffirmationListing: async (
   data: any,
-  user_id: any,
+  user_id: string,
 ): Promise<ApiResponse> => {
-
   try {
-
     const {
       page = 1,
       limit = 10,
     } = data;
 
-    // ================= USER =================
     const userData = await findOne(
       userAuthModel,
       {
@@ -125,7 +526,6 @@ const affirmationHandler = {
     );
 
     if (!userData) {
-
       return showResponse(
         false,
         responseMessage.common.not_exist,
@@ -134,146 +534,34 @@ const affirmationHandler = {
       );
     }
 
-    // ================= LANGUAGE =================
     const language =
       userData?.data?.language || "en";
 
-    // ================= COMMON QUERY =================
-    const commonQuery: any = {
-      status: USER_STATUS.ACTIVE,
+    // =========================
+    // LATEST AI (ALWAYS FIRST)
+    // =========================
 
-      // hide already viewed affirmations
-      user_id: {
-        $nin: [convertToObjectId(user_id)],
-      },
-    };
-
-    // ================= LATEST AI AFFIRMATION =================
-    let latestAI =
-      await userAffirmationModel.aggregate([
-
-        {
-          $match: {
-            status: USER_STATUS.ACTIVE,
-            type: "AI",
-          },
-        },
-
-        {
-          $sort: {
-            createdAt: -1,
-          },
-        },
-
-        {
-          $limit: 1,
-        },
-
-        {
-          $lookup: {
-            from: "likeaffirmations",
-
-            let: {
-              affirmationId: "$_id",
-            },
-
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      {
-                        $eq: [
-                          "$affirmation_id",
-                          "$$affirmationId",
-                        ],
-                      },
-                      {
-                        $eq: [
-                          "$user_id",
-                          convertToObjectId(user_id),
-                        ],
-                      },
-                      {
-                        $eq: [
-                          "$status",
-                          USER_STATUS.ACTIVE,
-                        ],
-                      },
-                    ],
-                  },
-                },
-              },
-            ],
-
-            as: "likedData",
-          },
-        },
-
-        {
-          $project: {
-
-            _id: 1,
-
-            affirmation: {
-              $ifNull: [
-                `$affirmation.${language}`,
-                "$affirmation.en",
-              ],
-            },
-
-            type: 1,
-
-            createdAt: 1,
-
-            is_liked: {
-              $cond: [
-                {
-                  $gt: [
-                    {
-                      $size: "$likedData",
-                    },
-                    0,
-                  ],
-                },
-                true,
-                false,
-              ],
-            },
-          },
-        },
-      ]);
-
-    // ================= REMAINING AFFIRMATIONS =================
-    let excludeIds =
-      latestAI.map((item: any) => item._id);
-
-    const aggregate: any = [
-
+    const latestAI = await userAffirmationModel.aggregate([
       {
         $match: {
-          ...commonQuery,
-
-          _id: {
-            $nin: excludeIds,
-          },
+          status: USER_STATUS.ACTIVE,
+          type: "AI",
         },
       },
-
       {
         $sort: {
           createdAt: -1,
         },
       },
-
+      {
+        $limit: 1,
+      },
       {
         $lookup: {
           from: "likeaffirmations",
-
           let: {
             affirmationId: "$_id",
           },
-
           pipeline: [
             {
               $match: {
@@ -302,15 +590,14 @@ const affirmationHandler = {
               },
             },
           ],
-
           as: "likedData",
         },
       },
-
       {
         $project: {
-
           _id: 1,
+          type: 1,
+          createdAt: 1,
 
           affirmation: {
             $ifNull: [
@@ -319,13 +606,108 @@ const affirmationHandler = {
             ],
           },
 
-          type: 1,
-
-          createdAt: 1,
+          affirmationEn: "$affirmation.en",
 
           is_liked: {
-            $cond: [
+            $gt: [
               {
+                $size: "$likedData",
+              },
+              0,
+            ],
+          },
+        },
+      },
+    ]);
+
+    const latestAIId =
+      latestAI?.[0]?._id || null;
+
+    // =========================
+    // GET UNSEEN AFFIRMATIONS
+    // =========================
+
+    const getUnseenAffirmations =
+      async () => {
+        return userAffirmationModel.aggregate([
+          {
+            $match: {
+              status: USER_STATUS.ACTIVE,
+
+              user_id: {
+                $nin: [
+                  convertToObjectId(user_id),
+                ],
+              },
+
+              ...(latestAIId && {
+                _id: {
+                  $ne: latestAIId,
+                },
+              }),
+            },
+          },
+
+          {
+            $lookup: {
+              from: "likeaffirmations",
+
+              let: {
+                affirmationId: "$_id",
+              },
+
+              pipeline: [
+                {
+                  $match: {
+                    $expr: {
+                      $and: [
+                        {
+                          $eq: [
+                            "$affirmation_id",
+                            "$$affirmationId",
+                          ],
+                        },
+                        {
+                          $eq: [
+                            "$user_id",
+                            convertToObjectId(
+                              user_id
+                            ),
+                          ],
+                        },
+                        {
+                          $eq: [
+                            "$status",
+                            USER_STATUS.ACTIVE,
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                },
+              ],
+
+              as: "likedData",
+            },
+          },
+
+          {
+            $project: {
+              _id: 1,
+              type: 1,
+              createdAt: 1,
+
+              affirmation: {
+                $ifNull: [
+                  `$affirmation.${language}`,
+                  "$affirmation.en",
+                ],
+              },
+
+              affirmationEn:
+                "$affirmation.en",
+
+              is_liked: {
                 $gt: [
                   {
                     $size: "$likedData",
@@ -333,48 +715,27 @@ const affirmationHandler = {
                   0,
                 ],
               },
-              true,
-              false,
-            ],
+            },
           },
-        },
-      },
-    ];
 
-    // ================= PAGINATION =================
-    const {
-      totalCount,
-      aggregation,
-    } = await commonHelper.getCountAndPagination(
-      userAffirmationModel,
-      aggregate,
-      page,
-      limit,
-    );
+          {
+            $sort: {
+              createdAt: -1,
+            },
+          },
+        ]);
+      };
 
-    let remainingResult =
-      await userAffirmationModel.aggregate(
-        aggregation
-      );
+    let affirmations =
+      await getUnseenAffirmations();
 
-    // ================= FINAL RESULT =================
-    let result = [
-      ...latestAI,
-      ...remainingResult,
-    ];
+    // =========================
+    // RESET WHEN ALL SEEN
+    // =========================
 
-    // ================= RESET IF ALL USED =================
-    if (!remainingResult.length) {
-
-      // remove user from all affirmations
+    if (!affirmations.length) {
       await userAffirmationModel.updateMany(
-        {
-          user_id: {
-            $in: [
-              convertToObjectId(user_id),
-            ],
-          },
-        },
+        {},
         {
           $pull: {
             user_id:
@@ -383,102 +744,129 @@ const affirmationHandler = {
         }
       );
 
-      // ================= REFETCH AI =================
-      latestAI =
-        await userAffirmationModel.aggregate([
+      affirmations =
+        await getUnseenAffirmations();
+    }
 
-          {
-            $match: {
-              status: USER_STATUS.ACTIVE,
-              type: "AI",
-            },
+    // =========================
+    // SPLIT NORMAL & I
+    // =========================
+
+    const iAffirmations =
+      affirmations.filter(
+        (item: any) =>
+          item?.affirmationEn &&
+          /^i\b/i.test(
+            item.affirmationEn.trim()
+          )
+      );
+
+    const normalAffirmations =
+      affirmations.filter(
+        (item: any) =>
+          !(
+            item?.affirmationEn &&
+            /^i\b/i.test(
+              item.affirmationEn.trim()
+            )
+          )
+      );
+
+    // =========================
+    // BUILD FEED
+    // 5 NORMAL -> 1 I
+    // =========================
+
+    const feed: any[] = [];
+
+    let normalIndex = 0;
+    let iIndex = 0;
+
+    while (
+      normalIndex <
+        normalAffirmations.length ||
+      iIndex < iAffirmations.length
+    ) {
+      for (
+        let i = 0;
+        i < 5 &&
+        normalIndex <
+          normalAffirmations.length;
+        i++
+      ) {
+        feed.push(
+          normalAffirmations[
+            normalIndex++
+          ]
+        );
+      }
+
+      if (
+        iIndex < iAffirmations.length
+      ) {
+        feed.push(
+          iAffirmations[iIndex++]
+        );
+      }
+
+      if (
+        normalIndex >=
+          normalAffirmations.length &&
+        iIndex >=
+          iAffirmations.length
+      ) {
+        break;
+      }
+    }
+
+    // =========================
+    // PAGINATION
+    // AI OCCUPIES FIRST SLOT
+    // =========================
+
+    const actualLimit = Math.max(
+      Number(limit) - 1,
+      1
+    );
+
+    const start =
+      (Number(page) - 1) *
+      actualLimit;
+
+    const paginatedFeed =
+      feed.slice(
+        start,
+        start + actualLimit
+      );
+
+    const result = [
+      ...(latestAI.length
+        ? [latestAI[0]]
+        : []),
+      ...paginatedFeed,
+    ];
+
+    // =========================
+    // MARK ONLY NON-AI ITEMS
+    // AS SEEN
+    // =========================
+
+    if (paginatedFeed.length) {
+      await userAffirmationModel.updateMany(
+        {
+          _id: {
+            $in: paginatedFeed.map(
+              (item: any) => item._id
+            ),
           },
-
-          {
-            $sort: {
-              createdAt: -1,
-            },
+        },
+        {
+          $addToSet: {
+            user_id:
+              convertToObjectId(user_id),
           },
-
-          {
-            $limit: 1,
-          },
-
-          {
-            $project: {
-
-              _id: 1,
-
-              affirmation: {
-                $ifNull: [
-                  `$affirmation.${language}`,
-                  "$affirmation.en",
-                ],
-              },
-
-              type: 1,
-
-              createdAt: 1,
-
-              is_liked: false,
-            },
-          },
-        ]);
-
-      excludeIds =
-        latestAI.map((item: any) => item._id);
-
-      // ================= REFETCH REMAINING =================
-      remainingResult =
-        await userAffirmationModel.aggregate([
-
-          {
-            $match: {
-              status: USER_STATUS.ACTIVE,
-
-              _id: {
-                $nin: excludeIds,
-              },
-            },
-          },
-
-          {
-            $sort: {
-              createdAt: -1,
-            },
-          },
-
-          {
-            $limit: Number(limit),
-          },
-
-          {
-            $project: {
-
-              _id: 1,
-
-              affirmation: {
-                $ifNull: [
-                  `$affirmation.${language}`,
-                  "$affirmation.en",
-                ],
-              },
-
-              type: 1,
-
-              createdAt: 1,
-
-              is_liked: {
-                $literal: false,
-              },
-            },
-          },
-        ]);
-
-      result = [
-        ...latestAI,
-        ...remainingResult,
-      ];
+        }
+      );
     }
 
     return showResponse(
@@ -487,13 +875,13 @@ const affirmationHandler = {
         .data_retreive_sucess,
       {
         result,
-        totalCount,
+        totalCount:
+          feed.length +
+          (latestAI.length ? 1 : 0),
       },
       statusCodes.SUCCESS,
     );
-
   } catch (error) {
-
     console.log(
       error,
       "GET_AFFIRMATION_LISTING_ERROR"

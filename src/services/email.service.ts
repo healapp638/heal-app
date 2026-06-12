@@ -110,7 +110,7 @@ const nodemail = async (
 
     } catch (err) {
 
-        console.log(err, "mail error");
+        // console.log(err, "mail error");
 
         return showResponse(
             false,
@@ -163,14 +163,14 @@ const sendEmail = async (emailType: EmailSendType, recipientEmail: string, body:
         const logoPath = useLocalLogo
             ? path.join(process.cwd(), './public', 'logo.png')
             : `${APP.BITBUCKET_URL}/${APP.PROJECT_LOGO}`;
-            console.log(logoPath, "logoPath")
+            // console.log(logoPath, "logoPath")
 
         const attachments = useLocalLogo ? [{
             filename: 'logo.png',
             path: logoPath,
             cid: 'unique@Logo',
         }] : [];
-        console.log(magic_link,"magic_link")
+        // console.log(magic_link,"magic_link")
 
         const email_payload: any = {
             project_name: APP.PROJECT_NAME,

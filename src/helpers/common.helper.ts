@@ -10,7 +10,6 @@ import userWeeklyChallengesModel from '../modules/UserChallenges/user.weekly.cha
 import userDailyChallengesModel from '../modules/UserChallenges/user.daily.challenges.model';
 
 const bycrptPasswordHash = (stringValue: string): Promise<string> => {
-    console.log(stringValue, "stringValue")
     return new Promise((resolve, reject) => {
         bcrypt.genSalt(10, function (err: any, salt: string) {
             if (err) {

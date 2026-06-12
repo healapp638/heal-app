@@ -21,8 +21,6 @@ const admin_theme_model_1 = __importDefault(require("../modules/AdminTheme/admin
 const admin_modules_model_1 = __importDefault(require("../modules/AdminModules/admin.modules.model"));
 const admin_submodules_model_1 = __importDefault(require("../modules/AdminSubModules/admin.submodules.model"));
 const admin_phases_model_1 = __importDefault(require("../modules/AdminPhases/admin.phases.model"));
-// import adminExerciseDetailsModel from "../modules/AdminExercise/admin.exercise.details..model";
-// import adminExcerciseModel from "../modules/AdminExercise/admin.excercise.model";
 const mongoose_config_1 = require("../configs/mongoose.config");
 const app_constant_1 = require("../constants/app.constant");
 const admin_exel_model_1 = __importDefault(require("../modules/AdminCommon/admin.exel.model"));
@@ -31,34 +29,12 @@ const admin_auth_model_1 = __importDefault(require("../modules/AdminAuth/admin.a
 const user_affirmation_model_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.model"));
 const admin_mcqexercise_model_1 = __importDefault(require("../modules/AdminExercise/admin.mcqexercise.model"));
 console.log("👷 Worker booting...");
-console.log("Worker DB URI BEFORE AWS:", app_constant_1.DB.MONGODB_URI);
-// const bootstrap = async () => {
-//     console.log("Before AWS:", DB.MONGODB_URI);
-//     await initializeAwsCredential();
-//     console.log("After AWS:", DB.MONGODB_URI);
-//     await startWorker();
-//     await startAffirmationWorker();
-// };
-// bootstrap().catch(console.error);
 // ✅ Redis connection
 const redisConnection = new ioredis_1.default({
     host: app_constant_1.REDIS_CREDENTIAL.REDIS_HOST || 'redis',
     port: app_constant_1.REDIS_CREDENTIAL.PORT || 6379,
     maxRetriesPerRequest: null,
 });
-// ✅ Escape regex (IMPORTANT)
-// const escapeRegex = (text: string) =>
-//     text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// ✅ Case-insensitive exact match
-// const ciMatch = (value: string) => ({
-//     $regex: new RegExp(`^${escapeRegex(value.trim())}$`, "i"),
-// });
-// const normalize = (text: string) =>
-//     (text || "")
-//         .toString()
-//         .trim()
-//         .replace(/\s+/g, " ")
-//         .toLowerCase();
 // ✅ Safe DB upsert
 const safeUpsert = (model, query, insertData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -103,9 +79,9 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, mongoose_config_1.connection)();
     console.log("✅ DB connected");
     const worker = new bullmq_1.Worker("excel-import", (job) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b;
         // let themeTitle = "unknown"; // Initialize with default value
-        console.log(`🚀 Processing Job ${job.id}`);
+        // console.log(`🚀 Processing Job ${job.id}`);
+        var _a, _b;
         try {
             // ✅ Fix buffer
             const rawBuffer = job.data.fileBuffer;
@@ -115,9 +91,9 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
             const workbook = xlsx_1.default.read(fileBuffer, { type: "buffer" });
             const sheetName = workbook.SheetNames[0];
             const sheetData = xlsx_1.default.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
-            console.log("📊 Rows:", sheetData.length);
+            // console.log("📊 Rows:", sheetData.length);
             if (!sheetData.length) {
-                console.log("❌ Empty Excel");
+                // console.log("❌ Empty Excel");
                 return;
             }
             // Get theme title from first row (it will remain same throughout)
@@ -128,14 +104,11 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
             }
             // Status 1: Start/Pending
             yield updateImportStatus(themeTitle, 1);
-            console.log(`✅ Theme "${themeTitle}" import started - Status: 1`);
             // Status 2: In Progress
             yield updateImportStatus(themeTitle, 2);
-            console.log(`🔄 Theme "${themeTitle}" import in progress - Status: 2`);
-            let rowCount = 1;
+            // let rowCount = 1;
             for (const row of sheetData) {
                 try {
-                    console.log(`\n📦 Row ${rowCount++}`);
                     // ================= THEME =================
                     if (!row.theme_title)
                         continue;
@@ -171,7 +144,6 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                         reflection: yield getTranslatedObj(row.personal_reflection),
                         points: row.phase_points || 0,
                     });
-                    console.log("📌 Phase:", phase._id);
                     // ======================================================
                     // STEP 1
                     // NORMAL CONTENT TYPE
@@ -180,7 +152,6 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                     const step1Description = row["exercise_description_step1"];
                     // create even if mcq empty
                     if (step1Title) {
-                        console.log("📝 Creating Step 1");
                         yield safeUpsert(admin_mcqexercise_model_1.default, {
                             phase_id: phase._id,
                             "title.en": step1Title.trim(),
@@ -192,7 +163,6 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                             // empty
                             mcq: [],
                         });
-                        console.log("✅ Step 1 saved");
                     }
                     // ======================================================
                     // STEP 2+
@@ -215,7 +185,6 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                                 option: yield getTranslatedObj(optionText.toString().trim()),
                             });
                         }
-                        console.log(`📝 Creating Step ${step}`);
                         // ======================================================
                         // CREATE MCQ
                         // ======================================================
@@ -228,7 +197,6 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                             description: yield getTranslatedObj(""),
                             mcq: mcqOptions,
                         });
-                        console.log(`✅ Step ${step} saved`);
                     }
                     yield (0, app_constant_1.initializeAwsCredential)();
                 }
@@ -242,9 +210,7 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
             const admin_id = admindata === null || admindata === void 0 ? void 0 : admindata._id;
             const title = "Excel Import Completed Successfully";
             const message = "Excel has been successfully imported";
-            const noti = yield (0, notification_service_1.sendTopicNotification)(`${admin_id}`, title, message, {});
-            console.log(noti, "noti");
-            console.log(`✅ Job ${job.id} completed`);
+            yield (0, notification_service_1.sendTopicNotification)(`${admin_id}`, title, message, {});
         }
         catch (err) {
             console.error("❌ Job error:", err);
@@ -257,7 +223,7 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
         concurrency: 1,
     });
     worker.on("completed", (job) => {
-        console.log(`🎉 Job ${job.id} done`);
+        console.log(` Job ${job.id} done`);
     });
     worker.on("failed", (job, err) => {
         console.error(`❌ Job ${job === null || job === void 0 ? void 0 : job.id} failed`, err);
@@ -273,7 +239,6 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
     console.log("✅ DB connected");
     const worker = new bullmq_1.Worker("affirmation-import", (job) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b;
-        console.log(`🚀 Processing Job ${job.id}`);
         try {
             // ================= BUFFER =================
             const rawBuffer = job.data.fileBuffer;
@@ -286,19 +251,15 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
             });
             const sheetName = workbook.SheetNames[0];
             const sheetData = xlsx_1.default.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: "" });
-            console.log("📊 Total Rows:", sheetData.length);
             if (!sheetData.length) {
-                console.log("❌ Empty Excel");
                 return;
             }
-            let rowCount = 1;
+            // let rowCount = 1;
             // ================= LOOP ROWS =================
             for (const row of sheetData) {
                 try {
-                    console.log(`📦 Processing Row ${rowCount++}`);
                     const affirmation = (_b = (_a = row === null || row === void 0 ? void 0 : row.affirmation) === null || _a === void 0 ? void 0 : _a.toString()) === null || _b === void 0 ? void 0 : _b.trim();
                     if (!affirmation) {
-                        console.log("⚠️ Empty affirmation skipped");
                         continue;
                     }
                     // ================= TRANSLATION =================
@@ -314,23 +275,20 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
                         },
                     });
                     if (existingAffirmation) {
-                        console.log("⚠️ Duplicate affirmation skipped:", affirmation);
                         continue;
                     }
                     // ================= SAVE =================
-                    const savedAffirmation = yield user_affirmation_model_1.default.create({
+                    yield user_affirmation_model_1.default.create({
                         affirmation: translatedAffirmation,
                         type: "Admin",
                         user_id: [],
                     });
-                    console.log("✅ Saved:", savedAffirmation._id);
                 }
                 catch (rowError) {
                     console.error("❌ Row failed:", rowError);
                     continue;
                 }
             }
-            console.log(`🎉 Job ${job.id} completed`);
         }
         catch (error) {
             console.error("❌ Worker Job Error:", error);
@@ -342,7 +300,7 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
     });
     // ================= EVENTS =================
     worker.on("completed", (job) => {
-        console.log(`🎉 Job ${job.id} completed successfully`);
+        console.log(` Job ${job.id} completed successfully`);
     });
     worker.on("failed", (job, err) => {
         console.error(`❌ Job ${job === null || job === void 0 ? void 0 : job.id} failed`, err);
