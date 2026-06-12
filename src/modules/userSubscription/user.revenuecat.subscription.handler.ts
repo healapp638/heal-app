@@ -131,7 +131,7 @@ function extractSubscriptionData(revenueCatData: any) {
 function verifyWebhookSignature(payload: any, signature: string, authorization?: string): boolean {
     try {
         // console.log(payload, signature, 'payload signature')
-        
+        console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization?.replace('Bearer ', '').trim();
         if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
