@@ -15,3 +15,10 @@ export const validateGetCommonContent = (common: any) => {
         type: joi.string().trim().required().allow('about', 'privacy_policy', 'terms_conditions'),
     }).validate(common)
 }
+
+export const validateDeleteAccount = (user: any) => {
+    return joi.object({
+        email: joi.string().trim().email().min(4).max(35).required(),
+        password: joi.string().required(),
+    }).validate(user)
+}

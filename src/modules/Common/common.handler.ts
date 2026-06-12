@@ -1,11 +1,14 @@
 import { ApiResponse } from "../../utils/interfaces.util";
 import { showResponse } from "../../utils/response.util";
-import { findAll } from "../../helpers/db.helpers";
+import { findAll, findOne, findOneAndUpdate } from "../../helpers/db.helpers";
 import responseMessage from '../../constants/responseMessages'
 import commonContentModel from "../../modules/AdminCommon/commonContent.model";
 import faqModel from "../../modules/AdminCommon/faq.model";
 import services from "../../services";
 import statusCodes from '../../constants/statusCodes'
+import userAuthModel from "../UserAuth/user.auth.model";
+import { USER_STATUS } from "../../constants/workflow.constant";
+import * as commonHelper from "../../helpers/common.helper";
 
 const CommonHandler = {
 
@@ -35,6 +38,24 @@ const CommonHandler = {
         }
         return showResponse(false, responseMessage?.common.parameter_store_post_error, null, statusCodes.API_ERROR);
     },
+
+    async deleteAccount(data: any): Promise<ApiResponse> {
+    const { email, password } = data;
+    const finduser = await findOne(userAuthModel, {email,status: { $ne: USER_STATUS.DELETED }});
+    if (!finduser.status) {
+      return showResponse(false,responseMessage.users.not_registered,null,statusCodes.API_ERROR,)
+    }
+    const isValid = await commonHelper.verifyBycryptHash(password,finduser?.data?.password,);
+    if (!isValid) {
+      return showResponse(false,"Incorrect password",null,statusCodes.API_ERROR,);
+    }
+    const status = 2;
+    const result = await findOneAndUpdate(userAuthModel,{email,status: { $ne: USER_STATUS.DELETED }},{status},);
+    if (!result.status) {
+      return showResponse(false,responseMessage.users.user_account_update_error,null,statusCodes.API_ERROR,);
+    }
+    return showResponse(true,`${responseMessage.users.user_account_has_been} deleted Successfully`,null,statusCodes.SUCCESS);
+  }, //ends
 }
 
 export default CommonHandler 

@@ -1,4 +1,37 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,6 +52,9 @@ const commonContent_model_1 = __importDefault(require("../../modules/AdminCommon
 const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model"));
 const services_1 = __importDefault(require("../../services"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
+const workflow_constant_1 = require("../../constants/workflow.constant");
+const commonHelper = __importStar(require("../../helpers/common.helper"));
 const CommonHandler = {
     getCommonContent: (type, language) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b;
@@ -43,5 +79,25 @@ const CommonHandler = {
         }
         return (0, response_util_1.showResponse)(false, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.parameter_store_post_error, null, statusCodes_1.default.API_ERROR);
     }),
+    deleteAccount(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const { email, password } = data;
+            const finduser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { email, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } });
+            if (!finduser.status) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.not_registered, null, statusCodes_1.default.API_ERROR);
+            }
+            const isValid = yield commonHelper.verifyBycryptHash(password, (_a = finduser === null || finduser === void 0 ? void 0 : finduser.data) === null || _a === void 0 ? void 0 : _a.password);
+            if (!isValid) {
+                return (0, response_util_1.showResponse)(false, "Incorrect password", null, statusCodes_1.default.API_ERROR);
+            }
+            const status = 2;
+            const result = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { email, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } }, { status });
+            if (!result.status) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.user_account_update_error, null, statusCodes_1.default.API_ERROR);
+            }
+            return (0, response_util_1.showResponse)(true, `${responseMessages_1.default.users.user_account_has_been} deleted Successfully`, null, statusCodes_1.default.SUCCESS);
+        });
+    }, //ends
 };
 exports.default = CommonHandler;
