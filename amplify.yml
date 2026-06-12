@@ -9,7 +9,7 @@ frontend:
         - if [ "$AWS_BRANCH" = "dev" ]; then cp .env.development .env; fi
 
         # Production branch
-        - if [ "$AWS_BRANCH" = "main" ]; then cp .env.production .env; fi
+        - if [ "$AWS_BRANCH" = "prod" ]; then cp .env.production .env; fi
 
         # Debug output
         - echo "========== USING .env FILE =========="
