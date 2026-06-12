@@ -58,10 +58,10 @@ const app_constant_1 = require("../../constants/app.constant");
 const crypto_1 = __importDefault(require("crypto"));
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
-const REVENUECAT_API_KEY = app_constant_1.APP.REVENUECAT_API_KEY || '';
+// const REVENUECAT_API_KEY = APP.REVENUECAT_API_KEY || '';
 // const REVENUECAT_PROJECT_ID = process.env.REVENUECAT_PROJECT_ID || '';
-const REVENUECAT_WEBHOOK_SECRET = app_constant_1.APP.REVENUECAT_WEBHOOK_SECRET || '';
-console.log(REVENUECAT_WEBHOOK_SECRET, "REVENUECAT_WEBHOOK_SECRET");
+// const REVENUECAT_WEBHOOK_SECRET = APP.REVENUECAT_WEBHOOK_SECRET || '';
+// console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
 // RevenueCat webhook event types
 const REVENUECAT_EVENT_TYPES = {
     INITIAL_PURCHASE: 'INITIAL_PURCHASE',
@@ -87,6 +87,8 @@ const REVENUECAT_EVENT_TYPES = {
  */
 function fetchRevenueCatSubscription(appUserId) {
     return __awaiter(this, void 0, void 0, function* () {
+        const REVENUECAT_API_KEY = (yield app_constant_1.APP.REVENUECAT_API_KEY) || '';
+        console.log(REVENUECAT_API_KEY, "REVENUECAT_API_KEY REVENUECAT_API_KEY");
         try {
             // Using RevenueCat API v1 (recommended for subscription checks)
             const url = `https://api.revenuecat.com/v1/subscribers/${appUserId}`;
@@ -166,33 +168,36 @@ function extractSubscriptionData(revenueCatData) {
  * Verify RevenueCat webhook signature for security
  */
 function verifyWebhookSignature(payload, signature, authorization) {
-    try {
-        // console.log(payload, signature, 'payload signature')
-        console.log(REVENUECAT_WEBHOOK_SECRET, "REVENUECAT_WEBHOOK_SECRET");
-        // 1. Check if they used the Authorization header instead of HMAC signature
-        const expectedAuth = authorization === null || authorization === void 0 ? void 0 : authorization.replace('Bearer ', '').trim();
-        if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
-            console.log('✅ Validated using Authorization header');
-            return true;
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            // console.log(payload, signature, 'payload signature')
+            const REVENUECAT_WEBHOOK_SECRET = (yield app_constant_1.APP.REVENUECAT_WEBHOOK_SECRET) || '';
+            console.log(REVENUECAT_WEBHOOK_SECRET, "REVENUECAT_WEBHOOK_SECRET");
+            // 1. Check if they used the Authorization header instead of HMAC signature
+            const expectedAuth = authorization === null || authorization === void 0 ? void 0 : authorization.replace('Bearer ', '').trim();
+            if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
+                console.log('✅ Validated using Authorization header');
+                return true;
+            }
+            // 2. Otherwise try HMAC signature validation
+            const expectedSignature = crypto_1.default
+                .createHmac('sha256', REVENUECAT_WEBHOOK_SECRET)
+                .update(JSON.stringify(payload))
+                .digest('hex');
+            const sigBuffer = Buffer.from(signature || '');
+            const expectedSigBuffer = Buffer.from(expectedSignature);
+            if (sigBuffer.length !== expectedSigBuffer.length) {
+                console.log('Signature length mismatch');
+                return false;
+            }
+            // console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
+            return crypto_1.default.timingSafeEqual(sigBuffer, expectedSigBuffer);
         }
-        // 2. Otherwise try HMAC signature validation
-        const expectedSignature = crypto_1.default
-            .createHmac('sha256', REVENUECAT_WEBHOOK_SECRET)
-            .update(JSON.stringify(payload))
-            .digest('hex');
-        const sigBuffer = Buffer.from(signature || '');
-        const expectedSigBuffer = Buffer.from(expectedSignature);
-        if (sigBuffer.length !== expectedSigBuffer.length) {
-            console.log('Signature length mismatch');
+        catch (error) {
+            console.error('Signature verification failed:', error);
             return false;
         }
-        // console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
-        return crypto_1.default.timingSafeEqual(sigBuffer, expectedSigBuffer);
-    }
-    catch (error) {
-        console.error('Signature verification failed:', error);
-        return false;
-    }
+    });
 }
 // ============= MAIN SUBSCRIPTION HANDLER =============
 const UserSubscriptionHandler = {

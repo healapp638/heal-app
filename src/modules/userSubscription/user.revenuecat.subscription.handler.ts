@@ -13,10 +13,10 @@ import crypto from 'crypto';
 
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
-const REVENUECAT_API_KEY = APP.REVENUECAT_API_KEY || '';
+// const REVENUECAT_API_KEY = APP.REVENUECAT_API_KEY || '';
 // const REVENUECAT_PROJECT_ID = process.env.REVENUECAT_PROJECT_ID || '';
-const REVENUECAT_WEBHOOK_SECRET = APP.REVENUECAT_WEBHOOK_SECRET || '';
-console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
+// const REVENUECAT_WEBHOOK_SECRET = APP.REVENUECAT_WEBHOOK_SECRET || '';
+// console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
 
 // RevenueCat webhook event types
 const REVENUECAT_EVENT_TYPES = {
@@ -44,6 +44,8 @@ const REVENUECAT_EVENT_TYPES = {
  * This calls RevenueCat's REST API to get the latest subscription status
  */
 async function fetchRevenueCatSubscription(appUserId: string) {
+    const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
+    console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
     try {
         // Using RevenueCat API v1 (recommended for subscription checks)
         const url = `https://api.revenuecat.com/v1/subscribers/${appUserId}`;
@@ -128,10 +130,11 @@ function extractSubscriptionData(revenueCatData: any) {
 /**
  * Verify RevenueCat webhook signature for security
  */
-function verifyWebhookSignature(payload: any, signature: string, authorization?: string): boolean {
+async function verifyWebhookSignature(payload: any, signature: string, authorization?: string): Promise<boolean> {
     try {
         // console.log(payload, signature, 'payload signature')
-        console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
+       const REVENUECAT_WEBHOOK_SECRET = await APP.REVENUECAT_WEBHOOK_SECRET || '';
+       console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization?.replace('Bearer ', '').trim();
         if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
