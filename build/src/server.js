@@ -59,7 +59,7 @@ setInterval(() => {
 }, 50000);
 app.use((0, helmet_1.default)());
 //  CORS CONFIG 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/", "https://admin.heal-app.com"];
 app.use((0, cors_1.default)({
     origin: allowedOrigins,
     credentials: true,

@@ -134,7 +134,7 @@ async function verifyWebhookSignature(payload: any, signature: string, authoriza
     try {
         // console.log(payload, signature, 'payload signature')
        const REVENUECAT_WEBHOOK_SECRET = await APP.REVENUECAT_WEBHOOK_SECRET || '';
-       console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
+    //    console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization?.replace('Bearer ', '').trim();
         if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
@@ -178,8 +178,8 @@ const UserSubscriptionHandler = {
     
     revenueCatWebhook: async (data: any, signature: string, authorization: string): Promise<ApiResponse> => {
         try {
-            console.log("📨 RevenueCat webhook received");
-            console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+            // console.log("📨 RevenueCat webhook received");
+            // console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
