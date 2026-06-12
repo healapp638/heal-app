@@ -1089,7 +1089,7 @@ getAffirmationListing: async (
                     responseMessage.common.data,
                     {
                         link:
-                            `https://apidev.heal-app.com/link/${code}/${affirmation_id}`,
+                            `https://api.heal-app.com/link/${code}/${affirmation_id}`,
                         code,
                     },
                     statusCodes.SUCCESS

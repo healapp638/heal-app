@@ -817,7 +817,7 @@ const affirmationHandler = {
             if (response) {
                 console.log("response", response);
                 return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data, {
-                    link: `https://apidev.heal-app.com/link/${code}/${affirmation_id}`,
+                    link: `https://api.heal-app.com/link/${code}/${affirmation_id}`,
                     code,
                 }, statusCodes_1.default.SUCCESS);
             }

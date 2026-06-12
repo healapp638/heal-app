@@ -18,7 +18,7 @@ const app_constant_1 = require("../constants/app.constant");
 const logger_config_1 = __importDefault(require("../configs/logger.config"));
 const connection = () => __awaiter(void 0, void 0, void 0, function* () {
     const MONGO_URI = app_constant_1.DB.MONGODB_URI;
-    console.log(MONGO_URI, "MONGODB_URIiiii");
+    // console.log(MONGO_URI,"MONGODB_URIiiii")
     mongoose_1.default.Promise = global.Promise;
     try {
         yield mongoose_1.default.connect(MONGO_URI, {});

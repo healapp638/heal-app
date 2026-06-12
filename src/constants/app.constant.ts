@@ -98,7 +98,7 @@ const initializeAwsCredential = async () => {
       services.awsService.getParameterFromAWS({ name: SMTP_API_KEY }),
     ]);
 
-    
+
     const [ mongodbUri,jwtSecret,accessId,region,awsSecret,bucketName,googleTranslateApiKey,openaiApiKey,revenueCatApiKey,
       revenueCatWebhookSecret,hlGoogleTranslateApiKey,smtpEmail,smtpApiKey,
     ] = results;
