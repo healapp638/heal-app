@@ -54,12 +54,14 @@ const user_subscriptionLogs_model_1 = __importDefault(require("./user.subscripti
 const user_subscriptionPlans_model_1 = __importDefault(require("./user.subscriptionPlans.model"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
+const app_constant_1 = require("../../constants/app.constant");
 const crypto_1 = __importDefault(require("crypto"));
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
-const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || '';
+const REVENUECAT_API_KEY = app_constant_1.APP.REVENUECAT_API_KEY || '';
 // const REVENUECAT_PROJECT_ID = process.env.REVENUECAT_PROJECT_ID || '';
-const REVENUECAT_WEBHOOK_SECRET = process.env.REVENUECAT_WEBHOOK_SECRET || '';
+const REVENUECAT_WEBHOOK_SECRET = app_constant_1.APP.REVENUECAT_WEBHOOK_SECRET || '';
+console.log(REVENUECAT_WEBHOOK_SECRET, "REVENUECAT_WEBHOOK_SECRET");
 // RevenueCat webhook event types
 const REVENUECAT_EVENT_TYPES = {
     INITIAL_PURCHASE: 'INITIAL_PURCHASE',
@@ -201,7 +203,8 @@ const UserSubscriptionHandler = {
     // Set this URL in RevenueCat Dashboard → Integrations → Webhooks
     revenueCatWebhook: (data, signature, authorization) => __awaiter(void 0, void 0, void 0, function* () {
         try {
-            // console.log("📨 RevenueCat webhook received");
+            console.log("📨 RevenueCat webhook received");
+            console.log(data, 'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
                 console.error("❌ Invalid webhook signature");

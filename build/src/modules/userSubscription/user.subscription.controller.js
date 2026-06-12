@@ -39,7 +39,7 @@ let UserSubscriptionController = class UserSubscriptionController extends tsoa_1
      */
     revenueCatWebhook(request) {
         return __awaiter(this, void 0, void 0, function* () {
-            // console.log("📨 Webhook Headers received:", this.req.headers);
+            console.log("📨 Webhook Headers received:", this.req.headers);
             const signature = this.req.headers['x-revenuecat-signature'] || '';
             const authorization = this.req.headers['authorization'] || '';
             // Pass both signature and authorization to the handler for flexibility

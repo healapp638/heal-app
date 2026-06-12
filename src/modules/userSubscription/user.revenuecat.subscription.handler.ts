@@ -8,13 +8,15 @@ import userSusbriptionLogsModel from "./user.subscriptionLogs.model";
 import subscriptionPlans from "./user.subscriptionPlans.model";
 import statusCodes from '../../constants/statusCodes'
 import { USER_STATUS } from "../../constants/workflow.constant";
+import { APP } from "../../constants/app.constant";
 import crypto from 'crypto';
 
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
-const REVENUECAT_API_KEY = process.env.REVENUECAT_API_KEY || '';
+const REVENUECAT_API_KEY = APP.REVENUECAT_API_KEY || '';
 // const REVENUECAT_PROJECT_ID = process.env.REVENUECAT_PROJECT_ID || '';
-const REVENUECAT_WEBHOOK_SECRET = process.env.REVENUECAT_WEBHOOK_SECRET || '';
+const REVENUECAT_WEBHOOK_SECRET = APP.REVENUECAT_WEBHOOK_SECRET || '';
+console.log(REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
 
 // RevenueCat webhook event types
 const REVENUECAT_EVENT_TYPES = {
@@ -173,7 +175,8 @@ const UserSubscriptionHandler = {
     
     revenueCatWebhook: async (data: any, signature: string, authorization: string): Promise<ApiResponse> => {
         try {
-            // console.log("📨 RevenueCat webhook received");
+            console.log("📨 RevenueCat webhook received");
+            console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
@@ -181,6 +184,7 @@ const UserSubscriptionHandler = {
                 return showResponse(false, "Invalid webhook signature", null, statusCodes.VALIDATION_ERROR);
             }
             // console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
+
             
             const event = data.event;
             // const customerInfo = data.customer_info;

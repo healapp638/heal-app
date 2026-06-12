@@ -23,7 +23,7 @@ export default class UserSubscriptionController extends Controller {
      */
     @Post("/revenuecat_webhook")
     public async revenueCatWebhook(@Body() request: any): Promise<ApiResponse> {
-        // console.log("📨 Webhook Headers received:", this.req.headers);
+        console.log("📨 Webhook Headers received:", this.req.headers);
         const signature = this.req.headers['x-revenuecat-signature'] as string || '';
         const authorization = this.req.headers['authorization'] as string || '';
         
