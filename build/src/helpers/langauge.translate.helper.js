@@ -12,14 +12,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutoTranslateText = exports.UserTranslateText = exports.translateHealyText = exports.detectLanguage = exports.translatePlainText = exports.translateText = void 0;
 const translate_1 = require("@google-cloud/translate");
 const app_constant_1 = require("../constants/app.constant");
-const translate = new translate_1.Translate({
-    key: app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-});
+// const translate = new Translate({
+//     key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+// });
 const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (targetLanguage == 'en') {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: 'en', // Source language
             to: targetLanguage, // Target language
@@ -38,6 +41,9 @@ const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, v
         if (targetLanguage == 'en') {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: 'en', // Source language
             to: targetLanguage, // Target language
@@ -54,6 +60,9 @@ exports.translatePlainText = translatePlainText;
 const detectLanguage = (text) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [detections] = yield translate.detect(text);
         return Array.isArray(detections)
             ? (_a = detections[0]) === null || _a === void 0 ? void 0 : _a.language
@@ -67,6 +76,9 @@ const detectLanguage = (text) => __awaiter(void 0, void 0, void 0, function* () 
 exports.detectLanguage = detectLanguage;
 const translateHealyText = (text, sourceLanguage, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         if (sourceLanguage === targetLanguage) {
             return text;
         }
@@ -89,6 +101,9 @@ const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(voi
         if (targetLanguage == sourceLanguage) {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: sourceLanguage, // Source language
             to: targetLanguage, // Target language
@@ -104,6 +119,9 @@ const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(voi
 exports.UserTranslateText = UserTranslateText;
 const AutoTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(void 0, [text_1, targetLanguage_1, ...args_1], void 0, function* (text, targetLanguage, sourceLanguage = 'auto') {
     try {
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         // Skip if source and target are the same
         if (sourceLanguage !== 'auto' && targetLanguage === sourceLanguage) {
             return text;
