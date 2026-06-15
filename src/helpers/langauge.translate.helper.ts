@@ -2,13 +2,16 @@ import { Translate } from '@google-cloud/translate';
 import { APP } from '../constants/app.constant';
 
 
-const translate = new Translate({
-    key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-});
+// const translate = new Translate({
+//     key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+// });
 
 
 export const translateText = async (text: string, targetLanguage: string) => {
     try {
+        const translate = new Translate({
+          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         if (targetLanguage == 'en') {
             return text
         }
@@ -26,6 +29,9 @@ export const translateText = async (text: string, targetLanguage: string) => {
 
 export const translatePlainText = async (text: string, targetLanguage: string) => {
     try {
+        const translate = new Translate({
+          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         if (targetLanguage == 'en') {
             return text
         }
@@ -43,6 +49,9 @@ export const translatePlainText = async (text: string, targetLanguage: string) =
 
 export const detectLanguage = async (text: string) => {
     try {
+        const translate = new Translate({
+          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [detections]: any = await translate.detect(text);
 
         return Array.isArray(detections)
@@ -65,6 +74,9 @@ export const translateHealyText = async (
             return text;
         }
 
+        const translate = new Translate({
+          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = await translate.translate(text, {
             from: sourceLanguage,
             to: targetLanguage,
@@ -84,6 +96,9 @@ export const translateHealyText = async (
 
 export const UserTranslateText = async (text: string, targetLanguage: string, sourceLanguage: string = 'en') => {
     try {
+        const translate = new Translate({
+          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         if (targetLanguage == sourceLanguage) {
             return text
         }
@@ -101,6 +116,9 @@ export const UserTranslateText = async (text: string, targetLanguage: string, so
 
 export const AutoTranslateText = async (text: string, targetLanguage: string, sourceLanguage: string = 'auto') => {
     try {
+        const translate = new Translate({
+          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         // Skip if source and target are the same
         if (sourceLanguage !== 'auto' && targetLanguage === sourceLanguage) {
             return text;

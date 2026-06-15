@@ -16,7 +16,7 @@ if (envConfig.error) {
 const ENV_PARMAS = getEnvironmentParams(process.env.ENV_MODE, 'HEAL', 'HL')//sds
 
 
-const {ADMIN_EMAIL,ACCESSID,REGION,DB_URI,BUCKET,JWT_SECRET,STMP_EMAIL,SMTP_API_KEY,GOOGLE_TRANSLATE_API_KEY} = ENV_PARMAS
+const {ADMIN_EMAIL,ACCESSID,REGION,DB_URI,BUCKET,JWT_SECRET,STMP_EMAIL,SMTP_API_KEY} = ENV_PARMAS
 let AGORA_CREDENTIAL: AgoraCredential
 let AWS_CREDENTIAL: AwsCredential
 let STRIPE_CREDENTIAL: StripeCredential
@@ -38,7 +38,7 @@ const APP: AppConstant = {
   SWAGGER_USER_NAME: 'admin',
   SWAGGER_PASSWORD: 'Admin@123',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
-  GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY || '',
+  // GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY || '',
   REVENUECAT_API_KEY: process.env.REVENUECAT_API_KEY || '',
   REVENUECAT_WEBHOOK_SECRET: process.env.REVENUECAT_WEBHOOK_SECRET || '',
   HL_GOOGLE_TRANSLATE_API_KEY: process.env.HL_GOOGLE_TRANSLATE_API_KEY || '',
@@ -89,7 +89,7 @@ const initializeAwsCredential = async () => {
       services.awsService.getParameterFromAWS({ name: REGION }),
       services.awsService.getSecretFromAWS("heal_secret"),
       services.awsService.getParameterFromAWS({ name: BUCKET }),
-      services.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY),
+      // services.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY),
       services.awsService.getSecretFromAWS("OPENAI_API_KEY"),
       services.awsService.getSecretFromAWS("REVENUECAT_API_KEY"),
       services.awsService.getSecretFromAWS("REVENUECAT_WEBHOOK_SECRET"),
@@ -99,7 +99,7 @@ const initializeAwsCredential = async () => {
     ]);
 
 
-    const [ mongodbUri,jwtSecret,accessId,region,awsSecret,bucketName,googleTranslateApiKey,openaiApiKey,revenueCatApiKey,
+    const [ mongodbUri,jwtSecret,accessId,region,awsSecret,bucketName,openaiApiKey,revenueCatApiKey,
       revenueCatWebhookSecret,hlGoogleTranslateApiKey,smtpEmail,smtpApiKey,
     ] = results;
     DB.MONGODB_URI = mongodbUri;
@@ -107,7 +107,7 @@ const initializeAwsCredential = async () => {
     APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
     APP.REVENUECAT_API_KEY = revenueCatApiKey || APP.REVENUECAT_API_KEY;
     APP.REVENUECAT_WEBHOOK_SECRET = revenueCatWebhookSecret || APP.REVENUECAT_WEBHOOK_SECRET;
-    APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
+    // APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
     APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
     APP.HL_GOOGLE_TRANSLATE_API_KEY = hlGoogleTranslateApiKey;
     EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
@@ -119,7 +119,7 @@ const initializeAwsCredential = async () => {
       BUCKET_NAME: bucketName,
     };
     console.log("AWS credentials initialized successfully.")
-    console.log(APP.REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
+    // console.log(APP.REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
   } catch (error) {
     console.error("Error initializing AWS credentials:", error)
     throw error; // Rethrow to prevent server from starting with invalid config

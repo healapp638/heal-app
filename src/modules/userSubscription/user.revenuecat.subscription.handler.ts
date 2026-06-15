@@ -45,7 +45,7 @@ const REVENUECAT_EVENT_TYPES = {
  */
 async function fetchRevenueCatSubscription(appUserId: string) {
     const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
-    console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
+    // console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
     try {
         // Using RevenueCat API v1 (recommended for subscription checks)
         const url = `https://api.revenuecat.com/v1/subscribers/${appUserId}`;
@@ -138,7 +138,7 @@ async function verifyWebhookSignature(payload: any, signature: string, authoriza
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization?.replace('Bearer ', '').trim();
         if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
-            console.log('✅ Validated using Authorization header');
+            // console.log('✅ Validated using Authorization header');
             return true;
         }
 

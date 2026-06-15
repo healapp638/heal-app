@@ -25,7 +25,7 @@ if (envConfig.error) {
 //2nd parm is project name 
 //3rd parm is project Initial 
 const ENV_PARMAS = (0, config_util_1.getEnvironmentParams)(process.env.ENV_MODE, 'HEAL', 'HL'); //sds
-const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET, STMP_EMAIL, SMTP_API_KEY, GOOGLE_TRANSLATE_API_KEY } = ENV_PARMAS;
+const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET, STMP_EMAIL, SMTP_API_KEY } = ENV_PARMAS;
 let AGORA_CREDENTIAL;
 let AWS_CREDENTIAL;
 let STRIPE_CREDENTIAL;
@@ -46,7 +46,7 @@ const APP = {
     SWAGGER_USER_NAME: 'admin',
     SWAGGER_PASSWORD: 'Admin@123',
     OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
-    GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY || '',
+    // GOOGLE_TRANSLATE_API_KEY: process.env.GOOGLE_TRANSLATE_API_KEY || '',
     REVENUECAT_API_KEY: process.env.REVENUECAT_API_KEY || '',
     REVENUECAT_WEBHOOK_SECRET: process.env.REVENUECAT_WEBHOOK_SECRET || '',
     HL_GOOGLE_TRANSLATE_API_KEY: process.env.HL_GOOGLE_TRANSLATE_API_KEY || '',
@@ -94,7 +94,7 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
             services_1.default.awsService.getParameterFromAWS({ name: REGION }),
             services_1.default.awsService.getSecretFromAWS("heal_secret"),
             services_1.default.awsService.getParameterFromAWS({ name: BUCKET }),
-            services_1.default.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY),
+            // services.awsService.getSecretFromAWS(GOOGLE_TRANSLATE_API_KEY),
             services_1.default.awsService.getSecretFromAWS("OPENAI_API_KEY"),
             services_1.default.awsService.getSecretFromAWS("REVENUECAT_API_KEY"),
             services_1.default.awsService.getSecretFromAWS("REVENUECAT_WEBHOOK_SECRET"),
@@ -102,13 +102,13 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
             services_1.default.awsService.getParameterFromAWS({ name: STMP_EMAIL }),
             services_1.default.awsService.getParameterFromAWS({ name: SMTP_API_KEY }),
         ]);
-        const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName, googleTranslateApiKey, openaiApiKey, revenueCatApiKey, revenueCatWebhookSecret, hlGoogleTranslateApiKey, smtpEmail, smtpApiKey,] = results;
+        const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName, openaiApiKey, revenueCatApiKey, revenueCatWebhookSecret, hlGoogleTranslateApiKey, smtpEmail, smtpApiKey,] = results;
         DB.MONGODB_URI = mongodbUri;
         APP.JWT_SECRET = jwtSecret;
         APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
         APP.REVENUECAT_API_KEY = revenueCatApiKey || APP.REVENUECAT_API_KEY;
         APP.REVENUECAT_WEBHOOK_SECRET = revenueCatWebhookSecret || APP.REVENUECAT_WEBHOOK_SECRET;
-        APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
+        // APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
         APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
         APP.HL_GOOGLE_TRANSLATE_API_KEY = hlGoogleTranslateApiKey;
         EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
@@ -120,7 +120,7 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
             BUCKET_NAME: bucketName,
         };
         console.log("AWS credentials initialized successfully.");
-        console.log(APP.REVENUECAT_WEBHOOK_SECRET, "REVENUECAT_WEBHOOK_SECRET");
+        // console.log(APP.REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
     }
     catch (error) {
         console.error("Error initializing AWS credentials:", error);
