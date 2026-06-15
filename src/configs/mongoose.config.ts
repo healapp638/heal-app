@@ -25,28 +25,28 @@ export const connection = async () => {
 
     process.exit(1); // crash → infra should restart
   }
-  const db = mongoose.connection;
+  // const db = mongoose.connection;
 
-  db.on("error", (error) => {
-    logger.error("MONGO_RUNTIME_ERROR", {
-      type: "mongodb",
-      message: error.message,
-      stack: error.stack,
-    });
-  });
+  // db.on("error", (error) => {
+  //   logger.error("MONGO_RUNTIME_ERROR", {
+  //     type: "mongodb",
+  //     message: error.message,
+  //     stack: error.stack,
+  //   });
+  // });
 
-  db.on("disconnected", () => {
-    logger.warn("MONGO_DISCONNECTED", {
-      type: "mongodb",
-      message: "MongoDB disconnected",
-    });
-  });
+  // db.on("disconnected", () => {
+  //   logger.warn("MONGO_DISCONNECTED", {
+  //     type: "mongodb",
+  //     message: "MongoDB disconnected",
+  //   });
+  // });
 
-  db.on("reconnected", () => {
-    logger.info("MONGO_RECONNECTED", {
-      type: "mongodb",
-      message: "MongoDB reconnected",
-    });
-  });
+  // db.on("reconnected", () => {
+  //   logger.info("MONGO_RECONNECTED", {
+  //     type: "mongodb",
+  //     message: "MongoDB reconnected",
+  //   });
+  // });
 
 }

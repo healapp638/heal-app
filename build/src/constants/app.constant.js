@@ -127,7 +127,7 @@ const initializeAwsCredential = () => __awaiter(void 0, void 0, void 0, function
         throw error; // Rethrow to prevent server from starting with invalid config
     }
     finally {
-        console.timeEnd("AWS_CREDENTIAL_INIT");
+        console.log("AWS_CREDENTIAL_INIT");
     }
 });
 exports.initializeAwsCredential = initializeAwsCredential;
