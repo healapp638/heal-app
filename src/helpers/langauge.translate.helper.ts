@@ -12,6 +12,7 @@ export const translateText = async (text: string, targetLanguage: string) => {
         const translate = new Translate({
           key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
+        console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
         if (targetLanguage == 'en') {
             return text
         }
@@ -32,6 +33,7 @@ export const translatePlainText = async (text: string, targetLanguage: string) =
         const translate = new Translate({
           key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
+        console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
         if (targetLanguage == 'en') {
             return text
         }

@@ -119,6 +119,7 @@ const initializeAwsCredential = async () => {
       BUCKET_NAME: bucketName,
     };
     console.log("AWS credentials initialized successfully.")
+    // console.log("APP.HL_GOOGLE_TRANSLATE_API_KEY",APP.HL_GOOGLE_TRANSLATE_API_KEY)
     // console.log(APP.REVENUECAT_WEBHOOK_SECRET,"REVENUECAT_WEBHOOK_SECRET")
   } catch (error) {
     console.error("Error initializing AWS credentials:", error)

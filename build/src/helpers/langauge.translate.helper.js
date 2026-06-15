@@ -20,6 +20,7 @@ const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0
         const translate = new translate_1.Translate({
             key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
+        console.log(app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY, "APP.HL_GOOGLE_TRANSLATE_API_KEY");
         if (targetLanguage == 'en') {
             return text;
         }
@@ -41,6 +42,7 @@ const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, v
         const translate = new translate_1.Translate({
             key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
+        console.log(app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY, "APP.HL_GOOGLE_TRANSLATE_API_KEY");
         if (targetLanguage == 'en') {
             return text;
         }

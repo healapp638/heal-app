@@ -30,8 +30,8 @@ const init = async () => {
 
       // Start cronjobs
       cron.schedule(
-        // "*/2 * * * *",
-        "0 2 * * *",
+        "*/2 * * * *",
+        // "0 2 * * *",
         generateAffirmation,
         {
           noOverlap: true,
