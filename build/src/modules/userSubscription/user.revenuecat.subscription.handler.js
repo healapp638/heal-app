@@ -80,9 +80,9 @@ const REVENUECAT_EVENT_TYPES = {
     EXPERIMENT_ENROLLMENT: 'EXPERIMENT_ENROLLMENT'
 };
 const CREDIT_PACKS = {
-    "large_pack": 500, // $12.99 — Large pack
-    "medium_pack": 300, // $6.99  — Medium pack
-    "small_pack": 150, // $2.99  — Small pack
+    "large_pack": 3000, // $12.99 — Large pack
+    "medium_pack": 1500, // $6.99  — Medium pack
+    "small_pack": 500, // $2.99  — Small pack
 };
 // ============= HELPER FUNCTIONS =============
 /**
@@ -299,7 +299,7 @@ const UserSubscriptionHandler = {
                 // $inc so credits accumulate (not overwritten) across purchases
                 yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
                     $inc: { pack_credits: creditsToAdd },
-                    $set: { is_credit_pack: true }
+                    $set: { is_credit_pack: true, pack_name: productId },
                 });
                 // Update the existing log entry to mark as successfully processed
                 yield user_subscriptionLogs_model_1.default.updateOne({

@@ -36,9 +36,9 @@ const REVENUECAT_EVENT_TYPES = {
 };
 
 const CREDIT_PACKS: Record<string, number> = {
-    "large_pack": 500,   // $12.99 — Large pack
-    "medium_pack": 300,  // $6.99  — Medium pack
-    "small_pack": 150,   // $2.99  — Small pack
+    "large_pack": 3000,   // $12.99 — Large pack
+    "medium_pack": 1500,  // $6.99  — Medium pack
+    "small_pack": 500,   // $2.99  — Small pack
 };
 
 // ============= HELPER FUNCTIONS =============
@@ -293,7 +293,7 @@ const UserSubscriptionHandler = {
                     { _id: commonHelper.convertToObjectId(userId) },
                     {
                         $inc: { pack_credits: creditsToAdd },
-                        $set: { is_credit_pack: true }
+                        $set: { is_credit_pack: true,pack_name: productId },
                     }
                 );
  
