@@ -11,7 +11,10 @@ import { triggerHaptic } from '../../../../../hooks/useHaptic';
 
 let isFreshAppLaunch = true;
 
-export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
+export const useHealyChat = (
+  flatListRef: React.RefObject<FlatList | null>,
+  setCreditsModalVisible: (visible: boolean) => void,
+) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
@@ -197,7 +200,10 @@ export const useHealyChat = (flatListRef: React.RefObject<FlatList | null>) => {
       },
       {
         onSuccess: async (res: any) => {
-
+console.log(res?.data?.total_credit,"res")
+          if (res?.data?.total_credit == 0) {
+            setCreditsModalVisible(true);
+          }
           const newConvId =
             res?.data?.conversation_id ||
             res?.conversation_id ||

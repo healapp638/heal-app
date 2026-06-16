@@ -21,7 +21,7 @@ export interface Config {
 }
 
 export const config: Config = {
-  mode: Mode.PROD,
+  mode: Mode.DEV,
 
   // Development
   devUrl: sensitiveData.devApiUrl,

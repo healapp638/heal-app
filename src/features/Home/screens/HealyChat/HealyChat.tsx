@@ -45,7 +45,7 @@ const HealyChat = () => {
   useEffect(() => {
     // const credits = user?.credits ?? user?.ai_credits;
     // if (credits === 0 && !hasAutoShown.current) {
-    setCreditsModalVisible(true);
+    // setCreditsModalVisible(true);
     //   hasAutoShown.current = true;
     // }
   }, [user]);
@@ -68,7 +68,7 @@ const HealyChat = () => {
     loadMorePastMessages,
     isPaginationLoading,
     firstAssistantMessageId,
-  } = useHealyChat(flatListRef);
+  } = useHealyChat(flatListRef, setCreditsModalVisible);
 
   const handleScroll = useCallback(
     (event: any) => {
