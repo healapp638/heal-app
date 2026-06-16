@@ -56,6 +56,7 @@ const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const crypto_1 = __importDefault(require("crypto"));
 const app_constant_1 = require("../../constants/app.constant");
+const logger_config_1 = __importDefault(require("../../configs/logger.config"));
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
 // const REVENUECAT_API_KEY = APP.REVENUECAT_API_KEY || '';
@@ -108,7 +109,11 @@ function fetchRevenueCatSubscription(appUserId) {
             return data;
         }
         catch (error) {
-            console.error('Error fetching RevenueCat subscription:', error);
+            logger_config_1.default.error("REVENUECAT_FETCH_ERROR", {
+                type: "error",
+                message: error.message,
+                stack: error.stack,
+            });
             return null;
         }
     });
@@ -157,7 +162,11 @@ function extractSubscriptionData(revenueCatData) {
         };
     }
     catch (error) {
-        console.error('Error extracting subscription data:', error);
+        logger_config_1.default.error("REVENUECAT_DATA_EXTRACTION_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return {
             isSubscribed: false,
             productId: '',
@@ -197,7 +206,11 @@ function verifyWebhookSignature(payload, signature, authorization) {
             return crypto_1.default.timingSafeEqual(sigBuffer, expectedSigBuffer);
         }
         catch (error) {
-            console.error('Signature verification failed:', error);
+            logger_config_1.default.error("REVENUECAT_SIGNATURE_VERIFICATION_ERROR", {
+                type: "error",
+                message: error.message,
+                stack: error.stack,
+            });
             return false;
         }
     });
@@ -227,7 +240,10 @@ const UserSubscriptionHandler = {
             // console.log("📨 RevenueCat webhook received");
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
-                console.error("❌ Invalid webhook signature");
+                logger_config_1.default.error("REVENUECAT_INVALID_WEBHOOK_SIGNATURE", {
+                    type: "error",
+                    message: "Invalid webhook signature",
+                });
                 return (0, response_util_1.showResponse)(false, "Invalid webhook signature", null, statusCodes_1.default.VALIDATION_ERROR);
             }
             // console.log(data,'dataaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
@@ -293,13 +309,20 @@ const UserSubscriptionHandler = {
                 }
                 const creditsToAdd = getCreditsForPack(productId);
                 if (!creditsToAdd) {
-                    console.error(`❌ Unknown credit pack product: ${productId}`);
+                    logger_config_1.default.error("REVENUECAT_UNKNOWN_CREDIT_PACK", {
+                        type: "error",
+                        message: `Unknown credit pack product: ${productId}`,
+                    });
                     return (0, response_util_1.showResponse)(false, "Unknown credit pack", null, statusCodes_1.default.VALIDATION_ERROR);
                 }
-                // $inc so credits accumulate (not overwritten) across purchases
+                const userObj = yield user_auth_model_1.default.findOne({ _id: commonHelper.convertToObjectId(userId) });
+                const currentPackCredits = Number(userObj === null || userObj === void 0 ? void 0 : userObj.pack_credits) || 0;
                 yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
-                    $inc: { pack_credits: creditsToAdd },
-                    $set: { is_credit_pack: true, pack_name: productId },
+                    $set: {
+                        pack_credits: currentPackCredits + creditsToAdd,
+                        is_credit_pack: true,
+                        pack_name: productId
+                    },
                 });
                 // Update the existing log entry to mark as successfully processed
                 yield user_subscriptionLogs_model_1.default.updateOne({
@@ -426,7 +449,11 @@ const UserSubscriptionHandler = {
             return (0, response_util_1.showResponse)(true, `Event ${eventType} logged`, null, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.error("RevenueCat webhook error:", error);
+            logger_config_1.default.error("REVENUECAT_WEBHOOK_ERROR", {
+                type: "error",
+                message: error.message,
+                stack: error.stack,
+            });
             return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Webhook failed", error, statusCodes_1.default.API_ERROR);
         }
     }),
@@ -482,7 +509,11 @@ const UserSubscriptionHandler = {
             return (0, response_util_1.showResponse)(true, "No active subscription", { isSubscribed: false }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.error("Error checking subscription:", error);
+            logger_config_1.default.error("REVENUECAT_CHECK_STATUS_ERROR", {
+                type: "error",
+                message: error.message,
+                stack: error.stack,
+            });
             return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Check failed", error, statusCodes_1.default.API_ERROR);
         }
     }),
@@ -530,7 +561,11 @@ const UserSubscriptionHandler = {
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.error("Sync error:", error);
+            logger_config_1.default.error("REVENUECAT_SYNC_ERROR", {
+                type: "error",
+                message: error.message,
+                stack: error.stack,
+            });
             return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Sync failed", error, statusCodes_1.default.API_ERROR);
         }
     }),
@@ -572,7 +607,11 @@ const UserSubscriptionHandler = {
             return (0, response_util_1.showResponse)(true, "Credits added successfully", { credits_added: creditsToAdd }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.error("Credit error:", error);
+            logger_config_1.default.error("ADD_CREDIT_ERROR", {
+                type: "error",
+                message: error.message,
+                stack: error.stack,
+            });
             return (0, response_util_1.showResponse)(false, (error === null || error === void 0 ? void 0 : error.message) || "Something went wrong", null, statusCodes_1.default.API_ERROR);
         }
     })

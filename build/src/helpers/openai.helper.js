@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateUserChallengesWeekly = exports.generateUserChallengesDaily = void 0;
 const openai_1 = __importDefault(require("openai"));
 const app_constant_1 = require("../constants/app.constant");
+const logger_config_1 = __importDefault(require("../configs/logger.config"));
 const getOpenAI = () => new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
@@ -135,10 +136,14 @@ const generateUserChallengesDaily = (payload, userId) => __awaiter(void 0, void 
         };
     }
     catch (error) {
-        console.log("generateUserChallenges Error =>", error);
+        logger_config_1.default.error("OPENAI_DAILY_CHALLENGE_GENERATION_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return {
             success: false,
-            message: "Failed to generate challenges",
+            message: "Error while generating challenges",
         };
     }
 });
@@ -265,7 +270,11 @@ const generateUserChallengesWeekly = (payload, userId) => __awaiter(void 0, void
         };
     }
     catch (error) {
-        console.log("generateUserChallenges Error =>", error);
+        logger_config_1.default.error("OPENAI_WEEKLY_CHALLENGE_GENERATION_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return {
             success: false,
             message: "Failed to generate challenges",

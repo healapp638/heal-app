@@ -1,5 +1,6 @@
 import OpenAI from "openai";
 import { APP } from "../constants/app.constant";
+import logger from "../configs/logger.config";
 
 const getOpenAI = () => new OpenAI({
   apiKey: APP.OPENAI_API_KEY,
@@ -145,14 +146,16 @@ export const generateUserChallengesDaily = async (payload: GenerateChallengePayl
       data: finalChallenges,
     };
 
-  } catch (error) {
-
-    console.log("generateUserChallenges Error =>", error);
-
+  } catch (error: any) {
+    logger.error("OPENAI_DAILY_CHALLENGE_GENERATION_ERROR", {
+      type: "error",
+      message: error.message,
+      stack: error.stack,
+    });
     return {
       success: false,
-      message: "Failed to generate challenges",
-    };
+      message: "Error while generating challenges",
+    }
   }
 };
 
@@ -289,11 +292,13 @@ export const generateUserChallengesWeekly = async (payload: GenerateChallengePay
       data: finalChallenges,
     };
 
-  } catch (error) {
-
-    console.log("generateUserChallenges Error =>", error);
-
-    return {
+  } catch (error: any) {
+    logger.error("OPENAI_WEEKLY_CHALLENGE_GENERATION_ERROR", {
+      type: "error",
+      message: error.message,
+      stack: error.stack,
+    });
+        return {
       success: false,
       message: "Failed to generate challenges",
     };

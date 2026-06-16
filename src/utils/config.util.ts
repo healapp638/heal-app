@@ -5,7 +5,7 @@ import statusCodes from '../constants/statusCodes'
 import { NextFunction, Response, Request } from 'express';
 import multer from 'multer'
 import { ApiResponse } from './interfaces.util';
-import logger from '../configs/logger.config';
+import logger from '../configs/logger.config';   
 import * as dotenv from 'dotenv';
 dotenv.config();
 

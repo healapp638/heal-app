@@ -23,6 +23,7 @@ const mongoose_config_1 = require("../configs/mongoose.config");
 const langauge_translate_helper_1 = require("./langauge.translate.helper");
 const workflow_constant_1 = require("../constants/workflow.constant");
 const app_constant_1 = require("../constants/app.constant");
+const logger_config_1 = __importDefault(require("../configs/logger.config"));
 exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     connection: {
         port: app_constant_1.REDIS_CREDENTIAL.PORT || 6379,
@@ -107,7 +108,12 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
         }
     }
     catch (error) {
-        console.log(error, "error");
+        logger_config_1.default.error("BULLMQ_CHALLENGE_WORKER_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
+        throw error;
     }
 }), {
     connection: {
