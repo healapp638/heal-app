@@ -189,6 +189,25 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
             status: USER_STATUS.ACTIVE,
         });
 
+        if (!user) {
+            return showResponse(false, "User not found", null, statusCodes.API_ERROR);
+        }
+
+        // =========================================
+        // CREDIT CHECK
+        // =========================================
+        const subCredits = user.sub_credits || 0;
+        const packCredits = user.pack_credits || 0;
+
+        if (subCredits <= 0 && packCredits <= 0) {
+            return showResponse(
+                false,
+                "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.",
+                {subCredits,packCredits},
+                statusCodes.SUCCESS
+            );
+        }
+
         const userLanguage = user?.language || "en";
 
         // =========================================
@@ -257,7 +276,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
                     });
 
                 shortTitle = titleResponse.choices?.[0]?.message?.content?.trim()?.replace(/["']/g, "") || "New Chat";
-
+// console.log(titleResponse.usage,"titleResponse--------------------------------------------------")
             } catch (err) {
                 console.log(err,"TITLE_GENERATION_ERROR");
             }
@@ -482,6 +501,7 @@ The user should leave feeling:
         temperature: 0.9,
         max_tokens: 1000,
     });
+    // console.log(aiResponse.usage,"aiResponse.usage--------------------------------------------------")
 
         const aiMessage = aiResponse?.choices?.[0]
                 ?.message?.content || "";
@@ -516,6 +536,21 @@ The user should leave feeling:
                 unix: `${Date.now()}`,
                 sequence: nextSequence + 1,
             });
+
+        // =========================================
+        // DEDUCT CREDIT
+        // =========================================
+        if (subCredits > 0) {
+            await userAuthModel.updateOne(
+                { _id: convertToObjectId(user_id) },
+                { $inc: {  sub_credits: -1 } }
+            );
+        } else {
+            await userAuthModel.updateOne(
+                { _id: convertToObjectId(user_id) },
+                { $inc: { pack_credits: -1 } }
+            );
+        }
 
         // =========================================
         // UPDATE CONVERSATION
@@ -557,6 +592,7 @@ The user should leave feeling:
                     message:createAiMessage?.message?.[userLanguage] ||createAiMessage?.message?.en,
                     sequence:createAiMessage.sequence,
                 },
+                subCredits,packCredits
             },
             statusCodes.SUCCESS
         );

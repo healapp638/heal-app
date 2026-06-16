@@ -374,38 +374,6 @@ app.listen(APP.PORT, () => {
 
 scheduleCroneJOb()
 
-// const messageHandler = async (message:any) => {
-//   try {
-//     // console.log('✅ message=>>>>>>>>>>>>>>>>>.', message);
-//     if (message?.data) {
-//       await handler.decodeAndroidSubscriptionMessage(message?.data);
-//     }
-//     message.ack(); // Acknowledge the message
-//   } catch (err) {
-//     console.error("❌ Error in messageHandler:", err);
-//   }
-// };
-
-// async function receiveNotifications() {
-//   try {
-//     console.log('✅--- receiveNotifications-1------');
-//     // const subscriptionName = 'projects/mywaymassage-381d3/subscriptions/subscription_webhook-sub'; // Make sure this exists in GCP
-//     // const subscriptionName:any = ANDROID_SUBSCRIPTION_DATA.SUBSCRIPTION_NAME; // Make sure this exists in GCP
-//     // const subscriptionName:any = "projects/ription-demo/subscriptions/subscription_webhook-sub"; // Make sure this exists in GCP
-//     const subscriptionName:any = "projects/manifestnails/subscriptions/manifest-sub"; // Make sure this exists in GCP
-//     const subscription = pubsub.subscription(subscriptionName);
-
-//     subscription.on('message', messageHandler);
-//     subscription.on('error', (err) => {
-//       console.error("❌ receiveNotifications Subscription Error:", err);
-//     });
-
-//   } catch (err) {
-//     console.error("❌ receiveNotifications Error:", err);
-//   }
-// }
-// receiveNotifications().catch(console.error);
-
 /* =========================
    PROCESS SAFETY  //handle unexpected crashes
 ========================= */

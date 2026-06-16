@@ -80,6 +80,7 @@ const createRotateTransport = (
   return new DailyRotateFile({
     dirname: `logs/${folder}`,
     filename: `${filename}-%DATE%.log`,
+    auditFile: `logs/${folder}/.${filename}-audit.json`,
     datePattern: "YYYY-MM-DD",   // rotate daily
     // zippedArchive: true,         // compress old logs
     maxSize: "5m",               // rotate after 5MB

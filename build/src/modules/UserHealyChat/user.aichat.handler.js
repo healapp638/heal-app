@@ -187,6 +187,17 @@ const UserCommonHandler = {
                 _id: (0, common_helper_1.convertToObjectId)(user_id),
                 status: workflow_constant_1.USER_STATUS.ACTIVE,
             });
+            if (!user) {
+                return (0, response_util_1.showResponse)(false, "User not found", null, statusCodes_1.default.API_ERROR);
+            }
+            // =========================================
+            // CREDIT CHECK
+            // =========================================
+            const subCredits = user.sub_credits || 0;
+            const packCredits = user.pack_credits || 0;
+            if (subCredits <= 0 && packCredits <= 0) {
+                return (0, response_util_1.showResponse)(false, "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.", { subCredits, packCredits }, statusCodes_1.default.SUCCESS);
+            }
             const userLanguage = (user === null || user === void 0 ? void 0 : user.language) || "en";
             // =========================================
             // OPENAI CONFIG
@@ -236,6 +247,7 @@ const UserCommonHandler = {
                         temperature: 0.7,
                     });
                     shortTitle = ((_e = (_d = (_c = (_b = (_a = titleResponse.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) === null || _d === void 0 ? void 0 : _d.trim()) === null || _e === void 0 ? void 0 : _e.replace(/["']/g, "")) || "New Chat";
+                    // console.log(titleResponse.usage,"titleResponse--------------------------------------------------")
                 }
                 catch (err) {
                     console.log(err, "TITLE_GENERATION_ERROR");
@@ -436,6 +448,7 @@ The user should leave feeling:
                 temperature: 0.9,
                 max_tokens: 1000,
             });
+            // console.log(aiResponse.usage,"aiResponse.usage--------------------------------------------------")
             const aiMessage = ((_h = (_g = (_f = aiResponse === null || aiResponse === void 0 ? void 0 : aiResponse.choices) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.message) === null || _h === void 0 ? void 0 : _h.content) || "";
             // =========================================
             // TRANSLATE AI MESSAGE
@@ -459,6 +472,15 @@ The user should leave feeling:
                 unix: `${Date.now()}`,
                 sequence: nextSequence + 1,
             });
+            // =========================================
+            // DEDUCT CREDIT
+            // =========================================
+            if (subCredits > 0) {
+                yield user_auth_model_1.default.updateOne({ _id: (0, common_helper_1.convertToObjectId)(user_id) }, { $inc: { sub_credits: -1 } });
+            }
+            else {
+                yield user_auth_model_1.default.updateOne({ _id: (0, common_helper_1.convertToObjectId)(user_id) }, { $inc: { pack_credits: -1 } });
+            }
             // =========================================
             // UPDATE CONVERSATION
             // =========================================
@@ -489,6 +511,7 @@ The user should leave feeling:
                     message: ((_l = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _l === void 0 ? void 0 : _l[userLanguage]) || ((_m = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _m === void 0 ? void 0 : _m.en),
                     sequence: createAiMessage.sequence,
                 },
+                subCredits, packCredits
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {

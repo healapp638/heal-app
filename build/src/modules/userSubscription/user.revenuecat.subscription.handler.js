@@ -79,6 +79,11 @@ const REVENUECAT_EVENT_TYPES = {
     VIRTUAL_CURRENCY_TRANSACTION: 'VIRTUAL_CURRENCY_TRANSACTION',
     EXPERIMENT_ENROLLMENT: 'EXPERIMENT_ENROLLMENT'
 };
+const CREDIT_PACKS = {
+    "large_pack": 500, // $12.99 — Large pack
+    "medium_pack": 300, // $6.99  — Medium pack
+    "small_pack": 150, // $2.99  — Small pack
+};
 // ============= HELPER FUNCTIONS =============
 /**
  * Fetch user subscription info from RevenueCat API
@@ -197,6 +202,18 @@ function verifyWebhookSignature(payload, signature, authorization) {
         }
     });
 }
+/**
+ * Check if a product ID is a credit pack
+ */
+function isCreditPack(productId) {
+    return Object.keys(CREDIT_PACKS).includes(productId.toLowerCase());
+}
+/**
+ * Get credits for a given credit pack product ID
+ */
+function getCreditsForPack(productId) {
+    return CREDIT_PACKS[productId.toLowerCase()] || 0;
+}
 // ============= MAIN SUBSCRIPTION HANDLER =============
 const UserSubscriptionHandler = {
     sleep: (...args_1) => __awaiter(void 0, [...args_1], void 0, function* (ms = 3000) {
@@ -218,6 +235,8 @@ const UserSubscriptionHandler = {
             // const customerInfo = data.customer_info;
             const userId = event === null || event === void 0 ? void 0 : event.app_user_id;
             const eventType = event === null || event === void 0 ? void 0 : event.type;
+            const productId = ((event === null || event === void 0 ? void 0 : event.product_id) || "").toLowerCase();
+            const transactionId = event === null || event === void 0 ? void 0 : event.transaction_id;
             // console.log(`Event: ${eventType} for user: ${userId}`);
             if (!userId) {
                 return (0, response_util_1.showResponse)(false, "User ID missing", null, statusCodes_1.default.API_ERROR);
@@ -258,6 +277,46 @@ const UserSubscriptionHandler = {
             if (!userDetails) {
                 return (0, response_util_1.showResponse)(true, "Webhook logged (user not found)", null, statusCodes_1.default.SUCCESS);
             }
+            // ================================================================
+            // CREDIT PACK HANDLING (NON_RENEWING_PURCHASE for credit packs)
+            // ================================================================
+            if (eventType === REVENUECAT_EVENT_TYPES.NON_RENEWING_PURCHASE && isCreditPack(productId)) {
+                // Deduplicate: prevent double-crediting if webhook fires twice
+                const existingLog = yield user_subscriptionLogs_model_1.default.findOne({
+                    'revenuecat_event.transaction_id': transactionId,
+                    subscription_status: { $in: ["CREDIT_PACK_ADDED", "CREDIT_PACK_DUPLICATE"] }
+                });
+                if (existingLog) {
+                    console.log(`⚠️ Duplicate credit pack transaction ${transactionId}, skipping.`);
+                    yield user_subscriptionLogs_model_1.default.updateOne({ 'revenuecat_event.transaction_id': transactionId, subscription_status: "CREDIT_PACK_DUPLICATE" }, { $set: { subscription_status: "CREDIT_PACK_DUPLICATE" } }, { upsert: false });
+                    return (0, response_util_1.showResponse)(true, "Already processed", null, statusCodes_1.default.SUCCESS);
+                }
+                const creditsToAdd = getCreditsForPack(productId);
+                if (!creditsToAdd) {
+                    console.error(`❌ Unknown credit pack product: ${productId}`);
+                    return (0, response_util_1.showResponse)(false, "Unknown credit pack", null, statusCodes_1.default.VALIDATION_ERROR);
+                }
+                // $inc so credits accumulate (not overwritten) across purchases
+                yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
+                    $inc: { pack_credits: creditsToAdd },
+                    $set: { is_credit_pack: true }
+                });
+                // Update the existing log entry to mark as successfully processed
+                yield user_subscriptionLogs_model_1.default.updateOne({
+                    user_id: userId,
+                    'revenuecat_event.transaction_id': transactionId
+                }, {
+                    $set: {
+                        subscription_status: "CREDIT_PACK_ADDED",
+                        credits_added: creditsToAdd
+                    }
+                });
+                console.log(`✅ Credit pack processed: +${creditsToAdd} pack_credits for user ${userId} (product: ${productId})`);
+                return (0, response_util_1.showResponse)(true, `Credit pack added: ${creditsToAdd} credits`, { creditsToAdd }, statusCodes_1.default.SUCCESS);
+            }
+            // ================================================================
+            // SUBSCRIPTION HANDLING (monthly / yearly)
+            // ================================================================
             // Process based on event type
             if (eventType === REVENUECAT_EVENT_TYPES.INITIAL_PURCHASE ||
                 eventType === REVENUECAT_EVENT_TYPES.RENEWAL ||
@@ -290,6 +349,13 @@ const UserSubscriptionHandler = {
                         webhook_data: data
                     }
                 };
+                const packageName = (subscriptionData.productId || (event === null || event === void 0 ? void 0 : event.product_id) || "").toLowerCase();
+                if (packageName === "yearly_heal") {
+                    updateData['sub_credits'] = 2000;
+                }
+                else if (packageName === "monthly_heal") {
+                    updateData['sub_credits'] = 1000;
+                }
                 if (eventType === REVENUECAT_EVENT_TYPES.UNCANCELLATION) {
                     updateData['user_subscription.cancelled_on_unix'] = 0;
                 }
@@ -323,15 +389,20 @@ const UserSubscriptionHandler = {
                 // console.log(subscriptionData,"subscriptionData")
                 if (subscriptionData.isSubscribed) {
                     // Still active on some other entitlement (e.g. grace period, user purchased another plan)
-                    yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, {
-                        $set: {
-                            'user_subscription.is_subscribed': 1,
-                            'user_subscription.package_name': subscriptionData.productId,
-                            'user_subscription.next_payment_unix': subscriptionData.expiryDate,
-                            'user_subscription.revenuecat_data': revenueCatData,
-                            'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
-                        }
-                    });
+                    const updateFields = {
+                        'user_subscription.is_subscribed': 1,
+                        'user_subscription.package_name': subscriptionData.productId,
+                        'user_subscription.next_payment_unix': subscriptionData.expiryDate,
+                        'user_subscription.revenuecat_data': revenueCatData,
+                        'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
+                    };
+                    // const packageName = (subscriptionData.productId || "").toLowerCase();
+                    // if (packageName === "yearly_heal") {
+                    //     updateFields['sub_credits'] = 2000;
+                    // } else if (packageName === "monthly_heal") {
+                    //     updateFields['sub_credits'] = 1000;
+                    // }
+                    yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(userId) }, { $set: updateFields });
                 }
                 else {
                     // Fully expired
@@ -342,7 +413,8 @@ const UserSubscriptionHandler = {
                             'user_subscription.next_payment_unix': 0,
                             'user_subscription.cancelled_on_unix': 0,
                             'user_subscription.revenuecat_data': revenueCatData,
-                            'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix()
+                            'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix(),
+                            'sub_credits': 0
                         }
                     });
                 }
@@ -377,7 +449,9 @@ const UserSubscriptionHandler = {
                 return (0, response_util_1.showResponse)(true, "Active subscription", {
                     isSubscribed: true,
                     productId: (_c = user.user_subscription) === null || _c === void 0 ? void 0 : _c.package_name,
-                    expiryDate: (_d = user.user_subscription) === null || _d === void 0 ? void 0 : _d.next_payment_unix
+                    expiryDate: (_d = user.user_subscription) === null || _d === void 0 ? void 0 : _d.next_payment_unix,
+                    packCredits: user.pack_credits || 0,
+                    subCredits: user.sub_credits || 0
                 }, statusCodes_1.default.SUCCESS);
             }
             // If local shows expired, verify with RevenueCat (in case it renewed)
@@ -400,7 +474,9 @@ const UserSubscriptionHandler = {
                     isSubscribed: subscriptionData.isSubscribed,
                     productId: subscriptionData.productId,
                     expiryDate: subscriptionData.expiryDate,
-                    willRenew: subscriptionData.willRenew
+                    willRenew: subscriptionData.willRenew,
+                    packCredits: user.pack_credits || 0,
+                    subCredits: user.sub_credits || 0
                 }, statusCodes_1.default.SUCCESS);
             }
             return (0, response_util_1.showResponse)(true, "No active subscription", { isSubscribed: false }, statusCodes_1.default.SUCCESS);
@@ -432,6 +508,13 @@ const UserSubscriptionHandler = {
                 'user_subscription.last_revenuecat_sync': (0, moment_1.default)().unix(),
                 'user_subscription.initially_purchased_on_unix': (0, moment_1.default)().unix()
             };
+            const packageName = (subscriptionData.productId || "").toLowerCase();
+            if (packageName === "yearly_heal") {
+                updateData['sub_credits'] = 2000;
+            }
+            else if (packageName === "monthly_heal") {
+                updateData['sub_credits'] = 1000;
+            }
             yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(user_id) }, { $set: updateData });
             yield user_subscriptionLogs_model_1.default.create({
                 user_id,
@@ -474,7 +557,7 @@ const UserSubscriptionHandler = {
                 return (0, response_util_1.showResponse)(false, "Invalid credit pack", null, statusCodes_1.default.API_ERROR);
             }
             const creditsToAdd = plan.credits || 0;
-            yield user_auth_model_1.default.updateOne({ _id: user_id }, { $inc: { extra_credits: creditsToAdd }, is_credit_pack: true });
+            yield user_auth_model_1.default.updateOne({ _id: user_id }, { $inc: { pack_credits: creditsToAdd }, is_credit_pack: true });
             yield user_subscriptionLogs_model_1.default.create({
                 user_id,
                 package_name: plan.plan_name,

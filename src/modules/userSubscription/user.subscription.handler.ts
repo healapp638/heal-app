@@ -906,7 +906,7 @@ const UserSubscriptionHandler = {
             // ✅ ADD CREDITS (atomic)
             await userAuthModel.updateOne(
                 { _id: user_id },
-                { $inc: { extra_credits: creditsToAdd }, is_credit_pack: true }
+                { $inc: { pack_credits: creditsToAdd }, is_credit_pack: true }
             );
 
             // ✅ SAVE LOG
