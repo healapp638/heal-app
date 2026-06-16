@@ -1130,8 +1130,9 @@ update_social_info: async (findUser: any, model: any, data: any) => {
         if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
             isUnderProgress = true
         }
+        const total_credit = userData?.sub_credits + userData?.pack_credits
         const result2 = await findOne(userAuthModel, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0, password: 0 });
-        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result2.data, account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }, statusCodes.SUCCESS)
+        return showResponse(true, getMessage(language || 'en', "user_detail"), { ...result2.data, account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress, total_credit }, statusCodes.SUCCESS)
     },
 
     updateUserProfile: async (data: any, user_id: string): Promise<ApiResponse> => {

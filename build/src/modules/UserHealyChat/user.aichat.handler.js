@@ -196,7 +196,7 @@ const UserCommonHandler = {
             const subCredits = user.sub_credits || 0;
             const packCredits = user.pack_credits || 0;
             if (subCredits <= 0 && packCredits <= 0) {
-                return (0, response_util_1.showResponse)(false, "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.", { subCredits, packCredits }, statusCodes_1.default.SUCCESS);
+                return (0, response_util_1.showResponse)(false, "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.", { total_credit: subCredits + packCredits }, statusCodes_1.default.SUCCESS);
             }
             const userLanguage = (user === null || user === void 0 ? void 0 : user.language) || "en";
             // =========================================
@@ -511,7 +511,7 @@ The user should leave feeling:
                     message: ((_l = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _l === void 0 ? void 0 : _l[userLanguage]) || ((_m = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _m === void 0 ? void 0 : _m.en),
                     sequence: createAiMessage.sequence,
                 },
-                subCredits, packCredits
+                total_credit: subCredits + packCredits
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {

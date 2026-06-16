@@ -203,7 +203,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
             return showResponse(
                 false,
                 "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.",
-                {subCredits,packCredits},
+                {total_credit:subCredits+packCredits},
                 statusCodes.SUCCESS
             );
         }
@@ -592,7 +592,7 @@ The user should leave feeling:
                     message:createAiMessage?.message?.[userLanguage] ||createAiMessage?.message?.en,
                     sequence:createAiMessage.sequence,
                 },
-                subCredits,packCredits
+                total_credit:subCredits+packCredits
             },
             statusCodes.SUCCESS
         );
