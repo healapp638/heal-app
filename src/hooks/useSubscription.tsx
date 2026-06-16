@@ -12,6 +12,7 @@ interface SubscriptionContextType {
     yearly: any;
   } | null;
   purchasePlan: (plan: 'monthly' | 'yearly') => Promise<boolean>;
+  purchasePackage: (packageToBuy: any) => Promise<{ productIdentifier: string } | null>;
   presentPaywall: () => Promise<boolean>;
   restorePurchases: () => Promise<boolean>;
 }
@@ -151,6 +152,16 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const purchasePackage = async (packageToBuy: any): Promise<{ productIdentifier: string } | null> => {
+    try {
+      const result = await purchasesService.purchasePackage(packageToBuy);
+      return result ? { productIdentifier: result.productIdentifier } : null;
+    } catch (error) {
+      console.error('[RevenueCat] Error during package purchase:', error);
+      throw error;
+    }
+  };
+
   return (
     <SubscriptionContext.Provider
       value={{
@@ -159,6 +170,7 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
         customerInfo,
         packages,
         purchasePlan,
+        purchasePackage,
         presentPaywall,
         restorePurchases,
       }}

@@ -15,3 +15,10 @@ export const REVENUECAT_CONFIG = {
   offeringId: 'trial_offering',
 };
 
+export const CREDIT_PACK_MAPPINGS: Record<string, number> = {
+  small_pack: 150,
+  medium_pack: 300,
+  large_pack: 500,
+};
+
+

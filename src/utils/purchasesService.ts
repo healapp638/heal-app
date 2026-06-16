@@ -143,6 +143,29 @@ class PurchasesService {
     }
   }
 
+  /**
+   * Purchases a specific RevenueCat package for consumables (e.g. credits).
+   * Does NOT check entitlements.
+   */
+  public async purchasePackage(packageToBuy: any): Promise<{ productIdentifier: string; customerInfo: CustomerInfo } | null> {
+    if (!this.isConfigured) {
+      console.warn('[RevenueCat] SDK not configured. Cannot purchase package.');
+      return null;
+    }
+
+    try {
+      const result = await Purchases.purchasePackage(packageToBuy);
+      return result;
+    } catch (error: any) {
+      if (error?.userCancelled) {
+        console.log('[RevenueCat] User cancelled package purchase.');
+      } else {
+        console.error('[RevenueCat] Package purchase failed:', error);
+      }
+      throw error;
+    }
+  }
+
 
 
   /**

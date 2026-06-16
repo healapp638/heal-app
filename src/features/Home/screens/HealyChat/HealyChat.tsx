@@ -1,4 +1,11 @@
-import React, { useContext, useRef, useCallback, useState } from 'react';
+import React, {
+  useContext,
+  useRef,
+  useCallback,
+  useState,
+  useEffect,
+} from 'react';
+import { useSelector } from 'react-redux';
 import {
   View,
   FlatList,
@@ -21,6 +28,7 @@ import { MessageItem } from './components/MessageItem';
 import { ThinkingBubble } from './components/ThinkingBubble';
 import { ChatInputBar } from './components/ChatInputBar';
 import { ConversationDrawer } from './components/ConversationDrawer';
+import GetCreditsModal from '../../../../modals/GetCreditsModal';
 
 const HealyChat = () => {
   const { colors, images } = useTheme() as any;
@@ -29,6 +37,18 @@ const HealyChat = () => {
 
   const flatListRef = useRef<FlatList>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const user = useSelector((state: any) => state.userData?.user);
+  const [creditsModalVisible, setCreditsModalVisible] = useState(false);
+  const hasAutoShown = useRef(false);
+
+  useEffect(() => {
+    // const credits = user?.credits ?? user?.ai_credits;
+    // if (credits === 0 && !hasAutoShown.current) {
+    setCreditsModalVisible(true);
+    //   hasAutoShown.current = true;
+    // }
+  }, [user]);
 
   // Custom Hooks for business logic, keyboard layout, and bouncing loading dots
   const {
@@ -62,7 +82,9 @@ const HealyChat = () => {
 
   // Removed getDynamicWelcomeText to display the random question directly as welcome text
 
-  const lastAiMessageIndex = messages.map(m => m.role !== 'user').lastIndexOf(true);
+  const lastAiMessageIndex = messages
+    .map(m => m.role !== 'user')
+    .lastIndexOf(true);
 
   // Memoized render bubble item to prevent full re-renders of the list cells
   const renderItem = useCallback(
@@ -223,6 +245,10 @@ const HealyChat = () => {
             onSelectConversation={setConversationId}
             onNewChat={startNewChat}
             styles={styles}
+          />
+          <GetCreditsModal
+            visible={creditsModalVisible}
+            onClose={() => setCreditsModalVisible(false)}
           />
         </View>
       }
