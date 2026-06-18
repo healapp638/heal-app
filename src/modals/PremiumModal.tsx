@@ -30,6 +30,35 @@ interface PremiumModalProps {
   onClose: () => void;
 }
 
+const getStartFreeTrialText = (appLanguage: string, priceStr: string) => {
+  const lang = (appLanguage || 'English').toLowerCase();
+  let prefix = "Start Free Trial";
+  switch (lang) {
+    case 'french':
+      prefix = "Démarrer l'essai gratuit";
+      break;
+    case 'spanish':
+      prefix = "Iniciar prueba gratuita";
+      break;
+    case 'german':
+      prefix = "Kostenlose Testversion starten";
+      break;
+    case 'portuguese':
+      prefix = "Iniciar teste gratuito";
+      break;
+    case 'italian':
+      prefix = "Inizia la prova gratuita";
+      break;
+    case 'russian':
+      prefix = "Начать бесплатную версию";
+      break;
+    default:
+      prefix = "Start Free Trial";
+      break;
+  }
+  return `${prefix} – ${priceStr}`;
+};
+
 const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -62,23 +91,59 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
 
   const { monthlyPrice, yearlyPrice } = getDynamicPrices();
 
-  const getPriceInfoText = () => {
-    if (selectedPlan === 'monthly') {
-      const defaultText = localization.appkeys?.monthlyPriceInfo || '';
-      if (packages?.monthly) {
-        const priceStr = packages.monthly.product.priceString;
-        return defaultText.replace(/CHF\s*10\.00/gi, priceStr);
-      }
-      return defaultText;
-    } else {
-      const defaultText = localization.appkeys?.yearlyPriceInfoNew || '';
-      if (packages?.yearly) {
-        const priceStr = packages.yearly.product.priceString;
-        return defaultText.replace(/CHF\s*48\.00/gi, priceStr);
-      }
-      return defaultText;
+  const renderPriceInfoText = (text: string, priceStr: string, textStyle: any, boldColor: string) => {
+    if (!priceStr || !text.includes(priceStr)) {
+      return <SolidText style={textStyle}>{text}</SolidText>;
     }
+
+    const parts = text.split(priceStr);
+    if (parts.length >= 2) {
+      const beforePrice = parts[0];
+      const afterPrice = parts[1];
+
+      const dotIndex = afterPrice.indexOf('.');
+      if (dotIndex !== -1) {
+        const periodSuffix = afterPrice.substring(0, dotIndex);
+        const rest = afterPrice.substring(dotIndex);
+
+        return (
+          <SolidText style={textStyle}>
+            {beforePrice}
+            <SolidText style={[textStyle, { fontFamily: AppFonts.bold, color: boldColor }]}>
+              {priceStr}
+              {periodSuffix}
+            </SolidText>
+            {rest}
+          </SolidText>
+        );
+      }
+    }
+
+    return <SolidText style={textStyle}>{text}</SolidText>;
   };
+
+  const getPriceInfo = () => {
+    let priceStr = 'CHF 10.00';
+    let text = '';
+    if (selectedPlan === 'monthly') {
+      text = localization.appkeys?.monthlyPriceInfo || '';
+      if (packages?.monthly) {
+        priceStr = packages.monthly.product.priceString;
+        text = text.replace(/CHF\s*10\.00/gi, priceStr);
+      }
+    } else {
+      text = localization.appkeys?.yearlyPriceInfoNew || '';
+      if (packages?.yearly) {
+        priceStr = packages.yearly.product.priceString;
+        text = text.replace(/CHF\s*48\.00/gi, priceStr);
+      } else {
+        priceStr = 'CHF 48.00';
+      }
+    }
+    return { text, priceStr };
+  };
+
+  const { text: priceInfoText, priceStr } = getPriceInfo();
   const [showCloseBtn, setShowCloseBtn] = useState(false);
 
   useEffect(() => {
@@ -157,6 +222,7 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 setSelectedPlan={setSelectedPlan}
                 monthlyPrice={monthlyPrice}
                 yearlyPrice={yearlyPrice}
+                appLanguage={appLanguage}
               />
 
               <SolidBtn
@@ -166,7 +232,7 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 titleTxt={
                   selectedPlan === 'monthly'
                     ? localization.appkeys?.startMyJourney
-                    : localization.appkeys?.startMy3DayFreeTrial
+                    : getStartFreeTrialText(appLanguage, yearlyPrice || localization.appkeys?.yearlyPrice)
                 }
                 onPress={async () => {
                   triggerHaptic('impactMedium');
@@ -181,9 +247,7 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 }}
               />
 
-              <SolidText style={styles.priceInfo}>
-                {getPriceInfoText()}
-              </SolidText>
+              {renderPriceInfoText(priceInfoText, priceStr, styles.priceInfo, '#3A2110')}
 
               <TouchableOpacity style={styles.promoBtn}>
                 <SolidText style={styles.promoText}>
@@ -328,11 +392,11 @@ const useStyles = (colors: any, appLanguage: any) =>
     planCard: {
       backgroundColor: 'white',
       borderRadius: 20,
-      padding: 16,
+      padding: 12,
       borderWidth: 2,
       borderColor: 'transparent',
       width: '48%',
-      height: 95,
+      height: 115,
       justifyContent: 'center',
     },
     activePlanCard: {
@@ -340,18 +404,19 @@ const useStyles = (colors: any, appLanguage: any) =>
     },
     planLabel: {
       fontFamily: AppFonts.bold,
-      fontSize: AppUtils.fontSize(20),
-      color: '#3A2110',
-      marginBottom: 6,
-      includeFontPadding: false,
-    },
-    planPrice: {
-      fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(16),
       color: '#3A2110',
+      marginBottom: 2,
       includeFontPadding: false,
     },
-    planFreeTrial: {
+    planPriceAmount: {
+      fontFamily: AppFonts.recoBold,
+      fontSize: AppUtils.fontSize(26),
+      color: '#3A2110',
+      marginTop: 2,
+      includeFontPadding: false,
+    },
+    planPricePeriod: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(12),
       color: '#7A7A7A',
