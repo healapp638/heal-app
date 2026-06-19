@@ -326,6 +326,7 @@ const homeThemeHandler = {
                 _id: 1,
                 imgUrl: 1,
                 categoryTheme_id: 1,
+                homeImgUrl:1,
                 createdAt: 1,
                 isSelected: {
                     $cond: [
@@ -432,6 +433,7 @@ getMyTheme: async (user_id: string): Promise<ApiResponse> => {
                 $project: {
                     _id: "$themeData._id",
                     imgUrl: "$themeData.imgUrl",
+                    homeImgUrl:"$themeData.homeImgUrl",
                     categoryTheme_id:
                         "$themeData.categoryTheme_id",
                     createdAt: "$themeData.createdAt",
