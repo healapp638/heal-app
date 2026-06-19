@@ -69,6 +69,10 @@ const UserSchema = new Schema(
         streak_days:{ type: [Number], default: [] },
         last_streak_date: { type: String, default: "" }, // YYYY-MM-DD in user timezone
         extra_credits:{ type: Number, default: 0 },
+        sub_credits:{ type: Number, default: 0 },
+        pack_credits:{type:Number,default:0},
+        is_credit_pack:{type:Boolean,default:false},
+        pack_name:{type:String,default:""},
         //***Use When Purchase Used */
         user_subscription: {
             is_subscribed: {

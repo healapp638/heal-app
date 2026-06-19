@@ -326,8 +326,8 @@ const homeThemeHandler = {
                 _id: 1,
                 imgUrl: 1,
                 categoryTheme_id: 1,
-                createdAt: 1,
                 homeImgUrl:1,
+                createdAt: 1,
                 isSelected: {
                     $cond: [
                         {

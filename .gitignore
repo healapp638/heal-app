@@ -18,6 +18,7 @@ public/androidCerts/androidInAppPurchase.json
 
 # Log files
 *.log
+logs/
 
 # Package files
 *.jar

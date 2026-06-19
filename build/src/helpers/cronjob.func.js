@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.generateAffirmation = exports.scheduleCroneJOb = void 0;
 const response_util_1 = require("../utils/response.util");
 const responseMessages_1 = __importDefault(require("../constants/responseMessages"));
+const logger_config_1 = __importDefault(require("../configs/logger.config"));
 const statusCodes_1 = __importDefault(require("../constants/statusCodes"));
 const workflow_constant_1 = require("../constants/workflow.constant");
 const langauge_translate_helper_1 = require("../helpers/langauge.translate.helper");
@@ -474,7 +475,11 @@ Return JSON only.
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, createQuote, statusCodes_1.default.SUCCESS);
     }
     catch (error) {
-        console.log(error, "CREATE_QUOTE_ERROR");
+        logger_config_1.default.error("CREATE_QUOTE_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return (0, response_util_1.showResponse)(false, "Error generating quote", null, statusCodes_1.default.API_ERROR);
     }
 });
@@ -592,7 +597,11 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
         }
     }
     catch (err) {
-        console.log(err, "GENERATE_CHALLENGES_ERROR");
+        logger_config_1.default.error("GENERATE_CHALLENGES_ERROR", {
+            type: "error",
+            message: err.message,
+            stack: err.stack,
+        });
         return (0, response_util_1.showResponse)(false, err.message, null, statusCodes_1.default.API_ERROR);
     }
 });

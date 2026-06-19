@@ -68,7 +68,7 @@ const UserSubscriptionHandler = {
                 return showResponse(false, `Subscription already purchased and linked with ${existingSubscription?.email}`, null, statusCodes.API_ERROR);
             }
 
-            const userDetail:any = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(user_id), status: USER_STATUS.ACTIVE });
+            const userDetail: any = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(user_id), status: USER_STATUS.ACTIVE });
             if (!userDetail) {
                 return showResponse(false, `Invalid user detail`, null, statusCodes.API_ERROR);
             }
@@ -179,7 +179,7 @@ const UserSubscriptionHandler = {
 
             console.log("✅ saveAndroidSubscriptionLogs coming :::: ", notification_type, subscription_id, " purchase_token : ", purchase_token)
 
-            let getUserDetails:any = await userAuthModel.findOne({ 'user_subscription.purchase_token': purchase_token, status: { $ne: USER_STATUS.DELETED } }); //not deleted
+            let getUserDetails: any = await userAuthModel.findOne({ 'user_subscription.purchase_token': purchase_token, status: { $ne: USER_STATUS.DELETED } }); //not deleted
 
             console.log("*USER ID*********", getUserDetails?._id);
             console.log("*saveSubscriptionWebhookLogAndroid purchaseToken*********", purchase_token);
@@ -581,7 +581,7 @@ const UserSubscriptionHandler = {
                 console.log("********renewalInfo saveSubscriptionWebhookLogIOS Ended ************")
                 if (renewalInfo) {
                     let user_id = null
-                    let userDetails:any = await userAuthModel.findOne({
+                    let userDetails: any = await userAuthModel.findOne({
                         status: { $ne: USER_STATUS.DELETED }, 'user_subscription.original_transaction_id': renewalInfo?.originalTransactionId
                     })
                     console.log("User-id >>>>>>>>>>>>> ", userDetails?._id)
@@ -744,7 +744,7 @@ const UserSubscriptionHandler = {
                 return showResponse(false, `Subscription already purchased and linked with ${existingSubscription?.email}`, null, statusCodes.API_ERROR);
             }
 
-            const userDetail:any = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(user_id), status: USER_STATUS.ACTIVE });
+            const userDetail: any = await userAuthModel.findOne({ _id: commonHelper.convertToObjectId(user_id), status: USER_STATUS.ACTIVE });
             if (!userDetail) {
                 return showResponse(false, `Invalid user detail`, null, statusCodes.API_ERROR);
             }
@@ -861,7 +861,7 @@ const UserSubscriptionHandler = {
             console.log("Incoming:", package_name, transaction_id);
 
             // ✅ USER CHECK
-            const user:any = await userAuthModel.findById(user_id);
+            const user: any = await userAuthModel.findById(user_id);
             if (!user) {
                 return showResponse(false, "User not found", null, statusCodes.API_ERROR);
             }
@@ -873,7 +873,7 @@ const UserSubscriptionHandler = {
             }
 
             // ✅ GET PLAN
-            const plan:any = await subscriptionPlans.findOne({
+            const plan: any = await subscriptionPlans.findOne({
                 plan_name: { $regex: `^${package_name}$`, $options: "i" }
             });
 
@@ -906,7 +906,7 @@ const UserSubscriptionHandler = {
             // ✅ ADD CREDITS (atomic)
             await userAuthModel.updateOne(
                 { _id: user_id },
-                { $inc: { extra_credits: creditsToAdd }, is_credit_pack: true }
+                { $inc: { pack_credits: creditsToAdd }, is_credit_pack: true }
             );
 
             // ✅ SAVE LOG

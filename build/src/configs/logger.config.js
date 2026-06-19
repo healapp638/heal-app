@@ -63,6 +63,7 @@ const createRotateTransport = (folder, filename, filter, level) => {
     return new winston_daily_rotate_file_1.default({
         dirname: `logs/${folder}`,
         filename: `${filename}-%DATE%.log`,
+        auditFile: `logs/${folder}/.${filename}-audit.json`,
         datePattern: "YYYY-MM-DD", // rotate daily
         // zippedArchive: true,         // compress old logs
         maxSize: "5m", // rotate after 5MB

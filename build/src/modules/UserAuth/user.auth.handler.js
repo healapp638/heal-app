@@ -939,8 +939,9 @@ const UserAuthHandler = {
         if (isOnBoardingComplete && totalDailyChallenges == 0 && totalWeeklyChallanges == 0) {
             isUnderProgress = true;
         }
+        const total_credit = (userData === null || userData === void 0 ? void 0 : userData.sub_credits) + (userData === null || userData === void 0 ? void 0 : userData.pack_credits);
         const result2 = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { _id: userId }, { createdAt: 0, updatedAt: 0, otp: 0, password: 0 });
-        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result2.data), { account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress }), statusCodes_1.default.SUCCESS);
+        return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "user_detail"), Object.assign(Object.assign({}, result2.data), { account_type, is_profile_completed: true, total_points, total_earned_points, completedPercentage, currentLevel, homeTheme, isOnBoardingComplete, isUnderProgress, total_credit }), statusCodes_1.default.SUCCESS);
     }),
     updateUserProfile: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
         const { fullName, country, dob, profilePic, language } = data;

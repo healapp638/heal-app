@@ -1,5 +1,6 @@
 import { showResponse } from "../utils/response.util";
 import responseMessage from "../constants/responseMessages";
+import logger from "../configs/logger.config";
 import statusCodes from "../constants/statusCodes";
 import { languages, USER_STATUS } from "../constants/workflow.constant";
 import { translatePlainText, translateText } from "../helpers/langauge.translate.helper";
@@ -546,13 +547,13 @@ Return JSON only.
       createQuote,
       statusCodes.SUCCESS
     );
-  } catch (error) {
-    console.log(
-      error,
-      "CREATE_QUOTE_ERROR"
-    );
-
-    return showResponse(
+  } catch (error: any) {
+    logger.error("CREATE_QUOTE_ERROR", {
+      type: "error",
+      message: error.message,
+      stack: error.stack,
+    });
+        return showResponse(
       false,
       "Error generating quote",
       null,
@@ -707,7 +708,11 @@ const generateChallenges = async () => {
       }))
     }
   } catch (err: any) {
-    console.log(err, "GENERATE_CHALLENGES_ERROR")
+    logger.error("GENERATE_CHALLENGES_ERROR", {
+      type: "error",
+      message: err.message,
+      stack: err.stack,
+    });
     return showResponse(false, err.message, null, statusCodes.API_ERROR)
   }
 }

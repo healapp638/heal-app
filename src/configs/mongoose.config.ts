@@ -14,7 +14,8 @@ export const connection = async () => {
       logger.info("MONGO_CONNECTED", {
       type: "mongodb",
       message: "MongoDB connection established",
-    });
+    }
+  );
 
   } catch (error: any) {
     logger.error("MONGO_CONNECTION_FAILED", {

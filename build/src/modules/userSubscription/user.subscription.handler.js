@@ -804,7 +804,7 @@ const UserSubscriptionHandler = {
                 return (0, response_util_1.showResponse)(false, "Invalid credit value in plan", null, statusCodes_1.default.API_ERROR);
             }
             // ✅ ADD CREDITS (atomic)
-            yield user_auth_model_1.default.updateOne({ _id: user_id }, { $inc: { extra_credits: creditsToAdd }, is_credit_pack: true });
+            yield user_auth_model_1.default.updateOne({ _id: user_id }, { $inc: { pack_credits: creditsToAdd }, is_credit_pack: true });
             // ✅ SAVE LOG
             yield user_subscriptionLogs_model_1.default.create({
                 user_id,

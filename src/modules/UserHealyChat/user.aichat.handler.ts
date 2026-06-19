@@ -12,6 +12,7 @@ import { languages, USER_STATUS,questions } from "../../constants/workflow.const
 import { translateHealyText,detectLanguage } from "../../helpers/langauge.translate.helper";
 import OpenAI from "openai";
 import { APP } from "../../constants/app.constant";
+import logger from "../../configs/logger.config";
 
 const UserCommonHandler = {
 
@@ -170,7 +171,6 @@ const UserCommonHandler = {
 // },
 
 sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
-    try {
         const { conversation_id, message, role } = data;
 
         if (!message?.trim()) {
@@ -188,6 +188,25 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
             _id: convertToObjectId(user_id),
             status: USER_STATUS.ACTIVE,
         });
+
+        if (!user) {
+            return showResponse(false, "User not found", null, statusCodes.API_ERROR);
+        }
+
+        // =========================================
+        // CREDIT CHECK
+        // =========================================
+        const subCredits = Number(user.sub_credits) || 0;
+        const packCredits = Number(user.pack_credits) || 0;
+
+        if (subCredits <= 0 && packCredits <= 0) {
+            return showResponse(
+                false,
+                "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.",
+                {total_credit:subCredits+packCredits},
+                statusCodes.SUCCESS
+            );
+        }
 
         const userLanguage = user?.language || "en";
 
@@ -229,7 +248,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
             let shortTitle = "New Chat";
 
-            try {
+
 
                 const titleResponse = await openai.chat.completions.create({
                         model: "gpt-4.1-mini",
@@ -257,10 +276,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
                     });
 
                 shortTitle = titleResponse.choices?.[0]?.message?.content?.trim()?.replace(/["']/g, "") || "New Chat";
-
-            } catch (err) {
-                console.log(err,"TITLE_GENERATION_ERROR");
-            }
+// console.log(titleResponse.usage,"titleResponse--------------------------------------------------")
 
             const translatedTitle: any = {};
 
@@ -482,6 +498,7 @@ The user should leave feeling:
         temperature: 0.9,
         max_tokens: 1000,
     });
+    // console.log(aiResponse.usage,"aiResponse.usage--------------------------------------------------")
 
         const aiMessage = aiResponse?.choices?.[0]
                 ?.message?.content || "";
@@ -516,6 +533,21 @@ The user should leave feeling:
                 unix: `${Date.now()}`,
                 sequence: nextSequence + 1,
             });
+
+        // =========================================
+        // DEDUCT CREDIT
+        // =========================================
+        if (subCredits > 0) {
+            await userAuthModel.updateOne(
+                { _id: convertToObjectId(user_id) },
+                { $set: { sub_credits: subCredits - 1 } }
+            );
+        } else {
+            await userAuthModel.updateOne(
+                { _id: convertToObjectId(user_id) },
+                { $set: { pack_credits: packCredits - 1 } }
+            );
+        }
 
         // =========================================
         // UPDATE CONVERSATION
@@ -557,16 +589,12 @@ The user should leave feeling:
                     message:createAiMessage?.message?.[userLanguage] ||createAiMessage?.message?.en,
                     sequence:createAiMessage.sequence,
                 },
+                total_credit:subCredits+packCredits
             },
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
 
-        console.log(error,"SEND_MESSAGE_ERROR");
-
-        return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
-    }
 },
 
 // getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
@@ -614,7 +642,6 @@ The user should leave feeling:
 
 getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
 
-    try {
 
         // =========================================
         // USER
@@ -728,21 +755,10 @@ Rules:
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
-
-        console.log(error, "GET_RANDOM_QUESTIONS_ERROR");
-
-        return showResponse(
-            false,
-            responseMessage.common.server_error,
-            null,
-            statusCodes.API_ERROR
-        );
-    }
 },
 
 getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse> => {
-    try {
+
 
         const {conversation_id,page ,limit } = data;
 
@@ -816,10 +832,6 @@ getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse>
             },statusCodes.SUCCESS
         );
 
-    } catch (error) {
-        console.log(error,"GET_CONVERSATION_MESSAGES_ERROR");
-        return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
-    }
 },
 aiSupportResponse: async (data: any): Promise<ApiResponse> => {
 
@@ -909,23 +921,16 @@ Rules:
         );
 
     } catch (error: any) {
-
-        console.log(
-            error,
-            "AI_SUPPORT_RESPONSE_ERROR"
-        );
-
-        return showResponse(
-            false,
-            error?.message ||
-                "Failed to generate AI response",
-            null,
-            statusCodes.API_ERROR
-        );
+        logger.error("AI_SUPPORT_RESPONSE_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
+        throw error;
     }
 },
 deleteConversation: async (conversation_id: string, user_id: string): Promise<ApiResponse> => {
-    try {
+
         // =========================
         // USER
         // =========================
@@ -959,15 +964,12 @@ deleteConversation: async (conversation_id: string, user_id: string): Promise<Ap
         // RETURN
         // =========================
         return showResponse(true,"Conversation deleted successfully",{conversation_id:conversationData._id},statusCodes.SUCCESS);
-    } catch (error: any) {
-        console.log(error,"DELETE_CONVERSATION_ERROR");
-        return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
-    }
+
 },
 
 
 getConversationListing: async (page: number = 1,limit: number = 10,search: string = "",sort_column: string = "updatedAt",sort_direction: string = "desc",user_id: string,): Promise<ApiResponse> => {
-    try {
+
         // =========================
         // USER
         // =========================
@@ -1133,20 +1135,6 @@ getConversationListing: async (page: number = 1,limit: number = 10,search: strin
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
-
-        console.log(
-            error,
-            "GET_CONVERSATION_LISTING_ERROR"
-        );
-
-        return showResponse(
-            false,
-            responseMessage.common.server_error,
-            null,
-            statusCodes.API_ERROR
-        );
-    }
 },
 
 }

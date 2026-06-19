@@ -8,6 +8,7 @@ import { connection as connectDB } from "../configs/mongoose.config";
 import { translateText } from "./langauge.translate.helper";
 import { languages } from "../constants/workflow.constant";
 import { REDIS_CREDENTIAL } from "../constants/app.constant";
+import logger from "../configs/logger.config";
 
 export const ChallengesQueue = new Queue('challenges', {
     connection: {
@@ -126,8 +127,13 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
                 await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } })
             }
         }
-    } catch (error) {
-        console.log(error, "error")
+    } catch (error: any) {
+        logger.error("BULLMQ_CHALLENGE_WORKER_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
+        throw error;
     }
 }, {
     connection: {

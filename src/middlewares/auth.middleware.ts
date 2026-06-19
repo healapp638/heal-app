@@ -31,6 +31,7 @@ export const verifyTokenAdmin = async (req: Request, res: Response, next: NextFu
 
         if (decoded.status && decoded?.data?.user_type == 'admin') {
             req.body.user = decoded.data;
+            (req as any).userId = decoded.data.user_id || decoded.data._id;
             next();
         } else {
             return showOutput(res, { status: false, message: "Invalid Admin", data: null, code: statusCodes.AUTH_TOKEN_ERROR }, statusCodes.AUTH_TOKEN_ERROR)

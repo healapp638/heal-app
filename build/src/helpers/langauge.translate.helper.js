@@ -8,22 +8,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AutoTranslateText = exports.UserTranslateText = exports.translateHealyText = exports.detectLanguage = exports.translatePlainText = exports.translateText = void 0;
 const translate_1 = require("@google-cloud/translate");
 const app_constant_1 = require("../constants/app.constant");
+const logger_config_1 = __importDefault(require("../configs/logger.config"));
 // const translate = new Translate({
 //     key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
 // });
 const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const translate = new translate_1.Translate({
-            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-        });
         console.log(app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY, "APP.HL_GOOGLE_TRANSLATE_API_KEY");
         if (targetLanguage == 'en') {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: 'en', // Source language
             to: targetLanguage, // Target language
@@ -31,21 +35,25 @@ const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0
         });
         return translation; // Return the translated text
     }
-    catch (errors) {
-        console.log(errors);
+    catch (error) {
+        logger_config_1.default.error("GOOGLE_TRANSLATE_TEXT_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return text;
     }
 });
 exports.translateText = translateText;
 const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const translate = new translate_1.Translate({
-            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-        });
         // console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
         if (targetLanguage == 'en') {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: 'en', // Source language
             to: targetLanguage, // Target language
@@ -53,8 +61,12 @@ const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, v
         });
         return translation; // Return the translated text
     }
-    catch (errors) {
-        console.log(errors);
+    catch (error) {
+        logger_config_1.default.error("GOOGLE_TRANSLATE_PLAIN_TEXT_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return text;
     }
 });
@@ -71,7 +83,11 @@ const detectLanguage = (text) => __awaiter(void 0, void 0, void 0, function* () 
             : detections === null || detections === void 0 ? void 0 : detections.language;
     }
     catch (error) {
-        console.log(error);
+        logger_config_1.default.error("GOOGLE_DETECT_LANGUAGE_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return "en";
     }
 });
@@ -89,23 +105,28 @@ const translateHealyText = (text, sourceLanguage, targetLanguage) => __awaiter(v
             to: targetLanguage,
             format: "text",
         });
-        // console.log(translation,"translation----------------------")
+        //console.log(translation,"translation----------------------")
         return translation;
     }
     catch (error) {
-        console.log(error);
+        //console.log(error,"error====================")
+        logger_config_1.default.error("GOOGLE_TRANSLATE_HEALY_TEXT_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return text;
     }
 });
 exports.translateHealyText = translateHealyText;
 const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(void 0, [text_1, targetLanguage_1, ...args_1], void 0, function* (text, targetLanguage, sourceLanguage = 'en') {
     try {
-        const translate = new translate_1.Translate({
-            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-        });
         if (targetLanguage == sourceLanguage) {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: sourceLanguage, // Source language
             to: targetLanguage, // Target language
@@ -113,8 +134,12 @@ const UserTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(voi
         });
         return translation; // Return the translated text
     }
-    catch (errors) {
-        console.log(errors);
+    catch (error) {
+        logger_config_1.default.error("GOOGLE_USER_TRANSLATE_TEXT_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return text;
     }
 });
@@ -140,8 +165,12 @@ const AutoTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(voi
         const [translation] = yield translate.translate(text, options);
         return translation;
     }
-    catch (errors) {
-        console.log(`Translation error for "${text}" to ${targetLanguage}:`, errors);
+    catch (error) {
+        logger_config_1.default.error("GOOGLE_AUTO_TRANSLATE_TEXT_ERROR", {
+            type: "error",
+            message: error.message,
+            stack: error.stack,
+        });
         return text;
     }
 });
