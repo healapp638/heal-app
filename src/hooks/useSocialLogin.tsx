@@ -107,7 +107,7 @@ const useSocialLogin = () => {
                 routes: [
                   {
                     name: AppRoutes.NonAuthStack,
-                    params: { screen: AppRoutes.Offer },
+                    params: { screen: AppRoutes.Premium },
                   } as never,
                 ],
               });

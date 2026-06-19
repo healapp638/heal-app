@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Alert } from 'react-native';
+import { View, TouchableOpacity, Alert, BackHandler } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -142,6 +142,42 @@ const Premium = () => {
 
   const { text: priceInfoText, priceStr } = getPriceInfo();
 
+  const handleLogoutAndRedirect = () => {
+    triggerHaptic('impactMedium');
+
+    dispatch(clearOnboardingProgress());
+    dispatch(setAuth(false));
+    dispatch(setUser({}));
+    dispatch(setToken(null));
+    dispatch(clearModuleParams());
+    queryClient.clear();
+    navigation.reset({
+      index: 0,
+      routes: [
+        {
+          name: AppRoutes.AuthStack as never,
+          params: {
+            screen: AppRoutes.AccessScreen,
+          },
+        },
+      ],
+    });
+  };
+
+  useEffect(() => {
+    const backAction = () => {
+      handleLogoutAndRedirect();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
   const [showCloseBtn, setShowCloseBtn] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -169,43 +205,7 @@ const Premium = () => {
           <PremiumHeader
             showCloseBtn={showCloseBtn}
             onClose={() => {
-              triggerHaptic('impactMedium');
-              navigation.goBack();
-              // Alert.alert(
-              //   localization.appkeys?.logoutDescription || 'Logout',
-              //   '',
-              //   [
-              //     {
-              //       text: localization.appkeys?.cancel || 'Cancel',
-              //       style: 'cancel',
-              //     },
-              //     {
-              //       text: localization.appkeys?.logout || 'Logout',
-              //       style: 'destructive',
-              //       onPress: () => {
-              //         triggerHaptic('impactMedium');
-
-              //         dispatch(clearOnboardingProgress());
-              //         dispatch(setAuth(false));
-              //         dispatch(setUser({}));
-              //         dispatch(setToken(null));
-              //         dispatch(clearModuleParams());
-              //         queryClient.clear();
-              //         navigation.reset({
-              //           index: 0,
-              //           routes: [
-              //             {
-              //               name: AppRoutes.AuthStack as never,
-              //               params: {
-              //                 screen: AppRoutes.AccessScreen,
-              //               },
-              //             },
-              //           ],
-              //         });
-              //       },
-              //     },
-              //   ],
-              // );
+              handleLogoutAndRedirect();
             }}
             styles={styles}
             images={images}

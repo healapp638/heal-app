@@ -145,7 +145,7 @@ const CreatingSpace = () => {
                 {
                   name: AppRoutes.NonAuthStack,
                   params: {
-                    screen: AppRoutes.Offer,
+                    screen: AppRoutes.Premium,
                   },
                 } as never,
               ],
@@ -159,7 +159,7 @@ const CreatingSpace = () => {
                 {
                   name: AppRoutes.NonAuthStack,
                   params: {
-                    screen: AppRoutes.Offer,
+                    screen: AppRoutes.Premium,
                   },
                 } as never,
               ],
