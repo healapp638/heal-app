@@ -50,7 +50,7 @@ const CREDIT_PACKS: Record<string, number> = {
  * This calls RevenueCat's REST API to get the latest subscription status
  */
 async function fetchRevenueCatSubscription(appUserId: string) {
-    const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
+    // const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
     // console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
     try {
         const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';

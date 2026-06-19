@@ -93,7 +93,7 @@ const CREDIT_PACKS = {
  */
 function fetchRevenueCatSubscription(appUserId) {
     return __awaiter(this, void 0, void 0, function* () {
-        const REVENUECAT_API_KEY = (yield app_constant_1.APP.REVENUECAT_API_KEY) || '';
+        // const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
         // console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
         try {
             const REVENUECAT_API_KEY = (yield app_constant_1.APP.REVENUECAT_API_KEY) || '';
