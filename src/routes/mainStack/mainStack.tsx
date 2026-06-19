@@ -26,6 +26,8 @@ import {
   getUserDetail,
 } from '../../redux/Reducers/userData';
 
+import { getTokensFromKeychain } from '../../utils/tokenStorage';
+
 export default function MainStack() {
   const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
@@ -42,9 +44,24 @@ export default function MainStack() {
   const isFirstLoad = useRef(true);
   const prevConnection = useRef<boolean | null>(null);
   const lastProcessedUrl = useRef<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     initializeAppLanguage();
+    const bootstrapAsync = async () => {
+      try {
+        const tokens = await getTokensFromKeychain();
+        if (tokens) {
+          dispatch(setToken(tokens.accessToken));
+          dispatch(setRefreshToken(tokens.refreshToken));
+        }
+      } catch (e) {
+        console.log('Error loading tokens from keychain:', e);
+      } finally {
+        setIsReady(true);
+      }
+    };
+    bootstrapAsync();
   }, []);
 
   useEffect(() => {
@@ -325,6 +342,10 @@ export default function MainStack() {
       subscription.remove();
     };
   }, []);
+
+  if (!isReady) {
+    return <Loader />;
+  }
 
   return (
     <>

@@ -125,11 +125,11 @@ const style = (colors: any, appLanguage: any) =>
     planCard: {
       backgroundColor: colors.white,
       borderRadius: 16,
-      padding: 10,
+      padding: 12,
       borderWidth: 1.5,
       borderColor: 'transparent',
       width: '48%',
-      height: 90,
+      height: 115,
       justifyContent: 'center',
     },
     activePlanCard: {
@@ -137,19 +137,19 @@ const style = (colors: any, appLanguage: any) =>
     },
     planLabel: {
       fontFamily: AppFonts.semiBold,
-      fontSize: AppUtils.fontSize(18),
+      fontSize: AppUtils.fontSize(16),
       color: colors.brown,
-      marginBottom: 3,
+      marginBottom: 2,
       includeFontPadding: false,
     },
-    planPrice: {
-      fontFamily: AppFonts.regular,
-      fontSize: AppUtils.fontSize(16),
+    planPriceAmount: {
+      fontFamily: AppFonts.recoBold,
+      fontSize: AppUtils.fontSize(26),
       color: colors.brown,
       marginTop: 2,
       includeFontPadding: false,
     },
-    planFreeTrial: {
+    planPricePeriod: {
       fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(12),
       color: '#666',
