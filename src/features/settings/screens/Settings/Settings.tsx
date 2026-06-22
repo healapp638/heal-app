@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
   setBiometric,
   getUserDetail,
@@ -257,6 +258,7 @@ const Settings = () => {
               dispatch(setAuth(false));
               dispatch(setUser({}));
               dispatch(setToken(null));
+              dispatch(setRefreshToken(null));
               dispatch(clearModuleParams());
               queryClient.clear();
               navigation.reset({

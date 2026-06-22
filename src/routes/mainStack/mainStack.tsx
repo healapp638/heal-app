@@ -26,7 +26,11 @@ import {
   getUserDetail,
 } from '../../redux/Reducers/userData';
 
-import { getTokensFromKeychain } from '../../utils/tokenStorage';
+import {
+  clearTokensFromKeychain,
+  getTokensFromKeychain,
+} from '../../utils/tokenStorage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MainStack() {
   const Stack = createNativeStackNavigator();
@@ -50,10 +54,18 @@ export default function MainStack() {
     initializeAppLanguage();
     const bootstrapAsync = async () => {
       try {
+        const hasRunBefore = await AsyncStorage.getItem('has_run_before');
+        if (!hasRunBefore) {
+          await clearTokensFromKeychain();
+          await AsyncStorage.setItem('has_run_before', 'true');
+        }
+
         const tokens = await getTokensFromKeychain();
         if (tokens) {
           dispatch(setToken(tokens.accessToken));
           dispatch(setRefreshToken(tokens.refreshToken));
+          dispatch(setAuth(true));
+          dispatch(getUserDetail(false) as any);
         }
       } catch (e) {
         console.log('Error loading tokens from keychain:', e);

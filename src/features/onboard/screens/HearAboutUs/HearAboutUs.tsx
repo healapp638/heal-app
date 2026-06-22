@@ -20,6 +20,7 @@ import {
   setOnboardingCurrentScreen,
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
   clearOnboardingProgress,
 } from '../../../../redux/Reducers/userData';
@@ -48,6 +49,7 @@ const HearAboutUs = () => {
       dispatch(setAuth(false));
       dispatch(setUser({}));
       dispatch(setToken(null));
+      dispatch(setRefreshToken(null));
       navigation.reset({
         index: 0,
         routes: [

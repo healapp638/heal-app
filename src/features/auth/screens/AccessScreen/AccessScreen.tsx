@@ -19,7 +19,7 @@ import {
   setUser,
   getUserDetail,
 } from '../../../../redux/Reducers/userData';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppUtils from '../../../../utils/appUtils';
@@ -28,7 +28,7 @@ const AccessScreen = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-  const dispatch = useDispatch();
+
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 
   return (

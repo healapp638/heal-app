@@ -21,34 +21,35 @@ import { useQueryClient } from '@tanstack/react-query';
 import {
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
   clearOnboardingProgress,
 } from '../../../../redux/Reducers/userData';
 import { clearModuleParams } from '../../../../redux/Reducers/tempData';
 const getStartFreeTrialText = (appLanguage: string, priceStr: string) => {
   const lang = (appLanguage || 'English').toLowerCase();
-  let prefix = "Start Free Trial";
+  let prefix = 'Start Free Trial';
   switch (lang) {
     case 'french':
       prefix = "Démarrer l'essai gratuit";
       break;
     case 'spanish':
-      prefix = "Iniciar prueba gratuita";
+      prefix = 'Iniciar prueba gratuita';
       break;
     case 'german':
-      prefix = "Kostenlose Testversion starten";
+      prefix = 'Kostenlose Testversion starten';
       break;
     case 'portuguese':
-      prefix = "Iniciar teste gratuito";
+      prefix = 'Iniciar teste gratuito';
       break;
     case 'italian':
-      prefix = "Inizia la prova gratuita";
+      prefix = 'Inizia la prova gratuita';
       break;
     case 'russian':
-      prefix = "Начать бесплатную версию";
+      prefix = 'Начать бесплатную версию';
       break;
     default:
-      prefix = "Start Free Trial";
+      prefix = 'Start Free Trial';
       break;
   }
   return `${prefix} – ${priceStr}`;
@@ -88,7 +89,12 @@ const Premium = () => {
 
   const { monthlyPrice, yearlyPrice } = getDynamicPrices();
 
-  const renderPriceInfoText = (text: string, priceStr: string, textStyle: any, boldColor: string) => {
+  const renderPriceInfoText = (
+    text: string,
+    priceStr: string,
+    textStyle: any,
+    boldColor: string,
+  ) => {
     if (!priceStr || !text.includes(priceStr)) {
       return <SolidText style={textStyle}>{text}</SolidText>;
     }
@@ -106,7 +112,12 @@ const Premium = () => {
         return (
           <SolidText style={textStyle}>
             {beforePrice}
-            <SolidText style={[textStyle, { fontFamily: AppFonts.bold, color: boldColor }]}>
+            <SolidText
+              style={[
+                textStyle,
+                { fontFamily: AppFonts.bold, color: boldColor },
+              ]}
+            >
               {priceStr}
               {periodSuffix}
             </SolidText>
@@ -149,6 +160,7 @@ const Premium = () => {
     dispatch(setAuth(false));
     dispatch(setUser({}));
     dispatch(setToken(null));
+    dispatch(setRefreshToken(null));
     dispatch(clearModuleParams());
     queryClient.clear();
     navigation.reset({
@@ -254,7 +266,10 @@ const Premium = () => {
             titleTxt={
               selectedPlan === 'monthly'
                 ? localization.appkeys?.startMyJourney
-                : getStartFreeTrialText(appLanguage, yearlyPrice || localization.appkeys?.yearlyPrice)
+                : getStartFreeTrialText(
+                    appLanguage,
+                    yearlyPrice || localization.appkeys?.yearlyPrice,
+                  )
             }
             isLoading={purchasing}
             disabled={purchasing}
@@ -282,7 +297,12 @@ const Premium = () => {
             }}
           />
 
-          {renderPriceInfoText(priceInfoText, priceStr, styles.priceInfo, colors.brown)}
+          {renderPriceInfoText(
+            priceInfoText,
+            priceStr,
+            styles.priceInfo,
+            colors.brown,
+          )}
 
           {/* <TouchableOpacity style={styles.promoBtn}>
             <SolidText style={styles.promoText}>

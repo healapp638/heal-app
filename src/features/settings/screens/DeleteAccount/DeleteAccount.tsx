@@ -18,6 +18,7 @@ import {
   clearOnboardingProgress,
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
 } from '../../../../redux/Reducers/userData';
 
@@ -74,6 +75,7 @@ const DeleteAccount = () => {
                   dispatch(setAuth(false));
                   dispatch(setUser({}));
                   dispatch(setToken(null));
+                  dispatch(setRefreshToken(null));
 
                   navigation.reset({
                     index: 0,

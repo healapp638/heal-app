@@ -77,7 +77,7 @@ class PurchasesService {
 
     try {
       const offerings = await Purchases.getOfferings();
-      console.log(offerings,"offerings==>>>")
+
       const specificOffering = REVENUECAT_CONFIG.offeringId;
 
       if (specificOffering && offerings.all[specificOffering]) {

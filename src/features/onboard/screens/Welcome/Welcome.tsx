@@ -39,6 +39,7 @@ const Welcome = () => {
   const hasPromptedOnFocus = useRef(false);
   const [resumeModalVisible, setResumeModalVisible] = React.useState(false);
   const [signInModalVisible, setSignInModalVisible] = React.useState(false);
+
   const handleResumeFlow = useCallback(() => {
     const currentScreen = onboarding?.currentScreen;
     if (!currentScreen) return;

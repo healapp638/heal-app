@@ -26,6 +26,7 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import {
   setAuth,
   setToken,
+  setRefreshToken,
   setUser,
 } from '../../../../redux/Reducers/userData';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
@@ -62,6 +63,7 @@ const CompleteProfile = () => {
     dispatch(setAuth(false));
     dispatch(setUser(null));
     dispatch(setToken(null));
+    dispatch(setRefreshToken(null));
     setLogoutModalVisible(false);
     navigation.reset({
       index: 0,

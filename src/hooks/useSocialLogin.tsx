@@ -64,6 +64,7 @@ const useSocialLogin = () => {
       { endpoint: endpoints.social_login, data: payload },
       {
         onSuccess: (response: any) => {
+          console.log(response?.data, 'lll');
           if (response?.data?.is_onboarding === false) {
             dispatch(setUser(response?.data));
             dispatch(setToken(response?.data?.access_token));
