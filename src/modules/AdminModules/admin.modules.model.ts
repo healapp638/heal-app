@@ -24,8 +24,8 @@ const moduleSchema = new mongoose.Schema(
 );
 
 moduleSchema.index(
-  { themeId: 1, "title.en": 1 },
-  { unique: true }
+    { themeId: 1, "title.en": 1 },
+    { unique: true }
 );
 
 export default mongoose.model('Module', moduleSchema);

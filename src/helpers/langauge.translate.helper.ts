@@ -1,6 +1,7 @@
 import { Translate } from '@google-cloud/translate';
 import { APP } from '../constants/app.constant';
 import logger from '../configs/logger.config';
+import he from 'he';
 
 
 // const translate = new Translate({
@@ -8,30 +9,66 @@ import logger from '../configs/logger.config';
 // });
 
 
-export const translateText = async (text: string, targetLanguage: string) => {
-    try {
-        if (targetLanguage == 'en') {
-            return text
-        }
-        const translate = new Translate({
-          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-        });
+// export const translateText = async (text: string, targetLanguage: string) => {
+//     try {
+//         if (targetLanguage == 'en') {
+//             return text
+//         }
+//         const translate = new Translate({
+//           key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+//         });
 
-        const [translation] = await translate.translate(text, {
-            from: 'en', // Source language
-            to: targetLanguage, // Target language
-            format: 'html', // Format if necessary
-        });
-        return translation; // Return the translated text
-    } catch (error: any) {
-        logger.error("GOOGLE_TRANSLATE_TEXT_ERROR", {
-            type: "error",
-            message: error.message,
-            stack: error.stack,
-        });
-         return text
+//         const [translation] = await translate.translate(text, {
+//             from: 'en', // Source language
+//             to: targetLanguage, // Target language
+//             format: 'html', // Format if necessary
+//         });
+//         return translation; // Return the translated text
+//     } catch (error: any) {
+//         logger.error("GOOGLE_TRANSLATE_TEXT_ERROR", {
+//             type: "error",
+//             message: error.message,
+//             stack: error.stack,
+//         });
+//          return text
 
+//     }
+// };
+
+
+export const translateText = async (
+  text: string,
+  targetLanguage: string
+) => {
+  try {
+    if (targetLanguage === 'en') {
+      return he.decode(text);
     }
+
+    const translate = new Translate({
+      key: await APP.HL_GOOGLE_TRANSLATE_API_KEY,
+    });
+
+    // Decode HTML entities first
+    const decodedText = he.decode(text);
+
+    const [translation] = await translate.translate(decodedText, {
+      from: 'en',
+      to: targetLanguage,
+      format: 'html',
+    });
+
+    // Decode again in case translation contains entities
+    return he.decode(translation);
+  } catch (error: any) {
+    logger.error('GOOGLE_TRANSLATE_TEXT_ERROR', {
+      type: 'error',
+      message: error.message,
+      stack: error.stack,
+    });
+
+    return he.decode(text);
+  }
 };
 
 export const translatePlainText = async (text: string, targetLanguage: string) => {

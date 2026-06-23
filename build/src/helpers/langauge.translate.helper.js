@@ -16,31 +16,58 @@ exports.AutoTranslateText = exports.UserTranslateText = exports.translateHealyTe
 const translate_1 = require("@google-cloud/translate");
 const app_constant_1 = require("../constants/app.constant");
 const logger_config_1 = __importDefault(require("../configs/logger.config"));
+const he_1 = __importDefault(require("he"));
 // const translate = new Translate({
 //     key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
 // });
+// export const translateText = async (text: string, targetLanguage: string) => {
+//     try {
+//         if (targetLanguage == 'en') {
+//             return text
+//         }
+//         const translate = new Translate({
+//           key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+//         });
+//         const [translation] = await translate.translate(text, {
+//             from: 'en', // Source language
+//             to: targetLanguage, // Target language
+//             format: 'html', // Format if necessary
+//         });
+//         return translation; // Return the translated text
+//     } catch (error: any) {
+//         logger.error("GOOGLE_TRANSLATE_TEXT_ERROR", {
+//             type: "error",
+//             message: error.message,
+//             stack: error.stack,
+//         });
+//          return text
+//     }
+// };
 const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (targetLanguage == 'en') {
-            return text;
+        if (targetLanguage === 'en') {
+            return he_1.default.decode(text);
         }
         const translate = new translate_1.Translate({
-            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY,
         });
-        const [translation] = yield translate.translate(text, {
-            from: 'en', // Source language
-            to: targetLanguage, // Target language
-            format: 'html', // Format if necessary
+        // Decode HTML entities first
+        const decodedText = he_1.default.decode(text);
+        const [translation] = yield translate.translate(decodedText, {
+            from: 'en',
+            to: targetLanguage,
+            format: 'html',
         });
-        return translation; // Return the translated text
+        // Decode again in case translation contains entities
+        return he_1.default.decode(translation);
     }
     catch (error) {
-        logger_config_1.default.error("GOOGLE_TRANSLATE_TEXT_ERROR", {
-            type: "error",
+        logger_config_1.default.error('GOOGLE_TRANSLATE_TEXT_ERROR', {
+            type: 'error',
             message: error.message,
             stack: error.stack,
         });
-        return text;
+        return he_1.default.decode(text);
     }
 });
 exports.translateText = translateText;
