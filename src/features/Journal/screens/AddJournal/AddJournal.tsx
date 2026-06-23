@@ -257,7 +257,7 @@ const AddJournal = () => {
     },
     {
       id: 'hopeful',
-      label: localization.appkeys?.feelingHope || 'Hope',
+      label: localization.appkeys?.feelingHopeful || 'Hopeful',
       image: images.hope,
     },
   ];

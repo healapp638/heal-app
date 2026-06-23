@@ -356,7 +356,7 @@ export default function MainStack() {
   }, []);
 
   if (!isReady) {
-    return <Loader />;
+    return <SafeAreaView style={{ flex: 1, backgroundColor: '#F4EEE2' }} />;
   }
 
   return (

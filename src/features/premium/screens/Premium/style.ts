@@ -107,6 +107,8 @@ const style = (colors: any, appLanguage: any) =>
       marginBottom: hp(4),
     },
     reminderText: {
+      flex: 1,
+      marginRight: 10,
       fontFamily: AppFonts.regular,
       fontSize: 14,
       color: colors.brown,

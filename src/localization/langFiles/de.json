@@ -359,6 +359,9 @@
     "entryTitlePlaceholder": "Titel deines Eintrags...",
     "entryBodyPlaceholder": "Drücke aus, was du fühlst... Dieser Raum gehört dir, ohne Urteil. 🤍",
     "saveMyEntry": "Eintrag speichern",
+    "listening": "Zuhören...",
+    "titleRequired": "Bitte gib einen Titel ein",
+    "bodyRequired": "Bitte drücke aus, was du fühlst",
     "calendarTitle": "Kalender",
     "monthlyView": "Monatliche Ansicht",
     "connected": "Verbunden",
@@ -591,6 +594,9 @@
     "monthlyPriceInfo": "Nur CHF 10.00 pro Monat. Die Abrechnung erfolgt monatlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird.",
     "startMy3DayFreeTrial": "Starten Sie Ihre 3-tägige kostenlose Testversion",
     "yearlyPriceInfoNew": "3 Tage kostenlos, danach CHF 48.00 pro Jahr. Die Abrechnung erfolgt jährlich und verlängert sich automatisch, sofern sie nicht im App Store gekündigt wird.",
-    "close": "Schließen"
+    "close": "Schließen",
+    "UploadPicture": "Bild hochladen",
+    "Camera": "Kamera",
+    "Gallary": "Galerie"
   }
 }

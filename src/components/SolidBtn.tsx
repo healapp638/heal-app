@@ -89,7 +89,9 @@ const style = (colors: any) =>
       alignItems: 'center',
       width: '90%',
       alignSelf: 'center',
-      height: Platform.OS == 'ios' ? 54 : 50,
+      minHeight: Platform.OS == 'ios' ? 54 : 50,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
       marginTop: 20,
       marginBottom: 10,
       borderRadius: 100,
@@ -101,6 +103,7 @@ const style = (colors: any) =>
       color: 'white',
       fontFamily: AppFonts.semiBold,
       includeFontPadding: false,
+      textAlign: 'center',
     },
     disabled: {
       backgroundColor: '#B0B0B0',

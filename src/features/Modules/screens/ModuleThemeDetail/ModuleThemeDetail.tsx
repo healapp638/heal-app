@@ -25,7 +25,10 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import SubModuleItem from '../../../../components/SubModuleItem';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import { useDispatch, useSelector } from 'react-redux';
-import { setModuleSubModule, setModuleSource } from '../../../../redux/Reducers/tempData';
+import {
+  setModuleSubModule,
+  setModuleSource,
+} from '../../../../redux/Reducers/tempData';
 
 const ModuleThemeDetail = () => {
   const dispatch = useDispatch();
@@ -69,7 +72,13 @@ const ModuleThemeDetail = () => {
       if (cursor === null) {
         setModules(fetchedModules);
       } else {
-        setModules(prev => [...prev, ...fetchedModules]);
+        setModules(prev => {
+          const existingIds = new Set(prev.map(m => m._id));
+          const newModules = fetchedModules.filter(
+            (m: any) => !existingIds.has(m._id),
+          );
+          return [...prev, ...newModules];
+        });
       }
     }
     setIsRefreshing(false);
@@ -172,7 +181,7 @@ const ModuleThemeDetail = () => {
               sub.totalPhaseCount > 0;
             return (
               <SubModuleItem
-                key={sub._id || subIndex}
+                key={sub._id ? `${sub._id}_${subIndex}` : subIndex}
                 sub={sub}
                 colorSet={colorSet}
                 isCompleted={isCompleted}
@@ -196,7 +205,8 @@ const ModuleThemeDetail = () => {
     [styles, navigation, images, colors, sectionColors, dispatch],
   );
   const keyExtractor = useCallback(
-    (item: any, index: number) => (item._id || index).toString(),
+    (item: any, index: number) =>
+      item._id ? `${item._id}_${index}` : index.toString(),
     [],
   );
   return (

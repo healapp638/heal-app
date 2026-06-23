@@ -103,7 +103,11 @@ const Modules = () => {
       if (cursor === null) {
         setThemes(fetchedThemes);
       } else {
-        setThemes(prev => [...prev, ...fetchedThemes]);
+        setThemes(prev => {
+          const existingIds = new Set(prev.map(t => t._id || t.id));
+          const newThemes = fetchedThemes.filter((t: any) => !existingIds.has(t._id || t.id));
+          return [...prev, ...newThemes];
+        });
       }
     }
     setIsRefreshing(false);
@@ -284,7 +288,7 @@ const Modules = () => {
               showsHorizontalScrollIndicator={false}
               renderItem={renderCarouselItem}
               keyExtractor={(item, index) =>
-                (item._id || item.sub_module_id || index).toString()
+                (item._id ? `${item._id}_${index}` : item.sub_module_id ? `${item.sub_module_id}_${index}` : index.toString())
               }
               onMomentumScrollEnd={handleScrollEnd}
               onScrollEndDrag={handleScrollEnd}
@@ -358,7 +362,7 @@ const Modules = () => {
     [navigation, dispatch, postApi],
   );
   const keyExtractor = useCallback(
-    (item: any, index: number) => (item.id || index).toString(),
+    (item: any, index: number) => (item._id ? `${item._id}_${index}` : item.id ? `${item.id}_${index}` : index.toString()),
     [],
   );
   return (

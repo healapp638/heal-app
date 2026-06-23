@@ -359,6 +359,9 @@
     "entryTitlePlaceholder": "Titolo della tua voce...",
     "entryBodyPlaceholder": "Esprimi ciò che provi... Questo spazio è tuo, senza giudizio. 🤍",
     "saveMyEntry": "Salva la mia voce",
+    "listening": "Ascolto in corso...",
+    "titleRequired": "Inserisci un titolo",
+    "bodyRequired": "Esprimi ciò che provi",
     "calendarTitle": "Calendario",
     "monthlyView": "Vista mensile",
     "connected": "Connesso",
@@ -591,6 +594,9 @@
     "monthlyPriceInfo": "Solo CHF 10.00 al mese. Fatturato mensilmente e si rinnova automaticamente a meno che non venga annullato nell'App Store.",
     "startMy3DayFreeTrial": "Inizia la mia prova gratuita di 3 giorni",
     "yearlyPriceInfoNew": "3 giorni gratis, poi CHF 48.00 all'anno. Fatturato annualmente e si rinnova automaticamente a meno che non venga annullato nell'App Store.",
-    "close": "Chiudi"
+    "close": "Chiudi",
+    "UploadPicture": "Carica immagine",
+    "Camera": "Fotocamera",
+    "Gallary": "Galleria"
   }
 }

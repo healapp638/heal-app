@@ -374,6 +374,8 @@ const useStyles = (colors: any, appLanguage: any) =>
       marginBottom: hp(4),
     },
     reminderText: {
+      flex: 1,
+      marginRight: 10,
       fontFamily: AppFonts.regular,
       fontSize: 15,
       color: '#3A2110',
@@ -451,7 +453,9 @@ const useStyles = (colors: any, appLanguage: any) =>
     actionBtn: {
       width: '100%',
       backgroundColor: '#3A2110',
-      height: 60,
+      minHeight: 60,
+      paddingVertical: 12,
+      paddingHorizontal: 24,
       borderRadius: 30,
       justifyContent: 'center',
       alignItems: 'center',

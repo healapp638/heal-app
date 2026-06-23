@@ -30,6 +30,138 @@ const Journal = () => {
   const navigation = useNavigation();
   const { colors, images } = useTheme() as any;
   const { localization, appLanguage } = useContext(LocalizationContext) as any;
+
+  const getLocalizedFeeling = (feeling: string) => {
+    if (!feeling) return '';
+    const f = feeling.toLowerCase().trim();
+    
+    // calm / calma / tranquilo / calmo / calme / ruhig / gelassen / спокойно / спокойный / спокойствие / gelassenheit / tranquillità / tranquillidade
+    if (
+      f === 'calm' ||
+      f === 'calma' ||
+      f === 'tranquilo' ||
+      f === 'calmo' ||
+      f === 'calme' ||
+      f === 'ruhig' ||
+      f === 'gelassen' ||
+      f === 'спокойно' ||
+      f === 'спокойный' ||
+      f === 'спокойствие' ||
+      f === 'gelassenheit' ||
+      f === 'tranquillità' ||
+      f === 'tranquillidade'
+    ) {
+      return localization.appkeys?.feelingCalm || 'Calm';
+    }
+    // sad / triste / traurig / грустно / грустный / traurigkeit
+    if (
+      f === 'sad' ||
+      f === 'triste' ||
+      f === 'traurig' ||
+      f === 'грустно' ||
+      f === 'грустный' ||
+      f === 'traurigkeit'
+    ) {
+      return localization.appkeys?.feelingSad || 'Sad';
+    }
+    // happy / feliz / heureux / joyeux / glücklich / felice / contento / счастливо / счастливый / радостно / радостный / felicità / felicidade / glück
+    if (
+      f === 'happy' ||
+      f === 'feliz' ||
+      f === 'heureux' ||
+      f === 'joyeux' ||
+      f === 'glücklich' ||
+      f === 'felice' ||
+      f === 'contento' ||
+      f === 'счастливо' ||
+      f === 'счастливый' ||
+      f === 'радостно' ||
+      f === 'радостный' ||
+      f === 'felicità' ||
+      f === 'felicidade' ||
+      f === 'glück'
+    ) {
+      return localization.appkeys?.feelingHappy || 'Happy';
+    }
+    // sorrow / grief / pena / dolor / tristeza / chagrin / douleur / tristesse / kummer / trauer / dolore / pesar / dor / печально / печаль / горе / schmerz / страдание / tristezza
+    if (
+      f === 'sorrow' ||
+      f === 'grief' ||
+      f === 'pena' ||
+      f === 'dolor' ||
+      f === 'tristeza' ||
+      f === 'chagrin' ||
+      f === 'douleur' ||
+      f === 'tristesse' ||
+      f === 'kummer' ||
+      f === 'trauer' ||
+      f === 'dolore' ||
+      f === 'pesar' ||
+      f === 'dor' ||
+      f === 'печально' ||
+      f === 'печаль' ||
+      f === 'горе' ||
+      f === 'schmerz' ||
+      f === 'страдание' ||
+      f === 'tristezza'
+    ) {
+      return localization.appkeys?.feelingSorrow || 'Sorrow';
+    }
+    // thoughtful / reflective / pensativo / considerado / reflexivo / pensif / réfléchi / reflectif / nachdenklich / reflektiert / riflessivo / pensieroso / задумчиво / задумчивый / размышляющий / вдумчивый / nachdenklichkeit / premuroso / atencioso / attentionné
+    if (
+      f === 'thoughtful' ||
+      f === 'reflective' ||
+      f === 'pensativo' ||
+      f === 'considerado' ||
+      f === 'reflexivo' ||
+      f === 'pensif' ||
+      f === 'réfléchi' ||
+      f === 'reflectif' ||
+      f === 'nachdenklich' ||
+      f === 'reflektiert' ||
+      f === 'riflessivo' ||
+      f === 'pensieroso' ||
+      f === 'задумчиво' ||
+      f === 'задумчивый' ||
+      f === 'размышляющий' ||
+      f === 'вдумчивый' ||
+      f === 'nachdenklichkeit' ||
+      f === 'premuroso' ||
+      f === 'atencioso' ||
+      f === 'attentionné'
+    ) {
+      return localization.appkeys?.feelingThoughtful || 'Thoughtful';
+    }
+    // hopeful / optimistic / esperanzado / esperanza / optimista / plein d'espoir / espoir / optimiste / hoffnungsvoll / hoffnung / optimistisch / speranzoso / speranza / ottimista / esperançoso / otimista / pieno di speranza / полный надежд / с надеждой / надежда / оптимистичный / обнадеживающий
+    if (
+      f === 'hopeful' ||
+      f === 'optimistic' ||
+      f === 'esperanzado' ||
+      f === 'esperanza' ||
+      f === 'optimista' ||
+      f === "plein d'espoir" ||
+      f === 'espoir' ||
+      f === 'optimiste' ||
+      f === 'hoffnungsvoll' ||
+      f === 'hoffnung' ||
+      f === 'optimistisch' ||
+      f === 'speranzoso' ||
+      f === 'speranza' ||
+      f === 'ottimista' ||
+      f === 'esperançoso' ||
+      f === 'otimista' ||
+      f === 'pieno di speranza' ||
+      f === 'полный надежд' ||
+      f === 'с надеждой' ||
+      f === 'надежда' ||
+      f === 'оптимистичный' ||
+      f === 'обнадеживающий'
+    ) {
+      return localization.appkeys?.feelingHopeful || localization.appkeys?.feelingHope || 'Hopeful';
+    }
+    
+    return feeling.charAt(0).toUpperCase() + feeling.slice(1);
+  };
   const MONTHS = [
     localization.appkeys?.monthJan || 'January',
     localization.appkeys?.monthFeb || 'February',
@@ -208,7 +340,7 @@ const Journal = () => {
                   )}
                   <JournalEntryCard
                     time={item.time}
-                    tag={item.tag}
+                    tag={getLocalizedFeeling(item?.feeling)}
                     title={item.title}
                     body={item.body}
                     onPress={() => {
@@ -244,7 +376,7 @@ const Journal = () => {
           <JournalDetailsModal
             visible={!!selectedEntry}
             onClose={() => setSelectedEntry(null)}
-            entry={selectedEntry}
+            entry={selectedEntry ? { ...selectedEntry, tag: getLocalizedFeeling(selectedEntry.feeling) } : null}
             localization={localization}
           />
         </View>

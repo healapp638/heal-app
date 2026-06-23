@@ -6,7 +6,10 @@ import React, {
   useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setModulePhase, setModuleIsLastPhase } from '../../../../redux/Reducers/tempData';
+import {
+  setModulePhase,
+  setModuleIsLastPhase,
+} from '../../../../redux/Reducers/tempData';
 import {
   View,
   FlatList,
@@ -74,7 +77,11 @@ const StartedModule = () => {
       if (cursor === null) {
         setPhases(fetchedPhases);
       } else {
-        setPhases(prev => [...prev, ...fetchedPhases]);
+        setPhases(prev => {
+          const existingIds = new Set(prev.map(p => p._id));
+          const newPhases = fetchedPhases.filter((p: any) => !existingIds.has(p._id));
+          return [...prev, ...newPhases];
+        });
       }
     }
     setIsRefreshing(false);
@@ -130,7 +137,7 @@ const StartedModule = () => {
               const isCompleted = phaseItem?.isCompleted;
               const step = index + 1;
               return (
-                <React.Fragment key={phaseItem?._id || step}>
+                <React.Fragment key={phaseItem?._id ? `${phaseItem._id}_${index}` : step}>
                   <View style={styles.circleContainer}>
                     <View
                       style={
@@ -230,7 +237,7 @@ const StartedModule = () => {
     ],
   );
   const keyExtractor = useCallback(
-    (item: any, index: number) => (item._id || index).toString(),
+    (item: any, index: number) => index.toString(),
     [],
   );
   useEffect(() => {

@@ -43,7 +43,9 @@ const ModuleExercise = () => {
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const phase = useSelector((state: any) => state.tempData.modulePhase);
-  const isLastPhase = useSelector((state: any) => state.tempData.moduleIsLastPhase);
+  const isLastPhase = useSelector(
+    (state: any) => state.tempData.moduleIsLastPhase,
+  );
   const source = useSelector((state: any) => state.tempData.moduleSource);
   const theme = useSelector((state: any) => state.tempData.moduleTheme);
   const subModule = useSelector((state: any) => state.tempData.moduleSubModule);
@@ -237,7 +239,6 @@ const ModuleExercise = () => {
             });
           },
           onError: error => {
-            console.log(error);
             ToastService.show('Failed to complete lesson. Please try again.');
           },
         },
@@ -327,30 +328,36 @@ const ModuleExercise = () => {
                   </SolidText>
                 ) : (
                   <View style={styles.optionList}>
-                    {currentStepData.options.map((optionItem: any) => {
-                      const isSelected =
-                        selectedOptions[currentStep] === optionItem._id;
-                      return (
-                        <TouchableOpacity
-                          key={optionItem._id}
-                          activeOpacity={0.7}
-                          style={[
-                            styles.optionCard,
-                            isSelected && styles.optionCardSelected,
-                          ]}
-                          onPress={() => handleSelectOption(optionItem._id)}
-                        >
-                          <SolidText
+                    {currentStepData?.options?.map(
+                      (optionItem: any, index: number) => {
+                        const isSelected =
+                          selectedOptions[currentStep] === optionItem._id;
+                        return (
+                          <TouchableOpacity
+                            key={
+                              optionItem._id
+                                ? `${optionItem._id}_${index}`
+                                : index
+                            }
+                            activeOpacity={0.7}
                             style={[
-                              styles.optionText,
-                              isSelected && styles.optionTextSelected,
+                              styles.optionCard,
+                              isSelected && styles.optionCardSelected,
                             ]}
+                            onPress={() => handleSelectOption(optionItem._id)}
                           >
-                            {optionItem.option}
-                          </SolidText>
-                        </TouchableOpacity>
-                      );
-                    })}
+                            <SolidText
+                              style={[
+                                styles.optionText,
+                                isSelected && styles.optionTextSelected,
+                              ]}
+                            >
+                              {optionItem.option}
+                            </SolidText>
+                          </TouchableOpacity>
+                        );
+                      },
+                    )}
                   </View>
                 )}
               </ScrollView>
