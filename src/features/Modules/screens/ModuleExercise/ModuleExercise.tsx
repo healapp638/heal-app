@@ -239,6 +239,7 @@ const ModuleExercise = () => {
             });
           },
           onError: error => {
+            console.log(error, 'error');
             ToastService.show('Failed to complete lesson. Please try again.');
           },
         },

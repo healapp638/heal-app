@@ -1,5 +1,4 @@
 import React, {
-  cloneElement,
   useCallback,
   useContext,
   useEffect,
@@ -20,13 +19,11 @@ import {
 import {
   useNavigation,
   useTheme,
-  useRoute,
   useFocusEffect,
 } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
-import ProgressTrackerCard from '../../../../components/ProgressTrackerCard';
 import PhaseCard from '../../../../components/PhaseCard';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
@@ -79,13 +76,15 @@ const StartedModule = () => {
       } else {
         setPhases(prev => {
           const existingIds = new Set(prev.map(p => p._id));
-          const newPhases = fetchedPhases.filter((p: any) => !existingIds.has(p._id));
+          const newPhases = fetchedPhases.filter(
+            (p: any) => !existingIds.has(p._id),
+          );
           return [...prev, ...newPhases];
         });
       }
     }
     setIsRefreshing(false);
-  }, [data]);
+  }, [data, cursor]);
   const onRefresh = () => {
     setIsRefreshing(true);
     setCursor(null);
@@ -137,7 +136,9 @@ const StartedModule = () => {
               const isCompleted = phaseItem?.isCompleted;
               const step = index + 1;
               return (
-                <React.Fragment key={phaseItem?._id ? `${phaseItem._id}_${index}` : step}>
+                <React.Fragment
+                  key={phaseItem?._id ? `${phaseItem._id}_${index}` : step}
+                >
                   <View style={styles.circleContainer}>
                     <View
                       style={
@@ -185,7 +186,6 @@ const StartedModule = () => {
       subModuleDetail,
       localization.appkeys,
       colors.brown,
-      navigation,
       phases,
     ],
   );
@@ -232,7 +232,6 @@ const StartedModule = () => {
       phases.length,
       startLesson,
       isStarting,
-      subModuleDetail,
       dispatch,
     ],
   );
@@ -260,45 +259,53 @@ const StartedModule = () => {
               viewStyle={{ marginBottom: -2 }}
             />
           </View>
-          <FlatList
-            data={phases}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            ListHeaderComponent={renderHeader}
-            contentContainerStyle={styles.listContent}
-            showsVerticalScrollIndicator={false}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={10}
-            removeClippedSubviews={true}
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.5}
-            refreshControl={
-              <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
-            }
-            ListEmptyComponent={
-              isLoading && cursor === null ? (
-                <ActivityIndicator
-                  size="large"
-                  color={colors.brown}
-                  style={{
-                    marginTop: 50,
-                  }}
-                />
-              ) : null
-            }
-            ListFooterComponent={
-              isFetching && cursor !== null ? (
-                <ActivityIndicator
-                  size="small"
-                  color={colors.brown}
-                  style={{
-                    marginVertical: 20,
-                  }}
-                />
-              ) : null
-            }
-          />
+          {isFetching && cursor === null && !isRefreshing ? (
+            <ActivityIndicator
+              size="large"
+              color={colors.brown}
+              style={{ flex: 1, justifyContent: 'center' }}
+            />
+          ) : (
+            <FlatList
+              data={phases}
+              keyExtractor={keyExtractor}
+              renderItem={renderItem}
+              ListHeaderComponent={renderHeader}
+              contentContainerStyle={styles.listContent}
+              showsVerticalScrollIndicator={false}
+              initialNumToRender={10}
+              maxToRenderPerBatch={10}
+              windowSize={10}
+              removeClippedSubviews={true}
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.5}
+              refreshControl={
+                <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+              }
+              ListEmptyComponent={
+                isLoading && cursor === null ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={colors.brown}
+                    style={{
+                      marginTop: 50,
+                    }}
+                  />
+                ) : null
+              }
+              ListFooterComponent={
+                isFetching && cursor !== null ? (
+                  <ActivityIndicator
+                    size="small"
+                    color={colors.brown}
+                    style={{
+                      marginVertical: 20,
+                    }}
+                  />
+                ) : null
+              }
+            />
+          )}
         </View>
       }
     />

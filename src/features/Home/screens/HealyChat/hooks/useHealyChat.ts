@@ -200,7 +200,6 @@ export const useHealyChat = (
       },
       {
         onSuccess: async (res: any) => {
-console.log(res?.data?.total_credit,"res")
           if (res?.data?.total_credit == 0) {
             setCreditsModalVisible(true);
           }

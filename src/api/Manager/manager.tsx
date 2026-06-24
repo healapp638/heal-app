@@ -14,7 +14,6 @@ import messaging from '@react-native-firebase/messaging';
 import { navigationRef } from '../../utils/navigationRef';
 import { CommonActions } from '@react-navigation/native';
 import AppRoutes from '../../routes/RouteKeys/appRoutes';
-import { Alert } from 'react-native';
 
 // Define the type for the API response
 type ResponseType = ApiResponse<any, any>;
@@ -25,9 +24,10 @@ const api = create({
 });
 
 api.addRequestTransform((request: any) => {
+  // console.log(`[API Request] ${request.method?.toUpperCase()} ${request.url}`);
   const token = store.getState().userData.token;
   if (token) {
-    request.headers['Authorization'] = `Bearer ${token}`;
+    request.headers.Authorization = `Bearer ${token}`;
   }
 });
 
@@ -83,7 +83,12 @@ store.subscribe(() => {
   }
 });
 
-const logoutUser = async (toastMessage: string | boolean | null = 'Session expired. Please log in again.') => {
+const logoutUser = async (
+  toastMessage:
+    | string
+    | boolean
+    | null = 'Session expired. Please log in again.',
+) => {
   if (isLoggingOut) {
     return;
   }
@@ -93,7 +98,7 @@ const logoutUser = async (toastMessage: string | boolean | null = 'Session expir
   }
   isLoggingOut = true;
   const user = store.getState().userData.user as any;
-  
+
   // Clear auth state synchronously to prevent concurrent API response triggers from proceeding
   store.dispatch(setAuth(false));
   store.dispatch(setToken(null));
@@ -132,70 +137,93 @@ const logoutUser = async (toastMessage: string | boolean | null = 'Session expir
   }
 };
 
-api.addResponseTransform(async (response: any) => {
-  // console.log('response.status', response.status);
-  if (response.status === 401) {
-    const originalRequest = response.config;
+api.axiosInstance.interceptors.response.use(
+  response => {
+    // console.log(
+    //   `[API Success] ${response.config?.method?.toUpperCase()} ${
+    //     response.config?.url
+    //   } - Status: ${response.status}`,
+    // );
+    return response;
+  },
+  async (error: any) => {
+    const originalRequest = error.config;
+    const response = error.response;
 
-    // Skip refresh for the refresh_token endpoint itself to avoid infinite loop
-    if (originalRequest?.url?.includes(endpoints.refresh_token)) {
-      logoutUser();
-      return;
-    }
+    if (response) {
+      // console.log(
+      //   `[API Error] ${originalRequest?.method?.toUpperCase()} ${
+      //     originalRequest?.url
+      //   } - Status: ${response.status}`,
+      // );
+      if (response.status === 401) {
+        // Skip refresh for the refresh_token endpoint itself to avoid infinite loop
+        if (originalRequest?.url?.includes(endpoints.refresh_token)) {
+          logoutUser();
+          return Promise.reject(error);
+        }
 
-    if (isRefreshing) {
-      // Queue this request until the token is refreshed
-      try {
-        const newToken = await new Promise<string>((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        });
-        // Retry the original request with the new token
-        const retryResponse = await api.any({
-          ...originalRequest,
-          headers: {
-            ...originalRequest.headers,
-            Authorization: `Bearer ${newToken}`,
-          },
-        });
-        Object.assign(response, retryResponse);
-      } catch (error) {
-        logoutUser();
+        // If we have already retried this request once and it still fails, log out to prevent infinite loops
+        if (originalRequest?._retry) {
+          logoutUser();
+          return Promise.reject(error);
+        }
+        if (originalRequest) {
+          originalRequest._retry = true;
+        }
+
+        if (isRefreshing) {
+          try {
+            const newToken = await new Promise<string>((resolve, reject) => {
+              failedQueue.push({ resolve, reject });
+            });
+            // Update auth header and retry with the underlying axiosInstance
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return api.axiosInstance(originalRequest);
+          } catch (queueError) {
+            logoutUser();
+            return Promise.reject(queueError);
+          }
+        }
+
+        isRefreshing = true;
+
+        try {
+          const newToken = await refreshAccessToken();
+          processQueue(null, newToken);
+
+          // Retry the original request with the new token
+          originalRequest.headers = originalRequest.headers || {};
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api.axiosInstance(originalRequest);
+        } catch (refreshError) {
+          processQueue(refreshError, null);
+          logoutUser();
+          return Promise.reject(refreshError);
+        } finally {
+          isRefreshing = false;
+        }
+      } else if (response.status === 409) {
+        logoutUser('Your account is deactivated by admin!!');
+      } else if (response.status === 410) {
+        logoutUser('Your account is deleted by admin!!');
       }
-      return;
+    } else {
+      console.log(
+        `[API Network/Server Error] ${originalRequest?.method?.toUpperCase()} ${
+          originalRequest?.url
+        } - Error: ${error.message}`,
+      );
     }
 
-    isRefreshing = true;
-
-    try {
-      const newToken = await refreshAccessToken();
-
-      processQueue(null, newToken);
-
-      // Retry the original request with the new token
-      const retryResponse = await api.any({
-        ...originalRequest,
-        headers: {
-          ...originalRequest.headers,
-          Authorization: `Bearer ${newToken}`,
-        },
-      });
-      Object.assign(response, retryResponse);
-    } catch (error) {
-      processQueue(error, null);
-      logoutUser();
-    } finally {
-      isRefreshing = false;
-    }
-  } else if (response.status === 409) {
-    logoutUser('Your account is deactivated by admin!!');
-  } else if (response.status === 410) {
-    logoutUser('Your account is deleted by admin!!');
-  }
-});
+    return Promise.reject(error);
+  },
+);
 
 // Define the type for the monitor function
 type MonitorFunction = (response: ResponseType) => void;
-const naviMonitor: MonitorFunction = response => {};
+const naviMonitor: MonitorFunction = _response => {};
 
 if (config.mode === Mode.DEV) {
   api.addMonitor(naviMonitor);

@@ -24,6 +24,7 @@
 		3B1D3AAC4DC241D4A0988FB5 /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 87A2E32AE0724361B35B097F /* Poppins-LightItalic.ttf */; };
 		4CEEC38C2615456C8FC07140 /* Recoleta Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BB4148B54B414431B156CC2A /* Recoleta Regular.otf */; };
 		526D5A122FBD969D0012582F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 526D5A112FBD969D0012582F /* GoogleService-Info.plist */; };
+		52D0CF14F371151184CC353E /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 13309F9CA4AC539E287664F6 /* InfoPlist.strings */; };
 		689C9ACD88F84FE9BC928E42 /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 9E81FDC9204A4DEFBAAB25CE /* Poppins-BoldItalic.ttf */; };
 		6A71ADB1787645C69477523D /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 72264700249E474AABE85F9A /* Poppins-SemiBoldItalic.ttf */; };
 		71120FDBD30D49AE91964EE9 /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AB804CEF9DDB42B2A58A6078 /* Poppins-SemiBold.ttf */; };
@@ -63,11 +64,15 @@
 		38918BCDFAE44A0AB8500595 /* Recoleta Alt Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Alt Light.otf"; path = "../assets/fonts/Recoleta Alt Light.otf"; sourceTree = "<group>"; };
 		42AD7F6EC78E4DA397BB62E9 /* Recoleta Alt SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Alt SemiBold.otf"; path = "../assets/fonts/Recoleta Alt SemiBold.otf"; sourceTree = "<group>"; };
 		4506CAB96FD14671AA9E1FF8 /* Recoleta Alt Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Alt Black.otf"; path = "../assets/fonts/Recoleta Alt Black.otf"; sourceTree = "<group>"; };
+		48E36667802B6DE0D3C4E9B0 /* en */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = en; path = Heal/en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		4D33F771D9EF495D9247AE07 /* Recoleta Light.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Light.otf"; path = "../assets/fonts/Recoleta Light.otf"; sourceTree = "<group>"; };
+		4E042405B9C40D7CE728E404 /* ru */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = ru; path = Heal/ru.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		52228CF229D174F300D294CD /* Heal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Heal.entitlements; path = Heal/Heal.entitlements; sourceTree = "<group>"; };
 		526D5A112FBD969D0012582F /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		527965C747A2C27B12A818EF /* de */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = de; path = Heal/de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6FCA7E34FD1E4DDABE3BE5CB /* Poppins-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Medium.ttf"; path = "../assets/fonts/Poppins-Medium.ttf"; sourceTree = "<group>"; };
 		72264700249E474AABE85F9A /* Poppins-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBoldItalic.ttf"; path = "../assets/fonts/Poppins-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		73E9FE27E2D767EBD1B11037 /* es */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = es; path = Heal/es.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7BF6EBE1B21245A69D50C740 /* Recoleta SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta SemiBold.otf"; path = "../assets/fonts/Recoleta SemiBold.otf"; sourceTree = "<group>"; };
 		7DB6DC78270C4F458D7E8AE1 /* Recoleta Alt Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Alt Medium.otf"; path = "../assets/fonts/Recoleta Alt Medium.otf"; sourceTree = "<group>"; };
 		7EFB765C629A42BE9CC61AFC /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLightItalic.ttf"; path = "../assets/fonts/Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
@@ -75,14 +80,17 @@
 		87A2E32AE0724361B35B097F /* Poppins-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-LightItalic.ttf"; path = "../assets/fonts/Poppins-LightItalic.ttf"; sourceTree = "<group>"; };
 		87F6417457A849DF9ABF388F /* Recoleta Medium.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Medium.otf"; path = "../assets/fonts/Recoleta Medium.otf"; sourceTree = "<group>"; };
 		942041D030DA4575BA80AFE3 /* Recoleta Black.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Black.otf"; path = "../assets/fonts/Recoleta Black.otf"; sourceTree = "<group>"; };
+		965943C0E16F598C40490FB7 /* pt */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = pt; path = Heal/pt.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		9968C4AB33D8502A81407E27 /* Pods-Heal.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Heal.debug.xcconfig"; path = "Target Support Files/Pods-Heal/Pods-Heal.debug.xcconfig"; sourceTree = "<group>"; };
 		9E81FDC9204A4DEFBAAB25CE /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-BoldItalic.ttf"; path = "../assets/fonts/Poppins-BoldItalic.ttf"; sourceTree = "<group>"; };
 		A4078E51C3AA495485DB0A6B /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ThinItalic.ttf"; path = "../assets/fonts/Poppins-ThinItalic.ttf"; sourceTree = "<group>"; };
 		A6BAB1E440B8475990C31242 /* Recoleta Alt Thin.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Alt Thin.otf"; path = "../assets/fonts/Recoleta Alt Thin.otf"; sourceTree = "<group>"; };
 		AB804CEF9DDB42B2A58A6078 /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-SemiBold.ttf"; path = "../assets/fonts/Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		B940F4BEF15A14A55F02F4E8 /* it */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = it; path = Heal/it.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B944755217094467999D22C5 /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-ExtraLight.ttf"; path = "../assets/fonts/Poppins-ExtraLight.ttf"; sourceTree = "<group>"; };
 		BB4148B54B414431B156CC2A /* Recoleta Regular.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Regular.otf"; path = "../assets/fonts/Recoleta Regular.otf"; sourceTree = "<group>"; };
 		BC08745BE00246ECA3E68DFB /* Poppins-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Regular.ttf"; path = "../assets/fonts/Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		BF18AE016D72053B3561ECB7 /* fr */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = fr; path = Heal/fr.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		CAEFD1E1DFBD4AF9B6D5C8C6 /* Poppins-Thin.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Poppins-Thin.ttf"; path = "../assets/fonts/Poppins-Thin.ttf"; sourceTree = "<group>"; };
 		CE147D05923A4E059157E35C /* SregsSerifDisplay-SemiBold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "SregsSerifDisplay-SemiBold.otf"; path = "../assets/fonts/SregsSerifDisplay-SemiBold.otf"; sourceTree = "<group>"; };
 		CE23CACAC94D4DA69D22984D /* Recoleta Alt Bold.otf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Recoleta Alt Bold.otf"; path = "../assets/fonts/Recoleta Alt Bold.otf"; sourceTree = "<group>"; };
@@ -118,6 +126,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				D4DF5B5E72939E3052CEA628 /* PrivacyInfo.xcprivacy */,
 				1A11B7AF2D9D205A00F2B75E /* Heal-Bridging-Header.h */,
+				13309F9CA4AC539E287664F6 /* InfoPlist.strings */,
 			);
 			name = Heal;
 			sourceTree = "<group>";
@@ -256,6 +265,12 @@
 			knownRegions = (
 				en,
 				Base,
+				fr,
+				es,
+				de,
+				ru,
+				pt,
+				it,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -308,6 +323,7 @@
 				E7782C55E34A4B9B90A453B1 /* Recoleta Black.otf in Resources */,
 				9AA721E969D447089CC7AECD /* Recoleta Alt SemiBold.otf in Resources */,
 				DE6BB74152BC47C0A63BE0F4 /* SregsSerifDisplay-SemiBold.otf in Resources */,
+				52D0CF14F371151184CC353E /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +473,23 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		13309F9CA4AC539E287664F6 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				48E36667802B6DE0D3C4E9B0 /* en */,
+				BF18AE016D72053B3561ECB7 /* fr */,
+				73E9FE27E2D767EBD1B11037 /* es */,
+				527965C747A2C27B12A818EF /* de */,
+				4E042405B9C40D7CE728E404 /* ru */,
+				965943C0E16F598C40490FB7 /* pt */,
+				B940F4BEF15A14A55F02F4E8 /* it */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -492,7 +525,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -538,7 +571,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",

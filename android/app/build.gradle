@@ -99,8 +99,8 @@ android {
         applicationId 'com.healrn'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "1.0.2"
+        versionCode 6
+        versionName "1.0.3"
         vectorDrawables.useSupportLibrary = true
     }
 
@@ -172,6 +172,19 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+}
+
+afterEvaluate {
+    if (project.findProject(':react-native-worklets') != null) {
+        tasks.configureEach { task ->
+            if (task.name == 'mergeReleaseJniLibFolders') {
+                task.dependsOn(':react-native-worklets:externalNativeBuildRelease')
+            }
+            if (task.name == 'mergeDebugJniLibFolders') {
+                task.dependsOn(':react-native-worklets:externalNativeBuildDebug')
+            }
+        }
     }
 }
 
