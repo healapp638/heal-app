@@ -835,7 +835,7 @@ const UserCommonHandler = {
         });
 
         if (completedLesson) {
-            return showResponse(true, getMessage(userLang || 'en', 'already_completed'), null, statusCodes.SUCCESS);
+            return showResponse(false, getMessage(userLang || 'en', 'already_completed'), null, statusCodes.API_ERROR);
         }
 
         const completedLessonData = await userModulesCompleteLessonModel.create({
