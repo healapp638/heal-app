@@ -30,8 +30,8 @@ let AGORA_CREDENTIAL;
 let AWS_CREDENTIAL;
 let STRIPE_CREDENTIAL;
 const APP = {
-    ACCESS_EXPIRY: "2m",
-    REFRESH_EXPIRY: "10m",
+    ACCESS_EXPIRY: "30m",
+    REFRESH_EXPIRY: "7d",
     PORT: process.env.PORT || 3000,
     API_PREFIX: process.env.API_PREFIX || "/api/v1",
     FRONTEND_URL: process.env.FRONTEND_URL || '',
