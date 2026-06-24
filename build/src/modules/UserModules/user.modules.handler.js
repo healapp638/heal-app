@@ -728,7 +728,7 @@ const UserCommonHandler = {
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
         if (completedLesson) {
-            return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(userLang || 'en', 'already_completed'), null, statusCodes_1.default.API_ERROR);
+            return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'already_completed'), null, statusCodes_1.default.SUCCESS);
         }
         const completedLessonData = yield user_modules_complete_lesson_model_1.default.create({
             user_id: (0, common_helper_1.convertToObjectId)(userId),

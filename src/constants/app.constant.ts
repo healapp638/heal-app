@@ -16,14 +16,14 @@ if (envConfig.error) {
 const ENV_PARMAS = getEnvironmentParams(process.env.ENV_MODE, 'HEAL', 'HL')//sds
 
 
-const {ADMIN_EMAIL,ACCESSID,REGION,DB_URI,BUCKET,JWT_SECRET,STMP_EMAIL,SMTP_API_KEY} = ENV_PARMAS
+const { ADMIN_EMAIL, ACCESSID, REGION, DB_URI, BUCKET, JWT_SECRET, STMP_EMAIL, SMTP_API_KEY } = ENV_PARMAS
 let AGORA_CREDENTIAL: AgoraCredential
 let AWS_CREDENTIAL: AwsCredential
 let STRIPE_CREDENTIAL: StripeCredential
 
 const APP: AppConstant = {
   ACCESS_EXPIRY: "2m",
-  REFRESH_EXPIRY: "4m",
+  REFRESH_EXPIRY: "10m",
   PORT: process.env.PORT || 3000,
   API_PREFIX: process.env.API_PREFIX || "/api/v1",
   FRONTEND_URL: process.env.FRONTEND_URL || '',
@@ -97,9 +97,9 @@ const initializeAwsCredential = async () => {
       services.awsService.getParameterFromAWS({ name: SMTP_API_KEY }),
     ]);
 
-    
-    const [ mongodbUri,jwtSecret,accessId,region,awsSecret,bucketName,openaiApiKey,revenueCatApiKey,
-      revenueCatWebhookSecret,hlGoogleTranslateApiKey,smtpEmail,smtpApiKey,
+
+    const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName, openaiApiKey, revenueCatApiKey,
+      revenueCatWebhookSecret, hlGoogleTranslateApiKey, smtpEmail, smtpApiKey,
     ] = results;
     DB.MONGODB_URI = mongodbUri;
     APP.JWT_SECRET = jwtSecret;

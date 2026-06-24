@@ -31,7 +31,7 @@ let AWS_CREDENTIAL;
 let STRIPE_CREDENTIAL;
 const APP = {
     ACCESS_EXPIRY: "2m",
-    REFRESH_EXPIRY: "4m",
+    REFRESH_EXPIRY: "10m",
     PORT: process.env.PORT || 3000,
     API_PREFIX: process.env.API_PREFIX || "/api/v1",
     FRONTEND_URL: process.env.FRONTEND_URL || '',
