@@ -79,10 +79,10 @@ function App(): React.JSX.Element {
     <SafeAreaProvider>
       <KeyboardProvider>
         <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        {/* <UpdatePopup
+        <UpdatePopup
           onBackDropPress={() => setIsUpdateAvailable(false)}
           isVisible={isUpdateAvailable}
-        /> */}
+        />
 
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
