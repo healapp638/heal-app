@@ -100,7 +100,6 @@ const QuoteItem = ({
                 },
 
                 fontFamily: AppFonts.recoMedium,
-
               },
             ]}
           >

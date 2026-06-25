@@ -597,6 +597,8 @@
     "monthlyPriceInfo": "Solo CHF 10.00 al mes. Se factura mensualmente y se renueva automáticamente a menos que se cancele en la App Store.",
     "startMy3DayFreeTrial": "Comenzar mi prueba gratuita de 3 días",
     "yearlyPriceInfoNew": "3 días gratis, luego CHF 48.00 al año. Se factura anualmente y se renueva automáticamente a menos que se cancele en la App Store.",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "startMyFreeTrail": "Comenzar mi prueba gratuita",
+    "healingStartsWithYou": "La sanación comienza contigo"
   }
 }

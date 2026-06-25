@@ -145,9 +145,9 @@ const style = (colors: any, appLanguage: any) =>
       includeFontPadding: false,
     },
     planPriceAmount: {
-      fontFamily: AppFonts.recoBold,
+      fontFamily: AppFonts.regular,
       fontSize: AppUtils.fontSize(26),
-      color: colors.brown,
+      color:colors.brown,
       marginTop: 2,
       includeFontPadding: false,
     },

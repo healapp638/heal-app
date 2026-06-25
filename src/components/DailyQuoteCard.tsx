@@ -16,6 +16,7 @@ import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
 import getEnvVars from '../../env';
 import { triggerHaptic } from '../hooks/useHaptic';
+import { hp } from '../utils/dimension';
 interface DailyQuoteCardProps {
   title: string;
   quote: string;
@@ -56,7 +57,6 @@ const DailyQuoteCard = ({
       </SolidText>
       <TouchableOpacity
         style={{
-          height: 100,
           width: '100%',
           borderWidth: 1,
           borderColor: '#3A21101A',
@@ -120,7 +120,6 @@ const DailyQuoteCard = ({
                       width: 0,
                       height: 1,
                     },
-
                   },
                 ]}
               >
@@ -156,13 +155,12 @@ const useStyle = (colors: any) =>
       includeFontPadding: false,
     },
     card: {
-      height: '100%',
+      minHeight: hp(11),
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'hidden',
       borderRadius: 18,
-
       // ✅ removed overflow: 'hidden' — it was clipping text inside
     },
     quoteText: {
@@ -174,11 +172,13 @@ const useStyle = (colors: any) =>
       includeFontPadding: false,
       width: '94%',
       color: colors.brown,
+      marginTop: 8,
     },
     exploreMore: {
       fontSize: 10,
       fontFamily: AppFonts.light,
       includeFontPadding: false,
+      marginBottom: 8,
     },
   });
 export default DailyQuoteCard;

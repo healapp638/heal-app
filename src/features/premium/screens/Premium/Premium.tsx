@@ -225,7 +225,8 @@ const Premium = () => {
 
           <SolidText style={styles.title}>
             {/* {localization.appkeys?.howTrialWorks} */}
-            Healing starts with you
+            {localization.appkeys?.healingStartsWithYou ||
+              'Healing starts with you'}
           </SolidText>
 
           <TimelineCard
@@ -266,10 +267,11 @@ const Premium = () => {
             titleTxt={
               selectedPlan === 'monthly'
                 ? localization.appkeys?.startMyJourney
-                : getStartFreeTrialText(
-                    appLanguage,
-                    yearlyPrice || localization.appkeys?.yearlyPrice,
-                  )
+                : localization.appkeys.startMyFreeTrail
+              // : getStartFreeTrialText(
+              //     appLanguage,
+              //     yearlyPrice || localization.appkeys?.yearlyPrice,
+              //   )
             }
             isLoading={purchasing}
             disabled={purchasing}

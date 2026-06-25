@@ -28,6 +28,11 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   const [displayedText, setDisplayedText] = useState('');
   const [, setIsDone] = useState(!isLatest);
 
+  const onCompleteRef = React.useRef(onComplete);
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
   useEffect(() => {
     if (isLatest && text) {
       setIsDone(false);
@@ -58,8 +63,8 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
         } else {
           clearInterval(interval);
           setIsDone(true);
-          if (onComplete) {
-            onComplete();
+          if (onCompleteRef.current) {
+            onCompleteRef.current();
           }
         }
       }, 45); // Smooth word-by-word streaming transition
@@ -69,7 +74,7 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
       setDisplayedText(text);
       setIsDone(true);
     }
-  }, [text, isLatest, onComplete]);
+  }, [text, isLatest]);
 
   return (
     <View style={{ alignItems: 'flex-start', width: '100%' }}>

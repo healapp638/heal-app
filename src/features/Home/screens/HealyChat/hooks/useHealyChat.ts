@@ -66,6 +66,7 @@ export const useHealyChat = (
     conversation_id: conversationId,
   }, {
     enabled: !isNewChatRequested && !!conversationId,
+    refetchOnWindowFocus: false,
   });
 
   useEffect(() => {
@@ -122,10 +123,18 @@ export const useHealyChat = (
       setVisibleCount(Math.min(10, rawResult.length));
     } else {
       // Same conversation refetch/update (e.g. after bot reply)
-      const diff = rawResult.length - allMessages.length;
-      setAllMessages(rawResult);
-      if (diff > 0) {
-        setVisibleCount(prev => Math.min(prev + diff, rawResult.length));
+      const hasMoreMessages = rawResult.length > allMessages.length;
+      const isLastIdDifferent =
+        rawResult.length === allMessages.length &&
+        rawResult.length > 0 &&
+        rawResult[rawResult.length - 1]?._id !== allMessages[allMessages.length - 1]?._id;
+
+      if (hasMoreMessages || isLastIdDifferent) {
+        const diff = rawResult.length - allMessages.length;
+        setAllMessages(rawResult);
+        if (diff > 0) {
+          setVisibleCount(prev => Math.min(prev + diff, rawResult.length));
+        }
       }
     }
   }, [chatData, isNewChatRequested, conversationId, prevConversationId, allMessages.length, isSending]);

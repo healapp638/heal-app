@@ -254,8 +254,6 @@ export default function MainStack() {
           {
             onSuccess: async (response: any) => {
               currentDispatch(setLoader(false));
-              AppUtils.showLog('Magic link login response:', response);
-
               currentDispatch(setUser(response?.data));
               currentDispatch(setToken(response?.data?.access_token));
               currentDispatch(setRefreshToken(response?.data?.refresh_token));

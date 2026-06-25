@@ -597,6 +597,8 @@
     "monthlyPriceInfo": "Just CHF 10.00 per month. Billed monthly and renews automatically unless canceled in the App Store.",
     "startMy3DayFreeTrial": "Start My 3-Day Free Trial",
     "yearlyPriceInfoNew": "3 days free, then CHF 48.00 per year. Billed yearly and renews automatically unless canceled in the App Store.",
-    "close": "Close"
+    "close": "Close",
+    "startMyFreeTrail":"Start My Free Trial",
+    "healingStartsWithYou": "Healing starts with you"
   }
 }

@@ -234,6 +234,7 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
             styles.textInput,
             { height: Math.max(24, Math.min(120, inputHeight)) },
           ]}
+          autoCorrect={false}
           placeholder={isListening ? 'Listening...' : placeholder}
           placeholderTextColor={isListening ? '#EA4335' : 'rgba(58,33,16,0.4)'}
           value={chatText}
