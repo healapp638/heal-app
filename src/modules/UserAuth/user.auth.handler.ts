@@ -634,6 +634,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 );
             }
 
+
             return showResponse(
                 true,
                 getMessage(language || 'en', "verification_email_sent"),
