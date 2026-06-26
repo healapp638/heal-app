@@ -3,24 +3,24 @@
 set -e
 
 echo "Stopping old process..."
-pm2 delete heal_api_3001 || true
+pm2 delete heal_api_3000 || true
 pm2 delete excel_import_worker || true
 pm2 delete bullMqWorker || true
 
 echo "Starting application..."
-cd /var/www/html/Heal-Dev-API
+cd /var/www/html/Heal-Prod-API
 
-npm run start:dev
+npm run start:prod
 
 echo "Waiting for app to start..."
 sleep 10
 
-echo "Checking if port 3001 is listening..."
+echo "Checking if port 3000 is listening..."
 
-if ss -tuln | grep -q ':3001'; then
-  echo "Application is running on port 3001"
+if ss -tuln | grep -q ':3000'; then
+  echo "Application is running on port 3000"
 else
-  echo "Application is not running on port 3001"
+  echo "Application is not running on port 3000"
 #  exit 1
 fi
 

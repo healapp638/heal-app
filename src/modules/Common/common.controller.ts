@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { Route, Controller, Tags, Post, Get, Security, FormField, Query } from 'tsoa'
+import { Route, Controller, Tags, Post, Get, Security, FormField, Query, Body, Put } from 'tsoa'
 import { ApiResponse } from '../../utils/interfaces.util';
 import handler from '../Common/common.handler'
 import { showResponse } from '../../utils/response.util';
-import { validateGetCommonContent, validateStoreParmeterToAws } from './common.validator';
+import { validateDeleteAccount, validateGetCommonContent, validateStoreParmeterToAws } from './common.validator';
 import statusCodes from '../../constants/statusCodes'
 import { tryCatchWrapper } from '../../utils/config.util';
 
@@ -109,7 +109,21 @@ export default class CommonController extends Controller {
     null,
     statusCodes.SERVER_TRYCATCH_ERROR
 );
-  }
+}
+
+/**
+* delete user account
+* 
+*/
+    @Put("/delete_account")
+    public async deleteAccount(@Body() request: { email: string, otp: string }): Promise<ApiResponse> {
+        const validate = validateDeleteAccount(request);
+        if (validate.error) {
+            return showResponse(false, validate.error.message, null, statusCodes.VALIDATION_ERROR)
+        }
+        const wrappedFunc = tryCatchWrapper(handler.deleteAccount);
+        return wrappedFunc(request); 
+    } //ends
 }
 
 

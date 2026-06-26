@@ -8,8 +8,9 @@ import userSusbriptionLogsModel from "./user.subscriptionLogs.model";
 import subscriptionPlans from "./user.subscriptionPlans.model";
 import statusCodes from '../../constants/statusCodes'
 import { USER_STATUS } from "../../constants/workflow.constant";
-import crypto from 'crypto';
 import { APP } from "../../constants/app.constant";
+import crypto from 'crypto';
+// import { APP } from "../../constants/app.constant";
 import logger from "../../configs/logger.config";
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
@@ -49,6 +50,8 @@ const CREDIT_PACKS: Record<string, number> = {
  * This calls RevenueCat's REST API to get the latest subscription status
  */
 async function fetchRevenueCatSubscription(appUserId: string) {
+    // const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
+    // console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
     try {
         const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
         // Using RevenueCat API v1 (recommended for subscription checks)
@@ -151,7 +154,7 @@ async function verifyWebhookSignature(payload: any, signature: string, authoriza
         // 1. Check if they used the Authorization header instead of HMAC signature
         const expectedAuth = authorization?.replace('Bearer ', '').trim();
         if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
-            console.log('✅ Validated using Authorization header');
+            // console.log('✅ Validated using Authorization header');
             return true;
         }
 
@@ -210,7 +213,6 @@ const UserSubscriptionHandler = {
     revenueCatWebhook: async (data: any, signature: string, authorization: string): Promise<ApiResponse> => {
         try {
             // console.log("📨 RevenueCat webhook received");
-
             // Verify webhook signature (security)
             if (!verifyWebhookSignature(data, signature, authorization)) {
                 logger.error("REVENUECAT_INVALID_WEBHOOK_SIGNATURE", {

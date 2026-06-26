@@ -255,7 +255,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             return showResponse(false, getMessage(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes.API_ERROR)
         }
         const userData = findUser?.data
-        console.log(timeZone, 'timeZone')
+        // console.log(timeZone, 'timeZone')
         await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { timeZone: timeZone } })
 
         // challenges logic start
@@ -442,7 +442,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 goalStartWith,
                 timeZone
             };
-            console.log(newObj, "newObj>>>>>>>>>>>>>>>")
+            // console.log(newObj, "newObj>>>>>>>>>>>>>>>")
 
             const userRef = new userAuthModel(newObj)
             const result = await createOne(userRef);
@@ -491,13 +491,13 @@ update_social_info: async (findUser: any, model: any, data: any) => {
        }
 
             const userData = { is_after_social_login: false, account_type, is_profile_completed: true, ...result?.data, access_token, refresh_token,is_onboarding:is_onboarding }
-            console.log(userData,"userrrrrrrrrdatatatus")
+            // console.log(userData,"userrrrrrrrrdatatatus")
             return showResponse(true, getMessage(language || 'en', "login_success"), userData, statusCodes.SUCCESS);
         }
     },
 
     async register(data: any, profile_pic: any): Promise<ApiResponse> {
-        console.log(profile_pic, "profile_pic")
+        // console.log(profile_pic, "profile_pic")
         const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language } = data;
         const obj: any = {
             hearAboutUs,
@@ -535,7 +535,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
         const otp = commonHelper.generateRandomOtp(6)
         obj.otp = otp
         const emailPayload = { user_name: fullName, otp }
-        console.log(emailPayload, "emailPayload")
+        // console.log(emailPayload, "emailPayload")
         // const payload = { ...data, account_source: 'email', password: hashed, otp }
 
 
@@ -633,6 +633,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                     statusCodes.API_ERROR
                 );
             }
+
 
             return showResponse(
                 true,

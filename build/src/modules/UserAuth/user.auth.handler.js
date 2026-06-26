@@ -235,7 +235,7 @@ const UserAuthHandler = {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "INVALID_CREDENTIALS"), null, statusCodes_1.default.API_ERROR);
         }
         const userData = findUser === null || findUser === void 0 ? void 0 : findUser.data;
-        console.log(timeZone, 'timeZone');
+        // console.log(timeZone, 'timeZone')
         yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { timeZone: timeZone } });
         // challenges logic start
         yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData }, {
@@ -398,7 +398,7 @@ const UserAuthHandler = {
                 goalStartWith,
                 timeZone
             };
-            console.log(newObj, "newObj>>>>>>>>>>>>>>>");
+            // console.log(newObj, "newObj>>>>>>>>>>>>>>>")
             const userRef = new user_auth_model_1.default(newObj);
             const result = yield (0, db_helpers_1.createOne)(userRef);
             if (!result.status) {
@@ -434,14 +434,14 @@ const UserAuthHandler = {
                 yield user_auth_model_1.default.updateOne({ _id: (_t = result.data) === null || _t === void 0 ? void 0 : _t._id }, { $set: { is_onboarding } });
             }
             const userData = Object.assign(Object.assign({ is_after_social_login: false, account_type, is_profile_completed: true }, result === null || result === void 0 ? void 0 : result.data), { access_token, refresh_token, is_onboarding: is_onboarding });
-            console.log(userData, "userrrrrrrrrdatatatus");
+            // console.log(userData,"userrrrrrrrrdatatatus")
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "login_success"), userData, statusCodes_1.default.SUCCESS);
         }
     }),
     register(data, profile_pic) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a, _b;
-            console.log(profile_pic, "profile_pic");
+            // console.log(profile_pic, "profile_pic")
             const { hearAboutUs, bringsYouHere, howFellingLately, likeToFellMore, timeYouCommit, startShowingOfYourSelf, fullName, country, email, dob, password, language } = data;
             const obj = {
                 hearAboutUs,
@@ -476,7 +476,7 @@ const UserAuthHandler = {
             const otp = commonHelper.generateRandomOtp(6);
             obj.otp = otp;
             const emailPayload = { user_name: fullName, otp };
-            console.log(emailPayload, "emailPayload");
+            // console.log(emailPayload, "emailPayload")
             // const payload = { ...data, account_source: 'email', password: hashed, otp }
             // check if user exists
             const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);

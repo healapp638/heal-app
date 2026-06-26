@@ -1083,7 +1083,7 @@ getAffirmationListing: async (
             });
 
             if (response) {
-                console.log("response",response)
+                // console.log("response",response)
                 return showResponse(
                     true,
                     responseMessage.common.data,

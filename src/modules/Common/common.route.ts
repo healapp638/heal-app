@@ -49,5 +49,12 @@ router.get('/test-rejection', async (req: Request | any, res: Response) => {
     return showOutput(res, result, result.code)
 })
 
+router.put('/delete_account', async (req: Request | any, res: Response) => {
+    const { email, otp } = req.body
+    const controller = new CommonController(req, res)
+    const result: ApiResponse = await controller.deleteAccount({ email, otp });
+    return showOutput(res, result, result.code)
+})
+
 
 export default router

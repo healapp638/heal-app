@@ -11,6 +11,8 @@ import he from 'he';
 
 // export const translateText = async (text: string, targetLanguage: string) => {
 //     try {
+
+//         console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
 //         if (targetLanguage == 'en') {
 //             return text
 //         }
@@ -35,49 +37,85 @@ import he from 'he';
 //     }
 // };
 
-
 export const translateText = async (
-  text: string,
-  targetLanguage: string
+
+    text: string,
+
+    targetLanguage: string
+
 ) => {
-  try {
-    if (targetLanguage === 'en') {
-      return he.decode(text);
+
+    try {
+
+        if (targetLanguage === 'en') {
+
+            return he.decode(text);
+
+        }
+
+
+
+        const translate = new Translate({
+
+            key: await APP.HL_GOOGLE_TRANSLATE_API_KEY,
+
+        });
+
+
+
+        // Decode HTML entities first
+
+        const decodedText = he.decode(text);
+
+
+
+        const [translation] = await translate.translate(decodedText, {
+
+            from: 'en',
+
+            to: targetLanguage,
+
+            format: 'html',
+
+        });
+
+
+
+        // Decode again in case translation contains entities
+
+        return he.decode(translation);
+
+    } catch (error: any) {
+
+        logger.error('GOOGLE_TRANSLATE_TEXT_ERROR', {
+
+            type: 'error',
+
+            message: error.message,
+
+            stack: error.stack,
+
+        });
+
+
+
+        return he.decode(text);
+
     }
 
-    const translate = new Translate({
-      key: await APP.HL_GOOGLE_TRANSLATE_API_KEY,
-    });
-
-    // Decode HTML entities first
-    const decodedText = he.decode(text);
-
-    const [translation] = await translate.translate(decodedText, {
-      from: 'en',
-      to: targetLanguage,
-      format: 'html',
-    });
-
-    // Decode again in case translation contains entities
-    return he.decode(translation);
-  } catch (error: any) {
-    logger.error('GOOGLE_TRANSLATE_TEXT_ERROR', {
-      type: 'error',
-      message: error.message,
-      stack: error.stack,
-    });
-
-    return he.decode(text);
-  }
 };
+
+
 
 export const translatePlainText = async (text: string, targetLanguage: string) => {
     try {
+
+        // console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
         if (targetLanguage == 'en') {
             return text
         }
         const translate = new Translate({
-          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+            key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
         const [translation] = await translate.translate(text, {
             from: 'en', // Source language
@@ -91,14 +129,14 @@ export const translatePlainText = async (text: string, targetLanguage: string) =
             message: error.message,
             stack: error.stack,
         });
-         return text
+        return text
     }
 };
 
 export const detectLanguage = async (text: string) => {
     try {
-         const translate = new Translate({
-          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        const translate = new Translate({
+            key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
         const [detections]: any = await translate.detect(text);
 
@@ -121,14 +159,13 @@ export const translateHealyText = async (
     targetLanguage: string
 ) => {
     try {
-        const translate = new Translate({
-          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-        });
-
         if (sourceLanguage === targetLanguage) {
             return text;
         }
 
+        const translate = new Translate({
+            key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = await translate.translate(text, {
             from: sourceLanguage,
             to: targetLanguage,
@@ -155,7 +192,7 @@ export const UserTranslateText = async (text: string, targetLanguage: string, so
             return text
         }
         const translate = new Translate({
-          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+            key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
         const [translation] = await translate.translate(text, {
             from: sourceLanguage, // Source language
@@ -176,28 +213,28 @@ export const UserTranslateText = async (text: string, targetLanguage: string, so
 export const AutoTranslateText = async (text: string, targetLanguage: string, sourceLanguage: string = 'auto') => {
     try {
         const translate = new Translate({
-          key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+            key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
         // Skip if source and target are the same
         if (sourceLanguage !== 'auto' && targetLanguage === sourceLanguage) {
             return text;
         }
-        
+
         // For auto-detection, don't specify source
         const options: any = {
             to: targetLanguage,
         };
-        
+
         // Only add 'from' if source is not 'auto'
         if (sourceLanguage !== 'auto') {
             options.from = sourceLanguage;
         }
-        
+
         // console.log(`Translating "${text}" to ${targetLanguage} with options:`, options);
-        
+
         const [translation] = await translate.translate(text, options);
         return translation;
-        
+
     } catch (error: any) {
         logger.error("GOOGLE_AUTO_TRANSLATE_TEXT_ERROR", {
             type: "error",
@@ -207,5 +244,3 @@ export const AutoTranslateText = async (text: string, targetLanguage: string, so
         return text;
     }
 };
-
-

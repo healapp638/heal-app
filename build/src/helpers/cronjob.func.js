@@ -606,8 +606,8 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 const scheduleCroneJOb = () => {
-    console.log("scheduleCroneJOb");
-    node_cron_1.default.schedule('0 0 */5 * * *', () => {
+    node_cron_1.default.schedule('*/30 * * * * *', () => {
+        // console.log("crrrroonnnn")
         generateChallenges();
     });
 };

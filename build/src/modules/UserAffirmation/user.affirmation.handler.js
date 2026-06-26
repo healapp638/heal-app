@@ -815,7 +815,7 @@ const affirmationHandler = {
             // Insert document with code and params
             const response = yield user_deeplink_model_1.default.insertMany(Object.assign(Object.assign({ code }, (affirmation_id && { affirmation_id })), { createdAt: new Date() }));
             if (response) {
-                console.log("response", response);
+                // console.log("response",response)
                 return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data, {
                     link: `https://apidev.heal-app.com/link/${code}/${affirmation_id}`,
                     code,

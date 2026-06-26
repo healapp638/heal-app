@@ -109,6 +109,20 @@ let CommonController = class CommonController extends tsoa_1.Controller {
             return (0, response_util_1.showResponse)(true, "Unhandled rejection triggered. Check logs/rejections.", null, statusCodes_1.default.SERVER_TRYCATCH_ERROR);
         });
     }
+    /**
+    * delete user account
+    *
+    */
+    deleteAccount(request) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const validate = (0, common_validator_1.validateDeleteAccount)(request);
+            if (validate.error) {
+                return (0, response_util_1.showResponse)(false, validate.error.message, null, statusCodes_1.default.VALIDATION_ERROR);
+            }
+            const wrappedFunc = (0, config_util_1.tryCatchWrapper)(common_handler_1.default.deleteAccount);
+            return wrappedFunc(request);
+        });
+    } //ends
 };
 __decorate([
     (0, tsoa_1.Security)('Bearer'),
@@ -152,6 +166,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], CommonController.prototype, "testRejection", null);
+__decorate([
+    (0, tsoa_1.Put)("/delete_account"),
+    __param(0, (0, tsoa_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], CommonController.prototype, "deleteAccount", null);
 CommonController = __decorate([
     (0, tsoa_1.Tags)('Common'),
     (0, tsoa_1.Route)('/common'),

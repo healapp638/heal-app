@@ -22,6 +22,7 @@ const he_1 = __importDefault(require("he"));
 // });
 // export const translateText = async (text: string, targetLanguage: string) => {
 //     try {
+//         console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
 //         if (targetLanguage == 'en') {
 //             return text
 //         }
@@ -73,6 +74,7 @@ const translateText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0
 exports.translateText = translateText;
 const translatePlainText = (text, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
         if (targetLanguage == 'en') {
             return text;
         }
@@ -119,12 +121,12 @@ const detectLanguage = (text) => __awaiter(void 0, void 0, void 0, function* () 
 exports.detectLanguage = detectLanguage;
 const translateHealyText = (text, sourceLanguage, targetLanguage) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const translate = new translate_1.Translate({
-            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
-        });
         if (sourceLanguage === targetLanguage) {
             return text;
         }
+        const translate = new translate_1.Translate({
+            key: yield app_constant_1.APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
+        });
         const [translation] = yield translate.translate(text, {
             from: sourceLanguage,
             to: targetLanguage,

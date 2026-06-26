@@ -88,7 +88,13 @@ export const generateUserChallengesDaily = async (payload: GenerateChallengePayl
                          - short walk
                          - gratitude
 
-                        14. JSON FORMAT MUST BE:
+                        12. IMPORTANT:
+                        - ALL challenge titles must be written in English.
+                        - ALL exercise titles must be written in English.
+                        - Never generate content in the user's language.
+                        - English only.
+
+                        13. JSON FORMAT MUST BE:
 
                         {
                             "challenges": [
@@ -234,7 +240,13 @@ export const generateUserChallengesWeekly = async (payload: GenerateChallengePay
                         - journaling
                         - self-care
 
-                          14. JSON FORMAT MUST BE:
+                        13. IMPORTANT:
+                        - ALL challenge titles must be written in English.
+                        - ALL exercise titles must be written in English.
+                        - Never generate content in the user's language.
+                        - English only.
+
+                        14. JSON FORMAT MUST BE:
 
                         {
                             "challenges": [

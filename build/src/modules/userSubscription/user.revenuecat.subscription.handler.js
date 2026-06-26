@@ -54,8 +54,9 @@ const user_subscriptionLogs_model_1 = __importDefault(require("./user.subscripti
 const user_subscriptionPlans_model_1 = __importDefault(require("./user.subscriptionPlans.model"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
-const crypto_1 = __importDefault(require("crypto"));
 const app_constant_1 = require("../../constants/app.constant");
+const crypto_1 = __importDefault(require("crypto"));
+// import { APP } from "../../constants/app.constant";
 const logger_config_1 = __importDefault(require("../../configs/logger.config"));
 // ============= REVENUECAT CONFIGURATION =============
 // Get these from RevenueCat Dashboard → Settings → API Keys
@@ -92,6 +93,8 @@ const CREDIT_PACKS = {
  */
 function fetchRevenueCatSubscription(appUserId) {
     return __awaiter(this, void 0, void 0, function* () {
+        // const REVENUECAT_API_KEY = await APP.REVENUECAT_API_KEY || '';
+        // console.log(REVENUECAT_API_KEY,"REVENUECAT_API_KEY REVENUECAT_API_KEY")
         try {
             const REVENUECAT_API_KEY = (yield app_constant_1.APP.REVENUECAT_API_KEY) || '';
             // Using RevenueCat API v1 (recommended for subscription checks)
@@ -188,7 +191,7 @@ function verifyWebhookSignature(payload, signature, authorization) {
             // 1. Check if they used the Authorization header instead of HMAC signature
             const expectedAuth = authorization === null || authorization === void 0 ? void 0 : authorization.replace('Bearer ', '').trim();
             if (expectedAuth && expectedAuth === REVENUECAT_WEBHOOK_SECRET) {
-                console.log('✅ Validated using Authorization header');
+                // console.log('✅ Validated using Authorization header');
                 return true;
             }
             // 2. Otherwise try HMAC signature validation

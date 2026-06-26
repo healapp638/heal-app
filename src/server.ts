@@ -29,14 +29,14 @@ const init = async () => {
     .then(() => {
 
       // Start cronjobs
-      // cron.schedule(
-      //   // "*/2 * * * *",
-      //   "0 2 * * *",
-      //   generateAffirmation,
-      //   {
-      //     noOverlap: true,
-      //   }
-      // );
+      cron.schedule(
+        // "*/2 * * * *",
+        "0 2 * * *",
+        generateAffirmation,
+        {
+          noOverlap: true,
+        }
+      );
 
       bootstrapAdmin(() => {
         console.log("Bootstrapping finished!");
@@ -58,7 +58,7 @@ setInterval(() => {
 app.use(helmet());
 
 //  CORS CONFIG 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:3001", "https://dev.heal-app.com", "https://admindev.heal-app.com", "https://www.heal-app.com", "https://admin.heal-app.com/", "https://admin.heal-app.com"];
 app.use(
   cors({
     origin: allowedOrigins,

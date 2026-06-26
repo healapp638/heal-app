@@ -19,6 +19,8 @@ const commonContent_model_1 = __importDefault(require("../../modules/AdminCommon
 const faq_model_1 = __importDefault(require("../../modules/AdminCommon/faq.model"));
 const services_1 = __importDefault(require("../../services"));
 const statusCodes_1 = __importDefault(require("../../constants/statusCodes"));
+const user_auth_model_1 = __importDefault(require("../UserAuth/user.auth.model"));
+const workflow_constant_1 = require("../../constants/workflow.constant");
 const CommonHandler = {
     getCommonContent: (type, language) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b;
@@ -43,5 +45,25 @@ const CommonHandler = {
         }
         return (0, response_util_1.showResponse)(false, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.parameter_store_post_error, null, statusCodes_1.default.API_ERROR);
     }),
+    deleteAccount(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            var _a;
+            const { email, otp } = data;
+            const finduser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, { email, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } });
+            if (!finduser.status) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.not_registered, null, statusCodes_1.default.API_ERROR);
+            }
+            // const isValid = await commonHelper.verifyBycryptHash(password,finduser?.data?.password,);
+            if (otp !== ((_a = finduser === null || finduser === void 0 ? void 0 : finduser.data) === null || _a === void 0 ? void 0 : _a.otp)) {
+                return (0, response_util_1.showResponse)(false, "Incorrect otp", null, statusCodes_1.default.API_ERROR);
+            }
+            const status = 2;
+            const result = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { email, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } }, { status });
+            if (!result.status) {
+                return (0, response_util_1.showResponse)(false, responseMessages_1.default.users.user_account_update_error, null, statusCodes_1.default.API_ERROR);
+            }
+            return (0, response_util_1.showResponse)(true, `${responseMessages_1.default.users.user_account_has_been} deleted Successfully`, null, statusCodes_1.default.SUCCESS);
+        });
+    }, //ends
 };
 exports.default = CommonHandler;
