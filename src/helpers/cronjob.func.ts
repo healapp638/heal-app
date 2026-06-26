@@ -718,7 +718,7 @@ const generateChallenges = async () => {
 }
 
 export const scheduleCroneJOb = () => {
-  nodeCron.schedule('*/30 * * * * *', () => {
+  nodeCron.schedule('*/60 * * * * *', () => {
     // console.log("crrrroonnnn")
     generateChallenges()
   })
