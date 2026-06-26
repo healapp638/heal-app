@@ -29,14 +29,14 @@ const init = async () => {
     .then(() => {
 
       // Start cronjobs
-      cron.schedule(
-        // "*/2 * * * *",
-        "0 2 * * *",
-        generateAffirmation,
-        {
-          noOverlap: true,
-        }
-      );
+      // cron.schedule(
+      //   // "*/2 * * * *",
+      //   "0 2 * * *",
+      //   generateAffirmation,
+      //   {
+      //     noOverlap: true,
+      //   }
+      // );
 
       bootstrapAdmin(() => {
         console.log("Bootstrapping finished!");

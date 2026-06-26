@@ -26,7 +26,6 @@ const mongoose_config_1 = require("./configs/mongoose.config");
 const config_util_1 = require("./utils/config.util");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 const compression_1 = __importDefault(require("compression"));
-const node_cron_1 = __importDefault(require("node-cron"));
 const cronjob_func_1 = require("./helpers/cronjob.func");
 const user_deeplink_model_1 = __importDefault(require("./modules/UserAffirmation/user.deeplink.model"));
 const perf_hooks_1 = require("perf_hooks");
@@ -39,11 +38,14 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, mongoose_config_1.connection)()
         .then(() => {
         // Start cronjobs
-        node_cron_1.default.schedule(
-        // "*/2 * * * *",
-        "0 2 * * *", cronjob_func_1.generateAffirmation, {
-            noOverlap: true,
-        });
+        // cron.schedule(
+        //   // "*/2 * * * *",
+        //   "0 2 * * *",
+        //   generateAffirmation,
+        //   {
+        //     noOverlap: true,
+        //   }
+        // );
         (0, bootstrap_util_1.bootstrapAdmin)(() => {
             console.log("Bootstrapping finished!");
         });
