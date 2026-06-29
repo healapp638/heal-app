@@ -1336,6 +1336,9 @@
 									"role": {
 										"type": "string"
 									},
+									"question": {
+										"type": "string"
+									},
 									"conversation_id": {
 										"type": "string"
 									},

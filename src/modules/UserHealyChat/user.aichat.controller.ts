@@ -26,7 +26,7 @@ export default class UserHealyChatController extends Controller {
      */
     @Security('Bearer')
     @Post("sendMessage")
-    public async sendMessage(@Body() request: { message: string, conversation_id?: string, role: string }): Promise<ApiResponse> {
+    public async sendMessage(@Body() request: { message: string, conversation_id?: string,question?:string, role: string }): Promise<ApiResponse> {
 
         const validate = validatesendMessage(request);
         if (validate.error) {

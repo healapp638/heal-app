@@ -1,9 +1,10 @@
 import Joi from "joi";
 
-export const validatesendMessage = (request: { message: string, conversation_id?: string, role: string }) => {
+export const validatesendMessage = (request: { message: string, conversation_id?: string,question?:string, role: string }) => {
     const schema = Joi.object({
         message: Joi.string().required(),
         conversation_id: Joi.any().optional().allow(""),
+        question: Joi.string().optional().allow(""),
         role: Joi.string().valid('user', 'ai').required(),
     })
     return schema.validate(request)

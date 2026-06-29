@@ -16,16 +16,14 @@ import logger from "../../configs/logger.config";
 
 const UserCommonHandler = {
 
+
 // sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
-
-//     try {
-
-//         const {conversation_id,message,role} = data;
+//         const { conversation_id,question, message, role } = data;
 
 //         if (!message?.trim()) {
-
 //             return showResponse(false,"Message is required",null,statusCodes.VALIDATION_ERROR);
 //         }
+        
 
 //         let finalConversationId = conversation_id;
 
@@ -33,23 +31,59 @@ const UserCommonHandler = {
 //         // USER LANGUAGE
 //         // =========================================
 
-//         const user = await userAuthModel.findOne({_id: convertToObjectId(user_id),status: USER_STATUS.ACTIVE});
+//         const user = await userAuthModel.findOne({
+//             _id: convertToObjectId(user_id),
+//             status: USER_STATUS.ACTIVE,
+//         });
 
-//         const userLanguage =
-//             user?.language || "en";
+//         if (!user) {
+//             return showResponse(false, "User not found", null, statusCodes.API_ERROR);
+//         }
 
 //         // =========================================
-//         // TRANSLATE MESSAGE
+//         // CREDIT CHECK
+//         // =========================================
+//         const subCredits = Number(user.sub_credits) || 0;
+//         const packCredits = Number(user.pack_credits) || 0;
+
+//         if (subCredits <= 0 && packCredits <= 0) {
+//             return showResponse(
+//                 false,
+//                 "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.",
+//                 {total_credit:subCredits+packCredits},
+//                 statusCodes.SUCCESS
+//             );
+//         }
+
+//         const userLanguage = user?.language || "en";
+
+//         // =========================================
+//         // OPENAI CONFIG
+//         // =========================================
+
+//         const openai = new OpenAI({
+//             apiKey: APP.OPENAI_API_KEY,
+//         });
+
+//         // =========================================
+//         // TRANSLATE USER MESSAGE
 //         // =========================================
 
 //         const translatedMessage: any = {};
 
-//         const langs:any = Object.values(languages);
+//         const langs: any =
+//             Object.values(languages);
+
+//         let detectedMessageLanguage =
+//          await detectLanguage(message);
+
+//         if (!langs.includes(detectedMessageLanguage)) {
+//             detectedMessageLanguage = "en";
+//         }
 
 //         await Promise.all(
 //             langs.map(async (lang: string) => {
-
-//                 translatedMessage[lang] =await translateText(message,lang);
+//                 translatedMessage[lang] = await translateHealyText(message,detectedMessageLanguage,lang);
 //             })
 //         );
 
@@ -57,126 +91,366 @@ const UserCommonHandler = {
 //         // CREATE CONVERSATION
 //         // =========================================
 
-//         if (!conversation_id) {
-
-//             // const shortTitle = message.trim().length > 40 ? `${message.trim().slice(0, 40)}...` : message.trim();
+//         if (!conversation_id ||!conversation_id.trim() || conversation_id == null) {
 
 //             let shortTitle = "New Chat";
 
-//             try {
-//         const openai = new OpenAI({
-//             apiKey: APP.OPENAI_API_KEY,
-//         });
 
-//                 const titleResponse =
-//                     await openai.chat.completions.create({
+
+//                 const titleResponse = await openai.chat.completions.create({
 //                         model: "gpt-4.1-mini",
 //                         messages: [
 //                             {
 //                                 role: "system",
 //                                 content: `
-//                             Generate a very short conversation title.
+//                                 Generate a very short conversation title.
+//                                 Rules:
+//                                 - Maximum 4 words
+//                                 - Human readable
+//                                 - No quotes
+//                                 - No emojis
+//                                 - Summarize the user's message
+//                                 `,
+//                             },
+//                             {
+//                                 role: "user",
+//                                 content: message,
+//                             },
+//                         ],
 
-//                             Rules:
-//                             - Maximum 4 words
-//                             - Human readable
-//                             - No quotes
-//                             - No emojis
-//                             - Summarize the user's message
-//                             - Keep it emotionally meaningful
-//                             `,
-//                         },
-//                         {
-//                             role: "user",
-//                             content: message,
-//                         },
-//                     ],
-//                     max_tokens: 12,
-//                     temperature: 0.7,
-//                 });
+//                         max_tokens: 12,
+//                         temperature: 0.7,
+//                     });
 
-//                 shortTitle =
-//                     titleResponse.choices?.[0]?.message?.content
-//                         ?.trim()
-//                         ?.replace(/["']/g, "") || "New Chat";
+//                 shortTitle = titleResponse.choices?.[0]?.message?.content?.trim()?.replace(/["']/g, "") || "New Chat";
+// // console.log(titleResponse.usage,"titleResponse--------------------------------------------------")
 
-//             } catch (err) {
-
-//                 console.log(err, "TITLE_GENERATION_ERROR");
-//             }
 //             const translatedTitle: any = {};
+
+//             let detectedTitleLanguage = await detectLanguage(shortTitle);
+
+//             if (!langs.includes(detectedTitleLanguage)) {
+//                 detectedTitleLanguage = "en";
+//             }
 
 //             await Promise.all(
 //                 langs.map(async (lang: string) => {
 
-//                     translatedTitle[lang] =await translateText(shortTitle,lang);
+//                     translatedTitle[lang] =await translateHealyText(shortTitle,detectedTitleLanguage,lang);
 //                 })
 //             );
 
 //             const createConversation = await userAichatConversation.create({user_id:convertToObjectId(user_id),title: translatedTitle,});
-//             finalConversationId =createConversation._id;
 
-//             console.log(createConversation,"createConversation---------------------------");
+//             finalConversationId =createConversation._id;
 //         }
 
 //         // =========================================
 //         // FIND LAST SEQUENCE
 //         // =========================================
 
-//         const lastMessage =await messageModel.findOne({conversation_id:convertToObjectId(finalConversationId),}).sort({sequence: -1,});
-//         const nextSequence =lastMessage?.sequence ? lastMessage.sequence + 1 : 1;
+//         const lastMessage = await messageModel.findOne({conversation_id:convertToObjectId(finalConversationId)}).sort({sequence: -1,});
+
+//         const nextSequence = lastMessage?.sequence ? lastMessage.sequence + 1: 1;
 
 //         // =========================================
-//         // SAVE MESSAGE
+//         // SAVE USER MESSAGE
 //         // =========================================
 
-//         const createMessage:any = await messageModel.create({
+//         const createUserMessage: any = await messageModel.create({
 //                 conversation_id:convertToObjectId(finalConversationId),
 //                 user_id:convertToObjectId(user_id),
-//                 role,
+//                 role: role || "user",
 //                 message: translatedMessage,
 //                 unix: `${Date.now()}`,
 //                 sequence: nextSequence,
 //             });
 
-//         console.log(createMessage,"createMessage---------------------------");
+//         // =========================================
+//         // SYSTEM PROMPT
+//         // =========================================
 
-//         if (!createMessage) {
+//         const systemPrompt = `
+// You are Healy, an emotionally intelligent AI companion.
 
-//             return showResponse(false,responseMessage.common.save_failed,null,statusCodes.API_ERROR);
+// Your role is to help users feel genuinely understood while guiding them toward deeper self-awareness.
+
+// You are not limited to providing emotional validation. You help users explore what they are experiencing, understand why they may be feeling that way, recognize patterns in their thoughts and behaviors, and discover insights about themselves.
+
+// CONVERSATION PHILOSOPHY
+
+// People often come to Healy for more than advice.
+
+// They want:
+
+// * To feel heard.
+// * To make sense of their emotions.
+// * To understand themselves better.
+// * To process difficult experiences.
+// * To talk through situations without being judged.
+// * To feel less alone.
+
+// Your goal is to create the feeling of a meaningful conversation with someone who is thoughtful, emotionally aware, and genuinely interested in understanding them.
+
+// HOW TO RESPOND
+
+// Before offering suggestions, spend time understanding the user's experience.
+
+// When appropriate:
+
+// * Reflect emotions you notice.
+// * Identify underlying concerns, fears, needs, or conflicts.
+// * Help users connect feelings with possible causes.
+// * Explore emotional patterns.
+// * Explain psychological or emotional mechanisms in simple language.
+// * Offer observations and insights.
+// * Ask relevant follow-up questions that deepen understanding.
+// * Encourage reflection rather than immediately solving the problem.
+// * Help users discover their own answers.
+
+// DEPTH OVER SPEED
+
+// Do not stop after acknowledging emotions.
+
+// Move the conversation forward by helping users explore:
+
+// * Why they might feel this way.
+// * What may be contributing to it.
+// * What emotional needs may be present.
+// * What internal conflicts may exist.
+// * What patterns may be repeating.
+
+// EXAMPLES OF GOOD EXPLORATION
+
+// Instead of only saying:
+
+// "That sounds difficult."
+
+// You may continue with:
+
+// "Sometimes situations like this create a conflict between what we want and what we think we should want. Reading your message, I wonder if part of the frustration comes from feeling pulled in two different directions."
+
+// Or:
+
+// "It sounds like you're carrying more than just disappointment. There may also be some self-pressure underneath it. Often when people care deeply about something, setbacks can start feeling like a reflection of who they are rather than simply what happened."
+
+// CONVERSATION STYLE
+
+// * Warm and natural.
+// * Curious without being intrusive.
+// * Emotionally intelligent.
+// * Insightful without sounding clinical.
+// * Thoughtful rather than motivational.
+// * Conversational rather than scripted.
+
+// AVOID
+
+// * Generic self-help advice.
+// * Therapy clichés.
+// * Excessive positivity.
+// * Motivational speaker language.
+// * Repetitive validation.
+// * Formulaic responses.
+
+
+// ONGOING CONVERSATIONS
+
+// Do not treat every user message as a new topic.
+
+// If the user has shared details earlier in the conversation:
+
+// - remember them
+// - reference them naturally
+// - build upon them
+// - notice recurring themes
+
+// Avoid repeatedly introducing yourself or re-validating the same emotion.
+
+// Instead, deepen the conversation and help the user connect ideas across different parts of their experience.
+
+
+// LENGTH
+
+// Match the user's needs.
+
+// For emotional or personal topics, responses can be several thoughtful paragraphs when deeper exploration would help.
+
+// Do not artificially shorten responses if the conversation would benefit from more depth.
+
+// The user should leave feeling:
+
+// "I feel understood."
+
+// "I learned something about myself."
+
+// "I want to continue this conversation."
+
+//         `;
+
+        
+
+//         // =========================================
+//         // AI RESPONSE
+//         // =========================================
+
+//         // const aiResponse = await openai.chat.completions.create({
+//         //         model: "gpt-4.1-mini",
+//         //         messages: [
+//         //             {
+//         //                 role: "system",
+//         //                 content: systemPrompt,
+//         //             },
+//         //             {
+//         //                 role: "user",
+//         //                 content: message,
+//         //             },
+//         //         ],
+
+//         //         temperature: 0.7,
+//         //         max_tokens: 1200,
+//         //     });
+
+//         const conversationMessages = await messageModel
+//     .find({
+//         conversation_id: convertToObjectId(finalConversationId),
+//     })
+//     .sort({ sequence: -1 })
+//     .limit(20);
+
+
+//     conversationMessages.reverse();
+//     // Build history for OpenAI
+//     const history: any[] = [];
+
+//     conversationMessages.forEach((msg:any) => {
+//     const content =
+//     msg?.message?.[userLanguage] ||
+//     msg?.message?.en ||
+//     "";
+
+//         history.push({
+//             role: msg.role === "ai" ? "assistant" : "user",
+//             content,
+//         });
+//     });
+
+//     const aiResponse = await openai.chat.completions.create({
+//         model: "gpt-4.1-mini",
+//         messages: [
+//             {
+//                 role: "system",
+//                 content: systemPrompt,
+//             },
+//             ...history,
+//         ],
+//         temperature: 0.9,
+//         max_tokens: 1000,
+//     });
+//     // console.log(aiResponse.usage,"aiResponse.usage--------------------------------------------------")
+
+//         const aiMessage = aiResponse?.choices?.[0]
+//                 ?.message?.content || "";
+
+//         // =========================================
+//         // TRANSLATE AI MESSAGE
+//         // =========================================
+
+//         const translatedAiMessage: any = {};
+
+//         let detectedAiMessageLanguage = await detectLanguage(aiMessage);
+
+//         if (!langs.includes(detectedAiMessageLanguage)) {
+//             detectedAiMessageLanguage = "en";
+//         }
+
+//         await Promise.all(
+//             langs.map(async (lang: string) => {
+//                 translatedAiMessage[lang] = await translateHealyText(aiMessage,detectedAiMessageLanguage,lang);
+//             })
+//         );
+
+//         // =========================================
+//         // SAVE AI MESSAGE
+//         // =========================================
+
+//         const createAiMessage: any = await messageModel.create({
+//                 conversation_id:convertToObjectId(finalConversationId),
+//                 user_id:convertToObjectId(user_id),
+//                 role: "ai",
+//                 message: translatedAiMessage,
+//                 unix: `${Date.now()}`,
+//                 sequence: nextSequence + 1,
+//             });
+
+//         // =========================================
+//         // DEDUCT CREDIT
+//         // =========================================
+//         if (subCredits > 0) {
+//             await userAuthModel.updateOne(
+//                 { _id: convertToObjectId(user_id) },
+//                 { $set: { sub_credits: subCredits - 1 } }
+//             );
+//         } else {
+//             await userAuthModel.updateOne(
+//                 { _id: convertToObjectId(user_id) },
+//                 { $set: { pack_credits: packCredits - 1 } }
+//             );
 //         }
 
 //         // =========================================
-//         // RESPONSE MESSAGE
+//         // UPDATE CONVERSATION
 //         // =========================================
 
-//         const responseData = {
-//             _id: createMessage._id,
-//             conversation_id:createMessage.conversation_id,
-//             role: createMessage.role,
-//             message:createMessage?.message?.[userLanguage] || createMessage?.message?.en,
-//             unix: createMessage.unix,
-//             sequence:createMessage.sequence,
-//             createdAt:createMessage.createdAt,
-//         };
+//         await userAichatConversation.updateOne(
+//             {
+//                 _id: convertToObjectId(finalConversationId),
+//             },
+//             {
+//                 $set: {
+//                     updatedAt: new Date(),
+//                 },
 
-//         return showResponse(true,responseMessage.common.data_save,{conversation_id:finalConversationId,message: responseData},statusCodes.SUCCESS);
+//                 $inc: {
+//                     total_messages: 2,
+//                 },
+//             }
+//         );
 
-//     } catch (error) {
+//         // =========================================
+//         // RESPONSE
+//         // =========================================
 
-//         console.log(error,"SEND_MESSAGE_ERROR");
+//         return showResponse(
+//             true,
+//             responseMessage.common.data_save,
+//             {
+//                 conversation_id:finalConversationId,
+//                 user_message: {
+//                     _id: createUserMessage._id,
+//                     role: createUserMessage.role,
+//                     message:createUserMessage?.message?.[userLanguage] ||createUserMessage?.message?.en,
+//                     sequence:createUserMessage.sequence,
+//                 },
+//                 ai_message: {
+//                     _id: createAiMessage._id,
+//                     role: createAiMessage.role,
+//                     message:createAiMessage?.message?.[userLanguage] ||createAiMessage?.message?.en,
+//                     sequence:createAiMessage.sequence,
+//                 },
+//                 total_credit:subCredits+packCredits
+//             },
+//             statusCodes.SUCCESS
+//         );
 
-//         return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
-//     }
+
 // },
 
-sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
-        const { conversation_id, message, role } = data;
+sendMessage: async (data: any, user_id: string): Promise<ApiResponse> => {
+        const { conversation_id, question, message, role } = data;
 
         if (!message?.trim()) {
-            return showResponse(false,"Message is required",null,statusCodes.VALIDATION_ERROR);
+            return showResponse(false, "Message is required", null, statusCodes.VALIDATION_ERROR);
         }
-        
 
         let finalConversationId = conversation_id;
 
@@ -203,7 +477,7 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
             return showResponse(
                 false,
                 "Insufficient credits. Please purchase a subscription or credit pack to continue chatting.",
-                {total_credit:subCredits+packCredits},
+                { total_credit: subCredits + packCredits },
                 statusCodes.SUCCESS
             );
         }
@@ -224,11 +498,9 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
         const translatedMessage: any = {};
 
-        const langs: any =
-            Object.values(languages);
+        const langs: any = Object.values(languages);
 
-        let detectedMessageLanguage =
-         await detectLanguage(message);
+        let detectedMessageLanguage = await detectLanguage(message);
 
         if (!langs.includes(detectedMessageLanguage)) {
             detectedMessageLanguage = "en";
@@ -236,26 +508,30 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
         await Promise.all(
             langs.map(async (lang: string) => {
-                translatedMessage[lang] = await translateHealyText(message,detectedMessageLanguage,lang);
+                translatedMessage[lang] = await translateHealyText(message, detectedMessageLanguage, lang);
             })
         );
+
+        // =========================================
+        // CHECK IF THIS IS A NEW CONVERSATION
+        // =========================================
+
+        const isNewConversation = !conversation_id || !conversation_id.trim() || conversation_id == null;
 
         // =========================================
         // CREATE CONVERSATION
         // =========================================
 
-        if (!conversation_id ||!conversation_id.trim() || conversation_id == null) {
+        if (isNewConversation) {
 
             let shortTitle = "New Chat";
 
-
-
-                const titleResponse = await openai.chat.completions.create({
-                        model: "gpt-4.1-mini",
-                        messages: [
-                            {
-                                role: "system",
-                                content: `
+            const titleResponse = await openai.chat.completions.create({
+                model: "gpt-4.1-mini",
+                messages: [
+                    {
+                        role: "system",
+                        content: `
                                 Generate a very short conversation title.
                                 Rules:
                                 - Maximum 4 words
@@ -264,19 +540,18 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
                                 - No emojis
                                 - Summarize the user's message
                                 `,
-                            },
-                            {
-                                role: "user",
-                                content: message,
-                            },
-                        ],
+                    },
+                    {
+                        role: "user",
+                        content: message,
+                    },
+                ],
 
-                        max_tokens: 12,
-                        temperature: 0.7,
-                    });
+                max_tokens: 12,
+                temperature: 0.7,
+            });
 
-                shortTitle = titleResponse.choices?.[0]?.message?.content?.trim()?.replace(/["']/g, "") || "New Chat";
-// console.log(titleResponse.usage,"titleResponse--------------------------------------------------")
+            shortTitle = titleResponse.choices?.[0]?.message?.content?.trim()?.replace(/["']/g, "") || "New Chat";
 
             const translatedTitle: any = {};
 
@@ -288,36 +563,57 @@ sendMessage: async (data: any,user_id: string): Promise<ApiResponse> => {
 
             await Promise.all(
                 langs.map(async (lang: string) => {
-
-                    translatedTitle[lang] =await translateHealyText(shortTitle,detectedTitleLanguage,lang);
+                    translatedTitle[lang] = await translateHealyText(shortTitle, detectedTitleLanguage, lang);
                 })
             );
 
-            const createConversation = await userAichatConversation.create({user_id:convertToObjectId(user_id),title: translatedTitle,});
+            // Store the starter question (if provided) translated across languages,
+            // so it stays retrievable later in the conversation lifecycle.
+            const translatedStarterQuestion: any = {};
 
-            finalConversationId =createConversation._id;
+            if (question && question.trim()) {
+                let detectedQuestionLanguage = await detectLanguage(question);
+
+                if (!langs.includes(detectedQuestionLanguage)) {
+                    detectedQuestionLanguage = "en";
+                }
+
+                await Promise.all(
+                    langs.map(async (lang: string) => {
+                        translatedStarterQuestion[lang] = await translateHealyText(question, detectedQuestionLanguage, lang);
+                    })
+                );
+            }
+
+            const createConversation = await userAichatConversation.create({
+                user_id: convertToObjectId(user_id),
+                title: translatedTitle,
+                starter_question: translatedStarterQuestion,
+            });
+
+            finalConversationId = createConversation._id;
         }
 
         // =========================================
         // FIND LAST SEQUENCE
         // =========================================
 
-        const lastMessage = await messageModel.findOne({conversation_id:convertToObjectId(finalConversationId)}).sort({sequence: -1,});
+        const lastMessage = await messageModel.findOne({ conversation_id: convertToObjectId(finalConversationId) }).sort({ sequence: -1 });
 
-        const nextSequence = lastMessage?.sequence ? lastMessage.sequence + 1: 1;
+        const nextSequence = lastMessage?.sequence ? lastMessage.sequence + 1 : 1;
 
         // =========================================
         // SAVE USER MESSAGE
         // =========================================
 
         const createUserMessage: any = await messageModel.create({
-                conversation_id:convertToObjectId(finalConversationId),
-                user_id:convertToObjectId(user_id),
-                role: role || "user",
-                message: translatedMessage,
-                unix: `${Date.now()}`,
-                sequence: nextSequence,
-            });
+            conversation_id: convertToObjectId(finalConversationId),
+            user_id: convertToObjectId(user_id),
+            role: role || "user",
+            message: translatedMessage,
+            unix: `${Date.now()}`,
+            sequence: nextSequence,
+        });
 
         // =========================================
         // SYSTEM PROMPT
@@ -405,7 +701,6 @@ AVOID
 * Repetitive validation.
 * Formulaic responses.
 
-
 ONGOING CONVERSATIONS
 
 Do not treat every user message as a new topic.
@@ -420,7 +715,6 @@ If the user has shared details earlier in the conversation:
 Avoid repeatedly introducing yourself or re-validating the same emotion.
 
 Instead, deepen the conversation and help the user connect ideas across different parts of their experience.
-
 
 LENGTH
 
@@ -437,71 +731,87 @@ The user should leave feeling:
 "I learned something about myself."
 
 "I want to continue this conversation."
-
-
         `;
+
+// =========================================
+// CONTEXTUAL NOTE: DISPLAYED STARTER QUESTION
+// =========================================
+// Only relevant on the very first user message of a brand-new conversation.
+// Tells the AI what prompt the user was shown, so it can determine whether
+// the user's message is answering that prompt or starting something new.
+
+        let promptContextNote = "";
+
+        if (isNewConversation && question && question.trim()) {
+            promptContextNote = `
+CONTEXT (not visible to the user): Before typing their first message, the user was shown this suggested conversation-starter prompt on screen:
+"${question.trim()}"
+
+Decide whether the user's message is:
+(a) a response/answer to that displayed prompt, or
+(b) the start of a completely different topic that ignores the prompt.
+
+If (a): Treat their message as a direct answer to the prompt. Acknowledge it naturally and ask a relevant, specific follow-up that deepens it. Do NOT ask the user to clarify or explain what they meant — you already know the question they were responding to.
+
+If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do not try to redirect the conversation back to the original prompt.
+            `;
+        }
+
+        // =========================================
+        // BUILD CONVERSATION HISTORY
+        // =========================================
+
+        const conversationMessages = await messageModel
+            .find({
+                conversation_id: convertToObjectId(finalConversationId),
+            })
+            .sort({ sequence: -1 })
+            .limit(20);
+
+        conversationMessages.reverse();
+
+        const history: any[] = [];
+
+        conversationMessages.forEach((msg: any) => {
+            const content =
+                msg?.message?.[userLanguage] ||
+                msg?.message?.en ||
+                "";
+
+            history.push({
+                role: msg.role === "ai" ? "assistant" : "user",
+                content,
+            });
+        });
 
         // =========================================
         // AI RESPONSE
         // =========================================
 
-        // const aiResponse = await openai.chat.completions.create({
-        //         model: "gpt-4.1-mini",
-        //         messages: [
-        //             {
-        //                 role: "system",
-        //                 content: systemPrompt,
-        //             },
-        //             {
-        //                 role: "user",
-        //                 content: message,
-        //             },
-        //         ],
-
-        //         temperature: 0.7,
-        //         max_tokens: 1200,
-        //     });
-
-        const conversationMessages = await messageModel
-    .find({
-        conversation_id: convertToObjectId(finalConversationId),
-    })
-    .sort({ sequence: -1 })
-    .limit(20);
-
-
-    conversationMessages.reverse();
-    // Build history for OpenAI
-    const history: any[] = [];
-
-    conversationMessages.forEach((msg:any) => {
-    const content =
-    msg?.message?.[userLanguage] ||
-    msg?.message?.en ||
-    "";
-
-        history.push({
-            role: msg.role === "ai" ? "assistant" : "user",
-            content,
-        });
-    });
-
-    const aiResponse = await openai.chat.completions.create({
-        model: "gpt-4.1-mini",
-        messages: [
+        const aiMessages: any[] = [
             {
                 role: "system",
                 content: systemPrompt,
             },
-            ...history,
-        ],
-        temperature: 0.9,
-        max_tokens: 1000,
-    });
-    // console.log(aiResponse.usage,"aiResponse.usage--------------------------------------------------")
+        ];
 
-        const aiMessage = aiResponse?.choices?.[0]
-                ?.message?.content || "";
+        if (promptContextNote) {
+            aiMessages.push({
+                role: "system",
+                content: promptContextNote,
+            });
+        }
+
+        aiMessages.push(...history);
+
+        const aiResponse = await openai.chat.completions.create({
+            model: "gpt-4.1-mini",
+            messages: aiMessages,
+            temperature: 0.9,
+            max_tokens: 1000,
+        });
+
+        const aiMessage = aiResponse?.choices?.[0]?.message?.content || "";
 
         // =========================================
         // TRANSLATE AI MESSAGE
@@ -517,7 +827,7 @@ The user should leave feeling:
 
         await Promise.all(
             langs.map(async (lang: string) => {
-                translatedAiMessage[lang] = await translateHealyText(aiMessage,detectedAiMessageLanguage,lang);
+                translatedAiMessage[lang] = await translateHealyText(aiMessage, detectedAiMessageLanguage, lang);
             })
         );
 
@@ -526,13 +836,13 @@ The user should leave feeling:
         // =========================================
 
         const createAiMessage: any = await messageModel.create({
-                conversation_id:convertToObjectId(finalConversationId),
-                user_id:convertToObjectId(user_id),
-                role: "ai",
-                message: translatedAiMessage,
-                unix: `${Date.now()}`,
-                sequence: nextSequence + 1,
-            });
+            conversation_id: convertToObjectId(finalConversationId),
+            user_id: convertToObjectId(user_id),
+            role: "ai",
+            message: translatedAiMessage,
+            unix: `${Date.now()}`,
+            sequence: nextSequence + 1,
+        });
 
         // =========================================
         // DEDUCT CREDIT
@@ -576,69 +886,26 @@ The user should leave feeling:
             true,
             responseMessage.common.data_save,
             {
-                conversation_id:finalConversationId,
+                conversation_id: finalConversationId,
                 user_message: {
                     _id: createUserMessage._id,
                     role: createUserMessage.role,
-                    message:createUserMessage?.message?.[userLanguage] ||createUserMessage?.message?.en,
-                    sequence:createUserMessage.sequence,
+                    message: createUserMessage?.message?.[userLanguage] || createUserMessage?.message?.en,
+                    sequence: createUserMessage.sequence,
                 },
                 ai_message: {
                     _id: createAiMessage._id,
                     role: createAiMessage.role,
-                    message:createAiMessage?.message?.[userLanguage] ||createAiMessage?.message?.en,
-                    sequence:createAiMessage.sequence,
+                    message: createAiMessage?.message?.[userLanguage] || createAiMessage?.message?.en,
+                    sequence: createAiMessage.sequence,
                 },
-                total_credit:subCredits+packCredits
+                total_credit: subCredits + packCredits,
             },
             statusCodes.SUCCESS
         );
 
-
 },
 
-// getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
-
-//     try {
-
-//         // =========================================
-//         // USER LANGUAGE
-//         // =========================================
-
-//         const user =await userAuthModel.findOne({_id: convertToObjectId(user_id),status: USER_STATUS.ACTIVE});
-
-//         const userLanguage = user?.language || "en";
-
-//         // =========================================
-//         // QUESTIONS
-//         // =========================================
-//         // const questions = workflowConstant.questions;
-
-//         const finalQuestion = questions;
-
-//         // =========================================
-//         // RANDOM 5
-//         // =========================================
-
-//         const shuffled =finalQuestion.sort(() => 0.5 - Math.random());
-
-//         const randomQuestions =shuffled.slice(0, 5);
-
-//         // =========================================
-//         // LANGUAGE RESPONSE
-//         // =========================================
-
-//         const finalQuestions = randomQuestions.map((item: any) =>item[userLanguage] || item.en);
-
-//         return showResponse(true,responseMessage.common.data_retreive_sucess,finalQuestions,statusCodes.SUCCESS);
-
-//     } catch (error) {
-
-//         console.log(error,"GET_RANDOM_QUESTIONS_ERROR");
-
-//         return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
-//     }
-// },
 
 getRandomQuestions: async (user_id: string): Promise<ApiResponse> => {
 

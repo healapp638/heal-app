@@ -79,7 +79,7 @@ const logger = winston_1.default.createLogger({
     level: process.env.LOG_LEVEL || "info",
     defaultMeta: {
         service: "heal-api",
-        env: process.env.ENV_MODE || "prod",
+        env: process.env.ENV_MODE || "DEV",
     },
     transports: [
         // 🔴 ERROR LOGS

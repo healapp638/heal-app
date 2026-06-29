@@ -18,7 +18,6 @@ const app_constant_1 = require("../constants/app.constant");
 const logger_config_1 = __importDefault(require("../configs/logger.config"));
 const connection = () => __awaiter(void 0, void 0, void 0, function* () {
     const MONGO_URI = yield app_constant_1.DB.MONGODB_URI;
-    // console.log(MONGO_URI,"MONGODB_URIiiii")
     mongoose_1.default.Promise = global.Promise;
     try {
         yield mongoose_1.default.connect(MONGO_URI, {});
@@ -33,27 +32,7 @@ const connection = () => __awaiter(void 0, void 0, void 0, function* () {
             message: error.message,
             stack: error.stack,
         });
-        process.exit(1); // crash → infra should restart
+        process.exit(1);
     }
-    // const db = mongoose.connection;
-    // db.on("error", (error) => {
-    //   logger.error("MONGO_RUNTIME_ERROR", {
-    //     type: "mongodb",
-    //     message: error.message,
-    //     stack: error.stack,
-    //   });
-    // });
-    // db.on("disconnected", () => {
-    //   logger.warn("MONGO_DISCONNECTED", {
-    //     type: "mongodb",
-    //     message: "MongoDB disconnected",
-    //   });
-    // });
-    // db.on("reconnected", () => {
-    //   logger.info("MONGO_RECONNECTED", {
-    //     type: "mongodb",
-    //     message: "MongoDB reconnected",
-    //   });
-    // });
 });
 exports.connection = connection;

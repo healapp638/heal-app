@@ -26,6 +26,7 @@ const conversationSchema = new mongoose.Schema(
         //     type: Number,
         //     default: 0,
         // },
+        starter_question: langSchema,
         status: {
             type: Number,
             default: 1, // 1 active, 2 deleted

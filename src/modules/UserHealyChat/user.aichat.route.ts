@@ -7,9 +7,9 @@ const { verifyTokenUser } = middlewares.auth
 const router = express.Router()
 
 router.post('/sendMessage',verifyTokenUser, async (req: Request | any, res: Response) => {
-    const { message, conversation_id, role } = req.body;
+    const { message, conversation_id,question, role } = req.body;
     const controller = new UserHealyChatController(req, res)
-    const result: ApiResponse = await controller.sendMessage({ message, conversation_id, role });
+    const result: ApiResponse = await controller.sendMessage({ message, conversation_id,question,role });
     return showOutput(res, result, result.code)
 })
 

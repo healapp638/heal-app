@@ -24,209 +24,16 @@ const openai_1 = __importDefault(require("openai"));
 const app_constant_1 = require("../constants/app.constant");
 const user_auth_model_1 = __importDefault(require("../modules/UserAuth/user.auth.model"));
 const user_daily_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.daily.challenges.model"));
-const moment_1 = __importDefault(require("moment"));
+// import moment from "moment";
 const common_helper_1 = require("./common.helper");
 const openai_helper_1 = require("./openai.helper");
 const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserChallenges/user.weekly.challenges.model"));
 const node_cron_1 = __importDefault(require("node-cron"));
 const mongoose_config_1 = require("../configs/mongoose.config");
+const moment_timezone_1 = __importDefault(require("moment-timezone"));
 const getOpenAI = () => new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
-// const generateAffirmation = async () => {
-//   try {
-//     let generatedQuote = "";
-//     let isDuplicate = true;
-//     let retryCount = 0;
-//     const maxRetry = 10;
-//     // ==================================================
-//     // RANDOM CATEGORY
-//     // ==================================================
-//     const categories = [
-//       "confidence",
-//       "self-love",
-//       "healing",
-//       "success",
-//       "peace",
-//       "gratitude",
-//       "motivation",
-//       "growth",
-//       "happiness",
-//       "strength",
-//       "focus",
-//       "abundance",
-//       "calmness",
-//       "courage",
-//       "discipline",
-//       "joy",
-//       "energy",
-//       "creativity",
-//       "mindfulness",
-//     ];
-//     // ==================================================
-//     // RECENT AFFIRMATIONS
-//     // ==================================================
-//     const recentAffirmations =
-//       await userAffirmationModel
-//         .find(
-//           {
-//             status: USER_STATUS.ACTIVE,
-//           },
-//           {
-//             "affirmation.en": 1,
-//           }
-//         )
-//         .sort({ createdAt: -1 })
-//         .limit(20)
-//         .lean();
-//     const avoidList =
-//       recentAffirmations
-//         .map(
-//           (item: any) =>
-//             item?.affirmation?.en
-//         )
-//         .filter(Boolean)
-//         .join("\n");
-//     // Generate until unique quote found
-//     while (isDuplicate && retryCount < maxRetry) {
-//       const randomCategory =
-//         categories[
-//         Math.floor(
-//           Math.random() *
-//           categories.length
-//         )
-//         ];
-//       const response = await openai.chat.completions.create({
-//         model: "gpt-4.1-mini",
-//         temperature: 1.4,
-//         response_format: {
-//           type: "json_object",
-//         },
-//         messages: [
-//           {
-//             role: "system",
-//             content: `
-// You are an affirmation generator.
-// Your job is to create highly diverse affirmations.
-// STRICT RULES:
-// - Every affirmation must feel completely different
-// - Avoid repeating sentence structures
-// - Avoid repeating verbs
-// - Avoid repeating emotional patterns
-// - Never repeatedly start with:
-//   "I embrace"
-//   "I am"
-//   "I deserve"
-// - Use varied tones:
-//   calm,
-//   energetic,
-//   empowering,
-//   peaceful,
-//   joyful,
-//   grounded,
-//   ambitious,
-//   healing
-// - Use modern natural language
-// - Keep under 15 words
-// - First person only
-// - No poetry
-// - No author names
-// - No explanations
-// - No hashtags
-// - No emojis
-// - Return ONLY JSON
-// `,
-//           },
-//           {
-//             role: "user",
-//             content: `
-// Generate 1 completely unique affirmation about "${randomCategory}".
-// DO NOT generate anything similar to these affirmations:
-// ${avoidList}
-// Rules:
-// - Different wording
-// - Different emotional direction
-// - Different structure
-// - Different verbs
-// - Different emotional energy
-// Return JSON:
-// {
-//   "affirmation": "text"
-// }
-// `,
-//           },
-//         ],
-//       });
-//       const content: any = response.choices?.[0]?.message?.content || "{}";
-//       const parsed = JSON.parse(content);
-//       generatedQuote = parsed?.affirmation?.trim();
-//       if (!generatedQuote) {
-//         retryCount++;
-//         continue;
-//       }
-//       // Duplicate check
-//       const existingQuote = await userAffirmationModel.findOne({
-//         "affirmation.en": {
-//           $regex: `^${generatedQuote}$`,
-//           $options: "i",
-//         },
-//         status: {
-//           $ne: USER_STATUS.DELETED,
-//         },
-//       });
-//       if (!existingQuote) {
-//         isDuplicate = false;
-//       }
-//       retryCount++;
-//     }
-//     if (!generatedQuote || isDuplicate) {
-//       return showResponse(
-//         false,
-//         "Failed to generate unique quote",
-//         null,
-//         statusCodes.API_ERROR,
-//       );
-//     }
-//     // Translate all languages
-//     const obj: any = {
-//       affirmation: {},
-//     };
-//     const langs = Object.values(languages);
-//     await Promise.all(
-//       langs.map(async (lang: string) => {
-//         const translatedQuote = await translatePlainText(generatedQuote, lang);
-//         obj.affirmation[lang] = translatedQuote;
-//       }),
-//     );
-//     // Save
-//     const createQuote = await userAffirmationModel.create({
-//       affirmation: obj.affirmation,
-//       type: "AI",
-//     });
-//     if (!createQuote) {
-//       return showResponse(
-//         false,
-//         responseMessage.common.save_failed,
-//         null,
-//         statusCodes.API_ERROR,
-//       );
-//     }
-//     return showResponse(
-//       true,
-//       responseMessage.common.data_save,
-//       createQuote,
-//       statusCodes.SUCCESS,
-//     );
-//   } catch (error) {
-//     console.log(error, "CREATE_QUOTE_ERROR");
-//     return showResponse(
-//       false,
-//       "Error generating quote",
-//       null,
-//       statusCodes.API_ERROR,
-//     );
-//   }
-// }; // end
 const generateAffirmation = () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
     try {
@@ -484,116 +291,322 @@ Return JSON only.
     }
 });
 exports.generateAffirmation = generateAffirmation;
+// const generateChallenges = async () => {
+//   try {
+//     await connectDB()
+//     //daily logic 
+//     const startOfDay = moment().startOf('day').toDate();
+//     const findUser = await userAuthModel.find({
+//       isVerified: true,
+//       $or: [
+//         { lastDailyChallengeGeneratedDate: { $exists: false } },
+//         { lastDailyChallengeGeneratedDate: { $lt: startOfDay } },
+//         { lastDailyChallengeGeneratedDate: null }
+//       ]
+//     });
+//     if (findUser.length > 0) {
+//       await Promise.all(findUser.map(async (curelem: any) => {
+//         //challenges logic start
+//         const challengesDetails = await challengsFn(curelem);
+//         const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+//         const isDailyChallengeExist = challengesDetails?.isDailyChallengeExist;
+//         const payload: any = challengesDetails?.payload;
+//         if (isOnBoardingComplete && !isDailyChallengeExist) {
+//           //
+//           await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { isDailyChallengeInProgress: true } })
+//           const res = await generateUserChallengesDaily(payload, curelem?._id.toString());
+//           const languagess = Object.values(languages);
+//           const formattedChallenges = await Promise.all(
+//             res?.data?.map(async (challenge: any) => {
+//               const titleObj: any = {};
+//               await Promise.all(
+//                 languagess.map(async (lang) => {
+//                   titleObj[lang] = await translateText(
+//                     challenge.title,
+//                     lang
+//                   );
+//                 })
+//               );
+//               const exercises = await Promise.all(
+//                 challenge.exercises.map(async (exercise: any) => {
+//                   const exerciseTitleObj: any = {};
+//                   await Promise.all(
+//                     languagess.map(async (lang) => {
+//                       exerciseTitleObj[lang] = await translateText(
+//                         exercise.title,
+//                         lang
+//                       );
+//                     })
+//                   );
+//                   return {
+//                     title: exerciseTitleObj,
+//                     step_number: exercise.step_number,
+//                   };
+//                 })
+//               );
+//               return {
+//                 user_id: challenge.user_id,
+//                 challenge_type: challenge.challenge_type,
+//                 points: challenge.points,
+//                 title: titleObj,
+//                 exercises,
+//               };
+//             })
+//           );
+//           const result = await userDailyChallengesModel.insertMany(
+//             formattedChallenges
+//           );
+//           if (result) {
+//             await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } })
+//           }
+//         }
+//         //end
+//       }))
+//     }
+//     //weerkly section
+//     const startOfWeek = moment().startOf('week').toDate();
+//     const findUserWeekly = await userAuthModel.find({
+//       isVerified: true,
+//       $or: [
+//         { lastWeeklyChallengeGeneratedDate: { $exists: false } },
+//         { lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek } },
+//         { lastWeeklyChallengeGeneratedDate: null }
+//       ]
+//     });
+//     if (findUserWeekly.length > 0) {
+//       await Promise.all(findUserWeekly.map(async (curelem: any) => {
+//         //challenges logic start
+//         const challengesDetails = await challengsFn(curelem);
+//         const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
+//         const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
+//         const payload: any = challengesDetails?.payload;
+//         if (isOnBoardingComplete && !isWeeklyChallengeExist) {
+//           await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { isWeeklyChallengeInProgress: true } })
+//           const res = await generateUserChallengesWeekly(payload, curelem?._id.toString())
+//           const languagess = Object.values(languages);
+//           const formattedChallenges = await Promise.all(
+//             res?.data?.map(async (challenge: any) => {
+//               const titleObj: any = {};
+//               await Promise.all(
+//                 languagess.map(async (lang) => {
+//                   titleObj[lang] = await translateText(
+//                     challenge.title,
+//                     lang
+//                   );
+//                 })
+//               );
+//               // multilingual exercises
+//               const exercises = await Promise.all(
+//                 challenge.exercises.map(async (exercise: any) => {
+//                   const exerciseTitleObj: any = {};
+//                   await Promise.all(
+//                     languagess.map(async (lang) => {
+//                       exerciseTitleObj[lang] = await translateText(
+//                         exercise.title,
+//                         lang
+//                       );
+//                     })
+//                   );
+//                   return {
+//                     title: exerciseTitleObj,
+//                     step_number: exercise.step_number,
+//                   };
+//                 })
+//               );
+//               return {
+//                 user_id: challenge.user_id,
+//                 challenge_type: challenge.challenge_type,
+//                 points: challenge.points,
+//                 title: titleObj,
+//                 exercises,
+//               };
+//             })
+//           );
+//           const result = await userWeeklyChallengesModel.insertMany(
+//             formattedChallenges
+//           );
+//           if (result) {
+//             await userAuthModel.findOneAndUpdate({ _id: curelem?._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } })
+//           }
+//         }
+//         //end
+//       }))
+//     }
+//   } catch (err: any) {
+//     logger.error("GENERATE_CHALLENGES_ERROR", {
+//       type: "error",
+//       message: err.message,
+//       stack: err.stack,
+//     });
+//     return showResponse(false, err.message, null, statusCodes.API_ERROR)
+//   }
+// }
+// -------------------------
+// Helpers
+// -------------------------
+const DEFAULT_TZ = "Europe/Zurich";
+const getUserStartOfDay = (timeZone) => {
+    console.log(timeZone, "timezone");
+    return moment_timezone_1.default.tz(timeZone || DEFAULT_TZ).startOf("day").toDate();
+};
+const getUserStartOfWeek = (timeZone) => {
+    console.log(timeZone, "timezone");
+    return moment_timezone_1.default.tz(timeZone || DEFAULT_TZ).startOf("week").toDate();
+};
+// -------------------------
+// Process single user - DAILY
+// -------------------------
+const processDailyUser = (curelem) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const challengesDetails = yield (0, common_helper_1.challengsFn)(curelem);
+    const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
+    const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
+    const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
+    if (!isOnBoardingComplete || isDailyChallengeExist) {
+        return;
+    }
+    const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, curelem._id.toString());
+    const languagess = Object.values(workflow_constant_1.languages);
+    const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+        // Translate Challenge Title
+        const titleObj = {};
+        yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
+        })));
+        // Translate Exercises
+        const exercises = yield Promise.all(challenge.exercises.map((exercise) => __awaiter(void 0, void 0, void 0, function* () {
+            const exerciseTitleObj = {};
+            yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                exerciseTitleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(exercise.title, lang);
+            })));
+            return { title: exerciseTitleObj, step_number: exercise.step_number };
+        })));
+        return {
+            user_id: challenge.user_id,
+            challenge_type: challenge.challenge_type,
+            points: challenge.points,
+            title: titleObj,
+            exercises,
+        };
+    })));
+    const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
+    if (result) {
+        yield user_auth_model_1.default.updateOne({ _id: curelem._id }, { $set: { lastDailyChallengeGeneratedDate: new Date() } });
+    }
+});
+// -------------------------
+// Process single user - WEEKLY
+// -------------------------
+const processWeeklyUser = (curelem) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const challengesDetails = yield (0, common_helper_1.challengsFn)(curelem);
+    const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
+    const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
+    const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
+    if (!isOnBoardingComplete || isWeeklyChallengeExist) {
+        return;
+    }
+    const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, curelem._id.toString());
+    const languagess = Object.values(workflow_constant_1.languages);
+    const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+        // Translate Challenge Title
+        const titleObj = {};
+        yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+            titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
+        })));
+        // Translate Exercises
+        const exercises = yield Promise.all(challenge.exercises.map((exercise) => __awaiter(void 0, void 0, void 0, function* () {
+            const exerciseTitleObj = {};
+            yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
+                exerciseTitleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(exercise.title, lang);
+            })));
+            return {
+                title: exerciseTitleObj,
+                step_number: exercise.step_number,
+            };
+        })));
+        return {
+            user_id: challenge.user_id,
+            challenge_type: challenge.challenge_type,
+            points: challenge.points,
+            title: titleObj,
+            exercises,
+        };
+    })));
+    const result = yield user_weekly_challenges_model_1.default.insertMany(formattedChallenges);
+    if (result) {
+        yield user_auth_model_1.default.updateOne({ _id: curelem._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date() } });
+    }
+});
+// -------------------------
+// Main orchestrator
+// -------------------------
 const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield (0, mongoose_config_1.connection)();
-        //daily logic 
-        const startOfDay = (0, moment_1.default)().startOf('day').toDate();
-        const findUser = yield user_auth_model_1.default.find({
+        // -------------------------
+        // DAILY (timezone-aware)
+        // -------------------------
+        const dailyCandidates = yield user_auth_model_1.default.find({
             isVerified: true,
+            isDailyChallengeInProgress: false,
             $or: [
                 { lastDailyChallengeGeneratedDate: { $exists: false } },
-                { lastDailyChallengeGeneratedDate: { $lt: startOfDay } },
-                { lastDailyChallengeGeneratedDate: null }
-            ]
+                { lastDailyChallengeGeneratedDate: null },
+                { lastDailyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
+            ],
         });
-        if (findUser.length > 0) {
-            yield Promise.all(findUser.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
-                var _a;
-                //challenges logic start
-                const challengesDetails = yield (0, common_helper_1.challengsFn)(curelem);
-                const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
-                const isDailyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isDailyChallengeExist;
-                const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
-                if (isOnBoardingComplete && !isDailyChallengeExist) {
-                    //
-                    yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { isDailyChallengeInProgress: true } });
-                    const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, curelem === null || curelem === void 0 ? void 0 : curelem._id.toString());
-                    const languagess = Object.values(workflow_constant_1.languages);
-                    const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
-                        const titleObj = {};
-                        yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                            titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
-                        })));
-                        const exercises = yield Promise.all(challenge.exercises.map((exercise) => __awaiter(void 0, void 0, void 0, function* () {
-                            const exerciseTitleObj = {};
-                            yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                                exerciseTitleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(exercise.title, lang);
-                            })));
-                            return {
-                                title: exerciseTitleObj,
-                                step_number: exercise.step_number,
-                            };
-                        })));
-                        return {
-                            user_id: challenge.user_id,
-                            challenge_type: challenge.challenge_type,
-                            points: challenge.points,
-                            title: titleObj,
-                            exercises,
-                        };
-                    })));
-                    const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
-                    if (result) {
-                        yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { lastDailyChallengeGeneratedDate: new Date(), isDailyChallengeInProgress: false } });
-                    }
-                }
-                //end
-            })));
+        for (const candidate of dailyCandidates) {
+            const userStartOfDay = getUserStartOfDay(candidate.timeZone);
+            const last = candidate.lastDailyChallengeGeneratedDate;
+            const isEligible = !last || last < userStartOfDay;
+            if (!isEligible)
+                continue; // their local day hasn't rolled over yet
+            const user = yield user_auth_model_1.default.findOneAndUpdate({ _id: candidate._id, isDailyChallengeInProgress: false }, { $set: { isDailyChallengeInProgress: true } }, { new: true });
+            if (!user)
+                continue; // already claimed/processed by another run
+            try {
+                yield processDailyUser(user);
+                // console.log("processDailyUser ",user?._id)
+            }
+            catch (err) {
+                logger_config_1.default.error("PROCESS_DAILY_USER_ERROR", err);
+            }
+            finally {
+                yield user_auth_model_1.default.updateOne({ _id: user._id }, { $set: { isDailyChallengeInProgress: false } });
+            }
         }
-        //weerkly section
-        const startOfWeek = (0, moment_1.default)().startOf('week').toDate();
-        const findUserWeekly = yield user_auth_model_1.default.find({
+        // -------------------------
+        // WEEKLY (timezone-aware)
+        // -------------------------
+        const weeklyCandidates = yield user_auth_model_1.default.find({
             isVerified: true,
+            isWeeklyChallengeInProgress: false,
             $or: [
                 { lastWeeklyChallengeGeneratedDate: { $exists: false } },
-                { lastWeeklyChallengeGeneratedDate: { $lt: startOfWeek } },
-                { lastWeeklyChallengeGeneratedDate: null }
-            ]
+                { lastWeeklyChallengeGeneratedDate: null },
+                { lastWeeklyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
+            ],
         });
-        if (findUserWeekly.length > 0) {
-            yield Promise.all(findUserWeekly.map((curelem) => __awaiter(void 0, void 0, void 0, function* () {
-                var _a;
-                //challenges logic start
-                const challengesDetails = yield (0, common_helper_1.challengsFn)(curelem);
-                const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
-                const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
-                const payload = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.payload;
-                if (isOnBoardingComplete && !isWeeklyChallengeExist) {
-                    yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { isWeeklyChallengeInProgress: true } });
-                    const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, curelem === null || curelem === void 0 ? void 0 : curelem._id.toString());
-                    const languagess = Object.values(workflow_constant_1.languages);
-                    const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
-                        const titleObj = {};
-                        yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                            titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
-                        })));
-                        // multilingual exercises
-                        const exercises = yield Promise.all(challenge.exercises.map((exercise) => __awaiter(void 0, void 0, void 0, function* () {
-                            const exerciseTitleObj = {};
-                            yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                                exerciseTitleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(exercise.title, lang);
-                            })));
-                            return {
-                                title: exerciseTitleObj,
-                                step_number: exercise.step_number,
-                            };
-                        })));
-                        return {
-                            user_id: challenge.user_id,
-                            challenge_type: challenge.challenge_type,
-                            points: challenge.points,
-                            title: titleObj,
-                            exercises,
-                        };
-                    })));
-                    const result = yield user_weekly_challenges_model_1.default.insertMany(formattedChallenges);
-                    if (result) {
-                        yield user_auth_model_1.default.findOneAndUpdate({ _id: curelem === null || curelem === void 0 ? void 0 : curelem._id }, { $set: { lastWeeklyChallengeGeneratedDate: new Date(), isWeeklyChallengeInProgress: false } });
-                    }
-                }
-                //end
-            })));
+        for (const candidate of weeklyCandidates) {
+            const userStartOfWeek = getUserStartOfWeek(candidate.timeZone);
+            const last = candidate.lastWeeklyChallengeGeneratedDate;
+            const isEligible = !last || last < userStartOfWeek;
+            if (!isEligible)
+                continue; // their local week hasn't rolled over yet
+            const user = yield user_auth_model_1.default.findOneAndUpdate({ _id: candidate._id, isWeeklyChallengeInProgress: false }, { $set: { isWeeklyChallengeInProgress: true } }, { new: true });
+            if (!user)
+                continue;
+            try {
+                yield processWeeklyUser(user);
+                // console.log("processWeeklyUser ",user?._id)
+            }
+            catch (err) {
+                logger_config_1.default.error("PROCESS_WEEKLY_USER_ERROR", err);
+            }
+            finally {
+                yield user_auth_model_1.default.updateOne({ _id: user._id }, { $set: { isWeeklyChallengeInProgress: false } });
+            }
         }
     }
     catch (err) {
@@ -602,12 +615,16 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
             message: err.message,
             stack: err.stack,
         });
-        return (0, response_util_1.showResponse)(false, err.message, null, statusCodes_1.default.API_ERROR);
     }
 });
+// export const scheduleCroneJOb = () => {
+//   nodeCron.schedule("*/60 * * * * *", () => {
+//     generateChallenges();
+//   });
+// };
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('*/60 * * * * *', () => {
-        // console.log("crrrroonnnn")
+    node_cron_1.default.schedule('*/300 * * * * *', () => {
+        console.log("crrrroonnnn");
         generateChallenges();
     });
 };

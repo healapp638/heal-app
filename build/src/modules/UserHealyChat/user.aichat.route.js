@@ -19,9 +19,9 @@ const middlewares_1 = __importDefault(require("../../middlewares"));
 const { verifyTokenUser } = middlewares_1.default.auth;
 const router = express_1.default.Router();
 router.post('/sendMessage', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { message, conversation_id, role } = req.body;
+    const { message, conversation_id, question, role } = req.body;
     const controller = new user_aichat_controller_1.default(req, res);
-    const result = yield controller.sendMessage({ message, conversation_id, role });
+    const result = yield controller.sendMessage({ message, conversation_id, question, role });
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
 router.get('/getRandomQuestions', verifyTokenUser, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
