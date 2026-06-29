@@ -17,6 +17,7 @@ const translate_1 = require("@google-cloud/translate");
 const app_constant_1 = require("../constants/app.constant");
 const logger_config_1 = __importDefault(require("../configs/logger.config"));
 const he_1 = __importDefault(require("he"));
+// import OpenAI from 'openai';
 // const translate = new Translate({
 //     key: APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
 // });
@@ -202,3 +203,65 @@ const AutoTranslateText = (text_1, targetLanguage_1, ...args_1) => __awaiter(voi
     }
 });
 exports.AutoTranslateText = AutoTranslateText;
+// // =========================================
+// // OPENAI TRANSLATION HELPER
+// // =========================================
+// export const translateWithOpenAI = async (
+//     openai: OpenAI,
+//     text: string,
+//     sourceLang: string,
+//     targetLangs: string[]
+// ): Promise<Record<string, string>> => {
+//     if (!text || !text.trim()) {
+//         const empty: Record<string, string> = {};
+//         targetLangs.forEach((l) => (empty[l] = ""));
+//         return empty;
+//     }
+//     // No need to "translate" into the same language it's already in
+//     const langsToTranslate = targetLangs.filter((l) => l !== sourceLang);
+//     if (langsToTranslate.length === 0) {
+//         const result: Record<string, string> = {};
+//         targetLangs.forEach((l) => (result[l] = text));
+//         return result;
+//     }
+//     let parsed: Record<string, string> = {};
+//     try {
+//         const response = await openai.chat.completions.create({
+//             model: "gpt-4.1-mini",
+//             messages: [
+//                 {
+//                     role: "system",
+//                     content: `You are a professional translator.
+// You will be given a piece of text written in "${sourceLang}".
+// Translate it into each of the following language codes: ${langsToTranslate.join(", ")}.
+// Rules:
+// - Preserve tone, meaning, and formatting (line breaks, punctuation, emojis).
+// - Do NOT summarize, shorten, or add commentary.
+// - Return ONLY valid JSON, no markdown fences, no extra text.
+// - JSON shape: { "langCode1": "translation1", "langCode2": "translation2", ... }
+// - Keys must be exactly the language codes provided, nothing else.`,
+//                 },
+//                 {
+//                     role: "user",
+//                     content: text,
+//                 },
+//             ],
+//             temperature: 0.2,
+//             max_tokens: 2000,
+//             response_format: { type: "json_object" },
+//         });
+//         const raw = response?.choices?.[0]?.message?.content || "{}";
+//         parsed = JSON.parse(raw);
+//     } catch (err) {
+//         console.log(err,"err")
+//         // Fallback: if API call or parsing fails, use the original text everywhere
+//         langsToTranslate.forEach((l) => (parsed[l] = text));
+//     }
+//     // Always include the source language as-is
+//     parsed[sourceLang] = text;
+//     // Safety net: ensure every requested lang has a value
+//     targetLangs.forEach((l) => {
+//         if (!parsed[l]) parsed[l] = text;
+//     });
+//     return parsed;
+// }
