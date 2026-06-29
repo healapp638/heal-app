@@ -498,12 +498,12 @@ Return JSON only.
 const DEFAULT_TZ = "Europe/Zurich";
 
 const getUserStartOfDay = (timeZone?: string) => {
-  console.log(timeZone,"timezone")
+  // console.log(timeZone,"timezone")
   return momentTz.tz(timeZone || DEFAULT_TZ).startOf("day").toDate();
 };
 
 const getUserStartOfWeek = (timeZone?: string) => {
-  console.log(timeZone,"timezone")
+  // console.log(timeZone,"timezone")
   return momentTz.tz(timeZone || DEFAULT_TZ).startOf("week").toDate();
 };
 
@@ -671,7 +671,7 @@ const generateChallenges = async () => {
         { lastDailyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
       ],
     });
-    console.log(dailyCandidates,"dailyCandidatesdailllllyyyy")
+    // console.log(dailyCandidates,"dailyCandidatesdailllllyyyy")
 
     for (const candidate of dailyCandidates) {
       const userStartOfDay = getUserStartOfDay(candidate.timeZone);
@@ -685,7 +685,7 @@ const generateChallenges = async () => {
         { $set: { isDailyChallengeInProgress: true } },
         { new: true }
       );
-      console.log(candidate._id,"userdaillyyy")
+      // console.log(candidate._id,"userdaillyyy")
 
       if (!user) continue; // already claimed/processed by another run
 
@@ -714,7 +714,8 @@ const generateChallenges = async () => {
         { lastWeeklyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
       ],
     });
-    console.log(weeklyCandidates,"weeklyCandidates")
+
+    // console.log(weeklyCandidates,"weeklyCandidates")
 
     for (const candidate of weeklyCandidates) {
       const userStartOfWeek = getUserStartOfWeek(candidate.timeZone);
@@ -722,7 +723,7 @@ const generateChallenges = async () => {
 
       const isEligible = !last || last < userStartOfWeek;
       if (!isEligible) continue; // their local week hasn't rolled over yet
-      console.log(candidate._id,"candidate._id",candidate.timeZone,"candidate.timeZone")
+      // console.log(candidate._id,"candidate._id",candidate.timeZone,"candidate.timeZone")
 
       const user = await userAuthModel.findOneAndUpdate(
         { _id: candidate._id, isWeeklyChallengeInProgress: false },
