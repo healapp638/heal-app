@@ -4,8 +4,8 @@ import React from "react";
 import { AppButton } from "@/components/ui";
 import IconButton from "@/components/ui/IconButton";
 import { FaEye } from "react-icons/fa";
-import { FiTrash2, FiEdit } from "react-icons/fi"
-import { Select, Switch, Table } from "antd";
+import { FiTrash2, FiEdit, FiSearch } from "react-icons/fi"
+import { Input, Select, Switch, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddAffirmationModal from "@/components/ui/modals/addAffirmationModal";
@@ -40,14 +40,26 @@ const Affirmation = () => {
     const [openViewModal, setOpenViewModal] = React.useState(false);
     const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
 
+        const [search, setSearch] = React.useState("");
+        const [debouncedSearch, setDebouncedSearch] = React.useState("");
+    
+        React.useEffect(() => {
+            const timer = setTimeout(() => {
+                setDebouncedSearch(search);
+                setPagination(prev => ({ ...prev, current: 1 }));
+            }, 500);
+            return () => clearTimeout(timer);
+        }, [search]);
+
     const { data: AffiliationList } = useAppQuery<AffiliationListData>({
-        queryKey: [MUTATION_KEYS.LIST_AFFILIATION, selectedLanguage],
+        queryKey: [MUTATION_KEYS.LIST_AFFILIATION, selectedLanguage,debouncedSearch],
         url: ENDPOINTS.PRIVATE.LIST_AFFILIATION,
         options: {
             staleTime: Infinity,
         },
         params: {
             language: selectedLanguage,
+            search_key: debouncedSearch
         }
     })
     const affiliationListData = AffiliationList?.data?.result ?? []
@@ -204,6 +216,14 @@ const Affirmation = () => {
                     Add <span className="text-maincolor">Affirmation</span>
                 </h1>
                 <div className='flex justify-center gap-2'>
+                 <Input
+                    placeholder="Search users..."
+                    prefix={<FiSearch className="text-black!" />}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="max-w-md h-11 rounded-xl border-maincolor!  bg-white! text-black! focus:border-maincolor! focus:bg-white! shadow-sm"
+                    allowClear
+                />
                     <Select
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
@@ -224,7 +244,7 @@ const Affirmation = () => {
                 pagination={{
                     current: pagination.current,
                     pageSize: pagination.pageSize,
-                    showSizeChanger: false,
+                    showSizeChanger: true,
                     pageSizeOptions: ['10', '20', '50', '100'],
                     onChange: (page, pageSize) => {
                         setPagination({

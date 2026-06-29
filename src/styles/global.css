@@ -226,6 +226,9 @@
 .ant-select-dropdown .ant-select-item {
   @apply text-maincolor!
 }
+.ant-select-show-search:not(.ant-select-customize-input):not(.ant-select-disabled){
+@apply bg-maincolor! border-maincolor!
+}
 }
 .buttonGradient{
   background: linear-gradient(135deg, #F66F76 0%, #f66f7610 100%)!important;
