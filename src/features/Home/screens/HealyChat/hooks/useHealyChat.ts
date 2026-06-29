@@ -7,6 +7,7 @@ import { setConversationId as setReduxConversationId } from '../../../../../redu
 import useGetApi from '../../../../../hooks/useGetApi';
 import usePostApi from '../../../../../hooks/usePostApi';
 import { endpoints } from '../../../../../api/Services/endpoints';
+import { useNavigation } from '@react-navigation/native';
 import { triggerHaptic } from '../../../../../hooks/useHaptic';
 
 let isFreshAppLaunch = true;
@@ -17,6 +18,24 @@ export const useHealyChat = (
 ) => {
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const unsubscribeBlur = navigation.addListener('blur', () => {
+      // If the user leaves the screen, stop the sending state
+      setIsSending(false);
+    });
+    const unsubscribeFocus = navigation.addListener('focus', () => {
+      // If the user returns to the screen, refetch to fetch latest status
+      if (conversationId) {
+        refetch();
+      }
+    });
+    return () => {
+      unsubscribeBlur();
+      unsubscribeFocus();
+    };
+  }, [navigation, conversationId, refetch]);
 
   const reduxConversationId = useSelector(
     (state: any) => state.tempData?.conversationId,
@@ -116,6 +135,7 @@ export const useHealyChat = (
     }
 
     const rawResult = chatData?.data?.result || chatData?.result || [];
+
     if (conversationId !== prevConversationId) {
       // Brand new conversation load
       setPrevConversationId(conversationId);
@@ -131,13 +151,45 @@ export const useHealyChat = (
 
       if (hasMoreMessages || isLastIdDifferent) {
         const diff = rawResult.length - allMessages.length;
+        if (hasMoreMessages && allMessages.length > 0 && allMessages[allMessages.length - 1]?.role === 'user') {
+          // If the user was waiting for response, and now we got new messages, animate the bot response
+          setShouldAnimateNext(true);
+        }
         setAllMessages(rawResult);
         if (diff > 0) {
           setVisibleCount(prev => Math.min(prev + diff, rawResult.length));
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatData, isNewChatRequested, conversationId, prevConversationId, allMessages.length, isSending]);
+
+  // Synchronize isSending state and handle polling when the last message is from user (waiting for reply)
+  const currentHistoryMessages = chatData?.data?.result || chatData?.result || [];
+  const isLastMessageUser = currentHistoryMessages.length > 0 && currentHistoryMessages[currentHistoryMessages.length - 1]?.role === 'user';
+
+  useEffect(() => {
+    if (!isHistoryLoading) {
+      if (isLastMessageUser) {
+        setIsSending(true);
+      } else if (isSending && !isLastMessageUser) {
+        setIsSending(false);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatData, isHistoryLoading, isLastMessageUser]);
+
+  useEffect(() => {
+    if (isSending && !isNewChatRequested && conversationId) {
+      const lastMsg = allMessages[allMessages.length - 1];
+      if (lastMsg && lastMsg.role === 'user') {
+        const timer = setTimeout(() => {
+          refetch();
+        }, 3000); // Poll every 3 seconds while waiting for response
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [allMessages, isSending, refetch, isNewChatRequested, conversationId]);
 
   // Synchronize conversation_id if found in history list
   useEffect(() => {
@@ -198,18 +250,23 @@ export const useHealyChat = (
     setIsSending(true);
     setIsNewChatRequested(false);
 
+    const payload = {
+      role: 'user',
+      conversation_id: conversationId, // First message sends null/empty
+      message: userMessageContent,
+      question: !conversationId ? (randomQuestion || '') : '',
+    };
+    console.log('Sending message payload:', payload);
+
     sendMessageMutate(
       {
         endpoint: endpoints.sendMessage,
-        data: {
-          role: 'user',
-          conversation_id: conversationId, // First message sends null/empty
-          message: userMessageContent,
-        },
+        data: payload,
       },
+      
       {
         onSuccess: async (res: any) => {
-          if (res?.data?.total_credit == 0) {
+          if (res?.data?.total_credit === 0) {
             setCreditsModalVisible(true);
           }
           const newConvId =
@@ -267,7 +324,7 @@ export const useHealyChat = (
         },
       },
     );
-  }, [conversationId, dispatch, refetch, sendMessageMutate, flatListRef, queryClient]);
+  }, [conversationId, dispatch, refetch, sendMessageMutate, flatListRef, queryClient, setCreditsModalVisible, randomQuestion]);
 
   const startNewChat = useCallback(() => {
     setConversationId(null);

@@ -117,7 +117,6 @@ const Home = () => {
         },
         {
           onSuccess: (res: any) => {
-            console.log(res);
             if (!res?.data?.is_hit) {
               const apiCount =
                 res?.data?.streak_count ??
@@ -149,7 +148,7 @@ const Home = () => {
             dispatch(getUserDetail() as any);
           },
           onError: (error: any) => {
-            console.log('claimStreak error', error);
+            console.log(error);
           },
         },
       );

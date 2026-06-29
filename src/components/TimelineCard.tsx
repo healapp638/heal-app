@@ -168,8 +168,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
             <View style={styles.timelineItemCenter}>
               <SolidText maxFontScale={1} style={styles.timelineTitle}>
                 {trialReminderDate} -{' '}
-                {localization.appkeys?.trialReminderDate?.split(' - ')[1] ||
-                  'Trial reminder'}
+                {localization.appkeys?.trialReminder || 'Trial reminder'}
               </SolidText>
               <SolidText maxFontScale={1} style={styles.timelineSub}>
                 {localization.appkeys?.endingSoon}
@@ -179,8 +178,7 @@ const TimelineCard: React.FC<TimelineCardProps> = ({
             <View style={styles.timelineItem}>
               <SolidText maxFontScale={1} style={styles.timelineTitle}>
                 {becomeMemberDate} -{' '}
-                {localization.appkeys?.becomeMemberDate?.split(' - ')[1] ||
-                  'Become member'}
+                {localization.appkeys?.becomeMember || 'Become member'}
               </SolidText>
               <SolidText maxFontScale={1} style={styles.timelineSub}>
                 {localization.appkeys?.endsUnlessCanceled}

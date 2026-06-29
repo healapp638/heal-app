@@ -15,8 +15,24 @@ const style = (colors: any) =>
     },
     mainContainer: {
       flex: 1,
+      width: '100%',
+      alignItems: 'center',
+    },
+    scrollView: {
+      flex: 1,
+      width: '100%',
+    },
+    scrollContentContainer: {
+      flexGrow: 1,
+      alignItems: 'center',
+      paddingBottom: 16,
+      width: '100%',
+    },
+    buttonContainer: {
+      width: '100%',
       paddingHorizontal: 20,
       alignItems: 'center',
+      justifyContent: 'center',
     },
     flameContainer: {
       width: 140,
@@ -57,17 +73,17 @@ const style = (colors: any) =>
       color: colors.brown,
       textAlign: 'center',
       marginBottom: 24,
+      paddingHorizontal: 20,
       includeFontPadding: false,
     },
     streakCard: {
       backgroundColor: '#A073621A',
       borderRadius: 18,
       paddingVertical: 10,
-
-      width: '100%',
-
-
+      paddingHorizontal: 20,
+      width: '90%',
       marginTop: 8
+
     },
     daysRow: {
       flexDirection: 'row',

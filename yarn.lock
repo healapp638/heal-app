@@ -1990,10 +1990,10 @@
   resolved "https://registry.yarnpkg.com/@jsamr/react-native-li/-/react-native-li-2.3.1.tgz#12a5b5f6e3971cec77b96bee58104eed0ae9314a"
   integrity sha512-Qbo4NEj48SQ4k8FZJHFE2fgZDKTWaUGmVxcIQh3msg5JezLdTMMHuRRDYctfdHI6L0FZGObmEv3haWbIvmol8w==
 
-"@logrocket/react-native@^3.1.1":
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/@logrocket/react-native/-/react-native-3.1.1.tgz#70b8886a5a3d00df9d927ca2ad7bded6aaf89dce"
-  integrity sha512-I6hQkX614JyS9qu2IXCiWgH5gPY0ZCdforCiSM7Iw4Xx8yE766M2BzREIqaeGH05EMl7k8Gv9Z8yeMA/5EOpCQ==
+"@logrocket/react-native@3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@logrocket/react-native/-/react-native-3.3.1.tgz#a1542cafb21c7460824c76da49829e98f2fffd1a"
+  integrity sha512-hGiJbvapDqzITl+NUmJLFPwYTne5NsQw0JITzyoHgyDN9xPvA9ymos26CXOlvK4Nq6wbR0rDtLwOvUvaEhT5nA==
 
 "@native-html/css-processor@1.11.0":
   version "1.11.0"

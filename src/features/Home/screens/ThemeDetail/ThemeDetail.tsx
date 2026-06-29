@@ -139,7 +139,7 @@ const ThemeDetail = () => {
               {
                 onSuccess: () => {
                   dispatch(getUserDetail() as any);
-                  setToastMsg('Theme selected successfully!');
+                  setToastMsg(localization.appkeys.themeSelectedSuccessfully);
                 },
                 onError: (error: any) => {
                   setToastMsg(error.message);

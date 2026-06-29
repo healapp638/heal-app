@@ -71,7 +71,7 @@ const style = (colors: any) =>
       backgroundColor: 'white',
       borderRadius: 30,
       minHeight: 44,
-      maxHeight: 140,
+      maxHeight: 240,
       marginHorizontal: 12,
       paddingLeft: 20,
       paddingRight: 6,
@@ -90,7 +90,7 @@ const style = (colors: any) =>
       paddingTop: 0,
       paddingBottom: 0,
       includeFontPadding: false,
-      maxHeight: 120,
+      maxHeight: 220,
     },
     micIcon: {
       width: 22,

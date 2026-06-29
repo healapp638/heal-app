@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Image, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useContext, useRef } from 'react';
+import { View, Image, StyleSheet, Text } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from '../../../../../components/SolidText';
 import { LocalizationContext } from '../../../../../localization/localization';
@@ -12,7 +12,24 @@ interface StreamingMessageTextProps {
   style: any;
   onComplete?: () => void;
   showDisclaimer?: boolean;
+  onStreamStart?: () => void;
 }
+
+// ─── Tuning knobs ────────────────────────────────────────────────────────────
+const WORD_INTERVAL_MS = 38; // ms per word — fast & smooth
+const BUNCH_SIZE = 2; // words revealed per tick after slow phase
+const SLOW_WORD_COUNT = 8; // first N words are one-by-one
+
+// 20-step ultra-smooth gradient tail
+// Follows a cubic ease-in curve: starts almost invisible, builds gradually
+const FADE_TAIL_LENGTH = 20;
+const getOpacity = (wordsBack: number): number => {
+  if (wordsBack >= FADE_TAIL_LENGTH) return 1;
+  // cubic ease-in: slow start → accelerates toward 1
+  const t = wordsBack / FADE_TAIL_LENGTH;
+  return Math.pow(t, 1.6); // 1.6 power = smooth but visible gradient
+};
+// ─────────────────────────────────────────────────────────────────────────────
 
 const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   text,
@@ -20,84 +37,144 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   style,
   onComplete,
   showDisclaimer,
+  onStreamStart,
 }) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
-  const styles = useStyle(colors);
+  const internalStyles = useStyle(colors);
 
-  const [displayedText, setDisplayedText] = useState('');
-  const [, setIsDone] = useState(!isLatest);
+  const [visibleCount, setVisibleCount] = useState(isLatest ? 0 : Infinity);
+  const [isDone, setIsDone] = useState(!isLatest);
 
-  const onCompleteRef = React.useRef(onComplete);
+  const onCompleteRef = useRef(onComplete);
   useEffect(() => {
     onCompleteRef.current = onComplete;
   }, [onComplete]);
+  const onStreamStartRef = useRef(onStreamStart);
+  useEffect(() => {
+    onStreamStartRef.current = onStreamStart;
+  }, [onStreamStart]);
+
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startedRef = useRef(false);
+  const visibleRef = useRef(0);
+  const slowCountRef = useRef(0); // tracks actual non-space words revealed
+
+  const words = text ? text.split(/(\s+)/).filter(Boolean) : [];
+
+  const clearTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  };
 
   useEffect(() => {
-    if (isLatest && text) {
-      setIsDone(false);
-      setDisplayedText('');
-      
-      // Split the text into alternating word and whitespace tokens
-      const tokens = text.split(/(\s+)/).filter(Boolean);
-      
-      let tokenIndex = 0;
-      const interval = setInterval(() => {
-        if (tokenIndex < tokens.length) {
-          // Get text up to the current token index, and trim trailing space to avoid native collapse
-          let nextText = tokens.slice(0, tokenIndex + 1).join('').trimEnd();
-          
-          // Fast-forward tokenIndex past consecutive whitespace tokens if they don't change the trimmed text
-          while (tokenIndex + 1 < tokens.length) {
-            const peekText = tokens.slice(0, tokenIndex + 2).join('').trimEnd();
-            if (peekText === nextText) {
-              tokenIndex++;
-              nextText = peekText;
-            } else {
-              break;
-            }
-          }
-          
-          setDisplayedText(nextText);
-          tokenIndex++;
-        } else {
-          clearInterval(interval);
-          setIsDone(true);
-          if (onCompleteRef.current) {
-            onCompleteRef.current();
-          }
-        }
-      }, 45); // Smooth word-by-word streaming transition
-      
-      return () => clearInterval(interval);
-    } else {
-      setDisplayedText(text);
-      setIsDone(true);
+    if (!isLatest || !text) return;
+
+    clearTimer();
+
+    if (!startedRef.current) {
+      startedRef.current = true;
+      onStreamStartRef.current?.();
     }
+
+    setIsDone(false);
+    visibleRef.current = 0;
+    slowCountRef.current = 0;
+
+    const tick = () => {
+      const isSlow = slowCountRef.current < SLOW_WORD_COUNT;
+      const increment = isSlow ? 1 : BUNCH_SIZE;
+      const next = Math.min(visibleRef.current + increment, words.length);
+
+      // Count actual words (non-whitespace) in newly revealed tokens
+      for (let i = visibleRef.current; i < next; i++) {
+        if (words[i] && !/^\s+$/.test(words[i])) slowCountRef.current++;
+      }
+
+      visibleRef.current = next;
+      setVisibleCount(next);
+
+      if (next >= words.length) {
+        clearTimer();
+        setIsDone(true);
+        setVisibleCount(Infinity);
+        onCompleteRef.current?.();
+      }
+    };
+
+    intervalRef.current = setInterval(tick, WORD_INTERVAL_MS);
+    return clearTimer;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [text, isLatest]);
 
+  useEffect(() => {
+    if (!isLatest) {
+      clearTimer();
+      startedRef.current = false;
+      visibleRef.current = 0;
+      slowCountRef.current = 0;
+      setVisibleCount(Infinity);
+      setIsDone(true);
+    }
+  }, [isLatest]);
+
+  const renderDisclaimer = () => (
+    <View style={internalStyles.disclaimerContainer}>
+      <Image
+        source={images.h}
+        style={internalStyles.disclaimerLogo}
+        tintColor={colors.primary}
+        resizeMode="contain"
+      />
+      <SolidText style={internalStyles.disclaimerText}>
+        {localization.appkeys.healyIsAiAndCanMakeMistakes ||
+          'Healy is AI and can make mistakes.\nPlease double-check responses.'}
+      </SolidText>
+    </View>
+  );
+
+  // Static — past or done
+  if (!isLatest || isDone) {
+    return (
+      <View style={internalStyles.container}>
+        <SolidText style={style}>{text}</SolidText>
+        {showDisclaimer && renderDisclaimer()}
+      </View>
+    );
+  }
+
+  // Streaming — word by word with smooth gradient tail
   return (
-    <View style={{ alignItems: 'flex-start', width: '100%' }}>
-      <SolidText style={style}>{displayedText}</SolidText>
-      {showDisclaimer && (
-        <View style={styles.disclaimerContainer}>
-          <Image
-            source={images.h}
-            style={styles.disclaimerLogo}
-            tintColor={colors.primary}
-            resizeMode="contain"
-          />
-          <SolidText style={styles.disclaimerText}>
-            {localization.appkeys.healyIsAiAndCanMakeMistakes || "Healy is AI and can make mistakes.\nPlease double-check responses."}
-          </SolidText>
-        </View>
-      )}
+    <View style={internalStyles.container}>
+      <Text style={style}>
+        {words.map((word, idx) => {
+          if (idx >= visibleCount) return null;
+
+          const distFromFront = visibleCount - 1 - idx;
+          const opacity = getOpacity(distFromFront);
+
+          if (opacity >= 0.999) return <Text key={idx}>{word}</Text>;
+
+          return (
+            <Text key={idx} style={{ opacity }}>
+              {word}
+            </Text>
+          );
+        })}
+      </Text>
+      {showDisclaimer && renderDisclaimer()}
     </View>
   );
 };
 
 const useStyle = (colors: any) =>
   StyleSheet.create({
+    container: {
+      alignItems: 'flex-start',
+      width: '100%',
+    },
     disclaimerContainer: {
       flexDirection: 'row',
       alignItems: 'flex-start',
@@ -114,7 +191,7 @@ const useStyle = (colors: any) =>
       flex: 1,
       fontSize: AppUtils.fontSize(11.5),
       fontFamily: AppFonts.regular,
-      color: (colors.brown || '#3A2110') + '73', // Dynamic muted brown (45% opacity)
+      color: (colors.brown || '#3A2110') + '73',
       lineHeight: 16,
     },
   });

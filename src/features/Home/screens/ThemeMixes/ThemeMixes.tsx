@@ -23,8 +23,7 @@ import GridThemeCard from '../../../../components/GridThemeCard';
 import ThemeMixesHeader from './components/ThemeMixesHeader';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
-import GetCreditsModal from '../../../../modals/GetCreditsModal';
-import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
+
 import { useHaptic } from '../../../../hooks/useHaptic';
 import useInfiniteGetApi from '../../../../hooks/useInfiniteGetApi';
 import useGetApi from '../../../../hooks/useGetApi';
@@ -233,7 +232,9 @@ const ThemeMixes = () => {
                       {
                         onSuccess: () => {
                           dispatch(getUserDetail() as any);
-                          setToastMsg('Theme selected successfully!');
+                          setToastMsg(
+                            localization.appkeys.themeSelectedSuccessfully,
+                          );
                         },
                         onError: (error: any) => {
                           setToastMsg(error.message);

@@ -39,20 +39,22 @@ interface ChatInputBarProps {
 const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
   onSend,
   placeholder,
-  plusIconSource,
   sendIconSource,
   micIconSource,
   styles,
 }) => {
   const [chatText, setChatText] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
-  const [scrollEnabled, setScrollEnabled] = useState(false);
-  const [inputHeight, setInputHeight] = useState(24);
+  const [inputHeight, setInputHeight] = useState(0);
+  const singleLineHeight = useRef<number>(0);
+  const textInputRef = useRef<TextInput>(null);
 
   const handleContentSizeChange = useCallback((e: any) => {
     const contentHeight = e.nativeEvent.contentSize.height;
+    // Capture the single-line baseline height on first measurement
+    if (singleLineHeight.current === 0) {
+      singleLineHeight.current = contentHeight;
+    }
     setInputHeight(contentHeight);
-    setScrollEnabled(contentHeight >= 120);
   }, []);
 
   // Speech-to-text state
@@ -196,7 +198,9 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
       setIsListening(false);
     }
     onSend(chatText);
+    textInputRef.current?.clear(); // Force native clear to prevent state sync lag on long chats
     setChatText('');
+    setInputHeight(0); // Reset height so text input collapses back to single line
   }, [chatText, onSend, isListening]);
 
   const showMic = isListening || chatText.trim().length === 0;
@@ -217,6 +221,9 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
   const handleTextChange = useCallback(
     (text: string) => {
       setChatText(text);
+      if (text.trim().length === 0) {
+        setInputHeight(0); // Reset height if text is cleared manually
+      }
       if (isListening && text.trim().length > 0) {
         Voice.stop().catch(() => {});
         setIsListening(false);
@@ -228,11 +235,25 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
   return (
     <View style={styles.footerContainer}>
       {/* Main Input Box */}
-      <View style={styles.inputWrapper}>
+      <View
+        style={[
+          styles.inputWrapper,
+          inputHeight > singleLineHeight.current &&
+          singleLineHeight.current > 0
+            ? {
+                height: Math.min(240, inputHeight + (Platform.OS === 'ios' ? 18 : 8)),
+              }
+            : undefined,
+        ]}
+      >
         <TextInput
+          ref={textInputRef}
           style={[
             styles.textInput,
-            { height: Math.max(24, Math.min(120, inputHeight)) },
+            {
+              paddingTop: Platform.OS === 'ios' ? 6 : 0,
+              paddingBottom: Platform.OS === 'ios' ? 6 : 0,
+            }
           ]}
           autoCorrect={false}
           placeholder={isListening ? 'Listening...' : placeholder}
@@ -240,10 +261,7 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
           value={chatText}
           onChangeText={handleTextChange}
           maxFontSizeMultiplier={1.4}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           multiline={true}
-          scrollEnabled={scrollEnabled}
           onContentSizeChange={handleContentSizeChange}
         />
         <TouchableOpacity onPress={handleButtonPress} activeOpacity={0.7}>

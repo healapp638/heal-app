@@ -29,6 +29,7 @@ import { ThinkingBubble } from './components/ThinkingBubble';
 import { ChatInputBar } from './components/ChatInputBar';
 import { ConversationDrawer } from './components/ConversationDrawer';
 import GetCreditsModal from '../../../../modals/GetCreditsModal';
+import { triggerHaptic } from '../../../../hooks/useHaptic';
 
 const HealyChat = () => {
   const { colors, images } = useTheme() as any;
@@ -109,6 +110,9 @@ const HealyChat = () => {
           onComplete={() => {
             setLastStreamedId(item._id);
             setShouldAnimateNext(false);
+          }}
+          onStreamStart={() => {
+            triggerHaptic('impactMedium');
           }}
         />
       );

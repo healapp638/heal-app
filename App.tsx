@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StatusBar, useColorScheme } from 'react-native';
+import { LogBox, StatusBar, useColorScheme } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { store, persistor } from './src/redux/Store/store';
@@ -28,7 +28,7 @@ function App(): React.JSX.Element {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const theme = useColorScheme();
   const isDarkMode = useColorScheme() === 'dark';
-
+  LogBox.ignoreLogs(['[RevenueCat]']);
   useEffect(() => {
     notifee.requestPermission();
     AppUtils.disableFontScale();

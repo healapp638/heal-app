@@ -11,6 +11,7 @@ interface MessageItemProps {
   tintColor: string;
   onComplete: () => void;
   showDisclaimer?: boolean;
+  onStreamStart?: () => void;
 }
 
 
@@ -21,6 +22,7 @@ const MessageItemComponent: React.FC<MessageItemProps> = ({
   styles,
   onComplete,
   showDisclaimer,
+  onStreamStart,
 }) => {
   const isUser = item.role === 'user';
 
@@ -48,6 +50,7 @@ const MessageItemComponent: React.FC<MessageItemProps> = ({
             style={styles.messageText}
             onComplete={onComplete}
             showDisclaimer={showDisclaimer}
+            onStreamStart={onStreamStart}
           />
         </View>
       )}
@@ -66,7 +69,8 @@ export const MessageItem = React.memo(
       prevProps.showDisclaimer === nextProps.showDisclaimer &&
       prevProps.styles === nextProps.styles &&
       prevProps.logoSource === nextProps.logoSource &&
-      prevProps.tintColor === nextProps.tintColor
+      prevProps.tintColor === nextProps.tintColor &&
+      prevProps.onStreamStart === nextProps.onStreamStart
     );
   }
 );

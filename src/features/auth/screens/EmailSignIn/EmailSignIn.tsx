@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import HeaderCommon from '../../../../components/HeaderCommon';
@@ -109,7 +109,7 @@ const EmailSignIn = () => {
 
             <SolidInput
               label={localization.appkeys?.email || 'Email'}
-              placeholder="name@example.com"
+              placeholder={localization.appkeys?.emailPlaceholder || 'name@example.com'}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"

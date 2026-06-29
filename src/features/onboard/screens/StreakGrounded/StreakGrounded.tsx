@@ -5,7 +5,7 @@ import React, {
   useState,
   useEffect,
 } from 'react';
-import { Image, View, Animated, Platform } from 'react-native';
+import { Image, View, Animated, Platform, ScrollView } from 'react-native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
 import SolidBtn from '../../../../components/SolidBtn';
@@ -19,7 +19,7 @@ import {
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
 import style from './style';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setOnboardingCurrentScreen } from '../../../../redux/Reducers/userData';
 import FastImage from '@d11/react-native-fast-image';
 import Svg, { Text as SvgText } from 'react-native-svg';
@@ -27,10 +27,8 @@ import AppFonts from '../../../../constants/fonts';
 
 const OutlinedNumber = ({
   number,
-  source,
 }: {
   number: number | string;
-  source?: any;
 }) => {
   const { images } = useTheme() as any;
   const [displayNumber, setDisplayNumber] = useState(0);
@@ -116,15 +114,6 @@ const StreakGrounded = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
 
-  const startGoalSelection = useSelector(
-    (state: any) => state.userData?.onboarding?.answers?.goalStartWith ?? null,
-  );
-
-  // Extract digits from selection (e.g. "3 Days" -> "3", "21 Days" -> "21"). Default to "3".
-  const streakNumber = startGoalSelection
-    ? startGoalSelection.replace(/\D/g, '') || '3'
-    : '3';
-
   useFocusEffect(
     useCallback(() => {
       dispatch(setOnboardingCurrentScreen(AppRoutes.StreakGrounded));
@@ -162,7 +151,7 @@ const StreakGrounded = () => {
 
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       viewStyle={{
         flex: 1,
       }}
@@ -175,57 +164,65 @@ const StreakGrounded = () => {
             />
           </View>
 
-          <View style={styles.mainContainer}>
-            {/* Centered Flame with Streak Overlay Number */}
-            <OutlinedNumber number={1} />
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+            overScrollMode="never"
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContentContainer}
+          >
+            <View style={styles.mainContainer}>
+              {/* Centered Flame with Streak Overlay Number */}
+              <OutlinedNumber number={1} />
 
-            {/* Localized Titles & Descriptions */}
-            <SolidText style={styles.title}>
-              {localization.appkeys?.streakGroundedTitle}
-            </SolidText>
-            <SolidText style={styles.subtitle}>
-              {localization.appkeys?.streakGroundedSub}
-            </SolidText>
-
-            {/* Custom High-Fidelity Weekly Calendar Card */}
-            <View style={styles.streakCard}>
-              <View style={styles.daysRow}>
-                {daysProgress.map((day, index) => {
-                  return (
-                    <View key={index} style={styles.dayItem}>
-                      <SolidText
-                        style={[
-                          styles.dayLabel,
-                          {
-                            color: day.isActive ? colors.primary : colors.brown,
-                          },
-                        ]}
-                      >
-                        {day.label}
-                      </SolidText>
-                      {day.isActive ? (
-                        <Image
-                          source={images.tick}
-                          style={styles.tickIcon}
-                          resizeMode="contain"
-                        />
-                      ) : (
-                        <View
-                          style={[styles.statusCircle, styles.inactiveCircle]}
-                        />
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-              <SolidText style={styles.cardCaption}>
-                {localization.appkeys?.buildStreak}
+              {/* Localized Titles & Descriptions */}
+              <SolidText style={styles.title}>
+                {localization.appkeys?.streakGroundedTitle}
               </SolidText>
+              <SolidText style={styles.subtitle}>
+                {localization.appkeys?.streakGroundedSub}
+              </SolidText>
+
+              {/* Custom High-Fidelity Weekly Calendar Card */}
+              <View style={styles.streakCard}>
+                <View style={styles.daysRow}>
+                  {daysProgress.map((day, index) => {
+                    return (
+                      <View key={index} style={styles.dayItem}>
+                        <SolidText
+                          style={[
+                            styles.dayLabel,
+                            {
+                              color: day.isActive ? colors.primary : colors.brown,
+                            },
+                          ]}
+                        >
+                          {day.label}
+                        </SolidText>
+                        {day.isActive ? (
+                          <Image
+                            source={images.tick}
+                            style={styles.tickIcon}
+                            resizeMode="contain"
+                          />
+                        ) : (
+                          <View
+                            style={[styles.statusCircle, styles.inactiveCircle]}
+                          />
+                        )}
+                      </View>
+                    );
+                  })}
+                </View>
+                <SolidText style={styles.cardCaption}>
+                  {localization.appkeys?.buildStreak}
+                </SolidText>
+              </View>
             </View>
+          </ScrollView>
 
-            <View style={{ flex: 1 }} />
-
-            {/* Cocoa Brown Continue Button */}
+          {/* Fixed Continue Button Container */}
+          <View style={styles.buttonContainer}>
             <SolidBtn
               titleTxt={localization.appkeys?.continue}
               btnStyle={styles.btn}
