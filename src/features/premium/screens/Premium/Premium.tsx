@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TouchableOpacity, Alert, BackHandler } from 'react-native';
+import { View, BackHandler } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -26,34 +26,6 @@ import {
   clearOnboardingProgress,
 } from '../../../../redux/Reducers/userData';
 import { clearModuleParams } from '../../../../redux/Reducers/tempData';
-const getStartFreeTrialText = (appLanguage: string, priceStr: string) => {
-  const lang = (appLanguage || 'English').toLowerCase();
-  let prefix = 'Start Free Trial';
-  switch (lang) {
-    case 'french':
-      prefix = "Démarrer l'essai gratuit";
-      break;
-    case 'spanish':
-      prefix = 'Iniciar prueba gratuita';
-      break;
-    case 'german':
-      prefix = 'Kostenlose Testversion starten';
-      break;
-    case 'portuguese':
-      prefix = 'Iniciar teste gratuito';
-      break;
-    case 'italian':
-      prefix = 'Inizia la prova gratuita';
-      break;
-    case 'russian':
-      prefix = 'Начать бесплатную версию';
-      break;
-    default:
-      prefix = 'Start Free Trial';
-      break;
-  }
-  return `${prefix} – ${priceStr}`;
-};
 
 const Premium = () => {
   const dispatch = useDispatch();
@@ -153,7 +125,7 @@ const Premium = () => {
 
   const { text: priceInfoText, priceStr } = getPriceInfo();
 
-  const handleLogoutAndRedirect = () => {
+  const handleLogoutAndRedirect = React.useCallback(() => {
     triggerHaptic('impactMedium');
 
     dispatch(clearOnboardingProgress());
@@ -174,7 +146,7 @@ const Premium = () => {
         },
       ],
     });
-  };
+  }, [dispatch, queryClient, navigation]);
 
   useEffect(() => {
     const backAction = () => {
@@ -188,7 +160,7 @@ const Premium = () => {
     );
 
     return () => backHandler.remove();
-  }, []);
+  }, [handleLogoutAndRedirect]);
 
   const [showCloseBtn, setShowCloseBtn] = useState(false);
   useEffect(() => {
@@ -221,13 +193,8 @@ const Premium = () => {
             }}
             styles={styles}
             images={images}
+            title={'Healing starts with you'}
           />
-
-          <SolidText style={styles.title}>
-            {/* {localization.appkeys?.howTrialWorks} */}
-            {localization.appkeys?.healingStartsWithYou ||
-              'Healing starts with you'}
-          </SolidText>
 
           <TimelineCard
             localization={localization}
@@ -238,7 +205,7 @@ const Premium = () => {
             selectedPlan={selectedPlan}
           />
 
-          {selectedPlan == 'yearly' && (
+          {selectedPlan === 'yearly' && (
             <ReminderToggle
               localization={localization}
               styles={styles}

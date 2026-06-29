@@ -22,7 +22,25 @@ const style = (colors: any, appLanguage: any) =>
     closeIcon: {
       width: 14,
       height: 14,
-
+    },
+    headerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    headerLeft: {
+      width: 40,
+      alignItems: 'flex-start',
+    },
+    headerRight: {
+      width: 40,
+    },
+    headerTitleContainer: {
+      flex: 1,
+    },
+    headerTitle: {
+      marginBottom: 0,
+      textAlign: 'center',
     },
     title: {
       fontSize: AppUtils.fontSize(25),
@@ -30,7 +48,8 @@ const style = (colors: any, appLanguage: any) =>
       fontFamily: AppFonts.recoMedium,
       color: colors.brown,
       includeFontPadding: false,
-      marginBottom:20
+
+
     },
     subtitle: {
       fontFamily: AppFonts.regular,

@@ -4,10 +4,9 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   Platform,
 } from 'react-native';
-import { useNavigation, useTheme } from '@react-navigation/native';
+import { useTheme } from '@react-navigation/native';
 import { LocalizationContext } from '../localization/localization';
 import { useSelector } from 'react-redux';
 import { hp, wp } from '../utils/dimension';
@@ -19,7 +18,7 @@ import PremiumHeader from '../components/PremiumHeader';
 import TimelineCard from '../components/TimelineCard';
 import ReminderToggle from '../components/ReminderToggle';
 import PlansSection from '../components/PlansSection';
-import AppRoutes from '../routes/RouteKeys/appRoutes';
+
 import { useSubscription } from '../hooks/useSubscription';
 import { triggerHaptic } from '../hooks/useHaptic';
 import usePostApi from '../hooks/usePostApi';
@@ -62,7 +61,7 @@ const getStartFreeTrialText = (appLanguage: string, priceStr: string) => {
 const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
-  const navigation = useNavigation();
+
   const { purchasePlan, packages } = useSubscription();
   const { mutate: syncPurchaseApi } = usePostApi();
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
@@ -179,9 +178,8 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
     >
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
+          <View
+            style={[styles.scrollContent, { flex: 1 }]}
           >
             <View style={styles.mainContainer}>
               <PremiumHeader
@@ -189,11 +187,9 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 onClose={onClose}
                 styles={styles}
                 images={images}
+                title={localization.appkeys?.howTrialWorks}
               />
 
-              <SolidText style={styles.title}>
-                {localization.appkeys?.howTrialWorks}
-              </SolidText>
               <SolidText style={styles.subtitle}>
                 {localization.appkeys?.notChargedToday}
               </SolidText>
@@ -214,6 +210,8 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 reminderEnabled={reminderEnabled}
                 onToggle={() => setReminderEnabled(!reminderEnabled)}
               />
+
+              <View style={{ flex: 1, minHeight: 10 }} />
 
               <PlansSection
                 localization={localization}
@@ -255,14 +253,14 @@ const PremiumModal = ({ visible, onClose }: PremiumModalProps) => {
                 </SolidText>
               </TouchableOpacity>
             </View>
-          </ScrollView>
+          </View>
         </View>
       </View>
     </Modal>
   );
 };
 
-const useStyles = (colors: any, appLanguage: any) =>
+const useStyles = (_colors: any, _appLanguage: any) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
@@ -298,6 +296,25 @@ const useStyles = (colors: any, appLanguage: any) =>
       height: 16,
       tintColor: '#C4C4C4',
     },
+    headerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    headerLeft: {
+      width: 40,
+      alignItems: 'flex-start',
+    },
+    headerRight: {
+      width: 40,
+    },
+    headerTitleContainer: {
+      flex: 1,
+    },
+    headerTitle: {
+      marginBottom: 0,
+      textAlign: 'center',
+    },
     title: {
       fontSize: AppUtils.fontSize(28),
       textAlign: 'center',
@@ -329,13 +346,13 @@ const useStyles = (colors: any, appLanguage: any) =>
     },
     premiumImage: {
       width: wp(11),
-      height: Platform.OS == 'ios' ? hp(32) : hp(34),
+      height: Platform.OS === 'ios' ? hp(32) : hp(34),
 
       resizeMode: 'stretch',
     },
     premiumImage2: {
       width: wp(11),
-      height: Platform.OS == 'ios' ? hp(32) : hp(34),
+      height: Platform.OS === 'ios' ? hp(32) : hp(34),
 
       resizeMode: 'stretch',
     },
@@ -348,7 +365,7 @@ const useStyles = (colors: any, appLanguage: any) =>
     },
     timelineItemCenter: {
       justifyContent: 'center',
-      marginVertical: Platform.OS == 'ios' ? hp(3) : hp(2.5),
+      marginVertical: Platform.OS === 'ios' ? hp(3) : hp(2.5),
     },
     timelineTitle: {
       fontFamily: AppFonts.recoMedium,
