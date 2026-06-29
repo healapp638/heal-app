@@ -671,6 +671,7 @@ const generateChallenges = async () => {
         { lastDailyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
       ],
     });
+    console.log(dailyCandidates,"dailyCandidatesdailllllyyyy")
 
     for (const candidate of dailyCandidates) {
       const userStartOfDay = getUserStartOfDay(candidate.timeZone);
@@ -684,6 +685,7 @@ const generateChallenges = async () => {
         { $set: { isDailyChallengeInProgress: true } },
         { new: true }
       );
+      console.log(candidate._id,"userdaillyyy")
 
       if (!user) continue; // already claimed/processed by another run
 
@@ -712,6 +714,7 @@ const generateChallenges = async () => {
         { lastWeeklyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
       ],
     });
+    console.log(weeklyCandidates,"weeklyCandidates")
 
     for (const candidate of weeklyCandidates) {
       const userStartOfWeek = getUserStartOfWeek(candidate.timeZone);
@@ -719,6 +722,7 @@ const generateChallenges = async () => {
 
       const isEligible = !last || last < userStartOfWeek;
       if (!isEligible) continue; // their local week hasn't rolled over yet
+      console.log(candidate._id,"candidate._id",candidate.timeZone,"candidate.timeZone")
 
       const user = await userAuthModel.findOneAndUpdate(
         { _id: candidate._id, isWeeklyChallengeInProgress: false },
@@ -756,7 +760,7 @@ const generateChallenges = async () => {
 // };
 
 export const scheduleCroneJOb = () => {
-  nodeCron.schedule('*/300 * * * * *', () => {
+  nodeCron.schedule('*/5 * * * *', () => {
     console.log("crrrroonnnn")
     generateChallenges()
   })

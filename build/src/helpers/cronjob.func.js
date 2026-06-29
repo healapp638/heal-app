@@ -556,6 +556,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
                 { lastDailyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
             ],
         });
+        console.log(dailyCandidates, "dailyCandidatesdailllllyyyy");
         for (const candidate of dailyCandidates) {
             const userStartOfDay = getUserStartOfDay(candidate.timeZone);
             const last = candidate.lastDailyChallengeGeneratedDate;
@@ -563,6 +564,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
             if (!isEligible)
                 continue; // their local day hasn't rolled over yet
             const user = yield user_auth_model_1.default.findOneAndUpdate({ _id: candidate._id, isDailyChallengeInProgress: false }, { $set: { isDailyChallengeInProgress: true } }, { new: true });
+            console.log(candidate._id, "userdaillyyy");
             if (!user)
                 continue; // already claimed/processed by another run
             try {
@@ -588,12 +590,14 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
                 { lastWeeklyChallengeGeneratedDate: { $lt: new Date() } }, // rough pre-filter
             ],
         });
+        console.log(weeklyCandidates, "weeklyCandidates");
         for (const candidate of weeklyCandidates) {
             const userStartOfWeek = getUserStartOfWeek(candidate.timeZone);
             const last = candidate.lastWeeklyChallengeGeneratedDate;
             const isEligible = !last || last < userStartOfWeek;
             if (!isEligible)
                 continue; // their local week hasn't rolled over yet
+            console.log(candidate._id, "candidate._id", candidate.timeZone, "candidate.timeZone");
             const user = yield user_auth_model_1.default.findOneAndUpdate({ _id: candidate._id, isWeeklyChallengeInProgress: false }, { $set: { isWeeklyChallengeInProgress: true } }, { new: true });
             if (!user)
                 continue;
@@ -623,7 +627,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 //   });
 // };
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('*/300 * * * * *', () => {
+    node_cron_1.default.schedule('*/5 * * * *', () => {
         console.log("crrrroonnnn");
         generateChallenges();
     });
