@@ -632,7 +632,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 //   });
 // };
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('0 */25 * * * *', () => {
+    node_cron_1.default.schedule('0 */5 * * * *', () => {
         // console.log("crrrroonnnn")
         generateChallenges();
     });
