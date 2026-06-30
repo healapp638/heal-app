@@ -33,10 +33,11 @@ exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     }
 });
 exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b;
     try {
         yield (0, mongoose_config_1.connection)();
         const { userData } = job.data;
+        console.log(userData, 'userData');
         const challengesDetails = yield (0, common_helper_1.challengsFn)(userData);
         const isOnBoardingComplete = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isOnBoardingComplete;
         const isWeeklyChallengeExist = challengesDetails === null || challengesDetails === void 0 ? void 0 : challengesDetails.isWeeklyChallengeExist;
@@ -46,8 +47,9 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
             yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { isDailyChallengeInProgress: true } });
             const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
             const languagess = Object.values(workflow_constant_1.languages);
-            const end_date_unix = (0, moment_timezone_1.default)().tz((_a = userData === null || userData === void 0 ? void 0 : userData.data) === null || _a === void 0 ? void 0 : _a.timeZone).endOf("day").unix();
-            const formattedChallenges = yield Promise.all((_b = res === null || res === void 0 ? void 0 : res.data) === null || _b === void 0 ? void 0 : _b.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+            console.log(userData === null || userData === void 0 ? void 0 : userData.timeZone, "userData?.timeZone");
+            const end_date_unix = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || "Europe/Zurich").endOf("day").unix();
+            const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
                 const titleObj = {};
                 yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
                     titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
@@ -80,8 +82,9 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
             yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { isWeeklyChallengeInProgress: true } });
             const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
             const languagess = Object.values(workflow_constant_1.languages);
-            const end_date_unix = (0, moment_timezone_1.default)().tz((_c = userData === null || userData === void 0 ? void 0 : userData.data) === null || _c === void 0 ? void 0 : _c.timeZone).endOf("week").unix();
-            const formattedChallenges = yield Promise.all((_d = res === null || res === void 0 ? void 0 : res.data) === null || _d === void 0 ? void 0 : _d.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+            const end_date_unix = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || "Europe/Zurich").endOf("week").unix();
+            console.log("end_date_unix", end_date_unix, userData === null || userData === void 0 ? void 0 : userData.timeZone);
+            const formattedChallenges = yield Promise.all((_b = res === null || res === void 0 ? void 0 : res.data) === null || _b === void 0 ? void 0 : _b.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
                 const titleObj = {};
                 yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
                     titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);

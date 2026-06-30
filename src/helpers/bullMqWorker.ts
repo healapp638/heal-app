@@ -23,6 +23,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
     try {
         await connectDB()
         const { userData } = job.data;
+        console.log(userData, 'userData')
         const challengesDetails = await challengsFn(userData);
         const isOnBoardingComplete = challengesDetails?.isOnBoardingComplete;
         const isWeeklyChallengeExist = challengesDetails?.isWeeklyChallengeExist;
@@ -32,7 +33,8 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isDailyChallengeInProgress: true } })
             const res = await generateUserChallengesDaily(payload, userData?._id);
             const languagess = Object.values(languages);
-            const end_date_unix = moment().tz(userData?.data?.timeZone).endOf("day").unix();
+            console.log(userData?.timeZone,"userData?.timeZone")
+            const end_date_unix = moment().tz(userData?.timeZone||"Europe/Zurich").endOf("day").unix();
             const formattedChallenges = await Promise.all(
                 res?.data?.map(async (challenge: any) => {
                     const titleObj: any = {};
@@ -85,7 +87,8 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isWeeklyChallengeInProgress: true } })
             const res = await generateUserChallengesWeekly(payload, userData?._id)
             const languagess = Object.values(languages);
-            const end_date_unix = moment().tz(userData?.data?.timeZone).endOf("week").unix();
+            const end_date_unix = moment().tz(userData?.timeZone||"Europe/Zurich").endOf("week").unix();
+            console.log("end_date_unix", end_date_unix,userData?.timeZone);
             const formattedChallenges = await Promise.all(
                 res?.data?.map(async (challenge: any) => {
                     const titleObj: any = {};
