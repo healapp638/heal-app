@@ -118,7 +118,7 @@ const UserSubscriptionHandler = {
             };
             console.log("✅ >>>>>>. receipt:::::::::::::: ", receipt);
             const receiptDecode = yield verifier.verifySub(receipt);
-            console.log("✅ >>>>>>. receiptDecode:::::::::::::: ", receiptDecode);
+            // console.log("✅ >>>>>>. receiptDecode:::::::::::::: ", receiptDecode)
             let expirationDateUnix = 0;
             let purchaseDateUnix = (0, moment_1.default)().unix();
             const appSubscriptionObj = {
@@ -146,7 +146,7 @@ const UserSubscriptionHandler = {
                 android_event: { receiptDecode: receiptDecode },
                 prev_user_subscription_obj: (_c = (userDetail === null || userDetail === void 0 ? void 0 : userDetail.user_subscription)) !== null && _c !== void 0 ? _c : {},
             };
-            console.log("createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
+            // console.log("createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
             // Prepare subscription data
             const updateSubscriptionData = {
                 'user_subscription.is_subscribed': 1,
@@ -167,7 +167,7 @@ const UserSubscriptionHandler = {
                 'user_subscription.stripe_subscription_obj': {},
                 'user_subscription.app_subscription_obj': appSubscriptionObj,
             };
-            console.log("✅ Android initially updateSubscriptionData :: ", updateSubscriptionData);
+            // console.log("✅ Android initially updateSubscriptionData :: ", updateSubscriptionData)
             //Possible values are: 0. Payment pending 1. Payment received 2. Free trial 3. Pending deferred upgrade/downgrade
             if (((_p = receiptDecode === null || receiptDecode === void 0 ? void 0 : receiptDecode.payload) === null || _p === void 0 ? void 0 : _p.paymentState) == 2) {
                 updateSubscriptionData['user_subscription.trial_period_start_unix'] = purchaseDateUnix;
@@ -196,16 +196,16 @@ const UserSubscriptionHandler = {
             const notification_type = (_a = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _a === void 0 ? void 0 : _a.notificationType;
             const subscription_id = (_b = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _b === void 0 ? void 0 : _b.subscriptionId;
             const purchase_token = (_c = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _c === void 0 ? void 0 : _c.purchaseToken;
-            console.log("✅ saveAndroidSubscriptionLogs coming :::: ", notification_type, subscription_id, " purchase_token : ", purchase_token);
+            // console.log("✅ saveAndroidSubscriptionLogs coming :::: ", notification_type, subscription_id, " purchase_token : ", purchase_token)
             let getUserDetails = yield user_auth_model_1.default.findOne({ 'user_subscription.purchase_token': purchase_token, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } }); //not deleted
-            console.log("*USER ID*********", getUserDetails === null || getUserDetails === void 0 ? void 0 : getUserDetails._id);
-            console.log("*saveSubscriptionWebhookLogAndroid purchaseToken*********", purchase_token);
+            // console.log("*USER ID*********", getUserDetails?._id);
+            // console.log("*saveSubscriptionWebhookLogAndroid purchaseToken*********", purchase_token);
             if (!(getUserDetails === null || getUserDetails === void 0 ? void 0 : getUserDetails._id)) {
-                console.log("User not found, retrying in 3 seconds...");
+                // console.log("User not found, retrying in 3 seconds...");
                 yield UserSubscriptionHandler.sleep(4000); // Delay of 3 seconds
                 getUserDetails = yield user_auth_model_1.default.findOne({ 'user_subscription.purchase_token': purchase_token, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } });
-                console.log("*After Delay USER ID*********", getUserDetails === null || getUserDetails === void 0 ? void 0 : getUserDetails._id);
-                console.log("*After Delay purchaseToken*********", purchase_token);
+                // console.log("*After Delay USER ID*********", getUserDetails?._id);
+                // console.log("*After Delay purchaseToken*********", purchase_token);
             }
             const subscriptionKey = Object.keys(ANDROID_SUBS_NOTI_TYPE).find(key => ANDROID_SUBS_NOTI_TYPE[key] === notification_type); //get subs-status by name
             // If no key is found, set subscriptionKey to an empty string
@@ -273,10 +273,10 @@ const UserSubscriptionHandler = {
                         }
                         const update_user = yield user_auth_model_1.default.updateOne({ _id: user_id }, updateSubObj);
                         if (update_user) {
-                            console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER INFO**************`);
+                            // console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER INFO**************`)
                             return (0, response_util_1.showResponse)(true, "subscription renewal success", null, statusCodes_1.default.SUCCESS);
                         }
-                        console.log(`❌ *******Unable to update android subscribed detail**************`);
+                        // console.log(`❌ *******Unable to update android subscribed detail**************`)
                         return (0, response_util_1.showResponse)(false, "Unable to renew subscription at the moment", null, statusCodes_1.default.SUCCESS);
                     }
                     console.error("❌ android subscription acknowledgementState is not 1");
@@ -299,18 +299,18 @@ const UserSubscriptionHandler = {
                         updateSubObj['user_subscription.next_payment_unix'] = 0;
                         updateSubObj['user_subscription.cancelled_on_unix'] = 0;
                     }
-                    console.log(user_id, "user_idandroid");
+                    // console.log(user_id, "user_idandroid")
                     const update_user = yield user_auth_model_1.default.updateOne({ _id: user_id }, updateSubObj);
                     if (update_user) {
-                        console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER info(for cancel)**************`);
+                        // console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER info(for cancel)**************`)
                         return (0, response_util_1.showResponse)(true, "✅ Operation performed successfully", null, statusCodes_1.default.SUCCESS);
                     }
-                    console.error(`❌ *******Unable to update android subscription cancel detail**************`);
+                    // console.error(`❌ *******Unable to update android subscription cancel detail**************`)
                 }
                 return (0, response_util_1.showResponse)(true, "✅ log added success", null, statusCodes_1.default.SUCCESS);
             }
             else {
-                console.log("❌ Android log added without userId");
+                // console.log("❌ Android log added without userId")
                 const result = yield user_subscriptionLogs_model_1.default.create(log_data);
                 return (0, response_util_1.showResponse)(true, "❌ Android log added without userId", result, statusCodes_1.default.SUCCESS);
             }
@@ -321,21 +321,24 @@ const UserSubscriptionHandler = {
     }),
     // *****Decode Messages From Play Store Subscription Notifications ****** */
     decodeAndroidSubscriptionMessage: (data) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a, _b, _c, _d;
+        var _a, _b;
         try {
             const decoded_data = JSON.parse(Buffer.from(data, 'base64').toString());
-            console.log("✅ decoded_data?.subscriptionNotification?.subscriptionId ", (_a = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _a === void 0 ? void 0 : _a.subscriptionId, "✅ decoded_data?.subscriptionNotification?.purchaseToken ", (_b = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _b === void 0 ? void 0 : _b.purchaseToken);
+            // console.log(
+            //     "✅ decoded_data?.subscriptionNotification?.subscriptionId ", decoded_data?.subscriptionNotification?.subscriptionId,
+            //     "✅ decoded_data?.subscriptionNotification?.purchaseToken ", decoded_data?.subscriptionNotification?.purchaseToken,
+            // )
             const receipt = {
                 // packageName: 'com.subscriptiondemosts',
                 // productId: decoded_data?.subscriptionNotification?.subscriptionId,
                 // purchaseToken: decoded_data?.subscriptionNotification?.purchaseToken,
                 packageName: ANDROID_SUBSCRIPTION_DATA.SUBSCRIPTION_APN,
-                productId: (_c = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _c === void 0 ? void 0 : _c.subscriptionId,
-                purchaseToken: (_d = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _d === void 0 ? void 0 : _d.purchaseToken,
+                productId: (_a = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _a === void 0 ? void 0 : _a.subscriptionId,
+                purchaseToken: (_b = decoded_data === null || decoded_data === void 0 ? void 0 : decoded_data.subscriptionNotification) === null || _b === void 0 ? void 0 : _b.purchaseToken,
             };
             const subscriptionData = yield verifier.verifySub(receipt);
             if (subscriptionData) {
-                console.log("✅ Android webhook_subscriptionData >>>>>>... ", subscriptionData);
+                // console.log("✅ Android webhook_subscriptionData >>>>>>... ", subscriptionData)
                 yield UserSubscriptionHandler.saveAndroidSubscriptionLogs(decoded_data, subscriptionData);
             }
         }
@@ -519,32 +522,32 @@ const UserSubscriptionHandler = {
                 let transactionInfo;
                 if (Array.isArray((_b = notification_data === null || notification_data === void 0 ? void 0 : notification_data.data) === null || _b === void 0 ? void 0 : _b.signedTransactionInfo)) {
                     // If it's an array, use decodeTransactions
-                    console.log(">>>>>>>>>>>> In array check<<<<<<<<<<<<<<");
+                    // console.log(">>>>>>>>>>>> In array check<<<<<<<<<<<<<<")
                     transactionInfo = yield (0, app_store_server_api_1.decodeTransactions)((_c = notification_data === null || notification_data === void 0 ? void 0 : notification_data.data) === null || _c === void 0 ? void 0 : _c.signedTransactionInfo);
                 }
                 else {
-                    console.log(">>>>>>>>>>>> In single value<<<<<<<<<<<<<<");
+                    // console.log(">>>>>>>>>>>> In single value<<<<<<<<<<<<<<")
                     // If it's a single transaction, use decodeTransaction
                     transactionInfo = yield (0, app_store_server_api_1.decodeTransaction)((_d = notification_data === null || notification_data === void 0 ? void 0 : notification_data.data) === null || _d === void 0 ? void 0 : _d.signedTransactionInfo);
                 }
-                console.log("********renewalInfo saveSubscriptionWebhookLogIOS Start ************");
-                console.log("renewalInfo >>>> ", renewalInfo);
-                console.log("********renewalInfo saveSubscriptionWebhookLogIOS Ended ************");
+                // console.log("********renewalInfo saveSubscriptionWebhookLogIOS Start ************")
+                // console.log("renewalInfo >>>> ", renewalInfo)
+                // console.log("********renewalInfo saveSubscriptionWebhookLogIOS Ended ************")
                 if (renewalInfo) {
                     let user_id = null;
                     let userDetails = yield user_auth_model_1.default.findOne({
                         status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, 'user_subscription.original_transaction_id': renewalInfo === null || renewalInfo === void 0 ? void 0 : renewalInfo.originalTransactionId
                     });
-                    console.log("User-id >>>>>>>>>>>>> ", userDetails === null || userDetails === void 0 ? void 0 : userDetails._id);
-                    console.log("originalTransactionId >>>>>>>>>>>>> ", renewalInfo === null || renewalInfo === void 0 ? void 0 : renewalInfo.originalTransactionId);
+                    // console.log("User-id >>>>>>>>>>>>> ", userDetails?._id)
+                    // console.log("originalTransactionId >>>>>>>>>>>>> ", renewalInfo?.originalTransactionId)
                     if (!(userDetails === null || userDetails === void 0 ? void 0 : userDetails._id)) {
-                        console.log("iOS User not found, retrying in 3 seconds...");
+                        // console.log("iOS User not found, retrying in 3 seconds...");
                         yield UserSubscriptionHandler.sleep(4000);
                         userDetails = yield user_auth_model_1.default.findOne({
                             status: { $ne: workflow_constant_1.USER_STATUS.DELETED }, 'user_subscription.original_transaction_id': renewalInfo === null || renewalInfo === void 0 ? void 0 : renewalInfo.originalTransactionId
                         });
-                        console.log("*After Delay USER ID*********", userDetails === null || userDetails === void 0 ? void 0 : userDetails._id);
-                        console.log("*After Delay originalTransactionId*********", renewalInfo === null || renewalInfo === void 0 ? void 0 : renewalInfo.originalTransactionId);
+                        // console.log("*After Delay USER ID*********", userDetails?._id);
+                        // console.log("*After Delay originalTransactionId*********", renewalInfo?.originalTransactionId);
                     }
                     user_id = userDetails === null || userDetails === void 0 ? void 0 : userDetails._id;
                     const data = {
@@ -573,7 +576,7 @@ const UserSubscriptionHandler = {
                     if (notification_data.notificationType == "DID_RENEW" || notification_data.notificationType == "DID_CHANGE_RENEWAL_PREF" ||
                         notification_data.notificationType == "SUBSCRIBED" ||
                         (notification_data.notificationType == "DID_CHANGE_RENEWAL_STATUS" && notification_data.subtype == "AUTO_RENEW_ENABLED")) {
-                        console.log("inside DID_RENEW iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
+                        // console.log("inside DID_RENEW iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
                         if (user_id) {
                             const nextPaymentUnix = (renewalInfo === null || renewalInfo === void 0 ? void 0 : renewalInfo.renewalDate) && renewalInfo.renewalDate.toString().length === 13
                                 ? Math.floor(renewalInfo.renewalDate / 1000)
@@ -618,7 +621,7 @@ const UserSubscriptionHandler = {
                     }
                     else if ((notification_data.notificationType == "DID_CHANGE_RENEWAL_STATUS" && notification_data.subtype == "AUTO_RENEW_DISABLED")
                         || notification_data.notificationType == "EXPIRED") {
-                        console.log("inside AUTO_RENEW_DISABLED iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
+                        // console.log("inside AUTO_RENEW_DISABLED iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
                         if (user_id) {
                             const cancelPaymentUnix = (renewalInfo === null || renewalInfo === void 0 ? void 0 : renewalInfo.signedDate) && renewalInfo.signedDate.toString().length === 13
                                 ? Math.floor(renewalInfo.signedDate / 1000)
@@ -659,10 +662,10 @@ const UserSubscriptionHandler = {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
         try {
             const { original_transaction_id, package_name, signedPayload } = data;
-            console.log(data, "data");
-            console.log("✅ >>>>>>>>>>>>>>. purchaseSubscriptionIos", {
-                original_transaction_id, package_name
-            });
+            // console.log(data, "data")
+            // console.log("✅ >>>>>>>>>>>>>>. purchaseSubscriptionIos", {
+            //     original_transaction_id, package_name
+            // })
             const queryObj = {
                 _id: { $ne: commonHelper.convertToObjectId(user_id) },
                 'user_subscription.original_transaction_id': original_transaction_id,
@@ -683,7 +686,7 @@ const UserSubscriptionHandler = {
             const packageName = package_name;
             const originalTransactionId = original_transaction_id;
             const validateReceiptData = yield UserSubscriptionHandler.validateReceipt(signedPayload);
-            console.log("✅ validateReceiptData :::>>>>> ", validateReceiptData);
+            // console.log("✅ validateReceiptData :::>>>>> ", validateReceiptData)
             if (validateReceiptData.length > 0) {
                 let indData = (validateReceiptData.length) - 1;
                 for (let a = 0; a < validateReceiptData.length; a++) {
@@ -700,7 +703,7 @@ const UserSubscriptionHandler = {
                     ? Math.floor(expirationDate / 1000)
                     : 0;
                 appSubscriptionObj.receipt_detail = validateReceiptData;
-                console.log(appSubscriptionObj, "appSubscriptionObjupperrrrr");
+                // console.log(appSubscriptionObj, "appSubscriptionObjupperrrrr")
                 // packageName = validateReceiptData[indData]?.productId;
                 // originalTransactionId = validateReceiptData[indData]?.originalTransactionId;
                 if ((0, moment_1.default)().unix() > expirationDateUnix) {
@@ -717,7 +720,7 @@ const UserSubscriptionHandler = {
                 ios_event: { receipt_detail: validateReceiptData },
                 prev_user_subscription_obj: (_d = (userDetail === null || userDetail === void 0 ? void 0 : userDetail.user_subscription)) !== null && _d !== void 0 ? _d : {}
             };
-            console.log("✅ createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
+            // console.log("✅ createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
             // Prepare subscription data
             const updateSubscriptionData = {
                 'user_subscription.is_subscribed': 1,
@@ -738,7 +741,7 @@ const UserSubscriptionHandler = {
                 'user_subscription.stripe_subscription_obj': {},
                 'user_subscription.app_subscription_obj': appSubscriptionObj,
             };
-            console.log("updateSubscriptionData ✅ ", appSubscriptionObj);
+            // console.log("updateSubscriptionData ✅ ", appSubscriptionObj)
             // Update User Model With Subscription Data
             const response = yield user_auth_model_1.default.updateOne({ _id: commonHelper.convertToObjectId(user_id) }, updateSubscriptionData);
             if (!response) {
@@ -751,7 +754,7 @@ const UserSubscriptionHandler = {
             return (0, response_util_1.showResponse)(true, "Initial purchased in ios successfully", null, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log("❌ Initial ios purchased error occured :: ", error);
+            // console.log("❌ Initial ios purchased error occured :: ", error)
             return (0, response_util_1.showResponse)(false, "Initial ios purchased error occured", error, statusCodes_1.default.API_ERROR);
         }
     }),
@@ -768,7 +771,7 @@ const UserSubscriptionHandler = {
             if (!package_name || !transaction_id) {
                 return (0, response_util_1.showResponse)(false, "package_name and transaction_id required", null, statusCodes_1.default.VALIDATION_ERROR);
             }
-            console.log("Incoming:", package_name, transaction_id);
+            // console.log("Incoming:", package_name, transaction_id);
             // ✅ USER CHECK
             const user = yield user_auth_model_1.default.findById(user_id);
             if (!user) {

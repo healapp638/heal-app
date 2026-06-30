@@ -66,7 +66,7 @@ const updateImportStatus = (themeTitle, status) => __awaiter(void 0, void 0, voi
             excelTheme: themeTitle,
             status: status
         }, { upsert: true, new: true });
-        console.log(`📊 Import status updated to ${status} for theme: ${themeTitle}`);
+        // console.log(`📊 Import status updated to ${status} for theme: ${themeTitle}`);
     }
     catch (err) {
         console.error(`❌ Failed to update status:`, err);
@@ -74,7 +74,7 @@ const updateImportStatus = (themeTitle, status) => __awaiter(void 0, void 0, voi
 });
 // 🚀 START WORKER
 const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("🔌 Connecting DB...");
+    // console.log("🔌 Connecting DB...");
     yield (0, app_constant_1.initializeAwsCredential)();
     yield (0, mongoose_config_1.connection)();
     console.log("✅ DB connected");
@@ -225,15 +225,15 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
     worker.on("completed", (job) => {
         console.log(` Job ${job.id} done`);
     });
-    worker.on("failed", (job, err) => {
-        console.error(`❌ Job ${job === null || job === void 0 ? void 0 : job.id} failed`, err);
-    });
+    // worker.on("failed", (job, err) => {
+    //     console.error(`❌ Job ${job?.id} failed`, err);
+    // });
 });
 // 🚀 Start
 startWorker();
 // ================= AFFIRMATION WORKER =================
 const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("🔌 Connecting DB...");
+    // console.log("🔌 Connecting DB...");
     yield (0, app_constant_1.initializeAwsCredential)();
     yield (0, mongoose_config_1.connection)();
     console.log("✅ DB connected");
@@ -302,9 +302,12 @@ const startAffirmationWorker = () => __awaiter(void 0, void 0, void 0, function*
     worker.on("completed", (job) => {
         console.log(` Job ${job.id} completed successfully`);
     });
-    worker.on("failed", (job, err) => {
-        console.error(`❌ Job ${job === null || job === void 0 ? void 0 : job.id} failed`, err);
-    });
+    // worker.on("failed", (job, err) => {
+    //     console.error(
+    //         `❌ Job ${job?.id} failed`,
+    //         err
+    //     );
+    // });
 });
 // ================= START =================
 startAffirmationWorker();

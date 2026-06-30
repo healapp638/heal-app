@@ -881,16 +881,16 @@ getAffirmationListing: async (
       },
       statusCodes.SUCCESS,
     );
-  } catch (error) {
-    console.log(
-      error,
-      "GET_AFFIRMATION_LISTING_ERROR"
-    );
+  } catch (error:any) {
+    // console.log(
+    //   error,
+    //   "GET_AFFIRMATION_LISTING_ERROR"
+    // );
 
     return showResponse(
       false,
       responseMessage.common.server_error,
-      null,
+      error?.message,
       statusCodes.API_ERROR,
     );
   }
@@ -1098,9 +1098,9 @@ getAffirmationListing: async (
 
 
             return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR);
-        } catch (err) {
-          console.log(err,"err")
-            return showResponse(false, responseMessage.common.data_not_found, null, statusCodes.API_ERROR);
+        } catch (err:any) {
+          // console.log(err,"err")
+            return showResponse(false, responseMessage.common.data_not_found, err?.message, statusCodes.API_ERROR);
         }
     },//ends-----------------------------------------------------------------------------------------------
 

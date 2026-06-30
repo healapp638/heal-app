@@ -25,7 +25,7 @@ const UserCommonHandler = {
         const { cursor, limit = 10 } = data;
         const user = await userAuthModel.findOne({ _id: userId, status: USER_STATUS.ACTIVE });
         const userLang = user?.language;
-        console.log(userLang, "userLang")
+        // console.log(userLang, "userLang")
 
         const match: any = {
             status: USER_STATUS.ACTIVE
@@ -67,7 +67,7 @@ const UserCommonHandler = {
         const last = themeList[themeList.length - 1];
 
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        console.log(themeList, "themeList")
+        // console.log(themeList, "themeList")
 
         return showResponse(true, getMessage(userLang || 'en', 'data_fetch_success'), { data: themeList, nextCursor }, statusCodes.SUCCESS);
     },
@@ -391,9 +391,9 @@ const UserCommonHandler = {
 
             return showResponse(true, responseMessages.common.data_save, createAnswer, statusCodes.SUCCESS);
 
-        } catch (error) {
-            console.log(error, "ADD_MCQ_ANSWER_ERROR");
-            return showResponse(false, responseMessages.common.server_error, null, statusCodes.API_ERROR);
+        } catch (error:any) {
+            // console.log(error, "ADD_MCQ_ANSWER_ERROR");
+            return showResponse(false, responseMessages.common.server_error, error?.message, statusCodes.API_ERROR);
         }
     },
 
@@ -654,11 +654,11 @@ const UserCommonHandler = {
 
             return showResponse(true, getMessage(userLang || "en", "data_fetch_success"), { mcqList, nextCursor }, statusCodes.SUCCESS);
 
-        } catch (error) {
+        } catch (error:any) {
 
-            console.log(error, "MCQ_EXERCISE_LIST_ERROR");
+            // console.log(error, "MCQ_EXERCISE_LIST_ERROR");
 
-            return showResponse(false, responseMessages.common.server_error, null, statusCodes.API_ERROR);
+            return showResponse(false, responseMessages.common.server_error, error?.message, statusCodes.API_ERROR);
         }
     },
 
@@ -854,10 +854,10 @@ const UserCommonHandler = {
             _id: convertToObjectId(phase_id),
             status: USER_STATUS.ACTIVE
         });
-        console.log(submodule, "submodule")
+        // console.log(submodule, "submodule")
 
         const subModuleId: any = submodule?.subModuleId;
-        console.log(subModuleId, "subModuleId")
+        // console.log(subModuleId, "subModuleId")
 
         if (completedLessonData) {
             await userModulesCompletePhaseModel.create({
@@ -872,14 +872,14 @@ const UserCommonHandler = {
             subModuleId: convertToObjectId(subModuleId),
             status: USER_STATUS.ACTIVE
         })
-        console.log(totalPhaseInSubModule, "totalPhaseInSubModule")
+        // console.log(totalPhaseInSubModule, "totalPhaseInSubModule")
 
         const completedPhaseInSubModule = await userModulesCompletePhaseModel.countDocuments({
             user_id: convertToObjectId(userId),
             sub_module_id: convertToObjectId(subModuleId),
             status: USER_STATUS.ACTIVE
         })
-        console.log(completedPhaseInSubModule, "completedPhaseInSubModule")
+        // console.log(completedPhaseInSubModule, "completedPhaseInSubModule")
 
         if (totalPhaseInSubModule === completedPhaseInSubModule) {
             await userModuleStartLessonModel.updateOne({

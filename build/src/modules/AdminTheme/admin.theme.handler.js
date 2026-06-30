@@ -179,8 +179,11 @@ const CommonHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, null, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "DELETE_THEME_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(
+            //     error,
+            //     "DELETE_THEME_ERROR"
+            // );
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     listTheme: (page_1, limit_1, ...args_1) => __awaiter(void 0, [page_1, limit_1, ...args_1], void 0, function* (page, limit, search = '', lang = 'en') {

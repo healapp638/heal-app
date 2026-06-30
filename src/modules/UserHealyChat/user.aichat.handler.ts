@@ -1474,7 +1474,7 @@ getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse>
         // CHECK CONVERSATION
         // =========================================
 
-        console.log(conversation_id,"conversation_id");
+        // console.log(conversation_id,"conversation_id");
 
         if(conversation_id == " " || conversation_id == null || conversation_id == undefined){
             return showResponse(true,responseMessage.common.data_retreive_sucess,[],statusCodes.SUCCESS);
@@ -1680,7 +1680,7 @@ getConversationListing: async (page: number = 1,limit: number = 10,search: strin
         // =========================
         // USER
         // =========================
-        console.log(page,"page")
+        // console.log(page,"page")
         const userData = await userAuthModel.findOne({_id: convertToObjectId(user_id),status: USER_STATUS.ACTIVE});
 
         if (!userData) {

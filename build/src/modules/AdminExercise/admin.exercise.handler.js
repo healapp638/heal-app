@@ -276,8 +276,8 @@ const exerciseHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, createExercise, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "CREATE_MCQ_EXERCISE_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error,"CREATE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     updateMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -364,8 +364,11 @@ const exerciseHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.updated_sucessfully, updatedExercise, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "UPDATE_MCQ_EXERCISE_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(
+            //     error,
+            //     "UPDATE_MCQ_EXERCISE_ERROR"
+            // );
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     deleteMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -379,8 +382,8 @@ const exerciseHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.delete_sucess, updatedExercise, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "DELETE_MCQ_EXERCISE_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error,"DELETE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     listMcqExercise: (page, limit, search, lang, phase_id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -428,8 +431,8 @@ const exerciseHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, { phase_details: phaseDetails[0], result, totalCount }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "LIST_MCQ_EXERCISE_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error, "LIST_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     singleMcqExercise: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -461,8 +464,8 @@ const exerciseHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, exercise[0], statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "SINGLE_MCQ_EXERCISE_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error,"SINGLE_MCQ_EXERCISE_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     })
 };

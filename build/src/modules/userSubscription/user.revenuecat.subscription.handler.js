@@ -202,7 +202,7 @@ function verifyWebhookSignature(payload, signature, authorization) {
             const sigBuffer = Buffer.from(signature || '');
             const expectedSigBuffer = Buffer.from(expectedSignature);
             if (sigBuffer.length !== expectedSigBuffer.length) {
-                console.log('Signature length mismatch');
+                // console.log('Signature length mismatch')
                 return false;
             }
             // console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
@@ -306,7 +306,7 @@ const UserSubscriptionHandler = {
                     subscription_status: { $in: ["CREDIT_PACK_ADDED", "CREDIT_PACK_DUPLICATE"] }
                 });
                 if (existingLog) {
-                    console.log(`⚠️ Duplicate credit pack transaction ${transactionId}, skipping.`);
+                    // console.log(`⚠️ Duplicate credit pack transaction ${transactionId}, skipping.`);
                     yield user_subscriptionLogs_model_1.default.updateOne({ 'revenuecat_event.transaction_id': transactionId, subscription_status: "CREDIT_PACK_DUPLICATE" }, { $set: { subscription_status: "CREDIT_PACK_DUPLICATE" } }, { upsert: false });
                     return (0, response_util_1.showResponse)(true, "Already processed", null, statusCodes_1.default.SUCCESS);
                 }
@@ -337,7 +337,7 @@ const UserSubscriptionHandler = {
                         credits_added: creditsToAdd
                     }
                 });
-                console.log(`✅ Credit pack processed: +${creditsToAdd} pack_credits for user ${userId} (product: ${productId})`);
+                // console.log(`✅ Credit pack processed: +${creditsToAdd} pack_credits for user ${userId} (product: ${productId})`);
                 return (0, response_util_1.showResponse)(true, `Credit pack added: ${creditsToAdd} credits`, { creditsToAdd }, statusCodes_1.default.SUCCESS);
             }
             // ================================================================

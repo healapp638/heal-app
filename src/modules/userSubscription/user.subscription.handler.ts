@@ -85,7 +85,7 @@ const UserSubscriptionHandler = {
 
             const receiptDecode = await verifier.verifySub(receipt)
 
-            console.log("✅ >>>>>>. receiptDecode:::::::::::::: ", receiptDecode)
+            // console.log("✅ >>>>>>. receiptDecode:::::::::::::: ", receiptDecode)
 
             let expirationDateUnix = 0;
             let purchaseDateUnix = moment().unix();
@@ -120,7 +120,7 @@ const UserSubscriptionHandler = {
                 prev_user_subscription_obj: (userDetail?.user_subscription) ?? {},
             }
 
-            console.log("createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
+            // console.log("createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
 
             // Prepare subscription data
             const updateSubscriptionData: any = {
@@ -142,7 +142,7 @@ const UserSubscriptionHandler = {
                 'user_subscription.stripe_subscription_obj': {},
                 'user_subscription.app_subscription_obj': appSubscriptionObj,
             };
-            console.log("✅ Android initially updateSubscriptionData :: ", updateSubscriptionData)
+            // console.log("✅ Android initially updateSubscriptionData :: ", updateSubscriptionData)
 
             //Possible values are: 0. Payment pending 1. Payment received 2. Free trial 3. Pending deferred upgrade/downgrade
             if (receiptDecode?.payload?.paymentState == 2) {
@@ -177,21 +177,21 @@ const UserSubscriptionHandler = {
             const purchase_token = decoded_data?.subscriptionNotification?.purchaseToken;
 
 
-            console.log("✅ saveAndroidSubscriptionLogs coming :::: ", notification_type, subscription_id, " purchase_token : ", purchase_token)
+            // console.log("✅ saveAndroidSubscriptionLogs coming :::: ", notification_type, subscription_id, " purchase_token : ", purchase_token)
 
             let getUserDetails: any = await userAuthModel.findOne({ 'user_subscription.purchase_token': purchase_token, status: { $ne: USER_STATUS.DELETED } }); //not deleted
 
-            console.log("*USER ID*********", getUserDetails?._id);
-            console.log("*saveSubscriptionWebhookLogAndroid purchaseToken*********", purchase_token);
+            // console.log("*USER ID*********", getUserDetails?._id);
+            // console.log("*saveSubscriptionWebhookLogAndroid purchaseToken*********", purchase_token);
 
             if (!getUserDetails?._id) {
-                console.log("User not found, retrying in 3 seconds...");
+                // console.log("User not found, retrying in 3 seconds...");
                 await UserSubscriptionHandler.sleep(4000); // Delay of 3 seconds
 
                 getUserDetails = await userAuthModel.findOne({ 'user_subscription.purchase_token': purchase_token, status: { $ne: USER_STATUS.DELETED } });
 
-                console.log("*After Delay USER ID*********", getUserDetails?._id);
-                console.log("*After Delay purchaseToken*********", purchase_token);
+                // console.log("*After Delay USER ID*********", getUserDetails?._id);
+                // console.log("*After Delay purchaseToken*********", purchase_token);
             }
 
             const subscriptionKey = Object.keys(ANDROID_SUBS_NOTI_TYPE).find(key => ANDROID_SUBS_NOTI_TYPE[key] === notification_type);//get subs-status by name
@@ -271,10 +271,10 @@ const UserSubscriptionHandler = {
                         }
                         const update_user = await userAuthModel.updateOne({ _id: user_id }, updateSubObj);
                         if (update_user) {
-                            console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER INFO**************`)
+                            // console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER INFO**************`)
                             return showResponse(true, "subscription renewal success", null, statusCodes.SUCCESS);
                         }
-                        console.log(`❌ *******Unable to update android subscribed detail**************`)
+                        // console.log(`❌ *******Unable to update android subscribed detail**************`)
                         return showResponse(false, "Unable to renew subscription at the moment", null, statusCodes.SUCCESS);
                     }
                     console.error("❌ android subscription acknowledgementState is not 1");
@@ -299,18 +299,18 @@ const UserSubscriptionHandler = {
                         updateSubObj['user_subscription.next_payment_unix'] = 0;
                         updateSubObj['user_subscription.cancelled_on_unix'] = 0;
                     }
-                    console.log(user_id, "user_idandroid")
+                    // console.log(user_id, "user_idandroid")
 
                     const update_user = await userAuthModel.updateOne({ _id: user_id }, updateSubObj);
                     if (update_user) {
-                        console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER info(for cancel)**************`)
+                        // console.log(`✅ *******USER SUBSCRIPNTION UPDATED IN USER info(for cancel)**************`)
                         return showResponse(true, "✅ Operation performed successfully", null, statusCodes.SUCCESS);
                     }
-                    console.error(`❌ *******Unable to update android subscription cancel detail**************`)
+                    // console.error(`❌ *******Unable to update android subscription cancel detail**************`)
                 }
                 return showResponse(true, "✅ log added success", null, statusCodes.SUCCESS);
             } else {
-                console.log("❌ Android log added without userId")
+                // console.log("❌ Android log added without userId")
                 const result = await userSusbriptionLogsModel.create(log_data);
                 return showResponse(true, "❌ Android log added without userId", result, statusCodes.SUCCESS);
             }
@@ -324,10 +324,10 @@ const UserSubscriptionHandler = {
     decodeAndroidSubscriptionMessage: async (data: any) => {
         try {
             const decoded_data = JSON.parse(Buffer.from(data, 'base64').toString());
-            console.log(
-                "✅ decoded_data?.subscriptionNotification?.subscriptionId ", decoded_data?.subscriptionNotification?.subscriptionId,
-                "✅ decoded_data?.subscriptionNotification?.purchaseToken ", decoded_data?.subscriptionNotification?.purchaseToken,
-            )
+            // console.log(
+            //     "✅ decoded_data?.subscriptionNotification?.subscriptionId ", decoded_data?.subscriptionNotification?.subscriptionId,
+            //     "✅ decoded_data?.subscriptionNotification?.purchaseToken ", decoded_data?.subscriptionNotification?.purchaseToken,
+            // )
             const receipt: any = {
                 // packageName: 'com.subscriptiondemosts',
                 // productId: decoded_data?.subscriptionNotification?.subscriptionId,
@@ -340,7 +340,7 @@ const UserSubscriptionHandler = {
             const subscriptionData = await verifier.verifySub(receipt)
 
             if (subscriptionData) {
-                console.log("✅ Android webhook_subscriptionData >>>>>>... ", subscriptionData)
+                // console.log("✅ Android webhook_subscriptionData >>>>>>... ", subscriptionData)
                 await UserSubscriptionHandler.saveAndroidSubscriptionLogs(decoded_data, subscriptionData)
             }
         } catch (error: any) {
@@ -569,33 +569,33 @@ const UserSubscriptionHandler = {
                 let transactionInfo: any;
                 if (Array.isArray(notification_data?.data?.signedTransactionInfo)) {
                     // If it's an array, use decodeTransactions
-                    console.log(">>>>>>>>>>>> In array check<<<<<<<<<<<<<<")
+                    // console.log(">>>>>>>>>>>> In array check<<<<<<<<<<<<<<")
                     transactionInfo = await decodeTransactions(notification_data?.data?.signedTransactionInfo);
                 } else {
-                    console.log(">>>>>>>>>>>> In single value<<<<<<<<<<<<<<")
+                    // console.log(">>>>>>>>>>>> In single value<<<<<<<<<<<<<<")
                     // If it's a single transaction, use decodeTransaction
                     transactionInfo = await decodeTransaction(notification_data?.data?.signedTransactionInfo);
                 }
-                console.log("********renewalInfo saveSubscriptionWebhookLogIOS Start ************")
-                console.log("renewalInfo >>>> ", renewalInfo)
-                console.log("********renewalInfo saveSubscriptionWebhookLogIOS Ended ************")
+                // console.log("********renewalInfo saveSubscriptionWebhookLogIOS Start ************")
+                // console.log("renewalInfo >>>> ", renewalInfo)
+                // console.log("********renewalInfo saveSubscriptionWebhookLogIOS Ended ************")
                 if (renewalInfo) {
                     let user_id = null
                     let userDetails: any = await userAuthModel.findOne({
                         status: { $ne: USER_STATUS.DELETED }, 'user_subscription.original_transaction_id': renewalInfo?.originalTransactionId
                     })
-                    console.log("User-id >>>>>>>>>>>>> ", userDetails?._id)
-                    console.log("originalTransactionId >>>>>>>>>>>>> ", renewalInfo?.originalTransactionId)
+                    // console.log("User-id >>>>>>>>>>>>> ", userDetails?._id)
+                    // console.log("originalTransactionId >>>>>>>>>>>>> ", renewalInfo?.originalTransactionId)
                     if (!userDetails?._id) {
-                        console.log("iOS User not found, retrying in 3 seconds...");
+                        // console.log("iOS User not found, retrying in 3 seconds...");
 
                         await UserSubscriptionHandler.sleep(4000);
 
                         userDetails = await userAuthModel.findOne({
                             status: { $ne: USER_STATUS.DELETED }, 'user_subscription.original_transaction_id': renewalInfo?.originalTransactionId
                         })
-                        console.log("*After Delay USER ID*********", userDetails?._id);
-                        console.log("*After Delay originalTransactionId*********", renewalInfo?.originalTransactionId);
+                        // console.log("*After Delay USER ID*********", userDetails?._id);
+                        // console.log("*After Delay originalTransactionId*********", renewalInfo?.originalTransactionId);
                     }
 
                     user_id = userDetails?._id;
@@ -631,7 +631,7 @@ const UserSubscriptionHandler = {
                         notification_data.notificationType == "SUBSCRIBED" ||
                         (notification_data.notificationType == "DID_CHANGE_RENEWAL_STATUS" && notification_data.subtype == "AUTO_RENEW_ENABLED")) {
 
-                        console.log("inside DID_RENEW iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
+                        // console.log("inside DID_RENEW iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
 
                         if (user_id) {
 
@@ -686,7 +686,7 @@ const UserSubscriptionHandler = {
                     }
                     else if ((notification_data.notificationType == "DID_CHANGE_RENEWAL_STATUS" && notification_data.subtype == "AUTO_RENEW_DISABLED")
                         || notification_data.notificationType == "EXPIRED") {
-                        console.log("inside AUTO_RENEW_DISABLED iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
+                        // console.log("inside AUTO_RENEW_DISABLED iosSubscriptionWebhook>>>>>>>>>>>>>>>>>>>>>>");
 
                         if (user_id) {
                             const cancelPaymentUnix = renewalInfo?.signedDate && renewalInfo.signedDate.toString().length === 13
@@ -727,11 +727,11 @@ const UserSubscriptionHandler = {
 
         try {
             const { original_transaction_id, package_name, signedPayload } = data;
-            console.log(data, "data")
+            // console.log(data, "data")
 
-            console.log("✅ >>>>>>>>>>>>>>. purchaseSubscriptionIos", {
-                original_transaction_id, package_name
-            })
+            // console.log("✅ >>>>>>>>>>>>>>. purchaseSubscriptionIos", {
+            //     original_transaction_id, package_name
+            // })
 
             const queryObj = {
                 _id: { $ne: commonHelper.convertToObjectId(user_id) },
@@ -757,7 +757,7 @@ const UserSubscriptionHandler = {
             const originalTransactionId = original_transaction_id;
 
             const validateReceiptData = await UserSubscriptionHandler.validateReceipt(signedPayload);
-            console.log("✅ validateReceiptData :::>>>>> ", validateReceiptData)
+            // console.log("✅ validateReceiptData :::>>>>> ", validateReceiptData)
             if (validateReceiptData.length > 0) {
                 let indData = (validateReceiptData.length) - 1;
                 for (let a = 0; a < validateReceiptData.length; a++) {
@@ -777,7 +777,7 @@ const UserSubscriptionHandler = {
                     : 0;
 
                 appSubscriptionObj.receipt_detail = validateReceiptData;
-                console.log(appSubscriptionObj, "appSubscriptionObjupperrrrr")
+                // console.log(appSubscriptionObj, "appSubscriptionObjupperrrrr")
 
                 // packageName = validateReceiptData[indData]?.productId;
                 // originalTransactionId = validateReceiptData[indData]?.originalTransactionId;
@@ -799,7 +799,7 @@ const UserSubscriptionHandler = {
                 prev_user_subscription_obj: (userDetail?.user_subscription) ?? {}
             }
 
-            console.log("✅ createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
+            // console.log("✅ createLogObj ::>>>>>>>>>>>>>>>>>>>>>>>>>>>> ", createLogObj);
 
             // Prepare subscription data
             const updateSubscriptionData = {
@@ -821,7 +821,7 @@ const UserSubscriptionHandler = {
                 'user_subscription.stripe_subscription_obj': {},
                 'user_subscription.app_subscription_obj': appSubscriptionObj,
             };
-            console.log("updateSubscriptionData ✅ ", appSubscriptionObj)
+            // console.log("updateSubscriptionData ✅ ", appSubscriptionObj)
 
 
             // Update User Model With Subscription Data
@@ -837,7 +837,7 @@ const UserSubscriptionHandler = {
             return showResponse(true, "Initial purchased in ios successfully", null, statusCodes.SUCCESS);
 
         } catch (error) {
-            console.log("❌ Initial ios purchased error occured :: ", error)
+            // console.log("❌ Initial ios purchased error occured :: ", error)
             return showResponse(false, "Initial ios purchased error occured", error, statusCodes.API_ERROR)
         }
     },
@@ -858,7 +858,7 @@ const UserSubscriptionHandler = {
                 return showResponse(false, "package_name and transaction_id required", null, statusCodes.VALIDATION_ERROR);
             }
 
-            console.log("Incoming:", package_name, transaction_id);
+            // console.log("Incoming:", package_name, transaction_id);
 
             // ✅ USER CHECK
             const user: any = await userAuthModel.findById(user_id);

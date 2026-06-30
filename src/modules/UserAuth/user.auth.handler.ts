@@ -20,6 +20,7 @@ import userJournalModel from "../UserJournel/user.journel.model";
 import moment from "moment-timezone";
 // import moment from "moment";
 import userDeeplinkModel from "../UserAffirmation/user.deeplink.model";
+import adminHomethemeModel from "../AdminHometheme/admin.hometheme.model";
 
 
 const UserAuthHandler = {
@@ -237,12 +238,12 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             data: findUserr.status ? findUserr.data : findUser.data
         };
 
-    } catch (error) {
-        console.log(error, "error update_social_info");
+    } catch (error:any) {
+        // console.log(error, "error update_social_info");
 
         return {
             status: false,
-            data: null
+            data: error?.message
         };
     }
 },
@@ -545,18 +546,18 @@ update_social_info: async (findUser: any, model: any, data: any) => {
         if (findUser.status && findUser?.data?.account_source == 'email' && findUser?.data?.isVerified) {
             return showResponse(false, getMessage(language || 'en', "email_already_exists"), null, statusCodes.API_ERROR);
         }
-        console.log(findUser, "findUser")
+        // console.log(findUser, "findUser")
 
         //if exist with different source (through google apple login) then update details and account source else insert new account entry
         const result = await findOneAndUpdate(userAuthModel, queryObject, obj, true);
         if (!result.status) {
             return showResponse(false, getMessage(language || 'en', "err_while_register"), null, statusCodes.API_ERROR);
         }
-        console.log(result, "result")
-        console.log(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll")
+        // console.log(result, "result")
+        // console.log(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll")
 
         const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload)
-        console.log(sendEmail, "sendEmail")
+        // console.log(sendEmail, "sendEmail")
         if (!sendEmail.status) {
             return showResponse(false, getMessage(language || 'en', "err_while_sending_email"), null, statusCodes.API_ERROR);
         }
@@ -597,7 +598,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 createdAt: new Date(),
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
             });
-            console.log(code, "code");
+            // console.log(code, "code");
 
             // =========================================
             // DEEPLINK URL
@@ -614,7 +615,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 magic_link: deeplink,
             };
 
-            console.log(emailPayload, "emailPayload");
+            // console.log(emailPayload, "emailPayload");
 
             // =========================================
             // SEND EMAIL
@@ -622,7 +623,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
 
             const sendEmail = await services.emailService.sendEmailViaNodemail(EMAIL_SEND_TYPE.MAGIC_LINK, email, emailPayload);
 
-            console.log(sendEmail, "sendEmail");
+            // console.log(sendEmail, "sendEmail");
 
             if (!sendEmail.status) {
 
@@ -642,14 +643,14 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 statusCodes.SUCCESS
             );
 
-        } catch (err) {
+        } catch (err:any) {
 
-            console.log(err, "register err");
+            // console.log(err, "register err");
 
             return showResponse(
                 false,
                 responseMessage.common.error_while_create_acc,
-                null,
+                err?.message,
                 statusCodes.API_ERROR
             );
         }
@@ -662,7 +663,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
 
         const queryObject = { email: lowercaseEmail, status: { $ne: USER_STATUS.DELETED } };
         const findUser = await findOne(userAuthModel, queryObject);
-        console.log(code, "codeeee")
+        // console.log(code, "codeeee")
 
 
         const deepLink = await userDeeplinkModel.findOneAndUpdate(
@@ -682,10 +683,10 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 new: true
             }
         );
-        console.log(deepLink, "deepLink");
+        // console.log(deepLink, "deepLink");
 
         if (!deepLink) {
-            console.log("Magic link is invalid, innnnnnnnnnnnnnn");
+            // console.log("Magic link is invalid, innnnnnnnnnnnnnn");
             return showResponse(
                 false,
                 "Magic link is invalid, expired, or already used",
@@ -738,7 +739,34 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             userData = createResult.data;
         }
 
-        console.log(timeZone, 'timeZone');
+        // =========================================
+        // ADD DEFAULT HOME THEME IF USER HAS NONE
+        // =========================================
+        const defaultThemeId = "6a227305e409d77a89066ca3";
+
+        const recentTheme = await userRecentHomeThemeModel.findOne({
+            user_id: commonHelper.convertToObjectId(userData._id),
+            status: USER_STATUS.ACTIVE,
+        });
+
+        if (!recentTheme) {
+            const themeExists = await findOne(adminHomethemeModel, {
+                _id: commonHelper.convertToObjectId(defaultThemeId),
+                status: USER_STATUS.ACTIVE,
+            });
+
+            if (themeExists?.status) {
+                await createOne(
+                    new userRecentHomeThemeModel({
+                        user_id: commonHelper.convertToObjectId(userData._id),
+                        homeTheme_id: commonHelper.convertToObjectId(defaultThemeId),
+                        status: USER_STATUS.ACTIVE,
+                    })
+                );
+            }
+        }
+
+        // console.log(timeZone, 'timeZone');
 
         // challenges logic start
         await ChallengesQueue.add('challenges', { userData }, {
@@ -789,10 +817,10 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 value !== null &&
                 String(value).trim() !== ''
         );
-        console.log(userData?.is_onboarding, is_onboarding, "data")
+        // console.log(userData?.is_onboarding, is_onboarding, "data")
 
         if (userData?.is_onboarding !== is_onboarding) {
-            console.log("first")
+            // console.log("first")
             await findOneAndUpdate(userAuthModel, { _id: userData._id }, { 'is_onboarding': is_onboarding });
             userData.is_onboarding = is_onboarding;
         }
@@ -1146,14 +1174,14 @@ update_social_info: async (findUser: any, model: any, data: any) => {
             ...(profilePic && { profilePic }),
         };
         const user = await userAuthModel.findOne({ _id: user_id })
-        console.log(user, 'user')
+        // console.log(user, 'user')
         if (!user) {
             return showResponse(false, getMessage('en', "user_not_found"), null, statusCodes.API_ERROR)
         }
         const user_language = user?.language || 'en';
-        console.log(user_id, '0')
+        // console.log(user_id, '0')
         const result = await findByIdAndUpdate(userAuthModel, user_id, updateObj);
-        console.log(result, 'result')
+        // console.log(result, 'result')
         if (!result.status) {
             return showResponse(false, getMessage(user_language || 'en', "user_account_update_error"), null, statusCodes.API_ERROR);
         }
@@ -1210,7 +1238,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
     uploadFile: async (data: any): Promise<ApiResponse> => {
         const { file } = data;
         const s3Upload = await services.awsService.uploadFileToS3([file])
-        console.log(s3Upload, 's3Upload')
+        // console.log(s3Upload, 's3Upload')
         if (!s3Upload.status) {
             return showResponse(false, responseMessage?.common.file_upload_error, {}, statusCodes.FILE_UPLOAD_ERROR);
         }
@@ -1220,7 +1248,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
     uploadFileAdmin: async (data: any): Promise<ApiResponse> => {
         const { file } = data;
         const s3Upload = await services.awsService.uploadFileToS3Theme([file])
-        console.log(s3Upload, 's3Upload')
+        // console.log(s3Upload, 's3Upload')
         if (!s3Upload.status) {
             return showResponse(false, responseMessage?.common.file_upload_error, {}, statusCodes.FILE_UPLOAD_ERROR);
         }
@@ -1285,7 +1313,7 @@ update_social_info: async (findUser: any, model: any, data: any) => {
                 value !== null &&
                 String(value).trim() !== ''
         );
-        console.log(userOnboarding?.is_onboarding, is_onboarding, "data")
+        // console.log(userOnboarding?.is_onboarding, is_onboarding, "data")
 
         if (userOnboarding?.is_onboarding !== is_onboarding) {
             // console.log("first")
@@ -1570,15 +1598,15 @@ const STREAK_REWARDS: any = {
         // =========================================
 
         const today = moment().tz(userTimeZone).format("YYYY-MM-DD");
-        console.log("today =====================================>>", today);
+        // console.log("today =====================================>>", today);
 
         const yesterday = moment()
             .tz(userTimeZone)
             .subtract(1, "day")
             .format("YYYY-MM-DD");
-        console.log("yesterday =====================================>>", yesterday);
+        // console.log("yesterday =====================================>>", yesterday);
 
-        console.log("user.last_streak_date =====================================>>", user.last_streak_date);
+        // console.log("user.last_streak_date =====================================>>", user.last_streak_date);
 
         // =========================================
         // ALREADY CLAIMED TODAY
@@ -1635,7 +1663,7 @@ const STREAK_REWARDS: any = {
         // =========================================
 
         const rewardXP = STREAK_REWARDS[streakCount] || 0;
-        console.log("rewardXP =====================================>>", rewardXP);
+        // console.log("rewardXP =====================================>>", rewardXP);
 
         if (rewardXP > 0) {
             streakCredit += rewardXP;
@@ -1670,14 +1698,14 @@ const STREAK_REWARDS: any = {
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(error, "CLAIM_STREAK_ERROR");
+        // console.log(error, "CLAIM_STREAK_ERROR");
 
         return showResponse(
             false,
             responseMessage.common.server_error,
-            null,
+            error?.message,
             statusCodes.API_ERROR
         );
     }

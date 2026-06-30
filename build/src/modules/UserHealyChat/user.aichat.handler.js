@@ -1157,7 +1157,7 @@ Rules:
         // =========================================
         // CHECK CONVERSATION
         // =========================================
-        console.log(conversation_id, "conversation_id");
+        // console.log(conversation_id,"conversation_id");
         if (conversation_id == " " || conversation_id == null || conversation_id == undefined) {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, [], statusCodes_1.default.SUCCESS);
         }
@@ -1320,7 +1320,7 @@ Rules:
         // =========================
         // USER
         // =========================
-        console.log(page, "page");
+        // console.log(page,"page")
         const userData = yield user_auth_model_1.default.findOne({ _id: (0, common_helper_1.convertToObjectId)(user_id), status: workflow_constant_1.USER_STATUS.ACTIVE });
         if (!userData) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.not_exist, null, statusCodes_1.default.NOT_FOUND);

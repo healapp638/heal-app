@@ -345,9 +345,9 @@ const exerciseHandler = {
 
         return showResponse(true,responseMessage.common.data_save,createExercise,statusCodes.SUCCESS);
 
-    } catch (error) {
-        console.log(error,"CREATE_MCQ_EXERCISE_ERROR");
-        return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
+    } catch (error:any) {
+        // console.log(error,"CREATE_MCQ_EXERCISE_ERROR");
+        return showResponse(false,responseMessage.common.server_error,error?.message,statusCodes.API_ERROR);
     }
 },
 updateMcqExercise: async (data: any): Promise<ApiResponse> => {
@@ -503,17 +503,17 @@ updateMcqExercise: async (data: any): Promise<ApiResponse> => {
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(
-            error,
-            "UPDATE_MCQ_EXERCISE_ERROR"
-        );
+        // console.log(
+        //     error,
+        //     "UPDATE_MCQ_EXERCISE_ERROR"
+        // );
 
         return showResponse(
             false,
             responseMessage.common.server_error,
-            null,
+            error?.message,
             statusCodes.API_ERROR
         );
     }
@@ -539,11 +539,11 @@ deleteMcqExercise: async (data: any): Promise<ApiResponse> => {
 
         return showResponse(true, responseMessage.common.delete_sucess, updatedExercise, statusCodes.SUCCESS);
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(error,"DELETE_MCQ_EXERCISE_ERROR");
+        // console.log(error,"DELETE_MCQ_EXERCISE_ERROR");
 
-        return showResponse(false, responseMessage.common.server_error, null, statusCodes.API_ERROR);
+        return showResponse(false, responseMessage.common.server_error,error?.message, statusCodes.API_ERROR);
     }
 },
 listMcqExercise: async (page:number, limit:number, search:string, lang:string, phase_id:string):Promise<ApiResponse> => {
@@ -604,11 +604,11 @@ listMcqExercise: async (page:number, limit:number, search:string, lang:string, p
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(error, "LIST_MCQ_EXERCISE_ERROR");
+        // console.log(error, "LIST_MCQ_EXERCISE_ERROR");
 
-        return showResponse(false,responseMessage.common.server_error,null,statusCodes.API_ERROR);
+        return showResponse(false,responseMessage.common.server_error,error?.message,statusCodes.API_ERROR);
     }
 },
 singleMcqExercise: async (data: any):Promise<ApiResponse> => {
@@ -647,11 +647,11 @@ singleMcqExercise: async (data: any):Promise<ApiResponse> => {
 
         return showResponse(true,responseMessage.common.data_retreive_sucess,exercise[0],statusCodes.SUCCESS);
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(error,"SINGLE_MCQ_EXERCISE_ERROR");
+        // console.log(error,"SINGLE_MCQ_EXERCISE_ERROR");
 
-        return showResponse(false, responseMessage.common.server_error,null, statusCodes.API_ERROR);
+        return showResponse(false, responseMessage.common.server_error,error?.message, statusCodes.API_ERROR);
     }
 }
 }

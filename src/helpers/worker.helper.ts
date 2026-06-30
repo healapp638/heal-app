@@ -69,7 +69,7 @@ const updateImportStatus = async (themeTitle: string, status: number) => {
             },
             { upsert: true, new: true }
         );
-        console.log(`📊 Import status updated to ${status} for theme: ${themeTitle}`);
+        // console.log(`📊 Import status updated to ${status} for theme: ${themeTitle}`);
     } catch (err) {
         console.error(`❌ Failed to update status:`, err);
     }
@@ -77,7 +77,7 @@ const updateImportStatus = async (themeTitle: string, status: number) => {
 
 // 🚀 START WORKER
 const startWorker = async () => {
-    console.log("🔌 Connecting DB...");
+    // console.log("🔌 Connecting DB...");
     await initializeAwsCredential();
     await connectDB();
     console.log("✅ DB connected");
@@ -295,9 +295,9 @@ const startWorker = async () => {
         console.log(` Job ${job.id} done`);
     });
 
-    worker.on("failed", (job, err) => {
-        console.error(`❌ Job ${job?.id} failed`, err);
-    });
+    // worker.on("failed", (job, err) => {
+    //     console.error(`❌ Job ${job?.id} failed`, err);
+    // });
 };
 
 // 🚀 Start
@@ -309,7 +309,7 @@ startWorker();
 
 const startAffirmationWorker = async () => {
 
-    console.log("🔌 Connecting DB...");
+    // console.log("🔌 Connecting DB...");
     await initializeAwsCredential();
     await connectDB();
 
@@ -440,13 +440,13 @@ const startAffirmationWorker = async () => {
         );
     });
 
-    worker.on("failed", (job, err) => {
+    // worker.on("failed", (job, err) => {
 
-        console.error(
-            `❌ Job ${job?.id} failed`,
-            err
-        );
-    });
+    //     console.error(
+    //         `❌ Job ${job?.id} failed`,
+    //         err
+    //     );
+    // });
 };
 
 // ================= START =================

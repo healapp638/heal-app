@@ -213,7 +213,7 @@ const uploadFileToS3 = (fileArray) => __awaiter(void 0, void 0, void 0, function
         try {
             const webpFilesArray = [];
             const promises = files.map(file => {
-                console.log(file, 'file');
+                // console.log(file, 'file')
                 const mime_type = file === null || file === void 0 ? void 0 : file.mimetype.split("/")[0];
                 if (mime_type == "image" && !file.originalname.endsWith(".psd")) {
                     return mediaHelper.convertImageToWebp(file === null || file === void 0 ? void 0 : file.buffer).then(imageNewBuffer => {
@@ -261,13 +261,13 @@ const uploadFileToS3 = (fileArray) => __awaiter(void 0, void 0, void 0, function
 exports.uploadFileToS3 = uploadFileToS3;
 const uploadFileToS3Theme = (fileArray) => __awaiter(void 0, void 0, void 0, function* () {
     const files = Array.isArray(fileArray) ? fileArray : [fileArray];
-    console.log(files, 'files');
+    // console.log(files, 'files')
     return new Promise((resolve) => {
         var _a;
         try {
             const webpFilesArray = [];
             const promises = files.map(file => {
-                console.log(file, 'file');
+                // console.log(file, 'file')
                 const mime_type = file === null || file === void 0 ? void 0 : file.mimetype.split("/")[0];
                 if (mime_type == "image" && !file.originalname.endsWith(".psd")) {
                     return mediaHelper.convertImageToWebp(file === null || file === void 0 ? void 0 : file.buffer).then(imageNewBuffer => {
@@ -443,9 +443,9 @@ const uploadToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* (
             secretAccessKey: yield app_constant_1.AWS_CREDENTIAL.AWS_SECRET,
             region: yield app_constant_1.AWS_CREDENTIAL.REGION,
         });
-        console.log(s3, 's3');
+        // console.log(s3, 's3')
         const bucketName = yield app_constant_1.AWS_CREDENTIAL.BUCKET_NAME;
-        console.log(bucketName, 'bucketName');
+        // console.log(bucketName, 'bucketName')
         const s3UploadPromises = files.map((file) => {
             return new Promise((resolve) => {
                 var _a, _b, _c, _d, _e;
@@ -477,7 +477,7 @@ const uploadToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* (
             });
         });
         const s3UploadResults = yield Promise.all(s3UploadPromises);
-        console.log(s3UploadResults, "s3UploadResults");
+        // console.log(s3UploadResults, "s3UploadResults")
         return s3UploadResults;
     }
     catch (error) {

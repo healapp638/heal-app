@@ -182,7 +182,7 @@ const uploadFileToS3 = async (fileArray: [any]): Promise<ApiResponse> => {
             const webpFilesArray: any = [];
 
             const promises = files.map(file => {
-                console.log(file, 'file')
+                // console.log(file, 'file')
                 const mime_type = file?.mimetype.split("/")[0];
                 if (mime_type == "image" && !file.originalname.endsWith(".psd")) {
                     return mediaHelper.convertImageToWebp(file?.buffer).then(imageNewBuffer => {
@@ -225,13 +225,13 @@ const uploadFileToS3 = async (fileArray: [any]): Promise<ApiResponse> => {
 
 const uploadFileToS3Theme = async (fileArray: [any]): Promise<ApiResponse> => {
     const files = Array.isArray(fileArray) ? fileArray : [fileArray];
-    console.log(files, 'files')
+    // console.log(files, 'files')
     return new Promise((resolve) => {
         try {
             const webpFilesArray: any = [];
 
             const promises = files.map(file => {
-                console.log(file, 'file')
+                // console.log(file, 'file')
                 const mime_type = file?.mimetype.split("/")[0];
                 if (mime_type == "image" && !file.originalname.endsWith(".psd")) {
                     return mediaHelper.convertImageToWebp(file?.buffer).then(imageNewBuffer => {
@@ -426,11 +426,11 @@ const uploadToS3 = async (files: any[], key?: string) => {
             region: await AWS_CREDENTIAL.REGION,
         });
 
-        console.log(s3, 's3')
+        // console.log(s3, 's3')
 
         const bucketName = await AWS_CREDENTIAL.BUCKET_NAME;
 
-        console.log(bucketName, 'bucketName')
+        // console.log(bucketName, 'bucketName')
 
         const s3UploadPromises = files.map((file: any) => {
         return new Promise((resolve) => {
@@ -462,7 +462,7 @@ const uploadToS3 = async (files: any[], key?: string) => {
             });
         });
         const s3UploadResults = await Promise.all(s3UploadPromises);
-        console.log(s3UploadResults, "s3UploadResults")
+        // console.log(s3UploadResults, "s3UploadResults")
         return s3UploadResults;
 
     } catch (error) {

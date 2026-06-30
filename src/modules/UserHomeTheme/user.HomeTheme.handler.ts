@@ -71,15 +71,15 @@ const homeThemeHandler = {
             statusCodes.SUCCESS,
         );
 
-    } catch (error) {
-        console.log(
-            error,
-            "ADD_USER_THEME_ERROR"
-        );
+    } catch (error:any) {
+        // console.log(
+        //     error,
+        //     "ADD_USER_THEME_ERROR"
+        // );
         return showResponse(
             false,
             responseMessage.common.server_error,
-            null,
+            error?.message,
             statusCodes.API_ERROR,
         );
     }
@@ -117,7 +117,7 @@ const homeThemeHandler = {
         statusCodes.NOT_FOUND,
       );
     }
-    console.log(themeCategory,"themeCategory")
+    // console.log(themeCategory,"themeCategory")
 
     // return only user's language
     // const responseData = {
@@ -142,7 +142,7 @@ const homeThemeHandler = {
 
             createdAt: item.createdAt,
         }));
-    console.log(responseData,"responseData")
+    // console.log(responseData,"responseData")
 
     return showResponse(
       true,
@@ -371,17 +371,17 @@ const homeThemeHandler = {
             statusCodes.SUCCESS,
         );
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(
-            error,
-            "GET_HOME_THEME_LISTING_ERROR"
-        );
+        // console.log(
+        //     error,
+        //     "GET_HOME_THEME_LISTING_ERROR"
+        // );
 
         return showResponse(
             false,
             responseMessage.common.server_error,
-            null,
+            error?.message,
             statusCodes.API_ERROR,
         );
     }
@@ -455,17 +455,17 @@ getMyTheme: async (user_id: string): Promise<ApiResponse> => {
             statusCodes.SUCCESS,
         );
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(
-            error,
-            "GET_MY_THEME_ERROR"
-        );
+        // console.log(
+        //     error,
+        //     "GET_MY_THEME_ERROR"
+        // );
 
         return showResponse(
             false,
             responseMessage.common.server_error,
-            null,
+            error?.message,
             statusCodes.API_ERROR,
         );
     }

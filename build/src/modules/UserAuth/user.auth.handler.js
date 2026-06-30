@@ -66,6 +66,7 @@ const user_journel_model_1 = __importDefault(require("../UserJournel/user.journe
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
 // import moment from "moment";
 const user_deeplink_model_1 = __importDefault(require("../UserAffirmation/user.deeplink.model"));
+const admin_hometheme_model_1 = __importDefault(require("../AdminHometheme/admin.hometheme.model"));
 const UserAuthHandler = {
     // update_social_info: async (findUser: any, model: any, data: any) => {
     //     try {
@@ -220,10 +221,10 @@ const UserAuthHandler = {
             };
         }
         catch (error) {
-            console.log(error, "error update_social_info");
+            // console.log(error, "error update_social_info");
             return {
                 status: false,
-                data: null
+                data: error === null || error === void 0 ? void 0 : error.message
             };
         }
     }),
@@ -484,16 +485,16 @@ const UserAuthHandler = {
             if (findUser.status && ((_a = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _a === void 0 ? void 0 : _a.account_source) == 'email' && ((_b = findUser === null || findUser === void 0 ? void 0 : findUser.data) === null || _b === void 0 ? void 0 : _b.isVerified)) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "email_already_exists"), null, statusCodes_1.default.API_ERROR);
             }
-            console.log(findUser, "findUser");
+            // console.log(findUser, "findUser")
             //if exist with different source (through google apple login) then update details and account source else insert new account entry
             const result = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, obj, true);
             if (!result.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_register"), null, statusCodes_1.default.API_ERROR);
             }
-            console.log(result, "result");
-            console.log(workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll");
+            // console.log(result, "result")
+            // console.log(EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload, "send emailllll")
             const sendEmail = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.REGISTER_EMAIL, email, emailPayload);
-            console.log(sendEmail, "sendEmail");
+            // console.log(sendEmail, "sendEmail")
             if (!sendEmail.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
             }
@@ -525,7 +526,7 @@ const UserAuthHandler = {
                 createdAt: new Date(),
                 expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours
             });
-            console.log(code, "code");
+            // console.log(code, "code");
             // =========================================
             // DEEPLINK URL
             // =========================================
@@ -538,20 +539,20 @@ const UserAuthHandler = {
                 user_name: fullName,
                 magic_link: deeplink,
             };
-            console.log(emailPayload, "emailPayload");
+            // console.log(emailPayload, "emailPayload");
             // =========================================
             // SEND EMAIL
             // =========================================
             const sendEmail = yield services_1.default.emailService.sendEmailViaNodemail(workflow_constant_1.EMAIL_SEND_TYPE.MAGIC_LINK, email, emailPayload);
-            console.log(sendEmail, "sendEmail");
+            // console.log(sendEmail, "sendEmail");
             if (!sendEmail.status) {
                 return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(language || 'en', "err_while_sending_email"), null, statusCodes_1.default.API_ERROR);
             }
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(language || 'en', "verification_email_sent"), deeplink, statusCodes_1.default.SUCCESS);
         }
         catch (err) {
-            console.log(err, "register err");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.error_while_create_acc, null, statusCodes_1.default.API_ERROR);
+            // console.log(err, "register err");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.error_while_create_acc, err === null || err === void 0 ? void 0 : err.message, statusCodes_1.default.API_ERROR);
         }
     }),
     magicLinkLogin: (data) => __awaiter(void 0, void 0, void 0, function* () {
@@ -560,7 +561,7 @@ const UserAuthHandler = {
         const lowercaseEmail = email ? email.toLowerCase().trim() : '';
         const queryObject = { email: lowercaseEmail, status: { $ne: workflow_constant_1.USER_STATUS.DELETED } };
         const findUser = yield (0, db_helpers_1.findOne)(user_auth_model_1.default, queryObject);
-        console.log(code, "codeeee");
+        // console.log(code, "codeeee")
         const deepLink = yield user_deeplink_model_1.default.findOneAndUpdate({
             code,
             isUsed: false,
@@ -574,9 +575,9 @@ const UserAuthHandler = {
         }, {
             new: true
         });
-        console.log(deepLink, "deepLink");
+        // console.log(deepLink, "deepLink");
         if (!deepLink) {
-            console.log("Magic link is invalid, innnnnnnnnnnnnnn");
+            // console.log("Magic link is invalid, innnnnnnnnnnnnnn");
             return (0, response_util_1.showResponse)(false, "Magic link is invalid, expired, or already used", null, statusCodes_1.default.API_ERROR);
         }
         let userData;
@@ -606,7 +607,28 @@ const UserAuthHandler = {
             }
             userData = createResult.data;
         }
-        console.log(timeZone, 'timeZone');
+        // =========================================
+        // ADD DEFAULT HOME THEME IF USER HAS NONE
+        // =========================================
+        const defaultThemeId = "6a227305e409d77a89066ca3";
+        const recentTheme = yield user_recentHomeTheme_model_1.default.findOne({
+            user_id: commonHelper.convertToObjectId(userData._id),
+            status: workflow_constant_1.USER_STATUS.ACTIVE,
+        });
+        if (!recentTheme) {
+            const themeExists = yield (0, db_helpers_1.findOne)(admin_hometheme_model_1.default, {
+                _id: commonHelper.convertToObjectId(defaultThemeId),
+                status: workflow_constant_1.USER_STATUS.ACTIVE,
+            });
+            if (themeExists === null || themeExists === void 0 ? void 0 : themeExists.status) {
+                yield (0, db_helpers_1.createOne)(new user_recentHomeTheme_model_1.default({
+                    user_id: commonHelper.convertToObjectId(userData._id),
+                    homeTheme_id: commonHelper.convertToObjectId(defaultThemeId),
+                    status: workflow_constant_1.USER_STATUS.ACTIVE,
+                }));
+            }
+        }
+        // console.log(timeZone, 'timeZone');
         // challenges logic start
         yield bullMqWorker_1.ChallengesQueue.add('challenges', { userData }, {
             attempts: 3,
@@ -648,9 +670,9 @@ const UserAuthHandler = {
         ].every(value => value !== undefined &&
             value !== null &&
             String(value).trim() !== '');
-        console.log(userData === null || userData === void 0 ? void 0 : userData.is_onboarding, is_onboarding, "data");
+        // console.log(userData?.is_onboarding, is_onboarding, "data")
         if ((userData === null || userData === void 0 ? void 0 : userData.is_onboarding) !== is_onboarding) {
-            console.log("first");
+            // console.log("first")
             yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userData._id }, { 'is_onboarding': is_onboarding });
             userData.is_onboarding = is_onboarding;
         }
@@ -947,14 +969,14 @@ const UserAuthHandler = {
         const { fullName, country, dob, profilePic, language } = data;
         const updateObj = Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (fullName && { fullName })), (country && { country })), (dob && { dob })), (language && { language })), (profilePic && { profilePic }));
         const user = yield user_auth_model_1.default.findOne({ _id: user_id });
-        console.log(user, 'user');
+        // console.log(user, 'user')
         if (!user) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)('en', "user_not_found"), null, statusCodes_1.default.API_ERROR);
         }
         const user_language = (user === null || user === void 0 ? void 0 : user.language) || 'en';
-        console.log(user_id, '0');
+        // console.log(user_id, '0')
         const result = yield (0, db_helpers_1.findByIdAndUpdate)(user_auth_model_1.default, user_id, updateObj);
-        console.log(result, 'result');
+        // console.log(result, 'result')
         if (!result.status) {
             return (0, response_util_1.showResponse)(false, (0, messages_1.getMessage)(user_language || 'en', "user_account_update_error"), null, statusCodes_1.default.API_ERROR);
         }
@@ -1010,7 +1032,7 @@ const UserAuthHandler = {
     uploadFile: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { file } = data;
         const s3Upload = yield services_1.default.awsService.uploadFileToS3([file]);
-        console.log(s3Upload, 's3Upload');
+        // console.log(s3Upload, 's3Upload')
         if (!s3Upload.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.file_upload_error, {}, statusCodes_1.default.FILE_UPLOAD_ERROR);
         }
@@ -1019,7 +1041,7 @@ const UserAuthHandler = {
     uploadFileAdmin: (data) => __awaiter(void 0, void 0, void 0, function* () {
         const { file } = data;
         const s3Upload = yield services_1.default.awsService.uploadFileToS3Theme([file]);
-        console.log(s3Upload, 's3Upload');
+        // console.log(s3Upload, 's3Upload')
         if (!s3Upload.status) {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default === null || responseMessages_1.default === void 0 ? void 0 : responseMessages_1.default.common.file_upload_error, {}, statusCodes_1.default.FILE_UPLOAD_ERROR);
         }
@@ -1068,7 +1090,7 @@ const UserAuthHandler = {
         ].every(value => value !== undefined &&
             value !== null &&
             String(value).trim() !== '');
-        console.log(userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.is_onboarding, is_onboarding, "data");
+        // console.log(userOnboarding?.is_onboarding, is_onboarding, "data")
         if ((userOnboarding === null || userOnboarding === void 0 ? void 0 : userOnboarding.is_onboarding) !== is_onboarding) {
             // console.log("first")
             yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, { _id: userOnboarding._id }, { 'is_onboarding': is_onboarding });
@@ -1263,13 +1285,13 @@ const UserAuthHandler = {
             // CURRENT DATE IN USER TIMEZONE
             // =========================================
             const today = (0, moment_timezone_1.default)().tz(userTimeZone).format("YYYY-MM-DD");
-            console.log("today =====================================>>", today);
+            // console.log("today =====================================>>", today);
             const yesterday = (0, moment_timezone_1.default)()
                 .tz(userTimeZone)
                 .subtract(1, "day")
                 .format("YYYY-MM-DD");
-            console.log("yesterday =====================================>>", yesterday);
-            console.log("user.last_streak_date =====================================>>", user.last_streak_date);
+            // console.log("yesterday =====================================>>", yesterday);
+            // console.log("user.last_streak_date =====================================>>", user.last_streak_date);
             // =========================================
             // ALREADY CLAIMED TODAY
             // =========================================
@@ -1306,7 +1328,7 @@ const UserAuthHandler = {
             // REWARD XP
             // =========================================
             const rewardXP = STREAK_REWARDS[streakCount] || 0;
-            console.log("rewardXP =====================================>>", rewardXP);
+            // console.log("rewardXP =====================================>>", rewardXP);
             if (rewardXP > 0) {
                 streakCredit += rewardXP;
             }
@@ -1330,8 +1352,8 @@ const UserAuthHandler = {
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "CLAIM_STREAK_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error, "CLAIM_STREAK_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     })
 };

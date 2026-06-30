@@ -698,8 +698,11 @@ const affirmationHandler = {
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "GET_AFFIRMATION_LISTING_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(
+            //   error,
+            //   "GET_AFFIRMATION_LISTING_ERROR"
+            // );
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     likeUnlikeAffirmation: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -824,8 +827,8 @@ const affirmationHandler = {
             return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
         }
         catch (err) {
-            console.log(err, "err");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, null, statusCodes_1.default.API_ERROR);
+            // console.log(err,"err")
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.data_not_found, err === null || err === void 0 ? void 0 : err.message, statusCodes_1.default.API_ERROR);
         }
     }), //ends-----------------------------------------------------------------------------------------------
 };

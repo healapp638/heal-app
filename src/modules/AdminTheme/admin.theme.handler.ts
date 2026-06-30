@@ -261,17 +261,17 @@ const CommonHandler = {
             statusCodes.SUCCESS
         );
 
-    } catch (error) {
+    } catch (error:any) {
 
-        console.log(
-            error,
-            "DELETE_THEME_ERROR"
-        );
+        // console.log(
+        //     error,
+        //     "DELETE_THEME_ERROR"
+        // );
 
         return showResponse(
             false,
             responseMessage.common.server_error,
-            null,
+            error?.message,
             statusCodes.API_ERROR
         );
     }

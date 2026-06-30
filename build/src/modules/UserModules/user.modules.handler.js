@@ -36,7 +36,7 @@ const UserCommonHandler = {
         const { cursor, limit = 10 } = data;
         const user = yield user_auth_model_1.default.findOne({ _id: userId, status: workflow_constant_1.USER_STATUS.ACTIVE });
         const userLang = user === null || user === void 0 ? void 0 : user.language;
-        console.log(userLang, "userLang");
+        // console.log(userLang, "userLang")
         const match = {
             status: workflow_constant_1.USER_STATUS.ACTIVE
         };
@@ -70,7 +70,7 @@ const UserCommonHandler = {
         ]);
         const last = themeList[themeList.length - 1];
         const nextCursor = last ? JSON.stringify({ createdAt: last.createdAt, _id: last._id }) : null;
-        console.log(themeList, "themeList");
+        // console.log(themeList, "themeList")
         return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || 'en', 'data_fetch_success'), { data: themeList, nextCursor }, statusCodes_1.default.SUCCESS);
     }),
     moduleList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -360,8 +360,8 @@ const UserCommonHandler = {
             return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_save, createAnswer, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "ADD_MCQ_ANSWER_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error, "ADD_MCQ_ANSWER_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     excerciseMcqList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -565,8 +565,8 @@ const UserCommonHandler = {
             return (0, response_util_1.showResponse)(true, (0, messages_1.getMessage)(userLang || "en", "data_fetch_success"), { mcqList, nextCursor }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "MCQ_EXERCISE_LIST_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(error, "MCQ_EXERCISE_LIST_ERROR");
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     exerciseDetailList: (data, userId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -744,9 +744,9 @@ const UserCommonHandler = {
             _id: (0, common_helper_1.convertToObjectId)(phase_id),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
-        console.log(submodule, "submodule");
+        // console.log(submodule, "submodule")
         const subModuleId = submodule === null || submodule === void 0 ? void 0 : submodule.subModuleId;
-        console.log(subModuleId, "subModuleId");
+        // console.log(subModuleId, "subModuleId")
         if (completedLessonData) {
             yield user_modules_complete_phase_model_1.default.create({
                 user_id: (0, common_helper_1.convertToObjectId)(userId),
@@ -759,13 +759,13 @@ const UserCommonHandler = {
             subModuleId: (0, common_helper_1.convertToObjectId)(subModuleId),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
-        console.log(totalPhaseInSubModule, "totalPhaseInSubModule");
+        // console.log(totalPhaseInSubModule, "totalPhaseInSubModule")
         const completedPhaseInSubModule = yield user_modules_complete_phase_model_1.default.countDocuments({
             user_id: (0, common_helper_1.convertToObjectId)(userId),
             sub_module_id: (0, common_helper_1.convertToObjectId)(subModuleId),
             status: workflow_constant_1.USER_STATUS.ACTIVE
         });
-        console.log(completedPhaseInSubModule, "completedPhaseInSubModule");
+        // console.log(completedPhaseInSubModule, "completedPhaseInSubModule")
         if (totalPhaseInSubModule === completedPhaseInSubModule) {
             yield user_module_start_lesson_model_1.default.updateOne({
                 user_id: (0, common_helper_1.convertToObjectId)(userId),

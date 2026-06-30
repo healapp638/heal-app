@@ -86,8 +86,11 @@ const homeThemeHandler = {
             return (0, response_util_1.showResponse)(true, "Theme added successfully", savedTheme === null || savedTheme === void 0 ? void 0 : savedTheme.data, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "ADD_USER_THEME_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(
+            //     error,
+            //     "ADD_USER_THEME_ERROR"
+            // );
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     getHomeThemeCategory: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -110,7 +113,7 @@ const homeThemeHandler = {
         if (!themeCategory) {
             return (0, response_util_1.showResponse)(false, "No Category Found", null, statusCodes_1.default.NOT_FOUND);
         }
-        console.log(themeCategory, "themeCategory");
+        // console.log(themeCategory,"themeCategory")
         // return only user's language
         // const responseData = {
         //   _id: themeCategory[0]._id,
@@ -130,7 +133,7 @@ const homeThemeHandler = {
                 createdAt: item.createdAt,
             });
         });
-        console.log(responseData, "responseData");
+        // console.log(responseData,"responseData")
         return (0, response_util_1.showResponse)(true, responseMessages_1.default.common.data_retreive_sucess, responseData, statusCodes_1.default.SUCCESS);
     }),
     getHomeThemeListing: (data, user_id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -300,8 +303,11 @@ const homeThemeHandler = {
             }, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "GET_HOME_THEME_LISTING_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(
+            //     error,
+            //     "GET_HOME_THEME_LISTING_ERROR"
+            // );
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     }),
     getMyTheme: (user_id) => __awaiter(void 0, void 0, void 0, function* () {
@@ -354,8 +360,11 @@ const homeThemeHandler = {
                 .data_retreive_sucess, (result === null || result === void 0 ? void 0 : result[0]) || null, statusCodes_1.default.SUCCESS);
         }
         catch (error) {
-            console.log(error, "GET_MY_THEME_ERROR");
-            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, null, statusCodes_1.default.API_ERROR);
+            // console.log(
+            //     error,
+            //     "GET_MY_THEME_ERROR"
+            // );
+            return (0, response_util_1.showResponse)(false, responseMessages_1.default.common.server_error, error === null || error === void 0 ? void 0 : error.message, statusCodes_1.default.API_ERROR);
         }
     })
 };

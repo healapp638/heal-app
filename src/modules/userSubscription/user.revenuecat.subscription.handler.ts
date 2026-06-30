@@ -168,7 +168,7 @@ async function verifyWebhookSignature(payload: any, signature: string, authoriza
         const expectedSigBuffer = Buffer.from(expectedSignature);
 
         if (sigBuffer.length !== expectedSigBuffer.length) {
-            console.log('Signature length mismatch')
+            // console.log('Signature length mismatch')
             return false;
         }
         // console.log(crypto.timingSafeEqual(sigBuffer, expectedSigBuffer), 'crypto.timingSafeEqual(sigBuffer, expectedSigBuffer)')
@@ -290,7 +290,7 @@ const UserSubscriptionHandler = {
                 });
 
                 if (existingLog) {
-                    console.log(`⚠️ Duplicate credit pack transaction ${transactionId}, skipping.`);
+                    // console.log(`⚠️ Duplicate credit pack transaction ${transactionId}, skipping.`);
                     await userSusbriptionLogsModel.updateOne(
                         { 'revenuecat_event.transaction_id': transactionId, subscription_status: "CREDIT_PACK_DUPLICATE" },
                         { $set: { subscription_status: "CREDIT_PACK_DUPLICATE" } },
@@ -337,7 +337,7 @@ const UserSubscriptionHandler = {
                     }
                 );
 
-                console.log(`✅ Credit pack processed: +${creditsToAdd} pack_credits for user ${userId} (product: ${productId})`);
+                // console.log(`✅ Credit pack processed: +${creditsToAdd} pack_credits for user ${userId} (product: ${productId})`);
                 return showResponse(true, `Credit pack added: ${creditsToAdd} credits`, { creditsToAdd }, statusCodes.SUCCESS);
             }
 
