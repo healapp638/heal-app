@@ -199,7 +199,7 @@ const ModuleExercise = () => {
                   phase?.phaseNumber || 1
                 }`
               }`,
-              `+${data?.data?.points || 0} pts`,
+              `+${data?.data?.points || 0} ${(localization.appkeys?.pts || 'pts').toLowerCase()}`,
             );
             navigation.dispatch(state => {
               const targetRoute = isLastPhase

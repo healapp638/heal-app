@@ -137,33 +137,19 @@ const CreatingSpace = () => {
         },
         {
           onSuccess: (res: any) => {
-            console.log('complete_onboarding response:', res);
             dispatch(getUserDetail() as any);
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: AppRoutes.NonAuthStack,
-                  params: {
-                    screen: AppRoutes.Premium,
-                  },
-                } as never,
-              ],
-            });
+            navigation.navigate(
+              AppRoutes.NonAuthStack as never,
+              {
+                screen: AppRoutes.Offer,
+                params: {
+                  fromCreatingSpace: true,
+                },
+              } as never,
+            );
           },
           onError: (err: any) => {
-            console.log('complete_onboarding error:', err);
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: AppRoutes.NonAuthStack,
-                  params: {
-                    screen: AppRoutes.Premium,
-                  },
-                } as never,
-              ],
-            });
+            console.log(err);
           },
         },
       );
@@ -216,7 +202,7 @@ const CreatingSpace = () => {
               {sentences.map((sentence, i) =>
                 displayedTexts[i].length > 0 ? (
                   <View key={i} style={styles.sentenceRow}>
-                    <SolidText style={styles.sentence}>
+                    <SolidText maxFontScale={1.1} style={styles.sentence}>
                       {displayedTexts[i]}
                       {activeSentence === i && activeChar < sentence.length && (
                         <Animated.Text

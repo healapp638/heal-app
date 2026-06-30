@@ -256,7 +256,7 @@ export const useHealyChat = (
       message: userMessageContent,
       question: !conversationId ? (randomQuestion || '') : '',
     };
-    console.log('Sending message payload:', payload);
+    // console.log('Sending message payload:', payload);
 
     sendMessageMutate(
       {

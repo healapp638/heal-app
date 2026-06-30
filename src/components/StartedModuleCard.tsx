@@ -93,6 +93,7 @@ const StartedModuleCard = ({
 
         <View style={styles.moduleCardTextContainer}>
           <SolidText
+            maxFontSizeMultiplier={1.2}
             style={[
               styles.moduleCardTitle,
               {
@@ -103,6 +104,7 @@ const StartedModuleCard = ({
             {title}
           </SolidText>
           <Text
+            maxFontSizeMultiplier={1.2}
             numberOfLines={1}
             style={[
               styles.moduleCardSubtitle,

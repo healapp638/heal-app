@@ -123,6 +123,7 @@ const TimeCommitment = () => {
                       activeOpacity={0.7}
                     >
                       <SolidText
+                        maxFontScale={1.2}
                         style={[
                           styles.optionText,
                           isSelected && styles.optionTextSelected,

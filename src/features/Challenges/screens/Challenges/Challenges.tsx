@@ -108,7 +108,8 @@ const Challenges = () => {
                 localization.appkeys?.dailyChallenges || 'Daily Challenges'
               }
               safeSpaceLabel={
-                localization.appkeys?.progressDayByDay || 'Safe Space'
+                localization.appkeys?.progressDayByDay ||
+                "Personalized challenges tailored to what you're going through"
               }
             />
           </View>

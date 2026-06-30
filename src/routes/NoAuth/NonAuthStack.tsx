@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { LocalizationContext } from '../../localization/localization';
 
 import AppRoutes from '../RouteKeys/appRoutes';
 import Offer from '../../features/premium/screens/Offer/Offer';
@@ -44,6 +45,7 @@ import SuccessModal from '../../modals/SuccessModal';
 import messaging from '@react-native-firebase/messaging';
 
 export default function NonAuthStack() {
+  const { localization } = useContext(LocalizationContext) as any;
   useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {});
 
   const user = useSelector((state: any) => state.userData.user);
@@ -168,9 +170,9 @@ export default function NonAuthStack() {
       <SuccessModal
         visible={showLevelModal}
         onClose={() => setShowLevelModal(false)}
-        title="Well done"
-        subtitle={`You've completed Level ${completedLevelNum}`}
-        btnLabel="Continue"
+        title={localization.appkeys?.wellDone || 'Well done'}
+        subtitle={`${localization.appkeys?.completedPhase || "You've completed"} ${localization.appkeys?.level || 'Level'} ${completedLevelNum}`}
+        btnLabel={localization.appkeys?.continue || 'Continue'}
         onPressBtn={() => setShowLevelModal(false)}
         btnStyle={{ marginTop: -10 }}
       />

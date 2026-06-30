@@ -126,8 +126,8 @@ const style = (colors: any) =>
     },
     micIconContainer: {
       position: 'absolute',
-      bottom: 10,
-      right: 4,
+      bottom: 12,
+      right: 12,
       width: 36,
       height: 36,
       borderRadius: 18,

@@ -57,25 +57,33 @@ const QuoteItem = ({
           },
         ]}
       >
-        {homeThemeUrl ? (
-          <>
-            <ImageBackground
-              source={{
-                uri: homeThemeUrl,
-              }}
-              style={StyleSheet.absoluteFillObject}
-              resizeMode="cover"
-            />
-            <View
-              style={[
-                StyleSheet.absoluteFillObject,
-                {
-                  backgroundColor: 'rgba(0,0,0,0.25)',
-                },
-              ]}
-            />
-          </>
-        ) : null}
+        {(() => {
+          const isLightBackground = homeThemeUrl?.includes(
+            'file/file-1782813958833.webp',
+          );
+          if (homeThemeUrl && !isLightBackground) {
+            return (
+              <>
+                <ImageBackground
+                  source={{
+                    uri: homeThemeUrl,
+                  }}
+                  style={StyleSheet.absoluteFillObject}
+                  resizeMode="cover"
+                />
+                <View
+                  style={[
+                    StyleSheet.absoluteFillObject,
+                    {
+                      backgroundColor: 'rgba(0,0,0,0.25)',
+                    },
+                  ]}
+                />
+              </>
+            );
+          }
+          return null;
+        })()}
 
         <View
           style={[

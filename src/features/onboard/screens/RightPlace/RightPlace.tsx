@@ -54,11 +54,9 @@ const RightPlace = () => {
             resizeMode="stretch"
           />
           <View style={styles.mainContainer}>
-
             <SolidText style={styles.title}>
               {localization.appkeys?.rightPlaceTitle}
             </SolidText>
-
 
             <SolidBtn
               titleTxt={localization.appkeys?.next}

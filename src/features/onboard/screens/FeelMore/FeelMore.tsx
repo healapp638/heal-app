@@ -30,13 +30,14 @@ const FeelMore = () => {
     (state: any) => state.userData?.onboarding?.answers?.likeToFellMore,
   );
 
-  const selectedList = typeof savedSelection === 'string'
-    ? savedSelection.split(', ').filter(Boolean)
-    : Array.isArray(savedSelection)
-    ? savedSelection
-    : savedSelection
-    ? [savedSelection]
-    : [];
+  const selectedList =
+    typeof savedSelection === 'string'
+      ? savedSelection.split(', ').filter(Boolean)
+      : Array.isArray(savedSelection)
+      ? savedSelection
+      : savedSelection
+      ? [savedSelection]
+      : [];
 
   useFocusEffect(
     useCallback(() => {
@@ -134,7 +135,8 @@ const FeelMore = () => {
               <View style={styles.listContainer}>
                 {options.map(option => {
                   const isSelected =
-                    selectedList.includes(option.label) || selectedList.includes(option.id);
+                    selectedList.includes(option.label) ||
+                    selectedList.includes(option.id);
                   return (
                     <TouchableOpacity
                       key={option.id}
@@ -146,6 +148,7 @@ const FeelMore = () => {
                       activeOpacity={0.7}
                     >
                       <SolidText
+                        maxFontScale={1.2}
                         style={[
                           styles.optionText,
                           isSelected && styles.optionTextSelected,

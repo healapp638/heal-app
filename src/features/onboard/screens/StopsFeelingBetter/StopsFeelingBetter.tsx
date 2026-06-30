@@ -81,6 +81,10 @@ const StopsFeelingBetter = () => {
         localization.appkeys?.optUnhealthyPatterns ||
         'Falling into unhealthy patterns',
     },
+    {
+      id: 'other',
+      label: localization.appkeys?.optOther || 'Other / None of the above',
+    },
   ];
 
   const handleOptionPress = (optionId: string, optionLabel: string) => {
@@ -162,6 +166,7 @@ const StopsFeelingBetter = () => {
                     >
                       <View style={styles.optionContent}>
                         <SolidText
+                          maxFontScale={1.2}
                           style={[
                             styles.optionText,
                             isCurrentSelected && styles.optionTextSelected,

@@ -34,10 +34,14 @@ const DailyQuoteCard = ({
   const { colors } = useTheme() as any;
   const user = useSelector((state: any) => state.userData?.user);
   const styles = useStyle(colors);
+  const isLightBackground =
+    user?.homeTheme?.imgUrl === 'file/file-1782813958833.webp';
+
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
-  const activeColor = homeThemeUrl ? '#FFFFFF' : colors.brown;
+  const activeColor =
+    homeThemeUrl && !isLightBackground ? '#FFFFFF' : colors.brown;
   return (
     <Pressable
       onPress={(...args: any) => {
@@ -46,6 +50,7 @@ const DailyQuoteCard = ({
       style={styles.container}
     >
       <SolidText
+        maxFontScale={1.2}
         style={[
           styles.title,
           {
@@ -69,7 +74,7 @@ const DailyQuoteCard = ({
       >
         <LinearGradient
           colors={
-            homeThemeUrl
+            homeThemeUrl && !isLightBackground
               ? ['#3A211026', '#3A211026'] // Semi-transparent brown fallback
               : ['#FFFFFF4D', '#FBE6D5', '#FBE6D5']
           }
@@ -83,7 +88,7 @@ const DailyQuoteCard = ({
           }}
           style={styles.card}
         >
-          {homeThemeUrl && (
+          {homeThemeUrl && !isLightBackground && (
             <>
               <ImageBackground
                 source={{

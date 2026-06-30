@@ -152,6 +152,7 @@ const HelpsFeelBetter = () => {
                     >
                       <View style={styles.optionContent}>
                         <SolidText
+                          maxFontScale={1.2}
                           style={[
                             styles.optionText,
                             isCurrentSelected && styles.optionTextSelected,

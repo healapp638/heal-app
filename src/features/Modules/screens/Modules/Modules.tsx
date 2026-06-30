@@ -105,7 +105,9 @@ const Modules = () => {
       } else {
         setThemes(prev => {
           const existingIds = new Set(prev.map(t => t._id || t.id));
-          const newThemes = fetchedThemes.filter((t: any) => !existingIds.has(t._id || t.id));
+          const newThemes = fetchedThemes.filter(
+            (t: any) => !existingIds.has(t._id || t.id),
+          );
           return [...prev, ...newThemes];
         });
       }
@@ -263,6 +265,7 @@ const Modules = () => {
           <>
             <View style={styles.sectionHeader}>
               <SolidText
+                maxFontScale={1.2}
                 style={[
                   styles.sectionTitle,
                   {
@@ -274,7 +277,7 @@ const Modules = () => {
               </SolidText>
               {!isCurrentEmpty && (
                 <TouchableOpacity onPress={handleSeeAll}>
-                  <SolidText style={styles.seeAllText}>
+                  <SolidText maxFontScale={1.2} style={styles.seeAllText}>
                     {localization.appkeys?.seeAll || 'See All'}
                   </SolidText>
                 </TouchableOpacity>
@@ -288,7 +291,11 @@ const Modules = () => {
               showsHorizontalScrollIndicator={false}
               renderItem={renderCarouselItem}
               keyExtractor={(item, index) =>
-                (item._id ? `${item._id}_${index}` : item.sub_module_id ? `${item.sub_module_id}_${index}` : index.toString())
+                item._id
+                  ? `${item._id}_${index}`
+                  : item.sub_module_id
+                  ? `${item.sub_module_id}_${index}`
+                  : index.toString()
               }
               onMomentumScrollEnd={handleScrollEnd}
               onScrollEndDrag={handleScrollEnd}
@@ -319,6 +326,7 @@ const Modules = () => {
 
       {/* Modules Themes Title */}
       <SolidText
+        maxFontScale={1.2}
         style={[
           styles.sectionTitle,
           {
@@ -362,7 +370,12 @@ const Modules = () => {
     [navigation, dispatch, postApi],
   );
   const keyExtractor = useCallback(
-    (item: any, index: number) => (item._id ? `${item._id}_${index}` : item.id ? `${item.id}_${index}` : index.toString()),
+    (item: any, index: number) =>
+      item._id
+        ? `${item._id}_${index}`
+        : item.id
+        ? `${item.id}_${index}`
+        : index.toString(),
     [],
   );
   return (

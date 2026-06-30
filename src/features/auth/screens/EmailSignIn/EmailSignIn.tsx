@@ -109,7 +109,9 @@ const EmailSignIn = () => {
 
             <SolidInput
               label={localization.appkeys?.email || 'Email'}
-              placeholder={localization.appkeys?.emailPlaceholder || 'name@example.com'}
+              placeholder={
+                localization.appkeys?.emailPlaceholder || 'name@example.com'
+              }
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -119,7 +121,8 @@ const EmailSignIn = () => {
               labelRow={false} // Ensure custom label is styled
               viewStyle={styles.inputContainer}
               textInputStyle={styles.textInput}
-              autoFocus={true}
+              // autoFocus={true}
+              onRightPress={() => {}}
             />
           </View>
 

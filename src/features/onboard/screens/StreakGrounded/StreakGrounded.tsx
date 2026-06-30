@@ -25,11 +25,7 @@ import FastImage from '@d11/react-native-fast-image';
 import Svg, { Text as SvgText } from 'react-native-svg';
 import AppFonts from '../../../../constants/fonts';
 
-const OutlinedNumber = ({
-  number,
-}: {
-  number: number | string;
-}) => {
+const OutlinedNumber = ({ number }: { number: number | string }) => {
   const { images } = useTheme() as any;
   const [displayNumber, setDisplayNumber] = useState(0);
   const scaleAnim = useRef(new Animated.Value(0)).current;
@@ -66,7 +62,7 @@ const OutlinedNumber = ({
       style={{
         alignItems: 'center',
         justifyContent: 'center',
-        marginTop: 20,
+
         opacity: scaleAnim,
         transform: [{ scale: scaleAnim }],
       }}
@@ -140,13 +136,13 @@ const StreakGrounded = () => {
   const targetIndex = currentDayIndex === 0 ? 6 : currentDayIndex - 1;
 
   const daysProgress = [
-    { label: 'Mo', isActive: targetIndex === 0 },
-    { label: 'Tu', isActive: targetIndex === 1 },
-    { label: 'We', isActive: targetIndex === 2 },
-    { label: 'Th', isActive: targetIndex === 3 },
-    { label: 'Fr', isActive: targetIndex === 4 },
-    { label: 'Sa', isActive: targetIndex === 5 },
-    { label: 'Su', isActive: targetIndex === 6 },
+    { label: localization.appkeys?.dayMo || 'Mo', isActive: targetIndex === 0 },
+    { label: localization.appkeys?.dayTu || 'Tu', isActive: targetIndex === 1 },
+    { label: localization.appkeys?.dayWe || 'We', isActive: targetIndex === 2 },
+    { label: localization.appkeys?.dayTh || 'Th', isActive: targetIndex === 3 },
+    { label: localization.appkeys?.dayFr || 'Fr', isActive: targetIndex === 4 },
+    { label: localization.appkeys?.daySa || 'Sa', isActive: targetIndex === 5 },
+    { label: localization.appkeys?.daySu || 'Su', isActive: targetIndex === 6 },
   ];
 
   return (
@@ -176,10 +172,10 @@ const StreakGrounded = () => {
               <OutlinedNumber number={1} />
 
               {/* Localized Titles & Descriptions */}
-              <SolidText style={styles.title}>
+              <SolidText maxFontScale={1.2} style={styles.title}>
                 {localization.appkeys?.streakGroundedTitle}
               </SolidText>
-              <SolidText style={styles.subtitle}>
+              <SolidText maxFontScale={1.3} style={styles.subtitle}>
                 {localization.appkeys?.streakGroundedSub}
               </SolidText>
 
@@ -193,7 +189,9 @@ const StreakGrounded = () => {
                           style={[
                             styles.dayLabel,
                             {
-                              color: day.isActive ? colors.primary : colors.brown,
+                              color: day.isActive
+                                ? colors.primary
+                                : colors.brown,
                             },
                           ]}
                         >

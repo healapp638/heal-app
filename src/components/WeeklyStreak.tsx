@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
+import { LocalizationContext } from '../localization/localization';
 
 import { useSelector } from 'react-redux';
 
 const WeeklyStreak = () => {
   const { colors } = useTheme() as any;
+  const { localization } = useContext(LocalizationContext) as any;
   const styles = useStyle(colors);
   const user = useSelector((state: any) => state.userData?.user);
   const streakDays = user?.streak_days || [];
@@ -22,7 +24,15 @@ const WeeklyStreak = () => {
     monday.setDate(today.getDate() + distanceToMonday);
 
     const weekDates = [];
-    const weekdays = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+    const weekdays = [
+      localization.appkeys?.dayMo || 'Mo',
+      localization.appkeys?.dayTu || 'Tu',
+      localization.appkeys?.dayWe || 'We',
+      localization.appkeys?.dayTh || 'Th',
+      localization.appkeys?.dayFr || 'Fr',
+      localization.appkeys?.daySa || 'Sa',
+      localization.appkeys?.daySu || 'Su',
+    ];
 
     for (let i = 0; i < 7; i++) {
       const dayDate = new Date(monday);

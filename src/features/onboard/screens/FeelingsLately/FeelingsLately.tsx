@@ -30,13 +30,14 @@ const FeelingsLately = () => {
     (state: any) => state.userData?.onboarding?.answers?.howFellingLately,
   );
 
-  const selectedList = typeof savedSelection === 'string'
-    ? savedSelection.split(', ').filter(Boolean)
-    : Array.isArray(savedSelection)
+  const selectedList =
+    typeof savedSelection === 'string'
+      ? savedSelection.split(', ').filter(Boolean)
+      : Array.isArray(savedSelection)
       ? savedSelection
       : savedSelection
-        ? [savedSelection]
-        : [];
+      ? [savedSelection]
+      : [];
 
   useFocusEffect(
     useCallback(() => {
@@ -138,12 +139,15 @@ const FeelingsLately = () => {
                 {localization.appkeys?.feelingsTitle}
               </SolidText>
               <SolidText style={styles.subtitle}>
-                {localization.appkeys?.chooseMood || "Choose a mood that suits you."}
+                {localization.appkeys?.chooseMood ||
+                  'Choose a mood that suits you.'}
               </SolidText>
 
               <View style={styles.listContainer}>
                 {options.map(option => {
-                  const isCurrentSelected = selectedList.includes(option.label) || selectedList.includes(option.id);
+                  const isCurrentSelected =
+                    selectedList.includes(option.label) ||
+                    selectedList.includes(option.id);
                   const isOther = option.id === 'other';
 
                   return (
@@ -167,6 +171,7 @@ const FeelingsLately = () => {
                               />
                             )}
                             <SolidText
+                              maxFontScale={1.2}
                               style={[
                                 styles.optionText,
                                 styles.optionTextLeft,
@@ -179,8 +184,16 @@ const FeelingsLately = () => {
                         </>
                       ) : (
                         <>
-                          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                          <View
+                            style={{
+                              flex: 1,
+                              flexDirection: 'row',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                            }}
+                          >
                             <SolidText
+                              maxFontScale={1.2}
                               style={[
                                 styles.optionText,
                                 isCurrentSelected && styles.optionTextSelected,

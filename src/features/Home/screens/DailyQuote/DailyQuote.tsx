@@ -137,10 +137,14 @@ const DailyQuote = () => {
   const apiQuotes =
     affirmationData?.pages?.flatMap(page => page?.data?.result || []) || [];
   const quotes = apiQuotes;
+  const isLightBackground =
+    user?.homeTheme?.imgUrl === 'file/file-1782813958833.webp';
+
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
-  const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
+  const activeColor =
+    homeThemeUrl && !isLightBackground ? '#FFFFFF' : '#3A2110';
 
   // Animation value for the big center heart
   const heartScale = useRef(new Animated.Value(0)).current;
@@ -237,7 +241,7 @@ const DailyQuote = () => {
   return (
     <SolidView
       edges={[]}
-      backgroundImage={homeThemeUrl}
+      backgroundImage={isLightBackground ? null : homeThemeUrl}
       view={
         <View
           style={[
@@ -388,7 +392,7 @@ const DailyQuote = () => {
                   },
                 ]}
               >
-                {homeThemeUrl ? (
+                {homeThemeUrl && !isLightBackground ? (
                   <>
                     <ImageBackground
                       source={{

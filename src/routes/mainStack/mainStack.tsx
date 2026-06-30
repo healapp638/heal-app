@@ -295,7 +295,7 @@ export default function MainStack() {
                       {
                         name: AppRoutes.NonAuthStack,
                         params: {
-                          screen: AppRoutes.Premium,
+                          screen: AppRoutes.Offer,
                         },
                       } as never,
                     ],

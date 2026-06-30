@@ -1,4 +1,5 @@
 import React, { useContext, useState, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { View, FlatList, Platform, ActivityIndicator } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -19,10 +20,21 @@ import { useCallback } from 'react';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import PremiumModal from '../../../../modals/PremiumModal';
 
+const SPEECH_LOCALE_BY_LANGUAGE: Record<string, string> = {
+  English: 'en-US',
+  Spanish: 'es-ES',
+  French: 'fr-FR',
+  German: 'de-DE',
+  Russian: 'ru-RU',
+  Portuguese: 'pt-PT',
+  Italian: 'it-IT',
+};
+
 const ConnectedEntries = () => {
   const navigation = useNavigation();
   const route = useRoute() as any;
   const { date } = route.params || {};
+  const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
@@ -191,11 +203,14 @@ const ConnectedEntries = () => {
       }),
       tag: getLocalizedFeeling(item.feeling),
       body: item.description,
-      date: new Date(item.createdAt).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric',
-      }),
+      date: new Date(item.createdAt).toLocaleDateString(
+        SPEECH_LOCALE_BY_LANGUAGE[appLanguage] || 'en-US',
+        {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+        },
+      ),
     }));
   }, [journalData, localization]);
 

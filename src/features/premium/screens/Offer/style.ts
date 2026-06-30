@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
+import { hp } from '../../../../utils/dimension';
 
 const style = (colors: any) =>
   StyleSheet.create({
@@ -9,14 +10,15 @@ const style = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 20,
+
     },
     title: {
-      fontSize: AppUtils.fontSize(20),
-      fontFamily: AppFonts.recoMedium,
+      fontSize: AppUtils.fontSize(22),
+      fontFamily: AppFonts.recoSemiBold,
       color: colors.brown,
       textAlign: 'center',
       paddingHorizontal: 15,
-      marginTop: 10,
+marginTop:-50
     },
     priceHeader: {
       fontSize: AppUtils.fontSize(36),

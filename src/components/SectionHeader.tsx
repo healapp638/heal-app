@@ -21,6 +21,7 @@ const SectionHeader = ({
   return (
     <View style={[styles.container, containerStyle]}>
       <SolidText
+        maxFontScale={1.2}
         style={[
           styles.title,
           {
@@ -44,6 +45,7 @@ const SectionHeader = ({
                 color: colors.primary,
               },
             ]}
+            maxFontScale={1}
           >
             {actionLabel}
           </SolidText>

@@ -324,11 +324,17 @@ const Home = () => {
                         />
 
                         <View style={styles.startModuleTextContainer}>
-                          <SolidText style={styles.startModuleTitle}>
+                          <SolidText
+                            maxFontScale={1.2}
+                            style={styles.startModuleTitle}
+                          >
                             {localization.appkeys?.startNewModule ||
                               'Start a new module'}
                           </SolidText>
-                          <SolidText style={styles.startModuleSubtitle}>
+                          <SolidText
+                            maxFontScale={1.2}
+                            style={styles.startModuleSubtitle}
+                          >
                             {localization.appkeys?.exploreVarietyGuided ||
                               'EXPLORE A VARIETY OF GUIDED PROGRAMS'}
                           </SolidText>

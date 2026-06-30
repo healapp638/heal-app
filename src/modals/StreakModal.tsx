@@ -136,7 +136,15 @@ const StreakModal = ({
     monday.setDate(today.getDate() + distanceToMonday);
 
     const weekDates = [];
-    const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+    const weekdays = [
+      localization.appkeys?.dayMo || 'Mo',
+      localization.appkeys?.dayTu || 'Tu',
+      localization.appkeys?.dayWe || 'We',
+      localization.appkeys?.dayTh || 'Th',
+      localization.appkeys?.dayFr || 'Fr',
+      localization.appkeys?.daySa || 'Sa',
+      localization.appkeys?.daySu || 'Su',
+    ];
 
     for (let i = 0; i < 7; i++) {
       const dayDate = new Date(monday);

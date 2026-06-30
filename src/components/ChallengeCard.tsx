@@ -42,8 +42,12 @@ const ChallengeCard = ({ title, duration, onPress }: ChallengeCardProps) => {
             />
 
             <View style={styles.textSection}>
-              <SolidText style={styles.challengeTitle}>{title}</SolidText>
-              <SolidText style={styles.timeText}>{duration}</SolidText>
+              <SolidText maxFontScale={1.2} style={styles.challengeTitle}>
+                {title}
+              </SolidText>
+              <SolidText maxFontScale={1.2} style={styles.timeText}>
+                {duration}
+              </SolidText>
             </View>
           </View>
           <View style={styles.rightSection}>

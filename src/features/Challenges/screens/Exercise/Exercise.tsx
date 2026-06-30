@@ -116,7 +116,7 @@ const Exercise = () => {
         {
           onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ['challenge_list'] });
-            showPointsToast(data?.message, `+${data?.data?.points} pts`);
+            showPointsToast(data?.message, `+${data?.data?.points} ${(localization.appkeys?.pts || 'pts').toLowerCase()}`);
             dispatch(getUserDetail() as any);
             navigation.reset({
               index: 0,

@@ -15,7 +15,7 @@ const style = (colors: any) =>
       textAlign: 'center',
       fontFamily: AppFonts.recoMedium,
       color: colors.brown,
-      marginTop: Platform.OS == 'ios' ? 50 : 50,
+
       paddingHorizontal: 10,
       includeFontPadding: false,
     },

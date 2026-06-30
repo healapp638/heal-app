@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -9,6 +9,7 @@ import {
   PermissionsAndroid,
   Alert,
 } from 'react-native';
+import { LocalizationContext } from '../../../../../localization/localization';
 import Voice, {
   SpeechResultsEvent,
   SpeechErrorEvent,
@@ -39,10 +40,12 @@ interface ChatInputBarProps {
 const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
   onSend,
   placeholder,
+  plusIconSource,
   sendIconSource,
   micIconSource,
   styles,
 }) => {
+  const { localization } = useContext(LocalizationContext) as any;
   const [chatText, setChatText] = useState('');
   const [inputHeight, setInputHeight] = useState(0);
   const singleLineHeight = useRef<number>(0);
@@ -256,7 +259,7 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
             }
           ]}
           autoCorrect={false}
-          placeholder={isListening ? 'Listening...' : placeholder}
+          placeholder={isListening ? (localization?.appkeys?.listening || 'Listening...') : placeholder}
           placeholderTextColor={isListening ? '#EA4335' : 'rgba(58,33,16,0.4)'}
           value={chatText}
           onChangeText={handleTextChange}

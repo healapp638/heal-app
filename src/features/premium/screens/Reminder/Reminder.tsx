@@ -8,6 +8,8 @@ import SolidBtn from '../../../../components/SolidBtn';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import HeaderCommon from '../../../../components/HeaderCommon';
+
 const Reminder = () => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
@@ -15,27 +17,32 @@ const Reminder = () => {
   const styles = style(colors);
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={false}
       view={
-        <View style={styles.mainContainer}>
-          <SolidText style={styles.title}>
-            {localization.appkeys?.reminderTrialEnds}
-          </SolidText>
-          <SolidText style={styles.subtitle}>
-            {localization.appkeys?.noSurprise}
-          </SolidText>
-          <Image
-            source={images.reminder}
-            resizeMode="contain"
-            style={styles.image}
-          />
-          <SolidBtn
-            btnStyle={styles.btn}
-            titleTxt={localization.appkeys?.tryFreeBtn}
-            onPress={() => {
-              return navigation.navigate(AppRoutes.Premium as never);
-            }}
-          />
+        <View style={{ flex: 1 }}>
+          <View style={{ paddingHorizontal: 20, zIndex: 999 }}>
+            <HeaderCommon onBackPress={() => navigation.goBack()} />
+          </View>
+          <View style={styles.mainContainer}>
+            <SolidText style={styles.title}>
+              {localization.appkeys?.reminderTrialEnds}
+            </SolidText>
+            <SolidText style={styles.subtitle}>
+              {localization.appkeys?.noSurprise}
+            </SolidText>
+            <Image
+              source={images.reminder}
+              resizeMode="contain"
+              style={styles.image}
+            />
+            <SolidBtn
+              btnStyle={styles.btn}
+              titleTxt={localization.appkeys?.tryFreeBtn}
+              onPress={() => {
+                return navigation.navigate(AppRoutes.Premium as never);
+              }}
+            />
+          </View>
         </View>
       }
     />

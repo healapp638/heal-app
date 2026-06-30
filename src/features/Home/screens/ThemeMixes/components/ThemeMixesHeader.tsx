@@ -124,7 +124,7 @@ const ThemeMixesHeader = ({
           style={{}}
         >
           <View style={[styles.sectionHeader, styles.contentPadding]}>
-            <SolidText style={styles.sectionTitle}>
+            <SolidText maxFontScale={1.2} style={styles.sectionTitle}>
               {localization.appkeys.themeMixes}
             </SolidText>
             <TouchableOpacity
@@ -133,7 +133,7 @@ const ThemeMixesHeader = ({
                 return navigation.navigate(AppRoutes.ThemeSeeAll as never);
               }}
             >
-              <SolidText style={styles.seeAllText}>
+              <SolidText maxFontScale={1.2} style={styles.seeAllText}>
                 {localization.appkeys.seeAll}
               </SolidText>
             </TouchableOpacity>
@@ -166,6 +166,7 @@ const ThemeMixesHeader = ({
                     }}
                   >
                     <SolidText
+                      maxFontScale={1.2}
                       style={{
                         color: colors.brown,
                         opacity: 0.5,

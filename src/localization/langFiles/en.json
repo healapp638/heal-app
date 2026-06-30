@@ -307,7 +307,7 @@
     "timeNight": "night",
     "fetchingChallenges": "Preparing your challenges...",
     "dailyChallenges": "Daily Challenges",
-    "progressDayByDay": "Progress day by day",
+    "progressDayByDay": "Personalized challenges tailored to what you're going through",
     "daily": "Daily",
     "weekly": "Weekly",
     "pending": "Pending",
@@ -331,6 +331,7 @@
     "trueFriendshipTitle": "What is a True Friendship?",
     "trueFriendshipDesc": "We often say we have friends — but what does that really mean? This module helps you clarify what friendship represents for you and what you expect from it",
     "phases": "Phases",
+    "phase": "Phase",
     "phase1": "Phase 1",
     "phase1Title": "Defining Friendship for Yourself",
     "phase2": "Phase 2",
@@ -477,6 +478,7 @@
     "markAsComplete": "Mark as Complete",
     "wellDone": "Well done",
     "completedPhase1": "You've completed Phase 1",
+    "completedPhase": "You've completed",
     "exerciseStep1": "Find a quiet place where you feel comfortable",
     "exerciseStep2": "Think about the positive moments of your day, even the smallest ones.",
     "exerciseStep3": "Write down 3 things you feel grateful for.",
@@ -603,6 +605,15 @@
     "yearlyPriceInfoNew": "3 days free, then CHF 48.00 per year. Billed yearly and renews automatically unless canceled in the App Store.",
     "close": "Close",
     "startMyFreeTrail":"Start My Free Trial",
-    "healingStartsWithYou": "Healing starts with you"
+    "healingStartsWithYou": "Healing starts with you",
+    "dayMo": "Mo",
+    "dayTu": "Tu",
+    "dayWe": "We",
+    "dayTh": "Th",
+    "dayFr": "Fr",
+    "daySa": "Sa",
+    "daySu": "Su",
+    "noStartedModulesFound": "No started modules found",
+    "noFinishedModulesFound": "No finished modules found"
   }
 }

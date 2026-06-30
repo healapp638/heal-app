@@ -219,7 +219,7 @@ const AddJournal = () => {
       },
       {
         onSuccess: (data: any) => {
-          showPointsToast(data?.message, `+${data?.data?.points} pts`);
+          showPointsToast(data?.message, `+${data?.data?.points} ${(localization.appkeys?.pts || 'pts').toLowerCase()}`);
           dispatch(getUserDetail() as any);
           navigation.goBack();
         },
@@ -276,11 +276,14 @@ const AddJournal = () => {
             {localization.appkeys?.addJournalTitle || 'New entry'}
           </SolidText>
           <SolidText style={styles.dateText}>
-            {new Date().toLocaleDateString('en-US', {
-              month: 'long',
-              day: 'numeric',
-              year: 'numeric',
-            })}
+            {new Date().toLocaleDateString(
+              SPEECH_LOCALE_BY_LANGUAGE[appLanguage] || 'en-US',
+              {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+              },
+            )}
           </SolidText>
 
           {/* Emotions Section */}

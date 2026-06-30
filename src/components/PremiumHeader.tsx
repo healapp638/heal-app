@@ -39,7 +39,10 @@ const PremiumHeader: React.FC<PremiumHeaderProps> = ({
       </View>
       {!!title && (
         <View style={styles.headerTitleContainer}>
-          <SolidText style={[styles.title, styles.headerTitle]}>
+          <SolidText
+            maxFontScale={1}
+            style={[styles.title, styles.headerTitle]}
+          >
             {title}
           </SolidText>
         </View>

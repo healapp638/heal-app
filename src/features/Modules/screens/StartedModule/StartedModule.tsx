@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setModulePhase,
@@ -181,25 +176,20 @@ const StartedModule = () => {
         </SolidText>
       </>
     ),
-    [
-      styles,
-      subModuleDetail,
-      localization.appkeys,
-      colors.brown,
-      phases,
-    ],
+    [styles, subModuleDetail, localization.appkeys, colors.brown, phases],
   );
   const renderItem = useCallback(
     ({ item, index }: { item: any; index: number }) => {
       const isLocked = item?.isLocked;
       return (
         <PhaseCard
-          phase={
-            item.phase ||
-            `${localization.appkeys?.phase || 'Phase'} ${item.phaseNumber}`
-          }
+          phase={`${localization.appkeys?.phase || 'Phase'} ${
+            item.phaseNumber
+          }`}
           title={item.title}
-          points={`${item.points || 0} Pts`}
+          points={`${item.points || 0} ${
+            localization.appkeys?.pts || 'Pts'
+          }`}
           isLocked={isLocked}
           isCompleted={item.isCompleted}
           onPress={() => {
@@ -280,7 +270,10 @@ const StartedModule = () => {
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
               refreshControl={
-                <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+                <RefreshControl
+                  refreshing={isRefreshing}
+                  onRefresh={onRefresh}
+                />
               }
               ListEmptyComponent={
                 isLoading && cursor === null ? (

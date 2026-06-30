@@ -62,18 +62,18 @@ const formatConversationDate = (dateString: string, localization: any) => {
       return yesterdayStr;
     } else {
       const months = [
-        localization?.appkeys?.monthJan?.substring(0, 3) || 'Jan',
-        localization?.appkeys?.monthFeb?.substring(0, 3) || 'Feb',
-        localization?.appkeys?.monthMar?.substring(0, 3) || 'Mar',
-        localization?.appkeys?.monthApr?.substring(0, 3) || 'Apr',
-        localization?.appkeys?.monthMay?.substring(0, 3) || 'May',
-        localization?.appkeys?.monthJun?.substring(0, 3) || 'Jun',
-        localization?.appkeys?.monthJul?.substring(0, 3) || 'Jul',
-        localization?.appkeys?.monthAug?.substring(0, 3) || 'Aug',
-        localization?.appkeys?.monthSep?.substring(0, 3) || 'Sep',
-        localization?.appkeys?.monthOct?.substring(0, 3) || 'Oct',
-        localization?.appkeys?.monthNov?.substring(0, 3) || 'Nov',
-        localization?.appkeys?.monthDec?.substring(0, 3) || 'Dec',
+        localization?.appkeys?.monthJan || 'January',
+        localization?.appkeys?.monthFeb || 'February',
+        localization?.appkeys?.monthMar || 'March',
+        localization?.appkeys?.monthApr || 'April',
+        localization?.appkeys?.monthMay || 'May',
+        localization?.appkeys?.monthJun || 'June',
+        localization?.appkeys?.monthJul || 'July',
+        localization?.appkeys?.monthAug || 'August',
+        localization?.appkeys?.monthSep || 'September',
+        localization?.appkeys?.monthOct || 'October',
+        localization?.appkeys?.monthNov || 'November',
+        localization?.appkeys?.monthDec || 'December',
       ];
       return `${
         months[date.getMonth()]

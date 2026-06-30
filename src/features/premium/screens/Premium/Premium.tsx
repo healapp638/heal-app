@@ -82,9 +82,10 @@ const Premium = () => {
         const rest = afterPrice.substring(dotIndex);
 
         return (
-          <SolidText style={textStyle}>
+          <SolidText maxFontScale={1} style={textStyle}>
             {beforePrice}
             <SolidText
+              maxFontScale={1}
               style={[
                 textStyle,
                 { fontFamily: AppFonts.bold, color: boldColor },
@@ -150,7 +151,7 @@ const Premium = () => {
 
   useEffect(() => {
     const backAction = () => {
-      handleLogoutAndRedirect();
+      navigation.goBack();
       return true;
     };
 
@@ -160,15 +161,7 @@ const Premium = () => {
     );
 
     return () => backHandler.remove();
-  }, [handleLogoutAndRedirect]);
-
-  const [showCloseBtn, setShowCloseBtn] = useState(false);
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCloseBtn(true);
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
+  }, [navigation]);
 
   // Helper to get formatted dates for the timeline
   const getTimelineDate = (daysToAdd: number) => {
@@ -187,9 +180,11 @@ const Premium = () => {
       view={
         <View style={styles.mainContainer}>
           <PremiumHeader
-            showCloseBtn={showCloseBtn}
+            showCloseBtn={true}
             onClose={() => {
-              handleLogoutAndRedirect();
+              triggerHaptic('impactMedium');
+
+              navigation.goBack();
             }}
             styles={styles}
             images={images}

@@ -146,6 +146,23 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
   }
 
   // Streaming — word by word with smooth gradient tail
+  const flatStyle = StyleSheet.flatten(style) || {};
+  const baseColor = flatStyle.color || colors.brown || '#3A2110';
+
+  const getHexColorWithOpacity = (colorStr: string, opacity: number): string => {
+    let cleanColor = typeof colorStr === 'string' ? colorStr.trim() : '#3A2110';
+    if (!cleanColor.startsWith('#')) {
+      return cleanColor;
+    }
+    if (cleanColor.length === 4) {
+      cleanColor = '#' + cleanColor[1] + cleanColor[1] + cleanColor[2] + cleanColor[2] + cleanColor[3] + cleanColor[3];
+    }
+    const hex6 = cleanColor.slice(0, 7);
+    const alphaInt = Math.round(opacity * 255);
+    const alphaHex = alphaInt.toString(16).padStart(2, '0').toUpperCase();
+    return `${hex6}${alphaHex}`;
+  };
+
   return (
     <View style={internalStyles.container}>
       <Text style={style}>
@@ -158,7 +175,12 @@ const StreamingMessageText: React.FC<StreamingMessageTextProps> = ({
           if (opacity >= 0.999) return <Text key={idx}>{word}</Text>;
 
           return (
-            <Text key={idx} style={{ opacity }}>
+            <Text
+              key={idx}
+              style={{
+                color: getHexColorWithOpacity(baseColor, opacity),
+              }}
+            >
               {word}
             </Text>
           );

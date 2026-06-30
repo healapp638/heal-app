@@ -43,10 +43,13 @@ const SavedDailyQuote = () => {
   const user = useSelector((state: any) => state.userData?.user);
   const { localization } = useContext(LocalizationContext) as any;
 
+  const isLightBackground =
+    user?.homeTheme?.imgUrl === 'file/file-1782813958833.webp';
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
-  const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
+  const activeColor =
+    homeThemeUrl && !isLightBackground ? '#FFFFFF' : '#3A2110';
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const viewShotRefs = useRef<{
     [key: string]: any;
@@ -223,7 +226,7 @@ const SavedDailyQuote = () => {
             },
           ]}
         >
-          {homeThemeUrl ? (
+          {homeThemeUrl && !isLightBackground ? (
             <>
               <ImageBackground
                 source={{
@@ -320,112 +323,112 @@ const SavedDailyQuote = () => {
   return (
     <SolidView
       edges={[]}
-      backgroundImage={homeThemeUrl}
+      backgroundImage={isLightBackground ? null : homeThemeUrl}
       view={
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: 'transparent',
+            },
+          ]}
+        >
           <View
             style={[
-              styles.container,
+              styles.headerWrapper,
               {
-                backgroundColor: 'transparent',
+                paddingTop:
+                  Platform.OS == 'android'
+                    ? -10
+                    : insets?.top > 0
+                    ? insets.top - 10
+                    : 20,
               },
             ]}
           >
-            <View
-              style={[
-                styles.headerWrapper,
-                {
-                  paddingTop:
-                    Platform.OS == 'android'
-                      ? -10
-                      : insets?.top > 0
-                      ? insets.top - 10
-                      : 20,
-                },
-              ]}
-            >
-              <HeaderCommon
-                title={
-                  localization.appkeys?.favouriteQuotes || 'Favourite Quotes'
-                }
-                showBack={true}
-                tintColor={activeColor}
-              />
-            </View>
-            {isLoading ? (
-              <View
-                style={{
-                  flex: 1,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <ActivityIndicator
-                  size="large"
-                  color={colors.primary || '#3A2110'}
-                />
-              </View>
-            ) : (
-              <FlatList
-                data={quotes}
-                renderItem={renderItem}
-                keyExtractor={(item, index) => index.toString()}
-                pagingEnabled
-                showsVerticalScrollIndicator={false}
-                snapToInterval={SCREEN_HEIGHT}
-                snapToAlignment="start"
-                decelerationRate="fast"
-                windowSize={3}
-                initialNumToRender={1}
-                maxToRenderPerBatch={2}
-                removeClippedSubviews={Platform.OS === 'android'}
-                onEndReached={() => {
-                  if (hasNextPage && !isFetchingNextPage) {
-                    fetchNextPage();
-                  }
-                }}
-                onEndReachedThreshold={0.5}
-                onViewableItemsChanged={onViewableItemsChanged}
-                viewabilityConfig={viewabilityConfig}
-                ListEmptyComponent={() => (
-                  <View
-                    style={{
-                      flex: 1,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: SCREEN_HEIGHT * 0.8,
-                    }}
-                  >
-                    <Image
-                      source={images.heartFill}
-                      tintColor={activeColor}
-                      style={{
-                        width: 60,
-                        height: 60,
-                        marginBottom: 20,
-                        tintColor: activeColor,
-                      }}
-                      resizeMode="contain"
-                    />
-                    <SolidText
-                      style={{
-                        color: activeColor,
-                      }}
-                    >
-                      {localization.appkeys?.noFavouritesFound ||
-                        'No favourites quotes found'}
-                    </SolidText>
-                  </View>
-                )}
-              />
-            )}
-
-            <PremiumModal
-              visible={showCreditsModal}
-              onClose={() => setShowCreditsModal(false)}
+            <HeaderCommon
+              title={
+                localization.appkeys?.favouriteQuotes || 'Favourite Quotes'
+              }
+              showBack={true}
+              tintColor={activeColor}
             />
           </View>
-        }
-      />
+          {isLoading ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              <ActivityIndicator
+                size="large"
+                color={colors.primary || '#3A2110'}
+              />
+            </View>
+          ) : (
+            <FlatList
+              data={quotes}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+              pagingEnabled
+              showsVerticalScrollIndicator={false}
+              snapToInterval={SCREEN_HEIGHT}
+              snapToAlignment="start"
+              decelerationRate="fast"
+              windowSize={3}
+              initialNumToRender={1}
+              maxToRenderPerBatch={2}
+              removeClippedSubviews={Platform.OS === 'android'}
+              onEndReached={() => {
+                if (hasNextPage && !isFetchingNextPage) {
+                  fetchNextPage();
+                }
+              }}
+              onEndReachedThreshold={0.5}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              ListEmptyComponent={() => (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: SCREEN_HEIGHT * 0.8,
+                  }}
+                >
+                  <Image
+                    source={images.heartFill}
+                    tintColor={activeColor}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      marginBottom: 20,
+                      tintColor: activeColor,
+                    }}
+                    resizeMode="contain"
+                  />
+                  <SolidText
+                    style={{
+                      color: activeColor,
+                    }}
+                  >
+                    {localization.appkeys?.noFavouritesFound ||
+                      'No favourites quotes found'}
+                  </SolidText>
+                </View>
+              )}
+            />
+          )}
+
+          <PremiumModal
+            visible={showCreditsModal}
+            onClose={() => setShowCreditsModal(false)}
+          />
+        </View>
+      }
+    />
   );
 };
 export default SavedDailyQuote;

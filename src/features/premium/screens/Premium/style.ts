@@ -26,7 +26,7 @@ const style = (colors: any, appLanguage: any) =>
     headerContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 20,
+      marginBottom: 10,
     },
     headerLeft: {
       width: 40,

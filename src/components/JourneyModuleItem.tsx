@@ -61,7 +61,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
             </SolidText>
             <View style={styles.levelBadge}>
               <SolidText style={styles.levelBadgeText}>
-                {`${points}/${totalPoints} pts`}
+                {`${points}/${totalPoints} ${(localization.appkeys.pts || 'pts').toLowerCase()}`}
               </SolidText>
             </View>
           </View>
@@ -122,7 +122,7 @@ const JourneyModuleItem = ({ item, localization }: JourneyModuleItemProps) => {
               {isCompleted
                 ? localization.appkeys.completed
                 : hasPoints
-                ? `${points}/${totalPoints} pts`
+                ? `${points}/${totalPoints} ${(localization.appkeys.pts || 'pts').toLowerCase()}`
                 : `${localization.appkeys.level} ${level}`}
             </SolidText>
           </View>

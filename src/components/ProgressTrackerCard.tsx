@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
@@ -6,6 +6,8 @@ import AppUtils from '../utils/appUtils';
 import AppFonts from '../constants/fonts';
 import { useSelector } from 'react-redux';
 import { triggerHaptic } from '../hooks/useHaptic';
+import { LocalizationContext } from '../localization/localization';
+
 interface ProgressTrackerCardProps {
   title: string;
   percentage?: string;
@@ -23,6 +25,7 @@ const ProgressTrackerCard = ({
   viewStyle,
 }: ProgressTrackerCardProps) => {
   const { colors } = useTheme() as any;
+  const { localization } = useContext(LocalizationContext) as any;
   const userDetails = useSelector((state: any) => state.userData.user);
 
   const displayPercentage =
@@ -30,18 +33,22 @@ const ProgressTrackerCard = ({
     (userDetails?.completedPercentage !== undefined
       ? `${Math.round(userDetails.completedPercentage)}%`
       : '0%');
+
+  const levelText = localization.appkeys?.level || 'Level';
   const displayLevel =
     level ||
     (userDetails?.currentLevel !== undefined
-      ? `Level ${userDetails.currentLevel}`
-      : 'Level 1');
+      ? `${levelText} ${userDetails.currentLevel}`
+      : `${levelText} 1`);
+
+  const ptsText = (localization.appkeys?.pts || 'PTS').toUpperCase();
   const displayPoints =
     points ||
     (userDetails?.total_earned_points !== undefined
       ? `${userDetails.total_earned_points}/${
           userDetails.total_points || 0
-        } PTS`
-      : '0/0 PTS');
+        } ${ptsText}`
+      : `0/0 ${ptsText}`);
   const progressWidth = Math.min(userDetails?.completedPercentage || 0, 100);
   return (
     <Pressable

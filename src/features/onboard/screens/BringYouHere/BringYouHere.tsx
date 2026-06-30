@@ -159,6 +159,7 @@ const BringYouHere = () => {
                         resizeMode="contain"
                       />
                       <SolidText
+                        maxFontSizeMultiplier={1.2}
                         style={[
                           styles.optionText,
                           isSelected && styles.optionTextSelected,
