@@ -9,6 +9,7 @@ import { translateText } from "./langauge.translate.helper";
 import { languages } from "../constants/workflow.constant";
 import { REDIS_CREDENTIAL } from "../constants/app.constant";
 import logger from "../configs/logger.config";
+import moment from "moment-timezone";
 
 export const ChallengesQueue = new Queue('challenges', {
     connection: {
@@ -31,6 +32,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isDailyChallengeInProgress: true } })
             const res = await generateUserChallengesDaily(payload, userData?._id);
             const languagess = Object.values(languages);
+            const end_date_unix = moment().tz(userData?.data?.timeZone).endOf("day").unix();
             const formattedChallenges = await Promise.all(
                 res?.data?.map(async (challenge: any) => {
                     const titleObj: any = {};
@@ -67,6 +69,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
                         points: challenge.points,
                         title: titleObj,
                         exercises,
+                        end_date_unix
                     };
                 })
             );
@@ -82,6 +85,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isWeeklyChallengeInProgress: true } })
             const res = await generateUserChallengesWeekly(payload, userData?._id)
             const languagess = Object.values(languages);
+            const end_date_unix = moment().tz(userData?.data?.timeZone).endOf("week").unix();
             const formattedChallenges = await Promise.all(
                 res?.data?.map(async (challenge: any) => {
                     const titleObj: any = {};
@@ -117,6 +121,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
                         points: challenge.points,
                         title: titleObj,
                         exercises,
+                        end_date_unix
                     };
                 })
             );

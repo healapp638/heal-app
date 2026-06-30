@@ -24,6 +24,7 @@ const langauge_translate_helper_1 = require("./langauge.translate.helper");
 const workflow_constant_1 = require("../constants/workflow.constant");
 const app_constant_1 = require("../constants/app.constant");
 const logger_config_1 = __importDefault(require("../configs/logger.config"));
+const moment_timezone_1 = __importDefault(require("moment-timezone"));
 exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     connection: {
         port: app_constant_1.REDIS_CREDENTIAL.PORT || 6379,
@@ -32,7 +33,7 @@ exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
     }
 });
 exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d;
     try {
         yield (0, mongoose_config_1.connection)();
         const { userData } = job.data;
@@ -45,7 +46,8 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
             yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { isDailyChallengeInProgress: true } });
             const res = yield (0, openai_helper_1.generateUserChallengesDaily)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
             const languagess = Object.values(workflow_constant_1.languages);
-            const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+            const end_date_unix = (0, moment_timezone_1.default)().tz((_a = userData === null || userData === void 0 ? void 0 : userData.data) === null || _a === void 0 ? void 0 : _a.timeZone).endOf("day").unix();
+            const formattedChallenges = yield Promise.all((_b = res === null || res === void 0 ? void 0 : res.data) === null || _b === void 0 ? void 0 : _b.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
                 const titleObj = {};
                 yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
                     titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
@@ -66,6 +68,7 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
                     points: challenge.points,
                     title: titleObj,
                     exercises,
+                    end_date_unix
                 };
             })));
             const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
@@ -77,7 +80,8 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
             yield user_auth_model_1.default.findOneAndUpdate({ _id: userData === null || userData === void 0 ? void 0 : userData._id }, { $set: { isWeeklyChallengeInProgress: true } });
             const res = yield (0, openai_helper_1.generateUserChallengesWeekly)(payload, userData === null || userData === void 0 ? void 0 : userData._id);
             const languagess = Object.values(workflow_constant_1.languages);
-            const formattedChallenges = yield Promise.all((_b = res === null || res === void 0 ? void 0 : res.data) === null || _b === void 0 ? void 0 : _b.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
+            const end_date_unix = (0, moment_timezone_1.default)().tz((_c = userData === null || userData === void 0 ? void 0 : userData.data) === null || _c === void 0 ? void 0 : _c.timeZone).endOf("week").unix();
+            const formattedChallenges = yield Promise.all((_d = res === null || res === void 0 ? void 0 : res.data) === null || _d === void 0 ? void 0 : _d.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
                 const titleObj = {};
                 yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
                     titleObj[lang] = yield (0, langauge_translate_helper_1.translateText)(challenge.title, lang);
@@ -99,6 +103,7 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
                     points: challenge.points,
                     title: titleObj,
                     exercises,
+                    end_date_unix
                 };
             })));
             const result = yield user_weekly_challenges_model_1.default.insertMany(formattedChallenges);

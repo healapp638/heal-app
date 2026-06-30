@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
-const moment_1 = __importDefault(require("moment"));
 const langSchema = {
     en: { type: String, default: '' },
     zh: { type: String, default: '' },
@@ -46,11 +45,7 @@ const daily_challenges = new mongoose_1.default.Schema({
     },
     //after 24 hour from now
     end_date_unix: {
-        type: Number,
-        default: () => {
-            const endOfDay = (0, moment_1.default)().endOf('day').unix();
-            return endOfDay;
-        }
+        type: Number
     },
     isCompleted: {
         type: Boolean,

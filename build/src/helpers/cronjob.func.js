@@ -31,6 +31,7 @@ const user_weekly_challenges_model_1 = __importDefault(require("../modules/UserC
 const node_cron_1 = __importDefault(require("node-cron"));
 const mongoose_config_1 = require("../configs/mongoose.config");
 const moment_timezone_1 = __importDefault(require("moment-timezone"));
+const moment_timezone_2 = __importDefault(require("moment-timezone"));
 const getOpenAI = () => new openai_1.default({
     apiKey: app_constant_1.APP.OPENAI_API_KEY,
 });
@@ -481,12 +482,14 @@ const processDailyUser = (curelem) => __awaiter(void 0, void 0, void 0, function
             })));
             return { title: exerciseTitleObj, step_number: exercise.step_number };
         })));
+        const end_date_unix = (0, moment_timezone_2.default)().tz(curelem.timeZone).endOf("day").unix();
         return {
             user_id: challenge.user_id,
             challenge_type: challenge.challenge_type,
             points: challenge.points,
             title: titleObj,
             exercises,
+            end_date_unix
         };
     })));
     const result = yield user_daily_challenges_model_1.default.insertMany(formattedChallenges);
@@ -525,12 +528,14 @@ const processWeeklyUser = (curelem) => __awaiter(void 0, void 0, void 0, functio
                 step_number: exercise.step_number,
             };
         })));
+        const end_date_unix = (0, moment_timezone_2.default)().tz(curelem.timeZone).endOf("day").unix();
         return {
             user_id: challenge.user_id,
             challenge_type: challenge.challenge_type,
             points: challenge.points,
             title: titleObj,
             exercises,
+            end_date_unix
         };
     })));
     const result = yield user_weekly_challenges_model_1.default.insertMany(formattedChallenges);
@@ -627,7 +632,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 //   });
 // };
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('0 0 */2 * *', () => {
+    node_cron_1.default.schedule('0 */5 * * * *', () => {
         // console.log("crrrroonnnn")
         generateChallenges();
     });

@@ -16,6 +16,7 @@ import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.cha
 import nodeCron from "node-cron";
 import { connection as connectDB } from "../configs/mongoose.config";
 import momentTz from "moment-timezone";
+import moment from "moment-timezone";
 
 
 const getOpenAI = () => new OpenAI({
@@ -327,7 +328,7 @@ Return JSON only.
       message: error.message,
       stack: error.stack,
     });
-        return showResponse(
+    return showResponse(
       false,
       "Error generating quote",
       null,
@@ -556,6 +557,7 @@ const processDailyUser = async (curelem: any) => {
           return { title: exerciseTitleObj, step_number: exercise.step_number };
         })
       );
+      const end_date_unix = moment().tz(curelem.timeZone).endOf("day").unix();
 
       return {
         user_id: challenge.user_id,
@@ -563,6 +565,8 @@ const processDailyUser = async (curelem: any) => {
         points: challenge.points,
         title: titleObj,
         exercises,
+        end_date_unix
+
       };
     })
   );
@@ -630,12 +634,14 @@ const processWeeklyUser = async (curelem: any) => {
         })
       );
 
+      const end_date_unix = moment().tz(curelem.timeZone).endOf("day").unix();
       return {
         user_id: challenge.user_id,
         challenge_type: challenge.challenge_type,
         points: challenge.points,
         title: titleObj,
         exercises,
+        end_date_unix
       };
     })
   );
@@ -761,7 +767,7 @@ const generateChallenges = async () => {
 // };
 
 export const scheduleCroneJOb = () => {
-  nodeCron.schedule('0 0 */2 * *', () => {
+  nodeCron.schedule('0 */5 * * * *', () => {
     // console.log("crrrroonnnn")
     generateChallenges()
   })
