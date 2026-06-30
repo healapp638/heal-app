@@ -634,7 +634,7 @@ const processWeeklyUser = async (curelem: any) => {
         })
       );
 
-      const end_date_unix = moment().tz(curelem.timeZone).endOf("day").unix();
+      const end_date_unix = moment().tz(curelem.timeZone).endOf("week").unix();
       return {
         user_id: challenge.user_id,
         challenge_type: challenge.challenge_type,
@@ -767,7 +767,7 @@ const generateChallenges = async () => {
 // };
 
 export const scheduleCroneJOb = () => {
-  nodeCron.schedule('0 */5 * * * *', () => {
+  nodeCron.schedule('0 */25 * * * *', () => {
     // console.log("crrrroonnnn")
     generateChallenges()
   })

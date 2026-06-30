@@ -528,7 +528,7 @@ const processWeeklyUser = (curelem) => __awaiter(void 0, void 0, void 0, functio
                 step_number: exercise.step_number,
             };
         })));
-        const end_date_unix = (0, moment_timezone_2.default)().tz(curelem.timeZone).endOf("day").unix();
+        const end_date_unix = (0, moment_timezone_2.default)().tz(curelem.timeZone).endOf("week").unix();
         return {
             user_id: challenge.user_id,
             challenge_type: challenge.challenge_type,
@@ -632,7 +632,7 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 //   });
 // };
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('0 */5 * * * *', () => {
+    node_cron_1.default.schedule('0 */25 * * * *', () => {
         // console.log("crrrroonnnn")
         generateChallenges();
     });

@@ -88,8 +88,9 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             await userAuthModel.findOneAndUpdate({ _id: userData?._id }, { $set: { isWeeklyChallengeInProgress: true } })
             const res = await generateUserChallengesWeekly(payload, userData?._id)
             const languagess = Object.values(languages);
-            const end_date_unix = moment().tz(userData?.timeZone||"Europe/Zurich").endOf("week").unix();
-            console.log("end_date_unix", end_date_unix,userData?.timeZone);
+            const end_date_unixx = moment().tz(userData?.timeZone||"Europe/Zurich").endOf("week").unix();
+            console.log("end_date_unixx",end_date_unixx)
+            console.log("end_date_unix", end_date_unixx,userData?.timeZone);
             const formattedChallenges = await Promise.all(
                 res?.data?.map(async (challenge: any) => {
                     const titleObj: any = {};
@@ -125,7 +126,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
                         points: challenge.points,
                         title: titleObj,
                         exercises,
-                        end_date_unix
+                        end_date_unix:end_date_unixx
                     };
                 })
             );
