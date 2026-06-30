@@ -49,6 +49,7 @@ exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(
             const languagess = Object.values(workflow_constant_1.languages);
             console.log(userData === null || userData === void 0 ? void 0 : userData.timeZone, "userData?.timeZone");
             const end_date_unix = (0, moment_timezone_1.default)().tz((userData === null || userData === void 0 ? void 0 : userData.timeZone) || "Europe/Zurich").endOf("day").unix();
+            console.log("end_date_unix", end_date_unix);
             const formattedChallenges = yield Promise.all((_a = res === null || res === void 0 ? void 0 : res.data) === null || _a === void 0 ? void 0 : _a.map((challenge) => __awaiter(void 0, void 0, void 0, function* () {
                 const titleObj = {};
                 yield Promise.all(languagess.map((lang) => __awaiter(void 0, void 0, void 0, function* () {

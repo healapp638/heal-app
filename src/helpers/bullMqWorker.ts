@@ -35,6 +35,7 @@ export const challengesWorker = new Worker("challenges", async (job: any) => {
             const languagess = Object.values(languages);
             console.log(userData?.timeZone,"userData?.timeZone")
             const end_date_unix = moment().tz(userData?.timeZone||"Europe/Zurich").endOf("day").unix();
+            console.log("end_date_unix", end_date_unix)
             const formattedChallenges = await Promise.all(
                 res?.data?.map(async (challenge: any) => {
                     const titleObj: any = {};

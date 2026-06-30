@@ -73,7 +73,7 @@ app.use(requestId_middlewear_1.requestIdMiddleware);
 app.use(body_parser_1.default.json());
 app.use(express_1.default.json({ limit: "50mb" }));
 app.use(body_parser_1.default.urlencoded({ extended: true }));
-// app.use(morgan("tiny"));
+app.use((0, morgan_1.default)("tiny"));
 morgan_1.default.token("userId", (req) => req.userId || "anonymous");
 morgan_1.default.token("requestId", (req) => req.id || "unknown");
 // Custom Morgan format for JSON logging
