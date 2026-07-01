@@ -208,10 +208,7 @@ const Journal = () => {
         const monthIndex = dateObj.getMonth();
         const year = dateObj.getFullYear();
         const monthName = MONTHS[monthIndex];
-        const itemDate =
-          appLanguage === 'English'
-            ? `${monthName} ${day}, ${year}`
-            : `${day} ${monthName} ${year}`;
+        const itemDate = `${day} ${monthName} ${year}`;
         return {
           ...item,
           id: item._id,

@@ -36,22 +36,19 @@ const StartedModule = () => {
   const styles = style(colors);
   const navigation = useNavigation();
   const [phases, setPhases] = useState<any[]>([]);
-  const [cursor, setCursor] = useState<string | null>(null);
   const [subModuleDetail, setSubModuleDetail] = useState<any>(subModule);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { mutate: startLesson, isPending: isStarting } = usePostApi();
-  const { data, isLoading, refetch, isFetching } = useGetApi(
+  const { data, isLoading, refetch } = useGetApi(
     endpoints.phase_list,
-    ['phase_list', subModule?._id, cursor],
+    ['phase_list', subModule?._id],
     {
       sub_module_id: subModule?._id,
-      cursor,
-      limit: 10,
+      limit: 100,
     },
   );
   useFocusEffect(
     useCallback(() => {
-      setCursor(null);
       refetch();
     }, [refetch]),
   );
@@ -67,33 +64,16 @@ const StartedModule = () => {
           phaseNumber: index + 1,
         }),
       );
-      if (cursor === null) {
-        setPhases(fetchedPhases);
-      } else {
-        setPhases(prev => {
-          const existingIds = new Set(prev.map(p => p._id));
-          const newPhases = fetchedPhases.filter(
-            (p: any) => !existingIds.has(p._id),
-          );
-          return [...prev, ...newPhases];
-        });
-      }
+      setPhases(fetchedPhases);
     }
     setIsRefreshing(false);
-  }, [data, cursor]);
+  }, [data]);
   const onRefresh = () => {
     setIsRefreshing(true);
-    setCursor(null);
     refetch();
     setTimeout(() => {
       setIsRefreshing(false);
     }, 2000);
-  };
-  const loadMore = () => {
-    const nextCursor = data?.data?.nextCursor || data?.data?.next_cursor;
-    if (nextCursor && !isFetching) {
-      setCursor(nextCursor);
-    }
   };
   const renderHeader = useCallback(
     () => (
@@ -253,7 +233,7 @@ const StartedModule = () => {
               viewStyle={{ marginBottom: -2 }}
             />
           </View>
-          {isFetching && cursor === null && !isRefreshing ? (
+          {isLoading && phases.length === 0 ? (
             <ActivityIndicator
               size="large"
               color={colors.brown}
@@ -271,35 +251,11 @@ const StartedModule = () => {
               maxToRenderPerBatch={10}
               windowSize={10}
               removeClippedSubviews={true}
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.5}
               refreshControl={
                 <RefreshControl
                   refreshing={isRefreshing}
                   onRefresh={onRefresh}
                 />
-              }
-              ListEmptyComponent={
-                isLoading && cursor === null ? (
-                  <ActivityIndicator
-                    size="large"
-                    color={colors.brown}
-                    style={{
-                      marginTop: 50,
-                    }}
-                  />
-                ) : null
-              }
-              ListFooterComponent={
-                isFetching && cursor !== null ? (
-                  <ActivityIndicator
-                    size="small"
-                    color={colors.brown}
-                    style={{
-                      marginVertical: 20,
-                    }}
-                  />
-                ) : null
               }
             />
           )}

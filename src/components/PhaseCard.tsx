@@ -4,7 +4,6 @@ import { useTheme } from '@react-navigation/native';
 import SolidText from './SolidText';
 import AppFonts from '../constants/fonts';
 import AppUtils from '../utils/appUtils';
-import { triggerHaptic } from '../hooks/useHaptic';
 interface PhaseCardProps {
   phase: string;
   title: string;
@@ -66,22 +65,24 @@ const PhaseCard = ({
       <View style={styles.rightContainer}>
         {isLocked ? (
           <Image
+            key="lock"
             source={images.lock3}
             style={styles.lockIcon}
             resizeMode="contain"
           />
         ) : isCompleted ? (
           <Image
+            key="tick"
             source={images.tick2}
             style={styles.tickIcon}
             resizeMode="contain"
           />
         ) : (
           <Image
+            key="forward"
             source={images.forward2}
             style={styles.forwardIcon}
             resizeMode="contain"
-            tintColor={colors.brown}
           />
         )}
       </View>

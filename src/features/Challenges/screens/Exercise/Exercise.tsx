@@ -1,14 +1,19 @@
-import React, { useContext, useState } from 'react';
-import { View, Platform, ActivityIndicator } from 'react-native';
+import React, {
+  useContext,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from 'react';
+import { View, ActivityIndicator, FlatList, Dimensions } from 'react-native';
 import { useNavigation, useTheme, useRoute } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
-import SolidText from '../../../../components/SolidText';
 import HeaderCommon from '../../../../components/HeaderCommon';
 import SolidBtn from '../../../../components/SolidBtn';
 import style from './style';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import { LocalizationContext } from '../../../../localization/localization';
-import { triggerHaptic } from '../../../../hooks/useHaptic';
+
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { useQueryClient } from '@tanstack/react-query';
@@ -16,11 +21,15 @@ import useGetApi from '../../../../hooks/useGetApi';
 import { showPointsToast } from '../../../../components/TopPointsToast';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
+import StepItem from '../../../../components/StepItem';
 
 const Exercise = () => {
   const dispatch = useDispatch();
   const { colors } = useTheme() as any;
   const styles = style(colors);
+  const { width } = Dimensions.get('window');
+  const itemWidth = width - 40; // paddingHorizontal: 20 on mainContainer
+  const flatListRef = useRef<FlatList>(null);
   const navigation = useNavigation();
   const route = useRoute() as any;
   const {
@@ -28,7 +37,8 @@ const Exercise = () => {
     challenge_id,
     challenge_type,
   } = route.params || {};
-  const { mutate: completeChallengeApi } = usePostApi();
+  const { mutate: completeChallengeApi, isPending: isCompleting } =
+    usePostApi();
   const queryClient = useQueryClient();
 
   const { data: detailResponse, isLoading } = useGetApi(
@@ -46,6 +56,30 @@ const Exercise = () => {
   const { localization } = useContext(LocalizationContext) as any;
   const [currentStep, setCurrentStep] = useState(0);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      flatListRef.current?.scrollToIndex({
+        index: currentStep,
+        animated: true,
+      });
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [currentStep]);
+
+  const renderStep = useCallback(
+    ({ item, index }: { item: any; index: number }) => {
+      return (
+        <StepItem
+          item={item}
+          index={index}
+          styles={styles}
+          itemWidth={itemWidth}
+        />
+      );
+    },
+    [styles, itemWidth],
+  );
+
   if (isLoading) {
     return (
       <SolidView
@@ -55,13 +89,7 @@ const Exercise = () => {
               title={localization.appkeys?.exercise || 'Exercise'}
               onBackPress={() => navigation.goBack()}
             />
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
+            <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color={colors.brown} />
             </View>
           </View>
@@ -71,7 +99,7 @@ const Exercise = () => {
   }
   const steps =
     exercises?.length > 0
-      ? exercises.map((item: any) => ({
+      ? exercises?.map((item: any) => ({
           text: item.title,
         }))
       : [
@@ -116,7 +144,12 @@ const Exercise = () => {
         {
           onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ['challenge_list'] });
-            showPointsToast(data?.message, `+${data?.data?.points} ${(localization.appkeys?.pts || 'pts').toLowerCase()}`);
+            showPointsToast(
+              data?.message,
+              `+${data?.data?.points} ${(
+                localization.appkeys?.pts || 'pts'
+              ).toLowerCase()}`,
+            );
             dispatch(getUserDetail() as any);
             navigation.reset({
               index: 0,
@@ -163,12 +196,21 @@ const Exercise = () => {
             onBackPress={handleBack}
           />
 
-          <View style={styles.contentContainer}>
-            <SolidText style={styles.numberText}>{currentStep + 1}</SolidText>
-            <SolidText style={styles.descriptionText}>
-              {steps[currentStep].text}
-            </SolidText>
-          </View>
+          <FlatList
+            ref={flatListRef}
+            data={steps}
+            renderItem={renderStep}
+            horizontal
+            pagingEnabled
+            scrollEnabled={false}
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(_, index) => index.toString()}
+            getItemLayout={(_, index) => ({
+              length: itemWidth,
+              offset: itemWidth * index,
+              index,
+            })}
+          />
 
           <SolidBtn
             titleTxt={
@@ -180,6 +222,7 @@ const Exercise = () => {
               return (handleNext as any)(...args);
             }}
             btnStyle={styles.nextButton}
+            isLoading={isCompleting}
           />
         </View>
       }

@@ -49,7 +49,7 @@ const Modules = () => {
   const [startedModules, setStartedModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showCreditsModal, setShowCreditsModal] = useState(false);
+
   const {
     data: startedModulesData,
     isLoading: isStartedLoading,
@@ -388,7 +388,6 @@ const Modules = () => {
             <HomeHeader
               showStreak={false}
               showCrown
-              onCrownPress={() => setShowCreditsModal(true)}
               userName={localization.appkeys?.tabModules || 'Modules'}
               safeSpaceLabel={
                 localization.appkeys?.modulesSubtitle || 'Choose guided support'
@@ -428,10 +427,6 @@ const Modules = () => {
                 />
               ) : null
             }
-          />
-          <PremiumModal
-            visible={showCreditsModal}
-            onClose={() => setShowCreditsModal(false)}
           />
         </View>
       }

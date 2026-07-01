@@ -276,14 +276,27 @@ const AddJournal = () => {
             {localization.appkeys?.addJournalTitle || 'New entry'}
           </SolidText>
           <SolidText style={styles.dateText}>
-            {new Date().toLocaleDateString(
-              SPEECH_LOCALE_BY_LANGUAGE[appLanguage] || 'en-US',
-              {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-              },
-            )}
+            {(() => {
+              const MONTHS = [
+                localization.appkeys?.monthJan || 'January',
+                localization.appkeys?.monthFeb || 'February',
+                localization.appkeys?.monthMar || 'March',
+                localization.appkeys?.monthApr || 'April',
+                localization.appkeys?.monthMay || 'May',
+                localization.appkeys?.monthJun || 'June',
+                localization.appkeys?.monthJul || 'July',
+                localization.appkeys?.monthAug || 'August',
+                localization.appkeys?.monthSep || 'September',
+                localization.appkeys?.monthOct || 'October',
+                localization.appkeys?.monthNov || 'November',
+                localization.appkeys?.monthDec || 'December',
+              ];
+              const currentDate = new Date();
+              const day = currentDate.getDate();
+              const monthName = MONTHS[currentDate.getMonth()];
+              const year = currentDate.getFullYear();
+              return `${day} ${monthName} ${year}`;
+            })()}
           </SolidText>
 
           {/* Emotions Section */}
