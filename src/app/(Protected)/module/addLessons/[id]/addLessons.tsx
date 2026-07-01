@@ -73,18 +73,17 @@ export default function AddLessons() {
 
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
+
     const LANGUAGE_OPTIONS = [
         { value: 'en', label: 'English' },
-        { value: 'zh', label: 'Chinese' },
         { value: 'es', label: 'Spanish' },
         { value: 'fr', label: 'French' },
-        { value: 'hi', label: 'Hindi' },
         { value: 'de', label: 'German' },
         { value: 'ru', label: 'Russian' },
-        { value: 'pt', label: 'Portuguese' },
         { value: 'it', label: 'Italian' },
-        { value: 'ro', label: 'Romanian' }
+        { value: 'pt', label: 'Portuguese' },
     ];
+    
     const handleLanguageChange = (value: string) => {
         setSelectedLanguage(value);
     };

@@ -70,18 +70,17 @@ const Affirmation = () => {
         pageSize: 10,
     });
 
+
     const LANGUAGE_OPTIONS = [
         { value: 'en', label: 'English' },
-        { value: 'zh', label: 'Chinese' },
         { value: 'es', label: 'Spanish' },
         { value: 'fr', label: 'French' },
-        { value: 'hi', label: 'Hindi' },
         { value: 'de', label: 'German' },
         { value: 'ru', label: 'Russian' },
-        { value: 'pt', label: 'Portuguese' },
         { value: 'it', label: 'Italian' },
-        { value: 'ro', label: 'Romanian' }
+        { value: 'pt', label: 'Portuguese' },
     ];
+
     const handleLanguageChange = (value: string) => {
         setSelectedLanguage(value);
     };
@@ -229,7 +228,7 @@ const Affirmation = () => {
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
                         onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
-                        className='w-32 bg-maincolor! font-bold text-white! border-none!'
+                        className='w-42 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />
                     <AppButton onClick={() => { setOpenAddAffirmation(true) }} className="bg-maincolor! w-32! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none! cursor-pointer!  shadow-none!" block>
