@@ -24,7 +24,7 @@ const workflow_constant_1 = require("../constants/workflow.constant");
 const statusCodes_1 = __importDefault(require("../constants/statusCodes"));
 //
 const generateJwtToken = (id_1, ...args_1) => __awaiter(void 0, [id_1, ...args_1], void 0, function* (id, extras = {}, expiresIn = '24h') {
-    const API_SECRET = '!@#$%^&*()';
+    const API_SECRET = yield app_constant_1.APP.API_SECRET;
     // console.log(API_SECRET, "API_SECRET")
     return new Promise((res, rej) => {
         jsonwebtoken_1.default.sign(Object.assign({ id }, extras), API_SECRET, {
@@ -57,7 +57,7 @@ const verifyToken = (req) => __awaiter(void 0, void 0, void 0, function* () {
         if (token.startsWith('Bearer ')) {
             token = token.slice(7, token.length);
         }
-        const API_SECRET = '!@#$%^&*()';
+        const API_SECRET = yield app_constant_1.APP.API_SECRET;
         const decoded = yield new Promise((resolve, reject) => {
             jsonwebtoken_1.default.verify(token, API_SECRET, (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
                 var _a;
@@ -113,7 +113,7 @@ exports.verifyToken = verifyToken;
 const decodeToken = (token) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const API_SECRET = '!@#$%^&*()';
+        const API_SECRET = yield app_constant_1.APP.API_SECRET;
         return jsonwebtoken_1.default.verify(token, API_SECRET, (err, decoded) => __awaiter(void 0, void 0, void 0, function* () {
             var _a, _b;
             if (err) {

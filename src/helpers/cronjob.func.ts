@@ -766,12 +766,35 @@ const generateChallenges = async () => {
 //   });
 // };
 
+// export const scheduleCroneJOb = () => {
+//   nodeCron.schedule('0 */5 * * * *', () => {
+//     // console.log("crrrroonnnn")
+//     generateChallenges()
+//   }, {
+//     noOverlap: true,
+//   })
+// }
 export const scheduleCroneJOb = () => {
-  nodeCron.schedule('0 */5 * * * *', () => {
-    // console.log("crrrroonnnn")
-    generateChallenges()
-  })
-}
+  if (process.env.NODE_APP_INSTANCE === '0') {
+    nodeCron.schedule(
+      '0 */5 * * * *',async () => {
+        try {
+          await generateChallenges();
+        } catch (err:any) {
+          logger.error("Challenge Cron Error", {
+            type: "error",
+            message: err.message,
+            stack: err.stack,
+          });
+        }
+      },
+      {
+        noOverlap: true,
+      }
+    );
+  }
+};
+
 
 export {
   generateAffirmation,

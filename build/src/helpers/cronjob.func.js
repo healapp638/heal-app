@@ -631,10 +631,30 @@ const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () 
 //     generateChallenges();
 //   });
 // };
+// export const scheduleCroneJOb = () => {
+//   nodeCron.schedule('0 */5 * * * *', () => {
+//     // console.log("crrrroonnnn")
+//     generateChallenges()
+//   }, {
+//     noOverlap: true,
+//   })
+// }
 const scheduleCroneJOb = () => {
-    node_cron_1.default.schedule('0 */5 * * * *', () => {
-        // console.log("crrrroonnnn")
-        generateChallenges();
-    });
+    if (process.env.NODE_APP_INSTANCE === '0') {
+        node_cron_1.default.schedule('0 */5 * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
+            try {
+                yield generateChallenges();
+            }
+            catch (err) {
+                logger_config_1.default.error("Challenge Cron Error", {
+                    type: "error",
+                    message: err.message,
+                    stack: err.stack,
+                });
+            }
+        }), {
+            noOverlap: true,
+        });
+    }
 };
 exports.scheduleCroneJOb = scheduleCroneJOb;

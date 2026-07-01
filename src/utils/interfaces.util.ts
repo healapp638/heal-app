@@ -44,6 +44,7 @@ export interface AppConstant {
     AWS_REGION: string
     SWAGGER_USER_NAME: any
     SWAGGER_PASSWORD: any
+    API_SECRET:any,
     OPENAI_API_KEY: any,
     REVENUECAT_API_KEY: any,
     REVENUECAT_WEBHOOK_SECRET: any,

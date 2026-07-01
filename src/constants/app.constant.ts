@@ -37,6 +37,7 @@ const APP: AppConstant = {
   AWS_REGION: 'us-east-1',
   SWAGGER_USER_NAME: 'admin',
   SWAGGER_PASSWORD: 'Admin@123',
+  API_SECRET:'',
   OPENAI_API_KEY: process.env.OPENAI_API_KEY || '',
   REVENUECAT_API_KEY: process.env.REVENUECAT_API_KEY || '',
   REVENUECAT_WEBHOOK_SECRET: process.env.REVENUECAT_WEBHOOK_SECRET || '',
@@ -93,13 +94,14 @@ const initializeAwsCredential = async () => {
       services.awsService.getSecretFromAWS("REVENUECAT_API_KEY"),
       services.awsService.getSecretFromAWS("REVENUECAT_WEBHOOK_SECRET"),
       services.awsService.getSecretFromAWS("HL_GOOGLE_TRANSLATE_API_KEY"),
+      services.awsService.getSecretFromAWS("API_SECRET"),
       services.awsService.getParameterFromAWS({ name: STMP_EMAIL }),
       services.awsService.getParameterFromAWS({ name: SMTP_API_KEY }),
     ]);
 
 
     const [mongodbUri, jwtSecret, accessId, region, awsSecret, bucketName, openaiApiKey, revenueCatApiKey,
-      revenueCatWebhookSecret, hlGoogleTranslateApiKey, smtpEmail, smtpApiKey,
+      revenueCatWebhookSecret, hlGoogleTranslateApiKey,apiSecret, smtpEmail, smtpApiKey,
     ] = results;
     DB.MONGODB_URI = mongodbUri;
     APP.JWT_SECRET = jwtSecret;
@@ -109,6 +111,7 @@ const initializeAwsCredential = async () => {
     // APP.GOOGLE_TRANSLATE_API_KEY = googleTranslateApiKey;
     APP.OPENAI_API_KEY = openaiApiKey || APP.OPENAI_API_KEY;
     APP.HL_GOOGLE_TRANSLATE_API_KEY = hlGoogleTranslateApiKey;
+    APP.API_SECRET = apiSecret;
     EMAIL_CREDENTIAL.SMTP_EMAIL = smtpEmail;
     EMAIL_CREDENTIAL.SMTP_API_KEY = smtpApiKey;
     AWS_CREDENTIAL = {

@@ -39,11 +39,24 @@ const init = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, mongoose_config_1.connection)()
         .then(() => {
         // Start cronjobs
-        node_cron_1.default.schedule(
-        // "*/2 * * * *",
-        "0 2 * * *", cronjob_func_1.generateAffirmation, {
-            noOverlap: true,
-        });
+        if (process.env.NODE_APP_INSTANCE === '0') {
+            node_cron_1.default.schedule(
+            // "*/2 * * * *",
+            "0 2 * * *", () => __awaiter(void 0, void 0, void 0, function* () {
+                try {
+                    yield (0, cronjob_func_1.generateAffirmation)();
+                }
+                catch (err) {
+                    logger_config_1.default.error("Affirmation Cron Error", {
+                        type: "error",
+                        message: err.message,
+                        stack: err.stack,
+                    });
+                }
+            }), {
+                noOverlap: true,
+            });
+        }
         (0, bootstrap_util_1.bootstrapAdmin)(() => {
             console.log("Bootstrapping finished!");
         });

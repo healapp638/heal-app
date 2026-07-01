@@ -12,7 +12,7 @@ import { tokenUserTypeInterface } from './interfaces.util';
 
 //
 export const generateJwtToken = async (id: string, extras = {}, expiresIn: any = '24h') => {
-    const API_SECRET = '!@#$%^&*()'
+    const API_SECRET = await APP.API_SECRET 
     // console.log(API_SECRET, "API_SECRET")
     return new Promise((res, rej) => {
         jwt.sign({ id, ...extras }, API_SECRET as string, {
@@ -50,7 +50,7 @@ export const verifyToken = async (req: Request) => {
             token = token.slice(7, token.length);
         }
 
-        const API_SECRET = '!@#$%^&*()';
+        const API_SECRET = await APP.API_SECRET;
 
         const decoded: any = await new Promise((resolve, reject) => {
             jwt.verify(token, API_SECRET as string, async (err: any, decoded: any) => {
@@ -113,7 +113,7 @@ export const verifyToken = async (req: Request) => {
 
 export const decodeToken = async (token: string) => {
     try {
-        const API_SECRET =  '!@#$%^&*()';
+        const API_SECRET = await APP.API_SECRET 
 
         return jwt.verify(token, API_SECRET, async (err: any, decoded: any) => {
             if (err) {

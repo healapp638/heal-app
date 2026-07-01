@@ -29,14 +29,26 @@ const init = async () => {
     .then(() => {
 
       // Start cronjobs
-      cron.schedule(
-        // "*/2 * * * *",
-        "0 2 * * *",
-        generateAffirmation,
-        {
-          noOverlap: true,
-        }
-      );
+      if (process.env.NODE_APP_INSTANCE === '0') {
+        cron.schedule(
+          // "*/2 * * * *",
+          "0 2 * * *",
+          async () => {
+            try {
+              await generateAffirmation();
+            } catch (err: any) {
+              logger.error("Affirmation Cron Error", {
+                type: "error",
+                message: err.message,
+                stack: err.stack,
+              });
+            }
+          },
+          {
+            noOverlap: true,
+          }
+        );
+      }
 
       bootstrapAdmin(() => {
         console.log("Bootstrapping finished!");
