@@ -19,6 +19,7 @@ import { logout, storeToken } from '@/redux/features/auth/authSlice';
 import { getAccessToken } from '@/redux/store/authToken';
 import logger from '@/utils/logger';
 import { ROUTES } from '@/routerKeys';
+import { removeAuthAction, setAuthAction } from '@/actions/authActions';
 
 /* ======================================================
    CONFIG
@@ -61,6 +62,19 @@ const resolveQueue = (token: string | null) => {
   refreshQueue.forEach((cb) => cb(token));
   refreshQueue = [];
 };
+
+const handleUnauthorizedRedirect = async () => {
+  store.dispatch(logout());
+  try {
+    await removeAuthAction();
+  } catch (e) {
+    logger.error('Error removing auth cookie', e);
+  }
+  if (typeof window !== 'undefined') {
+    window.location.href = ROUTES.WELCOME.WELCOME;
+  }
+};
+
 /* ======================================================
    REFRESH TOKEN CALL
    ====================================================== */
@@ -83,6 +97,11 @@ const refreshAccessToken = async (): Promise<string | null> => {
     const newToken = response?.data?.data?.access_token;
     if (newToken) {
       store.dispatch(storeToken(newToken));
+      try {
+        await setAuthAction(newToken);
+      } catch (e) {
+        logger.error('Error setting auth cookie on refresh', e);
+      }
     }
 
     return newToken || null;
@@ -110,8 +129,9 @@ api.interceptors.response.use(
 
         if (isRefreshing) {
           return new Promise((resolve, reject) => {
-            refreshQueue.push((token) => {
+            refreshQueue.push(async (token) => {
               if (!token) {
+                await handleUnauthorizedRedirect();
                 reject(error);
                 return;
               }
@@ -130,10 +150,7 @@ api.interceptors.response.use(
         resolveQueue(newToken);
 
         if (!newToken) {
-          store.dispatch(logout());
-          if (typeof window !== 'undefined') {
-            window.location.href = ROUTES.WELCOME.WELCOME;
-          }
+          await handleUnauthorizedRedirect();
           return Promise.reject(error);
         }
 
@@ -141,10 +158,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } else {
         // Already retried and still 401
-        store.dispatch(logout());
-        if (typeof window !== 'undefined') {
-          window.location.href = ROUTES.WELCOME.WELCOME;
-        }
+        await handleUnauthorizedRedirect();
       }
     }
 

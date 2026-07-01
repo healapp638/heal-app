@@ -23,19 +23,17 @@ export default function PrivacyPolicy() {
     const [editorContent, setEditorContent] = React.useState<string>('');
     const [selectedLanguage, setSelectedLanguage] = React.useState<string>('en');
 
+
     const LANGUAGE_OPTIONS = [
         { value: 'en', label: 'English' },
-        { value: 'zh', label: 'Chinese' },
         { value: 'es', label: 'Spanish' },
         { value: 'fr', label: 'French' },
-        { value: 'hi', label: 'Hindi' },
         { value: 'de', label: 'German' },
         { value: 'ru', label: 'Russian' },
-        { value: 'pt', label: 'Portuguese' },
         { value: 'it', label: 'Italian' },
-        { value: 'ro', label: 'Romanian' }
+        { value: 'pt', label: 'Portuguese' },
     ];
-
+    
     const { mutateAsync: updateContent } = useAppMutate({
         mutationKey: [MUTATION_KEYS.UPDATE_COMMON_CONTENT],
         invalidateQueryKeys: [MUTATION_KEYS.COMMON_CONTENT],
