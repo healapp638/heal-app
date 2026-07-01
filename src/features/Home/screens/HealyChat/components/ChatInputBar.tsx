@@ -8,6 +8,7 @@ import {
   Platform,
   PermissionsAndroid,
   Alert,
+  Text,
 } from 'react-native';
 import { LocalizationContext } from '../../../../../localization/localization';
 import Voice, {
@@ -51,7 +52,14 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
   const singleLineHeight = useRef<number>(0);
   const textInputRef = useRef<TextInput>(null);
 
+  const [textInputWidth, setTextInputWidth] = useState(0);
+
+  const handleTextInputLayout = useCallback((e: any) => {
+    setTextInputWidth(e.nativeEvent.layout.width);
+  }, []);
+
   const handleContentSizeChange = useCallback((e: any) => {
+    if (Platform.OS === 'android') return;
     const contentHeight = e.nativeEvent.contentSize.height;
     // Capture the single-line baseline height on first measurement
     if (singleLineHeight.current === 0) {
@@ -266,7 +274,34 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
           maxFontSizeMultiplier={1.4}
           multiline={true}
           onContentSizeChange={handleContentSizeChange}
+          onLayout={handleTextInputLayout}
         />
+        {Platform.OS === 'android' && textInputWidth > 0 && (
+          <Text
+            style={[
+              styles.textInput,
+              {
+                position: 'absolute',
+                top: -9999,
+                left: -9999,
+                opacity: 0,
+                width: textInputWidth,
+              },
+            ]}
+            onTextLayout={(e) => {
+              const contentHeight = e.nativeEvent.lines.reduce(
+                (acc, line) => acc + line.height,
+                0,
+              );
+              if (singleLineHeight.current === 0 && contentHeight > 0) {
+                singleLineHeight.current = contentHeight;
+              }
+              setInputHeight(contentHeight);
+            }}
+          >
+            {chatText || ' '}
+          </Text>
+        )}
         <TouchableOpacity onPress={handleButtonPress} activeOpacity={0.7}>
           <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
             <Image

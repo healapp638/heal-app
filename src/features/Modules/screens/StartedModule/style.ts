@@ -36,10 +36,14 @@ const style = (colors: any) =>
       marginBottom: 14,
       includeFontPadding: false,
     },
-    progressRow: {
+    progressRowContainer: {
+      marginHorizontal: -20,
+      marginBottom: Platform.OS == 'ios' ? 24 : 20,
+    },
+    progressRowContent: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: Platform.OS == 'ios' ? 24 : 20,
+      paddingHorizontal: 20,
     },
     circleContainer: {
       alignItems: 'center',

@@ -50,7 +50,9 @@ const SubModuleItem: React.FC<SubModuleItemProps> = ({
           {`${sub.totalCompletedPhaseCount || 0}/${sub.totalPhaseCount || 0}`}
         </SolidText>
       </View>
-      <SolidText style={styles.itemLabel}>{sub.title}</SolidText>
+      <SolidText maxFontScale={1.2} style={styles.itemLabel}>
+        {sub.title}
+      </SolidText>
       <Image
         source={isCompleted ? images.tick2 : images.forward2}
         style={{

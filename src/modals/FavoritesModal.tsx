@@ -119,9 +119,9 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                  ...quote,
-                  is_liked: false,
-                }
+                    ...quote,
+                    is_liked: false,
+                  }
                 : quote,
             ),
           },
@@ -185,17 +185,41 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
       }
     }, 200);
   };
+  const formatFavDate = (createdAt: string) => {
+    if (!createdAt) return '';
+    try {
+      const date = new Date(createdAt);
+      if (isNaN(date.getTime())) return '';
+      const day = date.getDate();
+      const year = date.getFullYear();
+      const monthNames = [
+        localization?.appkeys?.monthJan || 'January',
+        localization?.appkeys?.monthFeb || 'February',
+        localization?.appkeys?.monthMar || 'March',
+        localization?.appkeys?.monthApr || 'April',
+        localization?.appkeys?.monthMay || 'May',
+        localization?.appkeys?.monthJun || 'June',
+        localization?.appkeys?.monthJul || 'July',
+        localization?.appkeys?.monthAug || 'August',
+        localization?.appkeys?.monthSep || 'September',
+        localization?.appkeys?.monthOct || 'October',
+        localization?.appkeys?.monthNov || 'November',
+        localization?.appkeys?.monthDec || 'December',
+      ];
+      const monthName = monthNames[date.getMonth()];
+      const rawDayName = date.toLocaleDateString(locale, { weekday: 'long' });
+      const dayName = rawDayName.charAt(0).toUpperCase() + rawDayName.slice(1);
+      return `${dayName}, ${day} ${monthName}, ${year}`;
+    } catch {
+      return '';
+    }
+  };
   const renderFavItem = ({ item }: any) => (
     <View style={styles.card}>
       <SolidText style={styles.quoteText}>{item.affirmation}</SolidText>
       <View style={styles.cardFooter}>
         <SolidText style={styles.dateText}>
-          {new Date(item.createdAt).toLocaleDateString(locale, {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-            year: 'numeric',
-          })}
+          {formatFavDate(item.createdAt)}
         </SolidText>
         <View style={styles.actionRow}>
           <TouchableOpacity
@@ -260,9 +284,13 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                 style={styles.backIcon}
                 resizeMode="contain"
               />
-              <SolidText style={styles.backTxt}>{localization.appkeys?.backText || 'Back'}</SolidText>
+              <SolidText style={styles.backTxt}>
+                {localization.appkeys?.backText || 'Back'}
+              </SolidText>
             </TouchableOpacity>
-            <SolidText style={styles.title}>{localization.appkeys?.favoritesTitle || 'Favorites'}</SolidText>
+            <SolidText style={styles.title}>
+              {localization.appkeys?.favoritesTitle || 'Favorites'}
+            </SolidText>
             <View style={styles.headerRight} />
           </View>
 
@@ -334,7 +362,8 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                       color: '#A08E83',
                     }}
                   >
-                    {localization.appkeys?.noFavoritesFound || 'No favorites found'}
+                    {localization.appkeys?.noFavoritesFound ||
+                      'No favorites found'}
                   </SolidText>
                 </View>
               )}

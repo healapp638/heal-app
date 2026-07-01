@@ -191,32 +191,9 @@ const ConnectedEntries = () => {
 
   const totalEntries = journalData?.data?.total || 0;
 
-  const entries = useMemo(() => {
-    const raw = journalData?.data?.response || [];
-    return raw.map((item: any) => ({
-      ...item,
-      id: item._id,
-      time: new Date(item.createdAt).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      }),
-      tag: getLocalizedFeeling(item.feeling),
-      body: item.description,
-      date: new Date(item.createdAt).toLocaleDateString(
-        SPEECH_LOCALE_BY_LANGUAGE[appLanguage] || 'en-US',
-        {
-          month: 'long',
-          day: 'numeric',
-          year: 'numeric',
-        },
-      ),
-    }));
-  }, [journalData, localization]);
-
-  const formattedHeaderDate = useMemo(() => {
-    if (!date) return '';
-    const [y, m, d] = date.split('-');
+  const formatDateString = useCallback((dateStr: string) => {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-');
     const monthNames = [
       localization.appkeys?.monthJan || 'January',
       localization.appkeys?.monthFeb || 'February',
@@ -233,7 +210,27 @@ const ConnectedEntries = () => {
     ];
     const monthName = monthNames[parseInt(m, 10) - 1];
     return `${parseInt(d, 10)} ${monthName} ${y}`;
-  }, [date, localization]);
+  }, [localization]);
+
+  const entries = useMemo(() => {
+    const raw = journalData?.data?.response || [];
+    return raw.map((item: any) => ({
+      ...item,
+      id: item._id,
+      time: new Date(item.createdAt).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      }),
+      tag: getLocalizedFeeling(item.feeling),
+      body: item.description,
+      date: formatDateString(item.createdAt.split('T')[0]),
+    }));
+  }, [journalData, localization, formatDateString]);
+
+  const formattedHeaderDate = useMemo(() => {
+    return formatDateString(date);
+  }, [date, formatDateString]);
 
   return (
     <SolidView

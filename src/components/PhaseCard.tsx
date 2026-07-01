@@ -38,6 +38,7 @@ const PhaseCard = ({
     >
       <View style={styles.leftContainer}>
         <SolidText
+          maxFontScale={1.2}
           style={[
             styles.phaseText,
             {
@@ -48,6 +49,7 @@ const PhaseCard = ({
           {phase}
         </SolidText>
         <SolidText
+          maxFontScale={1.2}
           style={[
             styles.titleText,
             {
@@ -57,7 +59,9 @@ const PhaseCard = ({
         >
           {title}
         </SolidText>
-        <SolidText style={styles.pointsText}>{points}</SolidText>
+        <SolidText maxFontScale={1.2} style={styles.pointsText}>
+          {points}
+        </SolidText>
       </View>
       <View style={styles.rightContainer}>
         {isLocked ? (

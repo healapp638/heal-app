@@ -199,7 +199,9 @@ const ModuleExercise = () => {
                   phase?.phaseNumber || 1
                 }`
               }`,
-              `+${data?.data?.points || 0} ${(localization.appkeys?.pts || 'pts').toLowerCase()}`,
+              `+${data?.data?.points || 0} ${(
+                localization.appkeys?.pts || 'pts'
+              ).toLowerCase()}`,
             );
             navigation.dispatch(state => {
               const targetRoute = isLastPhase
@@ -306,6 +308,7 @@ const ModuleExercise = () => {
 
                 {/* Title */}
                 <SolidText
+                  maxFontScale={1.2}
                   style={[
                     styles.exerciseTitle,
                     currentStepData.type === 'text'
@@ -324,7 +327,10 @@ const ModuleExercise = () => {
 
                 {/* Reading Text / MCQ options */}
                 {currentStepData.type === 'text' ? (
-                  <SolidText style={styles.exerciseDescription}>
+                  <SolidText
+                    maxFontScale={1.2}
+                    style={styles.exerciseDescription}
+                  >
                     {currentStepData.description}
                   </SolidText>
                 ) : (
@@ -348,6 +354,7 @@ const ModuleExercise = () => {
                             onPress={() => handleSelectOption(optionItem._id)}
                           >
                             <SolidText
+                              maxFontScale={1.2}
                               style={[
                                 styles.optionText,
                                 isSelected && styles.optionTextSelected,

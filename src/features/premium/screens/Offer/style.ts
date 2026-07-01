@@ -13,8 +13,8 @@ const style = (colors: any) =>
 
     },
     title: {
-      fontSize: AppUtils.fontSize(22),
-      fontFamily: AppFonts.recoSemiBold,
+      fontSize: AppUtils.fontSize(24),
+      fontFamily: AppFonts.recoMedium,
       color: colors.brown,
       textAlign: 'center',
       paddingHorizontal: 15,

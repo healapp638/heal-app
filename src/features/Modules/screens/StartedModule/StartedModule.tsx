@@ -10,6 +10,7 @@ import {
   BackHandler,
   ActivityIndicator,
   RefreshControl,
+  ScrollView,
 } from 'react-native';
 import {
   useNavigation,
@@ -126,7 +127,12 @@ const StartedModule = () => {
 
         {/* Progress Circles */}
         {phases.length > 0 && (
-          <View style={styles.progressRow}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.progressRowContainer}
+            contentContainerStyle={styles.progressRowContent}
+          >
             {phases.map((phaseItem, index) => {
               const isCompleted = phaseItem?.isCompleted;
               const step = index + 1;
@@ -161,7 +167,7 @@ const StartedModule = () => {
                 </React.Fragment>
               );
             })}
-          </View>
+          </ScrollView>
         )}
 
         <SolidText
@@ -187,9 +193,7 @@ const StartedModule = () => {
             item.phaseNumber
           }`}
           title={item.title}
-          points={`${item.points || 0} ${
-            localization.appkeys?.pts || 'Pts'
-          }`}
+          points={`${item.points || 0} ${localization.appkeys?.pts || 'Pts'}`}
           isLocked={isLocked}
           isCompleted={item.isCompleted}
           onPress={() => {

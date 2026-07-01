@@ -75,9 +75,8 @@ const formatConversationDate = (dateString: string, localization: any) => {
         localization?.appkeys?.monthNov || 'November',
         localization?.appkeys?.monthDec || 'December',
       ];
-      return `${
-        months[date.getMonth()]
-      } ${date.getDate()}, ${date.getFullYear()}`;
+      const monthName = months[date.getMonth()];
+      return `${date.getDate()} ${monthName}, ${date.getFullYear()}`;
     }
   } catch {
     return '';
