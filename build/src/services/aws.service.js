@@ -439,8 +439,8 @@ exports.uploadToS3ExcelSheet = uploadToS3ExcelSheet;
 const uploadToS3 = (files, key) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const s3 = new aws_sdk_1.default.S3({
-            accessKeyId: yield app_constant_1.AWS_CREDENTIAL.ACCESSID,
-            secretAccessKey: yield app_constant_1.AWS_CREDENTIAL.AWS_SECRET,
+            // accessKeyId: await AWS_CREDENTIAL.ACCESSID,
+            // secretAccessKey: await AWS_CREDENTIAL.AWS_SECRET,
             region: yield app_constant_1.AWS_CREDENTIAL.REGION,
         });
         // console.log(s3, 's3')

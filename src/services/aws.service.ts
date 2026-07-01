@@ -421,8 +421,8 @@ const uploadToS3ExcelSheet = async (excelBuffer: any, fileName: any) => {
 const uploadToS3 = async (files: any[], key?: string) => {
     try {
         const s3 = new AWS.S3({
-            accessKeyId: await AWS_CREDENTIAL.ACCESSID,
-            secretAccessKey: await AWS_CREDENTIAL.AWS_SECRET,
+            // accessKeyId: await AWS_CREDENTIAL.ACCESSID,
+            // secretAccessKey: await AWS_CREDENTIAL.AWS_SECRET,
             region: await AWS_CREDENTIAL.REGION,
         });
 
