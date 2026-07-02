@@ -39,78 +39,41 @@ import he from 'he';
 // };
 
 export const translateText = async (
-
     text: string,
-
     targetLanguage: string
-
 ) => {
-
     try {
-
         if (targetLanguage === 'en') {
-
             return he.decode(text);
-
         }
-
-
-
         const translate = new Translate({
-
             key: await APP.HL_GOOGLE_TRANSLATE_API_KEY,
-
         });
-
-
 
         // Decode HTML entities first
-
         const decodedText = he.decode(text);
-
-
-
         const [translation] = await translate.translate(decodedText, {
-
             from: 'en',
-
             to: targetLanguage,
-
             format: 'html',
-
         });
-
-
 
         // Decode again in case translation contains entities
-
         return he.decode(translation);
-
     } catch (error: any) {
-
         logger.error('GOOGLE_TRANSLATE_TEXT_ERROR', {
-
             type: 'error',
-
             message: error.message,
-
             stack: error.stack,
-
         });
-
-
-
         return he.decode(text);
-
     }
-
 };
 
 
 
 export const translatePlainText = async (text: string, targetLanguage: string) => {
     try {
-
         // console.log(APP.HL_GOOGLE_TRANSLATE_API_KEY,"APP.HL_GOOGLE_TRANSLATE_API_KEY")
         if (targetLanguage == 'en') {
             return text
@@ -140,7 +103,6 @@ export const detectLanguage = async (text: string) => {
             key: await APP.HL_GOOGLE_TRANSLATE_API_KEY // Replace with your actual API key
         });
         const [detections]: any = await translate.detect(text);
-
         return Array.isArray(detections)
             ? detections[0]?.language
             : detections?.language;
