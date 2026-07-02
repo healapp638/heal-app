@@ -35,7 +35,9 @@ exports.ChallengesQueue = new bullmq_1.Queue('challenges', {
 exports.challengesWorker = new bullmq_1.Worker("challenges", (job) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {
+        yield (0, app_constant_1.initializeAwsCredential)();
         yield (0, mongoose_config_1.connection)();
+        console.log("✅ DB connected");
         const { userData } = job.data;
         console.log(userData, 'userData');
         const challengesDetails = yield (0, common_helper_1.challengsFn)(userData);

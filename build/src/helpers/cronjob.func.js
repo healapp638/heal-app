@@ -548,6 +548,7 @@ const processWeeklyUser = (curelem) => __awaiter(void 0, void 0, void 0, functio
 // -------------------------
 const generateChallenges = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        yield (0, app_constant_1.initializeAwsCredential)();
         yield (0, mongoose_config_1.connection)();
         // -------------------------
         // DAILY (timezone-aware)

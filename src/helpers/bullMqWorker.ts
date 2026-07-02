@@ -7,7 +7,7 @@ import userWeeklyChallengesModel from "../modules/UserChallenges/user.weekly.cha
 import { connection as connectDB } from "../configs/mongoose.config";
 import { translateText } from "./langauge.translate.helper";
 import { languages } from "../constants/workflow.constant";
-import { REDIS_CREDENTIAL } from "../constants/app.constant";
+import { initializeAwsCredential, REDIS_CREDENTIAL } from "../constants/app.constant";
 import logger from "../configs/logger.config";
 import moment from "moment-timezone";
 
@@ -21,7 +21,9 @@ export const ChallengesQueue = new Queue('challenges', {
 
 export const challengesWorker = new Worker("challenges", async (job: any) => {
     try {
+        await initializeAwsCredential();
         await connectDB()
+        console.log("✅ DB connected");
         const { userData } = job.data;
         console.log(userData, 'userData')
         const challengesDetails = await challengsFn(userData);

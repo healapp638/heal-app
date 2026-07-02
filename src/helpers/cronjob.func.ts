@@ -6,7 +6,7 @@ import { languages, USER_STATUS } from "../constants/workflow.constant";
 import { translatePlainText, translateText } from "../helpers/langauge.translate.helper";
 import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.model";
 import OpenAI from "openai";
-import { APP } from "../constants/app.constant";
+import { APP, initializeAwsCredential } from "../constants/app.constant";
 import userAuthModel from "../modules/UserAuth/user.auth.model";
 import userDailyChallengesModel from "../modules/UserChallenges/user.daily.challenges.model";
 // import moment from "moment";
@@ -663,6 +663,7 @@ const processWeeklyUser = async (curelem: any) => {
 // -------------------------
 const generateChallenges = async () => {
   try {
+    await initializeAwsCredential();
     await connectDB();
 
     // -------------------------
