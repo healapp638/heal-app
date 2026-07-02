@@ -10,9 +10,20 @@
  * - memory leak fixes applied: 2 (isMounted ref guard in mutate callbacks, proper BackHandler cleanup)
  */
 
-import React, { useContext, useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useCallback,
+  useMemo,
+} from 'react';
 import { BackHandler, Keyboard, View } from 'react-native';
-import { CommonActions, useNavigation, useTheme } from '@react-navigation/native';
+import {
+  CommonActions,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -26,6 +37,7 @@ import { triggerHaptic } from '../../../../hooks/useHaptic';
 import usePostApi from '../../../../hooks/usePostApi';
 import { LocalizationContext } from '../../../../localization/localization';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
+import { setExerciseJustCompleted } from '../../../../redux/Reducers/tempData';
 import { ToastService } from '../../../../utils/ToastManager';
 import style from './style';
 
@@ -64,7 +76,9 @@ const ModuleExercise = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [reflectionText, setReflectionText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState<Record<number, string>>({});
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<number, string>
+  >({});
 
   // Derived / memoized values
   const mcqList = useMemo(() => {
@@ -103,30 +117,45 @@ const ModuleExercise = () => {
     ];
   }, [mcqList, phase, localization]);
 
-  const currentStepData = useMemo(() => steps[currentStep] || {}, [steps, currentStep]);
+  const currentStepData = useMemo(
+    () => steps[currentStep] || {},
+    [steps, currentStep],
+  );
 
-  const selectedOptionId = useMemo(() => selectedOptions[currentStep], [selectedOptions, currentStep]);
+  const selectedOptionId = useMemo(
+    () => selectedOptions[currentStep],
+    [selectedOptions, currentStep],
+  );
 
-  const isCompletingOrSavingAnswer = useMemo(() => isCompleting || isSavingAnswer, [isCompleting, isSavingAnswer]);
+  const isCompletingOrSavingAnswer = useMemo(
+    () => isCompleting || isSavingAnswer,
+    [isCompleting, isSavingAnswer],
+  );
 
-  const nextButtonStyles = useMemo(() => [
-    styles.floatingNextButton,
-    currentStepData?.type === 'reflection' && {
-      position: 'relative' as const,
-      marginTop: 20,
-      marginBottom: 30,
-      bottom: 0,
-    },
-  ], [styles.floatingNextButton, currentStepData?.type]);
+  const nextButtonStyles = useMemo(
+    () => [
+      styles.floatingNextButton,
+      currentStepData?.type === 'reflection' && {
+        position: 'relative' as const,
+        marginTop: 20,
+        marginBottom: 30,
+        bottom: 0,
+      },
+    ],
+    [styles.floatingNextButton, currentStepData?.type],
+  );
 
   // Callbacks
-  const handleSelectOption = useCallback((optionId: string) => {
-    triggerHaptic('selection');
-    setSelectedOptions(prev => ({
-      ...prev,
-      [currentStep]: optionId,
-    }));
-  }, [currentStep]);
+  const handleSelectOption = useCallback(
+    (optionId: string) => {
+      triggerHaptic('selection');
+      setSelectedOptions(prev => ({
+        ...prev,
+        [currentStep]: optionId,
+      }));
+    },
+    [currentStep],
+  );
 
   const handleNext = useCallback(() => {
     Keyboard.dismiss();
@@ -165,6 +194,7 @@ const ModuleExercise = () => {
         {
           onSuccess: (data: any) => {
             if (!isMounted.current) return;
+            dispatch(setExerciseJustCompleted(true));
             queryClient.invalidateQueries({
               queryKey: ['phase_list'],
             });

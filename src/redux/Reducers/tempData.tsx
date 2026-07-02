@@ -9,6 +9,8 @@ interface TempDataState {
   moduleIsLastPhase: boolean;
   moduleSource: string | null;
   challengesActiveTab: 'daily' | 'weekly';
+  exerciseJustCompleted: boolean;
+  challengeJustCompleted: boolean;
 }
 
 const initialState: TempDataState = {
@@ -20,6 +22,8 @@ const initialState: TempDataState = {
   moduleIsLastPhase: false,
   moduleSource: null,
   challengesActiveTab: 'daily',
+  exerciseJustCompleted: false,
+  challengeJustCompleted: false,
 };
 
 const tempDataSlice = createSlice({
@@ -50,6 +54,12 @@ const tempDataSlice = createSlice({
     setChallengesActiveTab: (state, action: PayloadAction<'daily' | 'weekly'>) => {
       state.challengesActiveTab = action.payload;
     },
+    setExerciseJustCompleted: (state, action: PayloadAction<boolean>) => {
+      state.exerciseJustCompleted = action.payload;
+    },
+    setChallengeJustCompleted: (state, action: PayloadAction<boolean>) => {
+      state.challengeJustCompleted = action.payload;
+    },
     clearModuleParams: (state) => {
       state.moduleTheme = null;
       state.moduleSubModule = null;
@@ -57,6 +67,8 @@ const tempDataSlice = createSlice({
       state.moduleIsLastPhase = false;
       state.moduleSource = null;
       state.challengesActiveTab = 'daily';
+      state.exerciseJustCompleted = false;
+      state.challengeJustCompleted = false;
     },
   },
 });
@@ -70,6 +82,8 @@ export const {
   setModuleIsLastPhase,
   setModuleSource,
   setChallengesActiveTab,
+  setExerciseJustCompleted,
+  setChallengeJustCompleted,
   clearModuleParams,
 } = tempDataSlice.actions;
 

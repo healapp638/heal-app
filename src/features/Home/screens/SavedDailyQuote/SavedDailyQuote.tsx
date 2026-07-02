@@ -44,7 +44,7 @@ const SavedDailyQuote = () => {
   const { localization } = useContext(LocalizationContext) as any;
 
   const isLightBackground =
-    user?.homeTheme?.imgUrl === 'file/file-1782813958833.webp';
+    user?.homeTheme?.imgUrl === 'file/file-1782982927591.webp';
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;

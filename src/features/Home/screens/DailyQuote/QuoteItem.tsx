@@ -59,7 +59,7 @@ const QuoteItem = ({
       >
         {(() => {
           const isLightBackground = homeThemeUrl?.includes(
-            'file/file-1782813958833.webp',
+            'file/file-1782982927591.webp',
           );
           if (homeThemeUrl && !isLightBackground) {
             return (

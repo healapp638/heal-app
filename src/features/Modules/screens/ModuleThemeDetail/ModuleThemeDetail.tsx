@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -28,11 +28,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   setModuleSubModule,
   setModuleSource,
+  setExerciseJustCompleted,
 } from '../../../../redux/Reducers/tempData';
+import Loader from '../../../../modals/Loader';
 
 const ModuleThemeDetail = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state: any) => state.tempData.moduleTheme);
+  const exerciseJustCompleted = useSelector(
+    (state: any) => state.tempData.exerciseJustCompleted,
+  );
+  const hasStartedFetching = useRef(false);
   const { colors, images } = useTheme() as any;
   const styles = style(colors);
   const navigation = useNavigation();
@@ -44,7 +50,7 @@ const ModuleThemeDetail = () => {
   const [themeId] = useState(
     theme?._id || theme?.id || themeDetail?._id || themeDetail?.id,
   );
-  const { data, isLoading, refetch, isFetching } = useGetApi(
+  const { data, isLoading, refetch, isFetching, isError } = useGetApi(
     endpoints.module_list,
     ['module_list', themeId, cursor],
     {
@@ -63,6 +69,19 @@ const ModuleThemeDetail = () => {
     }, [cursor, refetch]),
   );
   useEffect(() => {
+    if (isFetching) {
+      hasStartedFetching.current = true;
+    }
+  }, [isFetching]);
+  useEffect(() => {
+    if (!isFetching && hasStartedFetching.current && isError && exerciseJustCompleted) {
+      setTimeout(() => {
+        dispatch(setExerciseJustCompleted(false));
+      }, 1000);
+      hasStartedFetching.current = false;
+    }
+  }, [isFetching, isError, exerciseJustCompleted, dispatch]);
+  useEffect(() => {
     if (data?.data) {
       const responseData = data.data;
       if (responseData.theme) {
@@ -80,9 +99,15 @@ const ModuleThemeDetail = () => {
           return [...prev, ...newModules];
         });
       }
+      if (!isFetching && hasStartedFetching.current && exerciseJustCompleted) {
+        setTimeout(() => {
+          dispatch(setExerciseJustCompleted(false));
+        }, 1000);
+        hasStartedFetching.current = false;
+      }
     }
     setIsRefreshing(false);
-  }, [data]);
+  }, [data, isFetching, exerciseJustCompleted, dispatch]);
   const onRefresh = () => {
     setIsRefreshing(true);
     setCursor(null);
@@ -259,6 +284,9 @@ const ModuleThemeDetail = () => {
               ) : null
             }
           />
+          {isFetching && modules.length > 0 && cursor === null && exerciseJustCompleted && (
+            <Loader />
+          )}
         </View>
       }
     />

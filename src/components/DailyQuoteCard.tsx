@@ -35,7 +35,7 @@ const DailyQuoteCard = ({
   const user = useSelector((state: any) => state.userData?.user);
   const styles = useStyle(colors);
   const isLightBackground =
-    user?.homeTheme?.imgUrl === 'file/file-1782813958833.webp';
+    user?.homeTheme?.imgUrl === 'file/file-1782982927591.webp';
 
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`

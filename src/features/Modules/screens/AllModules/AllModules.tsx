@@ -69,7 +69,9 @@ const AllModules = () => {
       } else {
         setModules(prev => {
           const existingIds = new Set(prev.map(m => m._id));
-          const newModules = fetchedModules.filter((m: any) => !existingIds.has(m._id));
+          const newModules = fetchedModules.filter(
+            (m: any) => !existingIds.has(m._id),
+          );
           return [...prev, ...newModules];
         });
       }

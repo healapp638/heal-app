@@ -19,7 +19,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import PremiumModal from '../../../../modals/PremiumModal';
 import AppFonts from '../../../../constants/fonts';
 import AppUtils from '../../../../utils/appUtils';
-import { setChallengesActiveTab } from '../../../../redux/Reducers/tempData';
+import {
+  setChallengesActiveTab,
+  setChallengeJustCompleted,
+} from '../../../../redux/Reducers/tempData';
+import Loader from '../../../../modals/Loader';
 import SolidText from '../../../../components/SolidText';
 import useGetApi from '../../../../hooks/useGetApi';
 import { endpoints } from '../../../../api/Services/endpoints';
@@ -28,9 +32,13 @@ import { ActivityIndicator } from 'react-native';
 const Challenges = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const hasStartedFetching = React.useRef(false);
   const { localization } = useContext(LocalizationContext) as any;
   const activeTab = useSelector(
     (state: any) => state.tempData.challengesActiveTab,
+  );
+  const challengeJustCompleted = useSelector(
+    (state: any) => state.tempData.challengeJustCompleted,
   );
   const [showCreditsModal, setShowCreditsModal] = useState(false);
   const user = useSelector((state: any) => state.userData.user);
@@ -40,6 +48,7 @@ const Challenges = () => {
   const {
     data: challengeResponse,
     isLoading,
+    isFetching,
     error,
     refetch,
   } = useGetApi(endpoints.challenge_list, ['challenge_list', activeTab], {
@@ -51,6 +60,17 @@ const Challenges = () => {
       refetch();
     }, [refetch]),
   );
+  React.useEffect(() => {
+    if (isFetching) {
+      hasStartedFetching.current = true;
+    }
+    if (!isFetching && hasStartedFetching.current && challengeJustCompleted) {
+      setTimeout(() => {
+        dispatch(setChallengeJustCompleted(false));
+      }, 1000);
+      hasStartedFetching.current = false;
+    }
+  }, [isFetching, challengeJustCompleted, dispatch]);
   const formatRemainingTime = (endDateUnix: number) => {
     const now = moment();
     const end = moment.unix(endDateUnix);
@@ -186,6 +206,9 @@ const Challenges = () => {
             visible={showCreditsModal}
             onClose={() => setShowCreditsModal(false)}
           />
+          {isFetching && allChallenges.length > 0 && challengeJustCompleted && (
+            <Loader />
+          )}
         </View>
       }
     />

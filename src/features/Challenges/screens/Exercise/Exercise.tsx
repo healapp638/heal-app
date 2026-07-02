@@ -21,6 +21,7 @@ import useGetApi from '../../../../hooks/useGetApi';
 import { showPointsToast } from '../../../../components/TopPointsToast';
 import { useDispatch } from 'react-redux';
 import { getUserDetail } from '../../../../redux/Reducers/userData';
+import { setChallengeJustCompleted } from '../../../../redux/Reducers/tempData';
 import StepItem from '../../../../components/StepItem';
 
 const Exercise = () => {
@@ -144,6 +145,7 @@ const Exercise = () => {
         {
           onSuccess: (data: any) => {
             queryClient.invalidateQueries({ queryKey: ['challenge_list'] });
+            dispatch(setChallengeJustCompleted(true));
             showPointsToast(
               data?.message,
               `+${data?.data?.points} ${(

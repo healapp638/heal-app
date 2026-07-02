@@ -1,8 +1,9 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   setModulePhase,
   setModuleIsLastPhase,
+  setExerciseJustCompleted,
 } from '../../../../redux/Reducers/tempData';
 import {
   View,
@@ -28,18 +29,23 @@ import useGetApi from '../../../../hooks/useGetApi';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import Loader from '../../../../modals/Loader';
 const StartedModule = () => {
   const dispatch = useDispatch();
   const subModule = useSelector((state: any) => state.tempData.moduleSubModule);
+  const exerciseJustCompleted = useSelector(
+    (state: any) => state.tempData.exerciseJustCompleted,
+  );
   const { colors } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
   const navigation = useNavigation();
+  const hasStartedFetching = useRef(false);
   const [phases, setPhases] = useState<any[]>([]);
   const [subModuleDetail, setSubModuleDetail] = useState<any>(subModule);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { mutate: startLesson, isPending: isStarting } = usePostApi();
-  const { data, isLoading, refetch } = useGetApi(
+  const { data, isLoading, isFetching, isError, refetch } = useGetApi(
     endpoints.phase_list,
     ['phase_list', subModule?._id],
     {
@@ -53,6 +59,19 @@ const StartedModule = () => {
     }, [refetch]),
   );
   useEffect(() => {
+    if (isFetching) {
+      hasStartedFetching.current = true;
+    }
+  }, [isFetching]);
+  useEffect(() => {
+    if (!isFetching && hasStartedFetching.current && isError && exerciseJustCompleted) {
+      setTimeout(() => {
+        dispatch(setExerciseJustCompleted(false));
+      }, 1000);
+      hasStartedFetching.current = false;
+    }
+  }, [isFetching, isError, exerciseJustCompleted, dispatch]);
+  useEffect(() => {
     if (data?.data) {
       const responseData = data.data;
       if (responseData.subModule) {
@@ -65,9 +84,15 @@ const StartedModule = () => {
         }),
       );
       setPhases(fetchedPhases);
+      if (!isFetching && hasStartedFetching.current && exerciseJustCompleted) {
+        setTimeout(() => {
+          dispatch(setExerciseJustCompleted(false));
+        }, 1000);
+        hasStartedFetching.current = false;
+      }
     }
     setIsRefreshing(false);
-  }, [data]);
+  }, [data, isFetching, exerciseJustCompleted, dispatch]);
   const onRefresh = () => {
     setIsRefreshing(true);
     refetch();
@@ -259,6 +284,7 @@ const StartedModule = () => {
               }
             />
           )}
+          {isFetching && phases.length > 0 && !isRefreshing && exerciseJustCompleted && <Loader />}
         </View>
       }
     />
