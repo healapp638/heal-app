@@ -34,8 +34,9 @@ import CompleteProfile from '../../features/auth/screens/CompleteProfile/Complet
 import EmailSignIn from '../../features/auth/screens/EmailSignIn/EmailSignIn';
 import CheckEmail from '../../features/auth/screens/CheckEmail/CheckEmail';
 
+const Stack = createNativeStackNavigator();
+
 export default function AuthStack() {
-  const Stack = createNativeStackNavigator();
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false, gestureEnabled: false }}

@@ -9,7 +9,7 @@ interface SubModuleItemProps {
     border: string;
   };
   isCompleted: boolean;
-  onPress: () => void;
+  onPress: (sub: any) => void;
   images: any;
   colors: any;
   styles: any;
@@ -25,9 +25,7 @@ const SubModuleItem: React.FC<SubModuleItemProps> = ({
 }) => {
   return (
     <TouchableOpacity
-      onPress={(...args: any) => {
-        return (onPress as any)(...args);
-      }}
+      onPress={() => onPress(sub)}
       style={styles.itemCard}
       activeOpacity={isCompleted ? 1 : 0.8}
     >

@@ -1,4 +1,11 @@
-import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,12 +13,13 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  InteractionManager,
 } from 'react-native';
 import {
   useNavigation,
   useTheme,
-  useRoute,
   useFocusEffect,
+  useIsFocused,
 } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -32,6 +40,21 @@ import {
 } from '../../../../redux/Reducers/tempData';
 import Loader from '../../../../modals/Loader';
 
+const sectionColors = [
+  {
+    text: '#986455',
+    border: '#E2D2CA',
+  },
+  {
+    text: '#776151',
+    border: '#C8BDB2',
+  },
+  {
+    text: '#F66F76',
+    border: '#F6C1C5',
+  },
+];
+
 const ModuleThemeDetail = () => {
   const dispatch = useDispatch();
   const theme = useSelector((state: any) => state.tempData.moduleTheme);
@@ -40,16 +63,18 @@ const ModuleThemeDetail = () => {
   );
   const hasStartedFetching = useRef(false);
   const { colors, images } = useTheme() as any;
-  const styles = style(colors);
+  const styles = useMemo(() => style(colors), [colors]);
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const [modules, setModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [themeDetail, setThemeDetail] = useState<any>(theme);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [themeId] = useState(
     theme?._id || theme?.id || themeDetail?._id || themeDetail?.id,
   );
+  const isFocused = useIsFocused();
   const { data, isLoading, refetch, isFetching, isError } = useGetApi(
     endpoints.module_list,
     ['module_list', themeId, cursor],
@@ -58,15 +83,17 @@ const ModuleThemeDetail = () => {
       cursor,
       limit: 10,
     },
+    {
+      enabled: isFocused,
+      gcTime: 30000,
+    },
   );
   useFocusEffect(
     useCallback(() => {
       if (cursor !== null) {
         setCursor(null);
-      } else {
-        refetch();
       }
-    }, [cursor, refetch]),
+    }, [cursor]),
   );
   useEffect(() => {
     if (isFetching) {
@@ -74,13 +101,14 @@ const ModuleThemeDetail = () => {
     }
   }, [isFetching]);
   useEffect(() => {
-    if (!isFetching && hasStartedFetching.current && isError && exerciseJustCompleted) {
-      setTimeout(() => {
+    if (!isFetching && hasStartedFetching.current && exerciseJustCompleted) {
+      const timer = setTimeout(() => {
         dispatch(setExerciseJustCompleted(false));
       }, 1000);
       hasStartedFetching.current = false;
+      return () => clearTimeout(timer);
     }
-  }, [isFetching, isError, exerciseJustCompleted, dispatch]);
+  }, [isFetching, exerciseJustCompleted, dispatch]);
   useEffect(() => {
     if (data?.data) {
       const responseData = data.data;
@@ -99,15 +127,19 @@ const ModuleThemeDetail = () => {
           return [...prev, ...newModules];
         });
       }
-      if (!isFetching && hasStartedFetching.current && exerciseJustCompleted) {
-        setTimeout(() => {
-          dispatch(setExerciseJustCompleted(false));
-        }, 1000);
-        hasStartedFetching.current = false;
-      }
     }
     setIsRefreshing(false);
-  }, [data, isFetching, exerciseJustCompleted, dispatch]);
+  }, [data]);
+
+  useEffect(() => {
+    if (isFocused) {
+      const task = InteractionManager.runAfterInteractions(() => {
+        setIsReady(true);
+      });
+      return () => task.cancel();
+    }
+  }, [isFocused]);
+
   const onRefresh = () => {
     setIsRefreshing(true);
     setCursor(null);
@@ -116,27 +148,22 @@ const ModuleThemeDetail = () => {
       setIsRefreshing(false);
     }, 2000);
   };
-  const loadMore = () => {
-    const nextCursor = data?.data?.nextCursor || data?.data?.next_cursor;
-    if (nextCursor && !isFetching) {
-      setCursor(nextCursor);
-    }
-  };
-  const sectionColors = [
-    {
-      text: '#986455',
-      border: '#E2D2CA',
+  const handleSubModulePress = useCallback(
+    (sub: any) => {
+      triggerHaptic('impactMedium');
+      const isCompleted =
+        sub.totalCompletedPhaseCount === sub.totalPhaseCount &&
+        sub.totalPhaseCount > 0;
+      if (!isCompleted) {
+        dispatch(setModuleSubModule(sub));
+        dispatch(setModuleSource('theme'));
+        navigation.navigate(AppRoutes.StartedModule as never);
+      }
     },
-    {
-      text: '#776151',
-      border: '#C8BDB2',
-    },
-    {
-      text: '#F66F76',
-      border: '#F6C1C5',
-    },
-  ];
-  const renderHeader = useCallback(
+    [dispatch, navigation],
+  );
+
+  const headerComponent = React.useMemo(
     () => (
       <View
         style={{
@@ -160,15 +187,22 @@ const ModuleThemeDetail = () => {
             localization.appkeys?.homeProgressTracker || 'Progress Tracker'
           }
           onPress={() => {
-            //
             navigation.navigate(AppRoutes.ProgressTracker as never);
           }}
         />
       </View>
     ),
-    [styles, themeDetail, localization.appkeys, navigation],
+    [
+      styles.title,
+      styles.subtitle,
+      styles.progressCardMargin,
+      themeDetail,
+      localization.appkeys,
+      navigation,
+    ],
   );
-  const renderFooter = useCallback(
+
+  const footerComponent = React.useMemo(
     () => (
       <View
         style={{
@@ -188,6 +222,7 @@ const ModuleThemeDetail = () => {
     ),
     [isFetching, cursor, colors.brown],
   );
+
   const renderItem = useCallback(
     ({
       item: moduleItem,
@@ -213,27 +248,31 @@ const ModuleThemeDetail = () => {
                 images={images}
                 colors={colors}
                 styles={styles}
-                onPress={() => {
-                  triggerHaptic('impactMedium');
-                  if (!isCompleted) {
-                    dispatch(setModuleSubModule(sub));
-                    dispatch(setModuleSource('theme'));
-                    navigation.navigate(AppRoutes.StartedModule as never);
-                  }
-                }}
+                onPress={handleSubModulePress}
               />
             );
           })}
         </View>
       );
     },
-    [styles, navigation, images, colors, sectionColors, dispatch],
+    [
+      styles.sectionTitle,
+      styles.itemCard,
+      images,
+      colors,
+      handleSubModulePress,
+    ],
   );
   const keyExtractor = useCallback(
     (item: any, index: number) =>
       item._id ? `${item._id}_${index}` : index.toString(),
     [],
   );
+
+  if (!isReady) {
+    return null;
+  }
+
   return (
     <SolidView
       isScrollEnabled={false}
@@ -259,16 +298,22 @@ const ModuleThemeDetail = () => {
             data={modules}
             keyExtractor={keyExtractor}
             renderItem={renderItem}
-            ListHeaderComponent={renderHeader}
-            ListFooterComponent={renderFooter}
-            initialNumToRender={10}
-            maxToRenderPerBatch={10}
-            windowSize={10}
+            ListHeaderComponent={headerComponent}
+            ListFooterComponent={footerComponent}
+            initialNumToRender={4}
+            maxToRenderPerBatch={4}
+            windowSize={5}
             removeClippedSubviews={true}
             refreshControl={
               <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
             }
-            onEndReached={loadMore}
+            onEndReached={() => {
+              const nextCursor =
+                data?.data?.nextCursor || data?.data?.next_cursor;
+              if (nextCursor && !isFetching) {
+                setCursor(nextCursor);
+              }
+            }}
             onEndReachedThreshold={0.5}
             showsVerticalScrollIndicator={false}
             style={styles.mainContainer}
@@ -284,9 +329,10 @@ const ModuleThemeDetail = () => {
               ) : null
             }
           />
-          {isFetching && modules.length > 0 && cursor === null && exerciseJustCompleted && (
-            <Loader />
-          )}
+          {isFetching &&
+            modules.length > 0 &&
+            cursor === null &&
+            exerciseJustCompleted && <Loader />}
         </View>
       }
     />

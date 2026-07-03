@@ -2018,7 +2018,7 @@ PODS:
     - React-Core
   - react-native-render-html (6.3.4):
     - React-Core
-  - react-native-safe-area-context (5.7.0):
+  - react-native-safe-area-context (5.8.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2036,8 +2036,8 @@ PODS:
     - React-graphics
     - React-ImageManager
     - React-jsi
-    - react-native-safe-area-context/common (= 5.7.0)
-    - react-native-safe-area-context/fabric (= 5.7.0)
+    - react-native-safe-area-context/common (= 5.8.0)
+    - react-native-safe-area-context/fabric (= 5.8.0)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-renderercss
@@ -2048,7 +2048,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-safe-area-context/common (5.7.0):
+  - react-native-safe-area-context/common (5.8.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2076,7 +2076,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - react-native-safe-area-context/fabric (5.7.0):
+  - react-native-safe-area-context/fabric (5.8.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3307,7 +3307,7 @@ PODS:
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNScreens (4.25.1):
+  - RNScreens (4.25.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -3334,10 +3334,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.25.1)
+    - RNScreens/common (= 4.25.2)
     - SocketRocket
     - Yoga
-  - RNScreens/common (4.25.1):
+  - RNScreens/common (4.25.2):
     - boost
     - DoubleConversion
     - fast_float
@@ -4006,7 +4006,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: 64f05e94821ee3f3adcd9b67b35c1480e5564915
   react-native-orientation-locker: cc6f357b289a2e0dd2210fea0c52cb8e0727fdaa
   react-native-render-html: 5afc4751f1a98621b3009432ef84c47019dcb2bd
-  react-native-safe-area-context: eda63a662750758c1fdd7e719c9f1026c8d161cb
+  react-native-safe-area-context: 7794f18549493f369e4ca4b3cd66843bd050ac66
   react-native-video: d7e6372a63833708a2f7a8b48fed59036910428c
   react-native-view-shot: 1a01c96f6fb09b99539142749cd93f685af7fe48
   react-native-voice: 54884c7cfd711f65619344c177a92012266c3977
@@ -4063,7 +4063,7 @@ SPEC CHECKSUMS:
   RNPurchases: 814d23250d91856382f2d1d7c5e255b3d6b4b8ef
   RNReactNativeHapticFeedback: 8f6dc89cf13406a754487d8f8bd6df4d6feb789b
   RNReanimated: 9342633c89caa4899897e4aaaa85912b824dc6e7
-  RNScreens: 3714e1b55dd60397b7c71f898351c29b9ae8cc5d
+  RNScreens: cfb11dc33b79eac5e09a10b25e1ad0c2499d5b8b
   RNShare: 61cad1e65b8e3788c97ee7c5cac4bcbb25a8df40
   RNSVG: f1367a7f88773c530b6d299dbc745fe3897edaa2
   RNWorklets: 416ef974c176d76634e34c0aeda83f6b67084a88

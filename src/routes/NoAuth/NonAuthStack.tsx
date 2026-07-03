@@ -44,6 +44,8 @@ import { useSelector } from 'react-redux';
 import SuccessModal from '../../modals/SuccessModal';
 import messaging from '@react-native-firebase/messaging';
 
+const Stack = createNativeStackNavigator();
+
 export default function NonAuthStack() {
   const { localization } = useContext(LocalizationContext) as any;
   useGetApi(endpoints.getRandomQuestions, ['getRandomQuestions'], {});
@@ -85,7 +87,6 @@ export default function NonAuthStack() {
     }
   }, [user?.total_earned_points, user?.total_points, prevEarnedPoints]);
 
-  const Stack = createNativeStackNavigator();
   return (
     <>
       <Stack.Navigator
@@ -171,7 +172,9 @@ export default function NonAuthStack() {
         visible={showLevelModal}
         onClose={() => setShowLevelModal(false)}
         title={localization.appkeys?.wellDone || 'Well done'}
-        subtitle={`${localization.appkeys?.completedPhase || "You've completed"} ${localization.appkeys?.level || 'Level'} ${completedLevelNum}`}
+        subtitle={`${
+          localization.appkeys?.completedPhase || "You've completed"
+        } ${localization.appkeys?.level || 'Level'} ${completedLevelNum}`}
         btnLabel={localization.appkeys?.continue || 'Continue'}
         onPressBtn={() => setShowLevelModal(false)}
         btnStyle={{ marginTop: -10 }}

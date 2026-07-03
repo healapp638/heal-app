@@ -32,8 +32,9 @@ import {
 } from '../../utils/tokenStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const Stack = createNativeStackNavigator();
+
 export default function MainStack() {
-  const Stack = createNativeStackNavigator();
   const dispatch = useDispatch();
   const { initializeAppLanguage, setAppLanguage } =
     useContext(LocalizationContext);

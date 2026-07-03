@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -53,7 +53,7 @@ const SolidView: React.FC<SolidViewProps> = ({
 }) => {
   const { colors, images } = useTheme() as any;
   const navigation = useNavigation();
-  const styles = style(colors);
+  const styles = useMemo(() => style(colors), [colors]);
   return (
     <SafeAreaView style={[styles.safeArea, containerStyle]} edges={edges}>
       {backgroundImage ? (

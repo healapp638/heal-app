@@ -26,6 +26,7 @@ import {
   clearOnboardingProgress,
 } from '../../../../redux/Reducers/userData';
 import { clearModuleParams } from '../../../../redux/Reducers/tempData';
+import messaging from '@react-native-firebase/messaging';
 
 const Premium = () => {
   const dispatch = useDispatch();
@@ -36,6 +37,8 @@ const Premium = () => {
   const { purchasePlan, packages } = useSubscription();
   const { mutate: syncPurchaseApi } = usePostApi();
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
+  const user = useSelector((state: any) => state.userData.user);
+
   const [purchasing, setPurchasing] = useState(false);
   const styles = style(colors, appLanguage);
   const [reminderEnabled, setReminderEnabled] = useState(false);
@@ -174,6 +177,28 @@ const Premium = () => {
   };
   const trialReminderDate = getTimelineDate(2);
   const becomeMemberDate = getTimelineDate(3);
+  React.useEffect(() => {
+    if (user?._id) {
+      messaging()
+        .unsubscribeFromTopic(user._id)
+        .then(() => {
+          return messaging()
+            .subscribeToTopic(user._id)
+            .then(() => {
+              // console.log(
+              //   'FCM Subscription Status: Subscribed successfully to topic',
+              //   user._id,
+              // );
+            });
+        })
+        .catch(error => {
+          // console.log(
+          //   'FCM Subscription Status: Failed to update topic subscription',
+          //   error,
+          // );
+        });
+    }
+  }, [user?._id]);
   return (
     <SolidView
       isScrollEnabled={true}

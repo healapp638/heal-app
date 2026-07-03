@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TextInput } from 'react-native';
 import SolidText from './SolidText';
 import HeaderCommon from './HeaderCommon';
@@ -6,8 +6,8 @@ import HeaderCommon from './HeaderCommon';
 interface ExerciseReflectionProps {
   question: string;
   placeholder: string;
-  reflectionText: string;
-  setReflectionText: (text: string) => void;
+  defaultValue: string;
+  onChangeText: (text: string) => void;
   isFocused: boolean;
   onFocus: () => void;
   onBlur: () => void;
@@ -19,8 +19,8 @@ interface ExerciseReflectionProps {
 const ExerciseReflection = React.memo(({
   question,
   placeholder,
-  reflectionText,
-  setReflectionText,
+  defaultValue,
+  onChangeText,
   isFocused,
   onFocus,
   onBlur,
@@ -28,6 +28,13 @@ const ExerciseReflection = React.memo(({
   localization,
   styles,
 }: ExerciseReflectionProps) => {
+  const [localText, setLocalText] = useState(defaultValue || '');
+
+  const handleChangeText = (text: string) => {
+    setLocalText(text);
+    onChangeText(text);
+  };
+
   return (
     <View
       style={{
@@ -60,8 +67,8 @@ const ExerciseReflection = React.memo(({
             multiline
             placeholder={isFocused ? '' : placeholder}
             placeholderTextColor="grey"
-            value={reflectionText}
-            onChangeText={setReflectionText}
+            value={localText}
+            onChangeText={handleChangeText}
             onFocus={onFocus}
             onBlur={onBlur}
             maxFontSizeMultiplier={1.4}

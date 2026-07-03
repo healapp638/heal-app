@@ -18,7 +18,13 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { BackHandler, Keyboard, View } from 'react-native';
+import {
+  BackHandler,
+  Keyboard,
+  View,
+  InteractionManager,
+  Pressable,
+} from 'react-native';
 import {
   CommonActions,
   useNavigation,
@@ -47,7 +53,7 @@ import ExerciseStepContent from '../../../../components/ExerciseStepContent';
 
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
-  const styles = style(colors);
+  const styles = useMemo(() => style(colors), [colors]);
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const queryClient = useQueryClient();
@@ -64,17 +70,22 @@ const ModuleExercise = () => {
     {
       phase_id: phase?._id,
     },
+    {
+      gcTime: 30000,
+    },
   );
 
   const { mutate: completeLesson, isPending: isCompleting } = usePostApi();
-  const { isPending: isSavingAnswer } = usePostApi();
+  const { mutate: startLesson } = usePostApi();
 
   // Refs
   const isMounted = useRef(true);
+  const startLessonCalled = useRef(false);
 
   // State
   const [currentStep, setCurrentStep] = useState(0);
-  const [reflectionText, setReflectionText] = useState('');
+  const reflectionTextRef = useRef('');
+  const [isReady, setIsReady] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<
     Record<number, string>
@@ -127,10 +138,7 @@ const ModuleExercise = () => {
     [selectedOptions, currentStep],
   );
 
-  const isCompletingOrSavingAnswer = useMemo(
-    () => isCompleting || isSavingAnswer,
-    [isCompleting, isSavingAnswer],
-  );
+  const isCompletingOrSavingAnswer = isCompleting;
 
   const nextButtonStyles = useMemo(
     () => [
@@ -170,10 +178,33 @@ const ModuleExercise = () => {
           );
           return;
         }
+
+        const firstMcqIdx = steps.findIndex(s => s.type === 'mcq');
+        if (currentStep === firstMcqIdx && !startLessonCalled.current) {
+          startLessonCalled.current = true;
+          startLesson(
+            {
+              endpoint: endpoints.start_lesson,
+              data: {
+                phase_id: phase?._id,
+              },
+            },
+            {
+              onSuccess: () => {
+                console.log('startLesson success');
+              },
+              onError: () => {
+                if (isMounted.current) {
+                  startLessonCalled.current = false;
+                }
+              },
+            },
+          );
+        }
       }
       setCurrentStep(currentStep + 1);
     } else {
-      if (!reflectionText.trim()) {
+      if (!reflectionTextRef.current.trim()) {
         ToastService.show(
           localization.appkeys?.pleaseEnterReflection ||
             'Please enter your reflection',
@@ -186,7 +217,7 @@ const ModuleExercise = () => {
         {
           endpoint: endpoints.complete_lesson,
           data: {
-            reflection: reflectionText,
+            reflection: reflectionTextRef.current,
             phase_id: phase?._id,
             exercise_id: lastExerciseId,
           },
@@ -271,7 +302,6 @@ const ModuleExercise = () => {
     steps,
     currentStepData,
     selectedOptions,
-    reflectionText,
     mcqList,
     completeLesson,
     phase,
@@ -281,6 +311,7 @@ const ModuleExercise = () => {
     navigation,
     queryClient,
     dispatch,
+    startLesson,
   ]);
 
   const handleBack = useCallback(() => {
@@ -301,11 +332,19 @@ const ModuleExercise = () => {
     setIsFocused(false);
   }, []);
 
+  const handleChangeText = useCallback((text: string) => {
+    reflectionTextRef.current = text;
+  }, []);
+
   // Effects
   useEffect(() => {
     isMounted.current = true;
+    const task = InteractionManager.runAfterInteractions(() => {
+      setIsReady(true);
+    });
     return () => {
       isMounted.current = false;
+      task.cancel();
     };
   }, []);
 
@@ -319,8 +358,17 @@ const ModuleExercise = () => {
     return () => backHandler.remove();
   }, []);
 
-  if (isMcqLoading) {
-    return <ExerciseLoading colors={colors} styles={styles} />;
+  useEffect(() => {
+    return () => {
+      // Immediately free MCQ data from cache on unmount
+      queryClient.removeQueries({
+        queryKey: ['exercise_mcq_list', phase?._id],
+      });
+    };
+  }, [queryClient, phase?._id]);
+
+  if (isMcqLoading || !isReady) {
+    return null;
   }
 
   return (
@@ -343,8 +391,8 @@ const ModuleExercise = () => {
               <ExerciseReflection
                 question={currentStepData.question}
                 placeholder={currentStepData.placeholder}
-                reflectionText={reflectionText}
-                setReflectionText={setReflectionText}
+                defaultValue={reflectionTextRef.current}
+                onChangeText={handleChangeText}
                 isFocused={isFocused}
                 onFocus={handleFocus}
                 onBlur={handleBlur}

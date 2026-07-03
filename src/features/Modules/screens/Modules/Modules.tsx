@@ -14,6 +14,7 @@ import {
   useNavigation,
   useTheme,
   useFocusEffect,
+  useIsFocused,
 } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
 import SolidText from '../../../../components/SolidText';
@@ -50,12 +51,16 @@ const Modules = () => {
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+  const isFocused = useIsFocused();
+
   const {
     data: startedModulesData,
     isLoading: isStartedLoading,
     refetch: refetchStarted,
   } = useGetApi(endpoints.start_sub_module_list, ['start_sub_module_list'], {
     limit: 10,
+  }, {
+    enabled: isFocused,
   });
   const {
     data: finishedModulesData,
@@ -63,6 +68,8 @@ const Modules = () => {
     refetch: refetchFinished,
   } = useGetApi(endpoints.end_sub_module_list, ['finished_sub_module_list'], {
     limit: 10,
+  }, {
+    enabled: isFocused,
   });
   const { data, isLoading, refetch, isFetching } = useGetApi(
     endpoints.theme_list,
@@ -71,21 +78,22 @@ const Modules = () => {
       cursor,
       limit: 10,
     },
+    {
+      enabled: isFocused,
+    },
   );
   const { refetch: refetchRandomQuestions } = useGetApi(
     endpoints.getRandomQuestions,
     ['getRandomQuestions'],
     {},
+    {
+      enabled: isFocused,
+    },
   );
   useFocusEffect(
     useCallback(() => {
-      // Optional: refetch on focus if needed
       setCursor(null);
-      refetch();
-      refetchStarted();
-      refetchFinished();
-      refetchRandomQuestions();
-    }, [refetch, refetchStarted, refetchFinished, refetchRandomQuestions]),
+    }, []),
   );
   useEffect(() => {
     if (data?.data) {
@@ -242,14 +250,13 @@ const Modules = () => {
     [localization.appkeys, navigation, carouselCardWidth, dispatch],
   );
 
-  const renderHeader = () => (
+  const HeaderComponent = React.useMemo(() => (
     <View>
       {/* Progress Tracker Card */}
       <ProgressTrackerCard
         viewStyle={styles.progressCardMargin}
         title={localization.appkeys?.homeProgressTracker || 'Progress Tracker'}
         onPress={() => {
-          //
           return navigation.navigate(AppRoutes.ProgressTracker as never);
         }}
       />
@@ -338,7 +345,27 @@ const Modules = () => {
         {localization.appkeys?.modulesThemes || 'Modules Themes'}
       </SolidText>
     </View>
-  );
+  ), [
+    styles.progressCardMargin,
+    styles.sectionHeader,
+    styles.sectionTitle,
+    styles.seeAllText,
+    styles.paginationContainer,
+    styles.paginationDot,
+    localization.appkeys,
+    navigation,
+    isStartedLoading,
+    isFinishedLoading,
+    carouselData,
+    colors.brown,
+    carouselTitle,
+    isCurrentEmpty,
+    handleSeeAll,
+    renderCarouselItem,
+    carouselCardWidth,
+    handleScrollEnd,
+    activeIndex,
+  ]);
 
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
@@ -403,7 +430,7 @@ const Modules = () => {
             maxToRenderPerBatch={10}
             windowSize={10}
             removeClippedSubviews={true}
-            ListHeaderComponent={renderHeader()}
+            ListHeaderComponent={HeaderComponent}
             // onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={
