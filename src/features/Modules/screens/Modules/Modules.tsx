@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -50,6 +50,7 @@ const Modules = () => {
   const [startedModules, setStartedModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isFocused = useIsFocused();
 
@@ -133,10 +134,17 @@ const Modules = () => {
     refetch();
     refetchStarted();
     refetchFinished();
-    setTimeout(() => {
+    refreshTimeoutRef.current = setTimeout(() => {
       setIsRefreshing(false);
     }, 1000);
   };
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const { width: screenWidth } = Dimensions.get('window');

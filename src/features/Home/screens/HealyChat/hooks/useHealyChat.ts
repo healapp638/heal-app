@@ -56,6 +56,7 @@ export const useHealyChat = (
   const [isNewChatRequested, setIsNewChatRequested] = useState(false);
   const messages = allMessages.slice(-visibleCount);
   const lastMessageRef = useRef<string | null>(null);
+  const paginationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isFreshAppLaunch) {
@@ -221,12 +222,20 @@ export const useHealyChat = (
     if (isPaginationLoading) return;
     if (visibleCount < allMessages.length) {
       setIsPaginationLoading(true);
-      setTimeout(() => {
+      paginationTimeoutRef.current = setTimeout(() => {
         setVisibleCount(prev => Math.min(prev + 10, allMessages.length));
         setIsPaginationLoading(false);
       }, 300);
     }
   }, [visibleCount, allMessages.length, isPaginationLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (paginationTimeoutRef.current) {
+        clearTimeout(paginationTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Handle message submission
   const handleSend = useCallback((textToSend: string) => {

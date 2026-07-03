@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -184,6 +184,7 @@ const Journal = () => {
   const [totalEntries, setTotalEntries] = useState(0);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showCreditsModal, setShowCreditsModal] = useState(false);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data, isLoading, refetch, isFetching, error } = useGetApi(
     endpoints.get_journals,
@@ -244,10 +245,17 @@ const Journal = () => {
     } else {
       setPage(1);
     }
-    setTimeout(() => {
+    refreshTimeoutRef.current = setTimeout(() => {
       setIsRefreshing(false);
     }, 1000);
   };
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
   const loadMore = () => {
     if (entries.length < totalEntries && !isFetching) {
       setPage(prev => prev + 1);

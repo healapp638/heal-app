@@ -62,6 +62,7 @@ const ModuleThemeDetail = () => {
     (state: any) => state.tempData.exerciseJustCompleted,
   );
   const hasStartedFetching = useRef(false);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { colors, images } = useTheme() as any;
   const styles = useMemo(() => style(colors), [colors]);
   const navigation = useNavigation();
@@ -144,10 +145,17 @@ const ModuleThemeDetail = () => {
     setIsRefreshing(true);
     setCursor(null);
     refetch();
-    setTimeout(() => {
+    refreshTimeoutRef.current = setTimeout(() => {
       setIsRefreshing(false);
     }, 2000);
   };
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
   const handleSubModulePress = useCallback(
     (sub: any) => {
       triggerHaptic('impactMedium');

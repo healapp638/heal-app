@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState, useRef } from 'react';
 import {
   View,
   FlatList,
@@ -40,6 +40,7 @@ const AllModules = () => {
   const [modules, setModules] = useState<any[]>([]);
   const [cursor, setCursor] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const refreshTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endpoint =
     type === 'started'
       ? endpoints.start_sub_module_list
@@ -82,10 +83,17 @@ const AllModules = () => {
     setIsRefreshing(true);
     setCursor(null);
     refetch();
-    setTimeout(() => {
+    refreshTimeoutRef.current = setTimeout(() => {
       setIsRefreshing(false);
     }, 1000);
   };
+  useEffect(() => {
+    return () => {
+      if (refreshTimeoutRef.current) {
+        clearTimeout(refreshTimeoutRef.current);
+      }
+    };
+  }, []);
   const renderItem = useCallback(
     ({ item }: { item: any }) => (
       <StartedModuleCard

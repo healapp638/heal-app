@@ -34,9 +34,9 @@ function App(): React.JSX.Element {
     AppUtils.disableFontScale();
     checkUpdate();
     getLanguage();
-    // if (!__DEV__) {
-    //   LogRocket.init('gh27g7/heal');
-    // }
+    if (!__DEV__) {
+      LogRocket.init('gh27g7/heal');
+    }
     const unsubscribe = messaging().onMessage(onMessageReceived);
     messaging().setBackgroundMessageHandler(onMessageReceived);
     return unsubscribe;

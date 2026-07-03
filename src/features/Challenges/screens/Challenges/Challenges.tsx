@@ -61,15 +61,19 @@ const Challenges = () => {
     }, [refetch]),
   );
   React.useEffect(() => {
+    let timer: any;
     if (isFetching) {
       hasStartedFetching.current = true;
     }
     if (!isFetching && hasStartedFetching.current && challengeJustCompleted) {
-      setTimeout(() => {
+      timer = setTimeout(() => {
         dispatch(setChallengeJustCompleted(false));
       }, 1000);
       hasStartedFetching.current = false;
     }
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isFetching, challengeJustCompleted, dispatch]);
   const formatRemainingTime = (endDateUnix: number) => {
     const now = moment();
