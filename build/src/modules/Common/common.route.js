@@ -36,21 +36,21 @@ router.get('/questions', verifyTokenBoth, (req, res) => __awaiter(void 0, void 0
     const result = yield controller.getQuestions();
     return (0, response_util_1.showOutput)(res, result, result.code);
 }));
-router.get('/test-error', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const controller = new common_controller_1.default(req, res);
-    const result = yield controller.testError();
-    return (0, response_util_1.showOutput)(res, result, result.code);
-}));
-router.get('/test-exception', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const controller = new common_controller_1.default(req, res);
-    const result = yield controller.testException();
-    return (0, response_util_1.showOutput)(res, result, result.code);
-}));
-router.get('/test-rejection', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const controller = new common_controller_1.default(req, res);
-    const result = yield controller.testRejection();
-    return (0, response_util_1.showOutput)(res, result, result.code);
-}));
+// router.get('/test-error', async (req: Request | any, res: Response) => {
+//     const controller = new CommonController(req, res)
+//     const result: ApiResponse = await controller.testError();
+//     return showOutput(res, result, result.code)
+// })
+// router.get('/test-exception', async (req: Request | any, res: Response) => {
+//     const controller = new CommonController(req, res)
+//     const result: any = await controller.testException();
+//     return showOutput(res, result, result.code)
+// })
+// router.get('/test-rejection', async (req: Request | any, res: Response) => {
+//     const controller = new CommonController(req, res)
+//     const result: any = await controller.testRejection();
+//     return showOutput(res, result, result.code)
+// })
 router.put('/delete_account', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, otp } = req.body;
     const controller = new common_controller_1.default(req, res);

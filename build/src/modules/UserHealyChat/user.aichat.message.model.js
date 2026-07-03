@@ -4,18 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-const langSchema = {
-    en: { type: String, default: '' },
-    zh: { type: String, default: '' },
-    hi: { type: String, default: '' },
-    es: { type: String, default: '' },
-    fr: { type: String, default: '' },
-    de: { type: String, default: '' },
-    ru: { type: String, default: '' },
-    pt: { type: String, default: '' },
-    it: { type: String, default: '' },
-    ro: { type: String, default: '' },
-};
 const messageSchema = new mongoose_1.default.Schema({
     conversation_id: {
         type: mongoose_1.default.Schema.Types.ObjectId,
@@ -34,7 +22,10 @@ const messageSchema = new mongoose_1.default.Schema({
         enum: ["user", "ai"],
         required: true,
     },
-    message: langSchema,
+    message: {
+        type: String,
+        required: true,
+    },
     unix: {
         type: String,
         required: true

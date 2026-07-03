@@ -31,23 +31,23 @@ router.get('/questions', verifyTokenBoth, async (req: Request | any, res: Respon
 
 })
 
-router.get('/test-error', async (req: Request | any, res: Response) => {
-    const controller = new CommonController(req, res)
-    const result: ApiResponse = await controller.testError();
-    return showOutput(res, result, result.code)
-})
+// router.get('/test-error', async (req: Request | any, res: Response) => {
+//     const controller = new CommonController(req, res)
+//     const result: ApiResponse = await controller.testError();
+//     return showOutput(res, result, result.code)
+// })
 
-router.get('/test-exception', async (req: Request | any, res: Response) => {
-    const controller = new CommonController(req, res)
-    const result: any = await controller.testException();
-    return showOutput(res, result, result.code)
-})
+// router.get('/test-exception', async (req: Request | any, res: Response) => {
+//     const controller = new CommonController(req, res)
+//     const result: any = await controller.testException();
+//     return showOutput(res, result, result.code)
+// })
 
-router.get('/test-rejection', async (req: Request | any, res: Response) => {
-    const controller = new CommonController(req, res)
-    const result: any = await controller.testRejection();
-    return showOutput(res, result, result.code)
-})
+// router.get('/test-rejection', async (req: Request | any, res: Response) => {
+//     const controller = new CommonController(req, res)
+//     const result: any = await controller.testRejection();
+//     return showOutput(res, result, result.code)
+// })
 
 router.put('/delete_account', async (req: Request | any, res: Response) => {
     const { email, otp } = req.body

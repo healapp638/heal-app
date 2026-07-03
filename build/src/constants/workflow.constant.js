@@ -23,18 +23,18 @@ const EMAIL_SEND_TYPE = interfaces_util_1.EmailSendType;
 exports.EMAIL_SEND_TYPE = EMAIL_SEND_TYPE;
 const languages = {
     ENGLISH: "en",
-    CHINESE: "zh",
+    // CHINESE: "zh",
     SPANISH: "es",
     FRENCH: "fr",
-    HINDI: "hi",
+    // HINDI: "hi",
     GERMAN: "de",
     RUSSIAN: "ru",
     PORTUGUESE: "pt",
     ITALIAN: "it",
-    ROMANIAN: "ro"
+    // ROMANIAN: "ro"
 };
 exports.languages = languages;
-const SUPPORTED_LANGUAGES = ["en", "zh", "hi", "es", "fr", "de", "ru", "pt", "it", "ro"];
+const SUPPORTED_LANGUAGES = ["en", "es", "fr", "de", "ru", "pt", "it"];
 exports.SUPPORTED_LANGUAGES = SUPPORTED_LANGUAGES;
 const bringsYouHereOptions = ['romantic relationship', 'family', 'friendship', 'loneliness', 'self confident', 'just need to talk'];
 exports.bringsYouHereOptions = bringsYouHereOptions;

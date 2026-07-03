@@ -95,15 +95,24 @@ const UserCommonHandler = {
         // =========================================
         // TRANSLATE USER MESSAGE
         // =========================================
-        const translatedMessage = {};
         const langs = Object.values(workflow_constant_1.languages);
         let detectedMessageLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(message);
         if (!langs.includes(detectedMessageLanguage)) {
             detectedMessageLanguage = "en";
         }
-        yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-            translatedMessage[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(message, detectedMessageLanguage, lang);
-        })));
+        const languageMap = {
+            en: "English",
+            zh: "Chinese",
+            hi: "Hindi",
+            es: "Spanish",
+            fr: "French",
+            de: "German",
+            ru: "Russian",
+            pt: "Portuguese",
+            it: "Italian",
+            ro: "Romanian",
+        };
+        const targetLanguageName = languageMap[detectedMessageLanguage] || "English";
         // =========================================
         // CHECK IF THIS IS A NEW CONVERSATION
         // =========================================
@@ -119,13 +128,14 @@ const UserCommonHandler = {
                     {
                         role: "system",
                         content: `
-                                Generate a very short conversation title.
+                                Generate a very short conversation title in the user's language (${targetLanguageName}).
                                 Rules:
                                 - Maximum 4 words
                                 - Human readable
                                 - No quotes
                                 - No emojis
                                 - Summarize the user's message
+                                - Write it in ${targetLanguageName}
                                 `,
                     },
                     {
@@ -137,30 +147,10 @@ const UserCommonHandler = {
                 temperature: 0.7,
             });
             shortTitle = ((_e = (_d = (_c = (_b = (_a = titleResponse.choices) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.message) === null || _c === void 0 ? void 0 : _c.content) === null || _d === void 0 ? void 0 : _d.trim()) === null || _e === void 0 ? void 0 : _e.replace(/["']/g, "")) || "New Chat";
-            const translatedTitle = {};
-            let detectedTitleLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(shortTitle);
-            if (!langs.includes(detectedTitleLanguage)) {
-                detectedTitleLanguage = "en";
-            }
-            yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                translatedTitle[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(shortTitle, detectedTitleLanguage, lang);
-            })));
-            // Store the starter question (if provided) translated across languages,
-            // so it stays retrievable later in the conversation lifecycle.
-            const translatedStarterQuestion = {};
-            if (question && question.trim()) {
-                let detectedQuestionLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(question);
-                if (!langs.includes(detectedQuestionLanguage)) {
-                    detectedQuestionLanguage = "en";
-                }
-                yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-                    translatedStarterQuestion[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(question, detectedQuestionLanguage, lang);
-                })));
-            }
             const createConversation = yield user_aichat_conversation_model_1.default.create({
                 user_id: (0, common_helper_1.convertToObjectId)(user_id),
-                title: translatedTitle,
-                starter_question: translatedStarterQuestion,
+                title: shortTitle,
+                starter_question: question || "",
             });
             finalConversationId = createConversation._id;
         }
@@ -176,7 +166,7 @@ const UserCommonHandler = {
             conversation_id: (0, common_helper_1.convertToObjectId)(finalConversationId),
             user_id: (0, common_helper_1.convertToObjectId)(user_id),
             role: role || "user",
-            message: translatedMessage,
+            message: message,
             unix: `${Date.now()}`,
             sequence: nextSequence,
         });
@@ -330,9 +320,9 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
         const history = [];
         conversationMessages.forEach((msg) => {
             var _a, _b;
-            const content = ((_a = msg === null || msg === void 0 ? void 0 : msg.message) === null || _a === void 0 ? void 0 : _a[userLanguage]) ||
-                ((_b = msg === null || msg === void 0 ? void 0 : msg.message) === null || _b === void 0 ? void 0 : _b.en) ||
-                "";
+            const content = typeof msg.message === "string"
+                ? msg.message
+                : (((_a = msg === null || msg === void 0 ? void 0 : msg.message) === null || _a === void 0 ? void 0 : _a[userLanguage]) || ((_b = msg === null || msg === void 0 ? void 0 : msg.message) === null || _b === void 0 ? void 0 : _b.en) || "");
             history.push({
                 role: msg.role === "ai" ? "assistant" : "user",
                 content,
@@ -341,10 +331,11 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
         // =========================================
         // AI RESPONSE
         // =========================================
+        const finalSystemPrompt = `${systemPrompt}\n\nIMPORTANT: You must respond in the language the user is speaking. The user's language is ${targetLanguageName}. Respond ONLY in ${targetLanguageName}.`;
         const aiMessages = [
             {
                 role: "system",
-                content: systemPrompt,
+                content: finalSystemPrompt,
             },
         ];
         if (promptContextNote) {
@@ -362,24 +353,13 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
         });
         const aiMessage = ((_h = (_g = (_f = aiResponse === null || aiResponse === void 0 ? void 0 : aiResponse.choices) === null || _f === void 0 ? void 0 : _f[0]) === null || _g === void 0 ? void 0 : _g.message) === null || _h === void 0 ? void 0 : _h.content) || "";
         // =========================================
-        // TRANSLATE AI MESSAGE
-        // =========================================
-        const translatedAiMessage = {};
-        let detectedAiMessageLanguage = yield (0, langauge_translate_helper_1.detectLanguage)(aiMessage);
-        if (!langs.includes(detectedAiMessageLanguage)) {
-            detectedAiMessageLanguage = "en";
-        }
-        yield Promise.all(langs.map((lang) => __awaiter(void 0, void 0, void 0, function* () {
-            translatedAiMessage[lang] = yield (0, langauge_translate_helper_1.translateHealyText)(aiMessage, detectedAiMessageLanguage, lang);
-        })));
-        // =========================================
         // SAVE AI MESSAGE
         // =========================================
         const createAiMessage = yield user_aichat_message_model_1.default.create({
             conversation_id: (0, common_helper_1.convertToObjectId)(finalConversationId),
             user_id: (0, common_helper_1.convertToObjectId)(user_id),
             role: "ai",
-            message: translatedAiMessage,
+            message: aiMessage,
             unix: `${Date.now()}`,
             sequence: nextSequence + 1,
         });
@@ -413,13 +393,17 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
             user_message: {
                 _id: createUserMessage._id,
                 role: createUserMessage.role,
-                message: ((_j = createUserMessage === null || createUserMessage === void 0 ? void 0 : createUserMessage.message) === null || _j === void 0 ? void 0 : _j[userLanguage]) || ((_k = createUserMessage === null || createUserMessage === void 0 ? void 0 : createUserMessage.message) === null || _k === void 0 ? void 0 : _k.en),
+                message: typeof createUserMessage.message === "string"
+                    ? createUserMessage.message
+                    : (((_j = createUserMessage === null || createUserMessage === void 0 ? void 0 : createUserMessage.message) === null || _j === void 0 ? void 0 : _j[userLanguage]) || ((_k = createUserMessage === null || createUserMessage === void 0 ? void 0 : createUserMessage.message) === null || _k === void 0 ? void 0 : _k.en) || ""),
                 sequence: createUserMessage.sequence,
             },
             ai_message: {
                 _id: createAiMessage._id,
                 role: createAiMessage.role,
-                message: ((_l = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _l === void 0 ? void 0 : _l[userLanguage]) || ((_m = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _m === void 0 ? void 0 : _m.en),
+                message: typeof createAiMessage.message === "string"
+                    ? createAiMessage.message
+                    : (((_l = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _l === void 0 ? void 0 : _l[userLanguage]) || ((_m = createAiMessage === null || createAiMessage === void 0 ? void 0 : createAiMessage.message) === null || _m === void 0 ? void 0 : _m.en) || ""),
                 sequence: createAiMessage.sequence,
             },
             total_credit: subCredits + packCredits,
@@ -544,10 +528,17 @@ Rules:
                     conversation_id: 1,
                     role: 1,
                     message: {
-                        $ifNull: [
-                            `$message.${userLanguage}`,
-                            "$message.en"
-                        ]
+                        $cond: {
+                            if: { $eq: [{ $type: "$message" }, "string"] },
+                            then: "$message",
+                            else: {
+                                $ifNull: [
+                                    `$message.${userLanguage}`,
+                                    "$message.en",
+                                    ""
+                                ]
+                            }
+                        }
                     },
                     unix: 1,
                     sequence: 1,
@@ -694,10 +685,17 @@ Rules:
             {
                 $addFields: {
                     title: {
-                        $ifNull: [
-                            `$title.${userLanguage}`,
-                            "$title.en",
-                        ],
+                        $cond: {
+                            if: { $eq: [{ $type: "$title" }, "string"] },
+                            then: "$title",
+                            else: {
+                                $ifNull: [
+                                    `$title.${userLanguage}`,
+                                    "$title.en",
+                                    ""
+                                ]
+                            }
+                        }
                     },
                 },
             },

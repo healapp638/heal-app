@@ -7,15 +7,15 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const workflow_constant_1 = require("../../constants/workflow.constant");
 const langSchema = {
     en: { type: String, default: '' },
-    zh: { type: String, default: '' },
-    hi: { type: String, default: '' },
+    // zh: { type: String, default: '' },
+    // hi: { type: String, default: '' },
     es: { type: String, default: '' },
     fr: { type: String, default: '' },
     de: { type: String, default: '' },
     ru: { type: String, default: '' },
     pt: { type: String, default: '' },
     it: { type: String, default: '' },
-    ro: { type: String, default: '' },
+    // ro: { type: String, default: '' },
 };
 const userJournalSchema = new mongoose_1.default.Schema({
     user_id: {

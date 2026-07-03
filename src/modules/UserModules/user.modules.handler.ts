@@ -1003,7 +1003,7 @@ const UserCommonHandler = {
             },
             {
                 $sort: {
-                    createdAt: -1,
+                    updatedAt: -1,
                     _id: -1
                 }
             },
@@ -1014,6 +1014,7 @@ const UserCommonHandler = {
                     total_phase_count: 1,
                     completed_phase_count: 1,
                     createdAt: 1,
+                    updatedAt: 1,
                     _id: 1,
                     sub_module_id: 1
                 }
@@ -1102,7 +1103,7 @@ const UserCommonHandler = {
             },
             {
                 $sort: {
-                    createdAt: -1,
+                    updatedAt: -1,
                     _id: -1
                 }
             },
@@ -1113,6 +1114,7 @@ const UserCommonHandler = {
                     total_phase_count: 1,
                     completed_phase_count: 1,
                     createdAt: 1,
+                    updatedAt:1,
                     _id: 1,
                     sub_module_id: 1
                 }

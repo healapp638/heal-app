@@ -9,7 +9,7 @@ import userAichatConversationModel from "./user.aichat.conversation.model";
 import * as commonHelper from "../../helpers/common.helper";
 import userAuthModel from "../UserAuth/user.auth.model";
 import { languages, USER_STATUS,questions } from "../../constants/workflow.constant";
-import { translateHealyText,detectLanguage } from "../../helpers/langauge.translate.helper";
+import { detectLanguage } from "../../helpers/langauge.translate.helper";
 import OpenAI from "openai";
 import { APP } from "../../constants/app.constant";
 import logger from "../../configs/logger.config";
@@ -67,8 +67,6 @@ sendMessage: async (data: any, user_id: string): Promise<ApiResponse> => {
         // TRANSLATE USER MESSAGE
         // =========================================
 
-        const translatedMessage: any = {};
-
         const langs: any = Object.values(languages);
 
         let detectedMessageLanguage = await detectLanguage(message);
@@ -77,11 +75,20 @@ sendMessage: async (data: any, user_id: string): Promise<ApiResponse> => {
             detectedMessageLanguage = "en";
         }
 
-        await Promise.all(
-            langs.map(async (lang: string) => {
-                translatedMessage[lang] = await translateHealyText(message, detectedMessageLanguage, lang);
-            })
-        );
+        const languageMap: any = {
+            en: "English",
+            zh: "Chinese",
+            hi: "Hindi",
+            es: "Spanish",
+            fr: "French",
+            de: "German",
+            ru: "Russian",
+            pt: "Portuguese",
+            it: "Italian",
+            ro: "Romanian",
+        };
+
+        const targetLanguageName = languageMap[detectedMessageLanguage] || "English";
 
         // =========================================
         // CHECK IF THIS IS A NEW CONVERSATION
@@ -103,13 +110,14 @@ sendMessage: async (data: any, user_id: string): Promise<ApiResponse> => {
                     {
                         role: "system",
                         content: `
-                                Generate a very short conversation title.
+                                Generate a very short conversation title in the user's language (${targetLanguageName}).
                                 Rules:
                                 - Maximum 4 words
                                 - Human readable
                                 - No quotes
                                 - No emojis
                                 - Summarize the user's message
+                                - Write it in ${targetLanguageName}
                                 `,
                     },
                     {
@@ -124,42 +132,10 @@ sendMessage: async (data: any, user_id: string): Promise<ApiResponse> => {
 
             shortTitle = titleResponse.choices?.[0]?.message?.content?.trim()?.replace(/["']/g, "") || "New Chat";
 
-            const translatedTitle: any = {};
-
-            let detectedTitleLanguage = await detectLanguage(shortTitle);
-
-            if (!langs.includes(detectedTitleLanguage)) {
-                detectedTitleLanguage = "en";
-            }
-
-            await Promise.all(
-                langs.map(async (lang: string) => {
-                    translatedTitle[lang] = await translateHealyText(shortTitle, detectedTitleLanguage, lang);
-                })
-            );
-
-            // Store the starter question (if provided) translated across languages,
-            // so it stays retrievable later in the conversation lifecycle.
-            const translatedStarterQuestion: any = {};
-
-            if (question && question.trim()) {
-                let detectedQuestionLanguage = await detectLanguage(question);
-
-                if (!langs.includes(detectedQuestionLanguage)) {
-                    detectedQuestionLanguage = "en";
-                }
-
-                await Promise.all(
-                    langs.map(async (lang: string) => {
-                        translatedStarterQuestion[lang] = await translateHealyText(question, detectedQuestionLanguage, lang);
-                    })
-                );
-            }
-
             const createConversation = await userAichatConversation.create({
                 user_id: convertToObjectId(user_id),
-                title: translatedTitle,
-                starter_question: translatedStarterQuestion,
+                title: shortTitle,
+                starter_question: question || "",
             });
 
             finalConversationId = createConversation._id;
@@ -181,7 +157,7 @@ sendMessage: async (data: any, user_id: string): Promise<ApiResponse> => {
             conversation_id: convertToObjectId(finalConversationId),
             user_id: convertToObjectId(user_id),
             role: role || "user",
-            message: translatedMessage,
+            message: message,
             unix: `${Date.now()}`,
             sequence: nextSequence,
         });
@@ -344,10 +320,9 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
         const history: any[] = [];
 
         conversationMessages.forEach((msg: any) => {
-            const content =
-                msg?.message?.[userLanguage] ||
-                msg?.message?.en ||
-                "";
+            const content = typeof msg.message === "string"
+                ? msg.message
+                : (msg?.message?.[userLanguage] || msg?.message?.en || "");
 
             history.push({
                 role: msg.role === "ai" ? "assistant" : "user",
@@ -359,10 +334,12 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
         // AI RESPONSE
         // =========================================
 
+        const finalSystemPrompt = `${systemPrompt}\n\nIMPORTANT: You must respond in the language the user is speaking. The user's language is ${targetLanguageName}. Respond ONLY in ${targetLanguageName}.`;
+
         const aiMessages: any[] = [
             {
                 role: "system",
-                content: systemPrompt,
+                content: finalSystemPrompt,
             },
         ];
 
@@ -385,24 +362,6 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
         const aiMessage = aiResponse?.choices?.[0]?.message?.content || "";
 
         // =========================================
-        // TRANSLATE AI MESSAGE
-        // =========================================
-
-        const translatedAiMessage: any = {};
-
-        let detectedAiMessageLanguage = await detectLanguage(aiMessage);
-
-        if (!langs.includes(detectedAiMessageLanguage)) {
-            detectedAiMessageLanguage = "en";
-        }
-
-        await Promise.all(
-            langs.map(async (lang: string) => {
-                translatedAiMessage[lang] = await translateHealyText(aiMessage, detectedAiMessageLanguage, lang);
-            })
-        );
-
-        // =========================================
         // SAVE AI MESSAGE
         // =========================================
 
@@ -410,7 +369,7 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
             conversation_id: convertToObjectId(finalConversationId),
             user_id: convertToObjectId(user_id),
             role: "ai",
-            message: translatedAiMessage,
+            message: aiMessage,
             unix: `${Date.now()}`,
             sequence: nextSequence + 1,
         });
@@ -461,13 +420,17 @@ If (b): Drop the suggested prompt entirely. Follow the user's actual topic. Do n
                 user_message: {
                     _id: createUserMessage._id,
                     role: createUserMessage.role,
-                    message: createUserMessage?.message?.[userLanguage] || createUserMessage?.message?.en,
+                    message: typeof createUserMessage.message === "string"
+                        ? createUserMessage.message
+                        : (createUserMessage?.message?.[userLanguage] || createUserMessage?.message?.en || ""),
                     sequence: createUserMessage.sequence,
                 },
                 ai_message: {
                     _id: createAiMessage._id,
                     role: createAiMessage.role,
-                    message: createAiMessage?.message?.[userLanguage] || createAiMessage?.message?.en,
+                    message: typeof createAiMessage.message === "string"
+                        ? createAiMessage.message
+                        : (createAiMessage?.message?.[userLanguage] || createAiMessage?.message?.en || ""),
                     sequence: createAiMessage.sequence,
                 },
                 total_credit: subCredits + packCredits,
@@ -644,10 +607,17 @@ getConversationMessages: async (data: any,user_id: string): Promise<ApiResponse>
                 conversation_id: 1,
                 role: 1,
                 message: {
-                    $ifNull: [
-                        `$message.${userLanguage}`,
-                        "$message.en"
-                    ]
+                    $cond: {
+                        if: { $eq: [{ $type: "$message" }, "string"] },
+                        then: "$message",
+                        else: {
+                            $ifNull: [
+                                `$message.${userLanguage}`,
+                                "$message.en",
+                                ""
+                            ]
+                        }
+                    }
                 },
                 unix: 1,
                 sequence: 1,
@@ -836,12 +806,18 @@ getConversationListing: async (page: number = 1,limit: number = 10,search: strin
 
             {
                 $addFields: {
-
                     title: {
-                        $ifNull: [
-                            `$title.${userLanguage}`,
-                            "$title.en",
-                        ],
+                        $cond: {
+                            if: { $eq: [{ $type: "$title" }, "string"] },
+                            then: "$title",
+                            else: {
+                                $ifNull: [
+                                    `$title.${userLanguage}`,
+                                    "$title.en",
+                                    ""
+                                ]
+                            }
+                        }
                     },
                 },
             },

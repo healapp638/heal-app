@@ -23,18 +23,18 @@ const EMAIL_SEND_TYPE = EmailSendType
 
 const languages = {
     ENGLISH: "en",
-    CHINESE: "zh",
+    // CHINESE: "zh",
     SPANISH: "es",
     FRENCH: "fr",
-    HINDI: "hi",
+    // HINDI: "hi",
     GERMAN: "de",
     RUSSIAN: "ru",
     PORTUGUESE: "pt",
     ITALIAN: "it",
-    ROMANIAN: "ro"
+    // ROMANIAN: "ro"
 }
 
-const SUPPORTED_LANGUAGES = ["en", "zh", "hi", "es", "fr", "de", "ru", "pt", "it", "ro"];
+const SUPPORTED_LANGUAGES = ["en","es", "fr", "de", "ru", "pt", "it"];
 
 const bringsYouHereOptions = ['romantic relationship', 'family', 'friendship', 'loneliness', 'self confident', 'just need to talk'];
 const howFellingLatelyOptions = ['Overwhelmed', 'Emotionally drained', 'Overthinking everything', 'Feeling stuck', 'Lost or unsure about life', 'Just looking for more clarity'];
