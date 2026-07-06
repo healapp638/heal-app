@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode, useEffect } from 'react';
+import React, { createContext, useState, ReactNode, useEffect, useCallback } from 'react';
 import * as RNLocalize from 'react-native-localize';
 import LocalizedStrings from 'react-native-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +21,28 @@ const localization = new LocalizedStrings({
   Italian: require('./langFiles/it.json'),
 });
 
+const languageCodeMapping: Record<string, string> = {
+  en: 'English',
+  fr: 'French',
+  es: 'Spanish',
+  de: 'German',
+  ru: 'Russian',
+  pt: 'Portuguese',
+  it: 'Italian',
+};
+
+const regionLanguageMapping: Record<string, string> = {
+  US: 'English',
+  GB: 'English',
+  FR: 'French',
+  ES: 'Spanish',
+  DE: 'German',
+  RU: 'Russian',
+  PT: 'Portuguese',
+  BR: 'Portuguese',
+  IT: 'Italian',
+};
+
 type LocalizationContextType = {
   localization: typeof LocalizedStrings;
   setAppLanguage: (language: string) => void;
@@ -40,38 +62,53 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({
 }) => {
   const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
 
-  useEffect(() => {
-    initializeAppLanguage();
-  }, []);
-
-  const setLanguage = (language: string) => {
+  const setLanguage = useCallback((language: string, saveToStorage = true) => {
     localization.setLanguage(language);
     setAppLanguage(language);
-    AsyncStorage.setItem(strings.appLanguage, language);
-  };
+    if (saveToStorage) {
+      AsyncStorage.setItem(strings.appLanguage, language);
+    }
+  }, []);
 
-  const initializeAppLanguage = async () => {
+  const initializeAppLanguage = useCallback(async () => {
     const currentLanguage = await AsyncStorage.getItem(strings.appLanguage);
-    // AppUtils.showLog(currentLanguage ?? "Language not found");
     if (!currentLanguage) {
       let localeCode = DEFAULT_LANGUAGE;
       const supportedLocaleCodes = localization.getAvailableLanguages();
+
+      // 1. Try checking the preferred phone language settings first
       const phoneLocaleCodes = RNLocalize.getLocales().map(
-        locale => locale.languageCode,
+        locale => locale.languageCode.toLowerCase(),
       );
-      phoneLocaleCodes.some(code => {
-        if (supportedLocaleCodes.includes(code)) {
-          localeCode = code;
-          return true;
-        }
+
+      const matchedCode = phoneLocaleCodes.find(code => {
+        const mappedLang = languageCodeMapping[code];
+        return mappedLang && supportedLocaleCodes.includes(mappedLang);
       });
-      AppUtils.showLog(localeCode);
-      setLanguage(localeCode);
+
+      if (matchedCode) {
+        localeCode = languageCodeMapping[matchedCode];
+      } else {
+        // 2. Fall back to device Region/country setting (e.g. country code "FR")
+        const deviceCountry = RNLocalize.getCountry();
+        const regionLang = deviceCountry ? regionLanguageMapping[deviceCountry.toUpperCase()] : undefined;
+
+        if (regionLang && supportedLocaleCodes.includes(regionLang)) {
+          localeCode = regionLang;
+        }
+      }
+
+      AppUtils.showLog(`Auto-detected language: ${localeCode}`);
+      setLanguage(localeCode, false);
     } else {
-      AppUtils.showLog(currentLanguage);
-      setLanguage(currentLanguage);
+      AppUtils.showLog(`Using saved language: ${currentLanguage}`);
+      setLanguage(currentLanguage, false);
     }
-  };
+  }, [setLanguage]);
+
+  useEffect(() => {
+    initializeAppLanguage();
+  }, [initializeAppLanguage]);
 
   return (
     <LocalizationContext.Provider
