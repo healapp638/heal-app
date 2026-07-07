@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
   Platform,
   Keyboard,
+  Dimensions,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -66,20 +67,14 @@ const HealyChat = () => {
     startNewChat,
     shouldScrollOnLayout,
     randomQuestion,
+    isRandomQuestionsFetching,
     loadMorePastMessages,
     isPaginationLoading,
-    firstAssistantMessageId,
+    extraPadding,
+    handleScroll,
+    handleContentSizeChange,
+    handleLayout,
   } = useHealyChat(flatListRef, setCreditsModalVisible);
-
-  const handleScroll = useCallback(
-    (event: any) => {
-      const { contentOffset } = event.nativeEvent;
-      if (contentOffset.y <= 10) {
-        loadMorePastMessages();
-      }
-    },
-    [loadMorePastMessages],
-  );
 
   // Removed getDynamicWelcomeText to display the random question directly as welcome text
 
@@ -97,7 +92,11 @@ const HealyChat = () => {
         item._id !== lastStreamedId &&
         shouldAnimateNext;
 
-      const showDisclaimer = !isUser && index === lastAiMessageIndex;
+      const showDisclaimer =
+        !isUser &&
+        index === lastAiMessageIndex &&
+        !isSending &&
+        !shouldAnimateNext;
 
       return (
         <MessageItem
@@ -121,6 +120,7 @@ const HealyChat = () => {
       messages.length,
       lastStreamedId,
       shouldAnimateNext,
+      isSending,
       styles,
       images.h,
       colors.primary,
@@ -173,6 +173,7 @@ const HealyChat = () => {
               logoColor={colors.primary}
               welcomeText={randomQuestion}
               styles={styles}
+              isLoadingQuestion={isRandomQuestionsFetching}
             />
           ) : (
             <FlatList
@@ -184,7 +185,8 @@ const HealyChat = () => {
               contentContainerStyle={[
                 styles.chatListContent,
                 {
-                  paddingBottom: styles.chatListContent.paddingBottom,
+                  paddingBottom:
+                    styles.chatListContent.paddingBottom + extraPadding,
                 },
               ]}
               onScroll={handleScroll}
@@ -193,10 +195,25 @@ const HealyChat = () => {
                 minIndexForVisible: 0,
                 autoscrollToTopThreshold: 0,
               }}
-              onContentSizeChange={() => {
-                if (isSending || shouldAnimateNext || shouldScrollOnLayout) {
-                  flatListRef.current?.scrollToEnd({ animated: false });
-                }
+              onContentSizeChange={handleContentSizeChange}
+              onLayout={handleLayout}
+              onScrollToIndexFailed={info => {
+                flatListRef.current?.scrollToOffset({
+                  offset: info.averageItemLength * info.index,
+                  animated: false,
+                });
+                setTimeout(() => {
+                  try {
+                    flatListRef.current?.scrollToIndex({
+                      index: info.index,
+                      viewPosition: 0,
+                      viewOffset: -20,
+                      animated: true,
+                    });
+                  } catch (err) {
+                    flatListRef.current?.scrollToEnd({ animated: true });
+                  }
+                }, 200);
               }}
               showsVerticalScrollIndicator={false}
               // List memory and rendering optimizations
@@ -239,6 +256,7 @@ const HealyChat = () => {
             sendIconSource={images.send}
             micIconSource={images.microPhone}
             styles={styles}
+            isDisabled={isSending || shouldAnimateNext}
           />
 
           {/* Paginated Conversations History Drawer */}

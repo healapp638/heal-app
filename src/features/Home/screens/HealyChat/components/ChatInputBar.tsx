@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useEffect, useRef, useContext } from 'react';
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  useContext,
+} from 'react';
 import {
   View,
   TouchableOpacity,
@@ -36,6 +42,7 @@ interface ChatInputBarProps {
   sendIconSource: any;
   micIconSource: any;
   styles: any;
+  isDisabled?: boolean;
 }
 
 const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
@@ -45,10 +52,12 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
   sendIconSource,
   micIconSource,
   styles,
+  isDisabled = false,
 }) => {
   const { localization } = useContext(LocalizationContext) as any;
   const [chatText, setChatText] = useState('');
   const [inputHeight, setInputHeight] = useState(0);
+  const [isMultiline, setIsMultiline] = useState(false);
   const singleLineHeight = useRef<number>(0);
   const textInputRef = useRef<TextInput>(null);
 
@@ -66,6 +75,12 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
       singleLineHeight.current = contentHeight;
     }
     setInputHeight(contentHeight);
+    if (
+      singleLineHeight.current > 0 &&
+      contentHeight > singleLineHeight.current * 1.3
+    ) {
+      setIsMultiline(true);
+    }
   }, []);
 
   // Speech-to-text state
@@ -208,10 +223,12 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
       Voice.stop().catch(() => {});
       setIsListening(false);
     }
-    onSend(chatText);
-    textInputRef.current?.clear(); // Force native clear to prevent state sync lag on long chats
+    const textToSend = chatText; // capture before clearing
     setChatText('');
-    setInputHeight(0); // Reset height so text input collapses back to single line
+    setInputHeight(0);
+    setIsMultiline(false);
+    textInputRef.current?.clear();
+    onSend(textToSend);
   }, [chatText, onSend, isListening]);
 
   const showMic = isListening || chatText.trim().length === 0;
@@ -234,6 +251,7 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
       setChatText(text);
       if (text.trim().length === 0) {
         setInputHeight(0); // Reset height if text is cleared manually
+        setIsMultiline(false);
       }
       if (isListening && text.trim().length > 0) {
         Voice.stop().catch(() => {});
@@ -249,10 +267,13 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
       <View
         style={[
           styles.inputWrapper,
-          inputHeight > singleLineHeight.current &&
-          singleLineHeight.current > 0
+          isMultiline
             ? {
-                height: Math.min(240, inputHeight + (Platform.OS === 'ios' ? 18 : 8)),
+                height: Math.min(
+                  240,
+                  inputHeight + (Platform.OS === 'ios' ? 50 : 42),
+                ),
+                paddingBottom: 36,
               }
             : undefined,
         ]}
@@ -264,10 +285,16 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
             {
               paddingTop: Platform.OS === 'ios' ? 6 : 0,
               paddingBottom: Platform.OS === 'ios' ? 6 : 0,
-            }
+              flex: isMultiline ? 1 : 0.9,
+            },
           ]}
-          autoCorrect={false}
-          placeholder={isListening ? (localization?.appkeys?.listening || 'Listening...') : placeholder}
+          spellCheck={true}
+          autoCorrect={true}
+          placeholder={
+            isListening
+              ? localization?.appkeys?.listening || 'Listening...'
+              : placeholder
+          }
           placeholderTextColor={isListening ? '#EA4335' : 'rgba(58,33,16,0.4)'}
           value={chatText}
           onChangeText={handleTextChange}
@@ -288,7 +315,7 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
                 width: textInputWidth,
               },
             ]}
-            onTextLayout={(e) => {
+            onTextLayout={e => {
               const contentHeight = e.nativeEvent.lines.reduce(
                 (acc, line) => acc + line.height,
                 0,
@@ -297,13 +324,43 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
                 singleLineHeight.current = contentHeight;
               }
               setInputHeight(contentHeight);
+              if (
+                singleLineHeight.current > 0 &&
+                contentHeight > singleLineHeight.current * 1.3
+              ) {
+                setIsMultiline(true);
+              }
             }}
           >
             {chatText || ' '}
           </Text>
         )}
-        <TouchableOpacity onPress={handleButtonPress} activeOpacity={0.7}>
-          <Animated.View style={{ transform: [{ scale: pulseAnim }] }}>
+        <TouchableOpacity
+          onPress={handleButtonPress}
+          activeOpacity={0.7}
+          disabled={isDisabled}
+          style={
+            isMultiline
+              ? {
+                  position: 'absolute',
+                  bottom: Platform.OS === 'ios' ? 6 : 4,
+                  right: 0,
+                  padding: 8,
+                }
+              : {
+                  position: 'absolute',
+                  bottom: Platform.OS === 'ios' ? 6 : 4,
+                  right: 0,
+                  padding: 8,
+                }
+          }
+        >
+          <Animated.View
+            style={{
+              transform: [{ scale: pulseAnim }],
+              opacity: isDisabled ? 0.3 : 1,
+            }}
+          >
             <Image
               source={showMic ? micIconSource : sendIconSource}
               style={[styles.micIcon, isListening && { tintColor: '#EA4335' }]}

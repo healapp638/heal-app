@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import SolidText from '../../../../../components/SolidText';
 
 interface WelcomeViewProps {
@@ -7,6 +7,7 @@ interface WelcomeViewProps {
   logoColor: string;
   welcomeText: string;
   styles: any;
+  isLoadingQuestion?: boolean;
 }
 
 const WelcomeViewComponent: React.FC<WelcomeViewProps> = ({
@@ -14,6 +15,7 @@ const WelcomeViewComponent: React.FC<WelcomeViewProps> = ({
   logoColor,
   welcomeText,
   styles,
+  isLoadingQuestion,
 }) => {
   return (
     <View style={styles.welcomeContainer}>
@@ -23,7 +25,11 @@ const WelcomeViewComponent: React.FC<WelcomeViewProps> = ({
         resizeMode="contain"
         tintColor={logoColor}
       />
-      <SolidText style={styles.welcomeText}>{welcomeText}</SolidText>
+      {isLoadingQuestion ? (
+        <ActivityIndicator size="small" color={logoColor} style={{ marginTop: 12 }} />
+      ) : (
+        <SolidText style={styles.welcomeText}>{welcomeText}</SolidText>
+      )}
     </View>
   );
 };

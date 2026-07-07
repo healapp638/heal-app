@@ -1,0 +1,27 @@
+diff --git a/node_modules/@dev-amirzubair/react-native-voice/android/src/main/java/com/wenkesj/voice/Voice.kt b/node_modules/@dev-amirzubair/react-native-voice/android/src/main/java/com/wenkesj/voice/Voice.kt
+index 086f395..58294a3 100644
+--- a/node_modules/@dev-amirzubair/react-native-voice/android/src/main/java/com/wenkesj/voice/Voice.kt
++++ b/node_modules/@dev-amirzubair/react-native-voice/android/src/main/java/com/wenkesj/voice/Voice.kt
+@@ -159,6 +159,8 @@ class Voice(context: ReactApplicationContext) : RecognitionListener {
+       intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
+     }
+     
++    intent.putExtra("android.speech.extra.ENABLE_FORMATTING", "quality")
++    
+     speech?.startListening(intent)
+   }
+ 
+diff --git a/node_modules/@dev-amirzubair/react-native-voice/ios/Voice/Voice.mm b/node_modules/@dev-amirzubair/react-native-voice/ios/Voice/Voice.mm
+index 082ce01..63519d6 100644
+--- a/node_modules/@dev-amirzubair/react-native-voice/ios/Voice/Voice.mm
++++ b/node_modules/@dev-amirzubair/react-native-voice/ios/Voice/Voice.mm
+@@ -297,6 +297,9 @@ - (void)setupAndStartRecognizing:(NSString *)localeStr {
+   self.recognitionRequest.shouldReportPartialResults = YES;
+   // Set task hint for better end-of-speech detection (like dictation)
+   self.recognitionRequest.taskHint = SFSpeechRecognitionTaskHintDictation;
++  if (@available(iOS 16.0, *)) {
++    self.recognitionRequest.addsPunctuation = YES;
++  }
+   // Ensure continuous mode is off for auto-stop behavior
+   self.continuous = NO;
+ 

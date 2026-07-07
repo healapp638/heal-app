@@ -10,7 +10,7 @@ const style = (colors: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       paddingHorizontal: 20,
-
+      paddingBottom: 120,
     },
     title: {
       fontSize: AppUtils.fontSize(24),
@@ -18,7 +18,6 @@ const style = (colors: any) =>
       color: colors.brown,
       textAlign: 'center',
       paddingHorizontal: 15,
-marginTop:-50
     },
     priceHeader: {
       fontSize: AppUtils.fontSize(36),
