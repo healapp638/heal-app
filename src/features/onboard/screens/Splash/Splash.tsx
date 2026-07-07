@@ -78,7 +78,7 @@ const Splash = () => {
             routes: [
               {
                 name: AppRoutes.NonAuthStack,
-                params: { screen: AppRoutes.Offer },
+                params: { screen: AppRoutes.BottomTab },
               } as never,
             ],
           });
