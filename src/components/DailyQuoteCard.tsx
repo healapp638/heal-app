@@ -118,13 +118,6 @@ const DailyQuoteCard = ({
                   styles.quoteText,
                   {
                     color: activeColor,
-                    textShadowColor: homeThemeUrl
-                      ? 'rgba(0, 0, 0, 0.4)'
-                      : 'transparent',
-                    textShadowOffset: {
-                      width: 0,
-                      height: 1,
-                    },
                   },
                 ]}
               >
