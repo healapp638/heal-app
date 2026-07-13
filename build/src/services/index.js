@@ -35,11 +35,11 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const emailService = __importStar(require("./email.service"));
 const awsService = __importStar(require("./aws.service"));
-const notificationService = __importStar(require("./notification.service"));
+// import * as notificationService from './notification.service'
 const smsService = __importStar(require("./sms.service"));
 exports.default = {
     emailService,
     awsService,
-    notificationService,
+    // notificationService,
     smsService,
 };

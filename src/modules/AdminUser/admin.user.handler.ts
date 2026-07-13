@@ -14,7 +14,7 @@ import userWeeklyChallengesModel from "../UserChallenges/user.weekly.challenges.
 import userDailyChallengesModel from "../UserChallenges/user.daily.challenges.model";
 import userAuthModel from "../../modules/UserAuth/user.auth.model";
 import userThemeEngagementModel from "../UserModules/user.themeEngagement.model";
-import { sendTopicNotification } from "../../services/notification.service";
+// import { sendTopicNotification } from "../../services/notification.service";
 import axios from "axios";
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 
@@ -208,15 +208,15 @@ const AdminUserHandler = {
 
         if (parsedStatus === USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = DEACTIVATE_BY.ADMIN
-            await sendTopicNotification(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {})
+            // await sendTopicNotification(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {})
         }//ends
 
         if (parsedStatus === USER_STATUS.DELETED) {
-            await sendTopicNotification(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {})
+            // await sendTopicNotification(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {})
         }
 
         if (parsedStatus === USER_STATUS.ACTIVE) {
-            await sendTopicNotification(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {})
+            // await sendTopicNotification(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {})
         }
 
         const response = await findOneAndUpdate(userModel, queryObject, editObj);

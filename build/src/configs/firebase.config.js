@@ -1,11 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const firebase_admin_1 = __importDefault(require("firebase-admin"));
-const firebase_sdk_json_1 = __importDefault(require("../../public/firebase/firebase.sdk.json"));
-firebase_admin_1.default.initializeApp({
-    credential: firebase_admin_1.default.credential.cert(firebase_sdk_json_1.default)
-});
-exports.default = firebase_admin_1.default;
+// import firebaseAdmin from 'firebase-admin'
+// import serviceAccount from '../../public/firebase/firebase.sdk.json'
+// firebaseAdmin.initializeApp({
+//     credential: firebaseAdmin.credential.cert(serviceAccount as any)
+// });
+// export default firebaseAdmin

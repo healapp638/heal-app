@@ -24,8 +24,8 @@ const admin_phases_model_1 = __importDefault(require("../modules/AdminPhases/adm
 const mongoose_config_1 = require("../configs/mongoose.config");
 const app_constant_1 = require("../constants/app.constant");
 const admin_exel_model_1 = __importDefault(require("../modules/AdminCommon/admin.exel.model"));
-const notification_service_1 = require("../services/notification.service");
-const admin_auth_model_1 = __importDefault(require("../modules/AdminAuth/admin.auth.model"));
+// import { sendTopicNotification } from "../services/notification.service";
+// import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
 const user_affirmation_model_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.model"));
 const admin_mcqexercise_model_1 = __importDefault(require("../modules/AdminExercise/admin.mcqexercise.model"));
 console.log("👷 Worker booting...");
@@ -206,11 +206,16 @@ const startWorker = () => __awaiter(void 0, void 0, void 0, function* () {
                 }
             }
             yield updateImportStatus(themeTitle, 3);
-            const admindata = yield admin_auth_model_1.default.findOne({ user_type: 1 }).lean();
-            const admin_id = admindata === null || admindata === void 0 ? void 0 : admindata._id;
-            const title = "Excel Import Completed Successfully";
-            const message = "Excel has been successfully imported";
-            yield (0, notification_service_1.sendTopicNotification)(`${admin_id}`, title, message, {});
+            // const admindata = await adminAuthModel.findOne({ user_type: 1 }).lean();
+            // const admin_id = admindata?._id
+            // const title = "Excel Import Completed Successfully";
+            // const message = "Excel has been successfully imported"
+            // await sendTopicNotification(
+            //     `${admin_id}`,
+            //     title,
+            //     message,
+            //     {},
+            // );
         }
         catch (err) {
             console.error("❌ Job error:", err);

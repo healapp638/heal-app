@@ -60,7 +60,7 @@ const user_weekly_challenges_model_1 = __importDefault(require("../UserChallenge
 const user_daily_challenges_model_1 = __importDefault(require("../UserChallenges/user.daily.challenges.model"));
 const user_auth_model_2 = __importDefault(require("../../modules/UserAuth/user.auth.model"));
 const user_themeEngagement_model_1 = __importDefault(require("../UserModules/user.themeEngagement.model"));
-const notification_service_1 = require("../../services/notification.service");
+// import { sendTopicNotification } from "../../services/notification.service";
 const axios_1 = __importDefault(require("axios"));
 // import { getCache, setCache } from "../../processQueue/redis.cache";
 const AdminUserHandler = {
@@ -233,13 +233,13 @@ const AdminUserHandler = {
         const editObj = { status: parsedStatus, deactivate_by: '' };
         if (parsedStatus === workflow_constant_1.USER_STATUS.DEACTIVATED) {
             editObj.deactivate_by = workflow_constant_1.DEACTIVATE_BY.ADMIN;
-            yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {});
+            // await sendTopicNotification(user_id, 'Your account has been deactivated', 'Your account has been deactivated by Admin', {})
         } //ends
         if (parsedStatus === workflow_constant_1.USER_STATUS.DELETED) {
-            yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {});
+            // await sendTopicNotification(user_id, 'Your account has been deleted', 'Your account has been deleted by Admin', {})
         }
         if (parsedStatus === workflow_constant_1.USER_STATUS.ACTIVE) {
-            yield (0, notification_service_1.sendTopicNotification)(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {});
+            // await sendTopicNotification(user_id, 'Your account has been activated', 'Your account has been activated by Admin', {})
         }
         const response = yield (0, db_helpers_1.findOneAndUpdate)(user_auth_model_1.default, queryObject, editObj);
         if (!response.status) {

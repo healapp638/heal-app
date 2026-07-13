@@ -10,8 +10,8 @@ import adminPhasesModel from "../modules/AdminPhases/admin.phases.model";
 import { connection as connectDB } from "../configs/mongoose.config";
 import { initializeAwsCredential, REDIS_CREDENTIAL } from "../constants/app.constant";
 import adminExelModel from "../modules/AdminCommon/admin.exel.model";
-import { sendTopicNotification } from "../services/notification.service";
-import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
+// import { sendTopicNotification } from "../services/notification.service";
+// import adminAuthModel from "../modules/AdminAuth/admin.auth.model";
 import userAffirmationModel from "../modules/UserAffirmation/user.affirmation.model";
 import adminMcqexerciseModel from "../modules/AdminExercise/admin.mcqexercise.model";
 console.log("👷 Worker booting...");
@@ -266,16 +266,16 @@ const startWorker = async () => {
                     }
                 }
                 await updateImportStatus(themeTitle, 3);
-                const admindata = await adminAuthModel.findOne({ user_type: 1 }).lean();
-                const admin_id = admindata?._id
-                const title = "Excel Import Completed Successfully";
-                const message = "Excel has been successfully imported"
-                await sendTopicNotification(
-                    `${admin_id}`,
-                    title,
-                    message,
-                    {},
-                );
+                // const admindata = await adminAuthModel.findOne({ user_type: 1 }).lean();
+                // const admin_id = admindata?._id
+                // const title = "Excel Import Completed Successfully";
+                // const message = "Excel has been successfully imported"
+                // await sendTopicNotification(
+                //     `${admin_id}`,
+                //     title,
+                //     message,
+                //     {},
+                // );
 
             } catch (err) {
                 console.error("❌ Job error:", err);
