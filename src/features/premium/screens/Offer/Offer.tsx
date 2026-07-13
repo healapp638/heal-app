@@ -90,8 +90,8 @@ const Offer = () => {
     <SolidView
       isScrollEnabled={false}
       view={
-        <View style={{ flex: 1 }}>
-          <View style={{ paddingHorizontal: 20, zIndex: 999 }}>
+        <View style={styles.mainContainer}>
+          <View style={styles.headerWrapper}>
             <HeaderCommon
               onBackPress={
                 fromCreatingSpace
@@ -100,27 +100,18 @@ const Offer = () => {
               }
             />
           </View>
-          <View style={styles.mainContainer}>
-            {/* <SolidText style={styles.priceHeader}>
-              {yearlyPriceDisplay}
-            </SolidText> */}
 
-            <SolidText style={styles.title}>
-              {localization.appkeys?.offerTrialText}
-            </SolidText>
+          <SolidText style={styles.title}>
+            {localization.appkeys?.offerTrialText}
+          </SolidText>
 
-            {/* <SolidText style={styles.infoText}>
-              {priceInfoText}
-            </SolidText> */}
-
-            <SolidBtn
-              btnStyle={styles.btn}
-              titleTxt={localization.appkeys?.tryFreeBtn}
-              onPress={() => {
-                return navigation.navigate(AppRoutes.Reminder as never);
-              }}
-            />
-          </View>
+          <SolidBtn
+            btnStyle={styles.btn}
+            titleTxt={localization.appkeys?.tryFreeBtn}
+            onPress={() => {
+              return navigation.navigate(AppRoutes.Reminder as never);
+            }}
+          />
         </View>
       }
     />

@@ -288,8 +288,8 @@ const ChatInputBarComponent: React.FC<ChatInputBarProps> = ({
               flex: isMultiline ? 1 : 0.9,
             },
           ]}
-          spellCheck={true}
-          autoCorrect={true}
+          // spellCheck={true}
+          // autoCorrect={true}
           placeholder={
             isListening
               ? localization?.appkeys?.listening || 'Listening...'
