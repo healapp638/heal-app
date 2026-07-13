@@ -42,6 +42,7 @@ const susbriptionPlansSchema = new Schema(
         timestamps: true
     },
 
+    
 )
 export default model('susbriptionPlans', susbriptionPlansSchema, "susbription_plans")
 
