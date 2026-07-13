@@ -1,0 +1,55 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const Route = express_1.default.Router();
+//admin routes
+const admin_auth_route_1 = __importDefault(require("../modules/AdminAuth/admin.auth.route"));
+const admin_common_route_1 = __importDefault(require("../modules/AdminCommon/admin.common.route"));
+const admin_user_route_1 = __importDefault(require("../modules/AdminUser/admin.user.route"));
+const admin_contactus_route_1 = __importDefault(require("../modules/AdminContactus/admin.contactus.route"));
+const admin_theme_route_1 = __importDefault(require("./AdminTheme/admin.theme.route"));
+const admin_modules_route_1 = __importDefault(require("./AdminModules/admin.modules.route"));
+const admin_submodules_route_1 = __importDefault(require("./AdminSubModules/admin.submodules.route"));
+const admin_phases_route_1 = __importDefault(require("./AdminPhases/admin.phases.route"));
+const admin_exercise_route_1 = __importDefault(require("./AdminExercise/admin.exercise.route"));
+const user_modules_route_1 = __importDefault(require("./UserModules/user.modules.route"));
+const user_journal_route_1 = __importDefault(require("./UserJournel/user.journal.route"));
+const user_challenges_route_1 = __importDefault(require("./UserChallenges/user.challenges.route"));
+const admin_hometheme_route_1 = __importDefault(require("./AdminHometheme/admin.hometheme.route"));
+//user and admin all usertype common routes
+const common_route_1 = __importDefault(require("../modules/Common/common.route"));
+//user routes
+const user_auth_route_1 = __importDefault(require("../modules/UserAuth/user.auth.route"));
+const user_common_route_1 = __importDefault(require("../modules/UserCommon/user.common.route"));
+const user_affirmation_route_1 = __importDefault(require("../modules/UserAffirmation/user.affirmation.route"));
+const user_HomeTheme_route_1 = __importDefault(require("../modules/UserHomeTheme/user.HomeTheme.route"));
+const user_aichat_route_1 = __importDefault(require("../modules/UserHealyChat/user.aichat.route"));
+const user_subscription_route_1 = __importDefault(require("../modules/userSubscription/user.subscription.route"));
+// *********assign order of routes for swagger in last to show on first **********
+//admin routes
+Route.use('/admin/common', admin_common_route_1.default);
+Route.use('/admin/user', admin_user_route_1.default);
+Route.use('/admin/auth', admin_auth_route_1.default);
+Route.use('/admin/contactus', admin_contactus_route_1.default);
+Route.use('/admin/theme', admin_theme_route_1.default);
+Route.use('/admin/modules', admin_modules_route_1.default);
+Route.use('/admin/submodules', admin_submodules_route_1.default);
+Route.use('/admin/phases', admin_phases_route_1.default);
+Route.use('/admin/exercise', admin_exercise_route_1.default);
+Route.use('/admin/homeTheme', admin_hometheme_route_1.default);
+//user routes
+Route.use('/user/auth', user_auth_route_1.default);
+Route.use('/user/common', user_common_route_1.default);
+Route.use('/user/modules', user_modules_route_1.default);
+Route.use('/user/journal', user_journal_route_1.default);
+Route.use('/user/subscription', user_subscription_route_1.default);
+Route.use('/user/challenges', user_challenges_route_1.default);
+Route.use('/user/affirmation', user_affirmation_route_1.default);
+Route.use('/user/homeTheme', user_HomeTheme_route_1.default);
+Route.use('/user/healyChat', user_aichat_route_1.default);
+//user and admin all usertype common routes
+Route.use('/common', common_route_1.default);
+exports.default = Route;
