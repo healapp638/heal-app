@@ -2,6 +2,10 @@ import React from 'react'
 import type { Metadata } from 'next'
 import ResetPasswordForm from './ResetPasswordForm'
 
+// Must never be statically prerendered/CDN-cached, or an already-authenticated
+// user can be served this page without src/proxy.ts running its redirect.
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Reset Password',
   description: 'Create a new password for your Heal account. Keep your account secure with a strong password.',

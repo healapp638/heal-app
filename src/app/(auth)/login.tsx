@@ -26,12 +26,12 @@ export default function Login() {
     // Login mutate
     const { mutateAsync: loginMutate } = useAppMutate({
         mutationKey: [MUTATION_KEYS.LOGIN],
-        onSuccess(data: any) {
+        async onSuccess(data: any) {
             dispatch(storeToken(data?.access_token))
             dispatch(storeRefresh(data?.refresh_token))
             // Store user info in TanStack Query cache using reusable hook
             setCache([QUERY_KEYS.USER], data)
-            setAuthAction(data?.access_token) // Set auth cookie for middleware
+            await setAuthAction(data?.access_token) // Set auth cookie for middleware
             setLoading(false)
             router.push(ROUTES.PRIVATE.HOME)
         },

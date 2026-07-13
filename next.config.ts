@@ -115,8 +115,20 @@ export default withPWA({
                 networkTimeoutSeconds: 10,
             },
         },
+        // Full-page navigations (document requests) must always hit the network so
+        // src/proxy.ts can run and redirect an authenticated user away from the
+        // login/AUTH_PAGES. next-pwa's fallbacks.document ("/offline.html") still
+        // applies automatically here regardless of handler type, so offline UX
+        // is unaffected.
         {
-            urlPattern: /.*/i,
+            urlPattern: ({ request }: { request: Request }) => request.mode === "navigate",
+            handler: "NetworkOnly",
+            options: {
+                cacheName: "navigations",
+            },
+        },
+        {
+            urlPattern: ({ request }: { request: Request }) => request.mode !== "navigate",
             handler: "NetworkFirst",
             options: {
                 cacheName: "others",
