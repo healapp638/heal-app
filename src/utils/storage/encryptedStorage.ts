@@ -1,7 +1,7 @@
 import logger from "@/utils/logger";
 
 const SECRET_KEY =
-  process.env.NEXT_PUBLIC_STORAGE_KEY || "default-weak-key";
+  process.env.NEXT_PUBLIC_ENCRYPTION_KEY || "default-weak-key";
 
 /* ----------------------------------
    Environment guard

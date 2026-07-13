@@ -293,7 +293,7 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
                                 isLoading={isPending || isUpdating}
                                 disabled={!isView && !fileUrl}
                                 htmlType="submit"
-                                className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!"
+                                className="bg-maincolor! font-bold text-white!  hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none! my-4!"
                                 block
                             >
                                 {isView ? "OK" : isUpdate ? "Update Home Theme" : "Add Home Theme"}

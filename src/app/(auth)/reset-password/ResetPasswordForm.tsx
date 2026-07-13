@@ -19,8 +19,13 @@ const ResetPasswordForm = () => {
 
   const router = useRouter();
   const [form] = Form.useForm();
-  const { getResetEmail, getResetOTP, clearResetFlow} = useResetFlow();
+  const { resetEmail, resetOTP, getResetEmail, getResetOTP, clearResetFlow} = useResetFlow();
 
+  React.useEffect(() => {
+    if (!resetEmail || !resetOTP) {
+      router.push(ROUTES.AUTH.FORGOT_PASSWORD);
+    }
+  }, [resetEmail, resetOTP, router]);
 
   const { mutateAsync: resetPasswordMutate, isPending } = useAppMutate({
     mutationKey: [MUTATION_KEYS.RESET_PASSWORD],
@@ -82,7 +87,7 @@ const ResetPasswordForm = () => {
         onFinish={handleResetPassword}
         requiredMark={false}
         autoComplete='off'
-        className='w-full text-center'
+        className='w-full text-center reset-page'
       >
         <PasswordFormItem
           name="newpassword"
@@ -95,7 +100,7 @@ const ResetPasswordForm = () => {
           required
           label="Confirmed Password"
         />
-        <AppButton isLoading={isPending} ghost={true} htmlType="submit" className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 w-full rounded-lg  border-transparent! border-none! outline-none!  shadow-none!">
+        <AppButton isLoading={isPending} ghost={true} htmlType="submit" className="bg-maincolor! my-4! font-bold text-white! hover:text-white! hover:opacity-100 w-full rounded-lg  border-transparent! border-none! outline-none!  shadow-none!">
           Submit
         </AppButton>
       </Form>

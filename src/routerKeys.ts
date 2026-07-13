@@ -5,7 +5,6 @@ export const ROUTES = {
     },
     // Auth group
     AUTH: {
-        REGISTER: "/register",
         VERIFY_OTP: "/otp-verify",
         FORGOT_PASSWORD: "/forgot-password",
         RESET_PASSWORD: "/reset-password",
@@ -33,17 +32,11 @@ export const ROUTES = {
         CATEGORY: "/category",
         HOMETHEME: "/category/theme",
         ADDMCQEXERCISE: "/module/addMcqExercise",
-
     },
 
     // Common public pages
     COMMON: {
-        DELETE_ACCOUNT: "/delete-account",
-        TERMS: "/terms",
-        PRIVACY: "/privacy",
-        CONTACT: "/contact",
         DELETE: "/delete",
-
     },
 
 } as const

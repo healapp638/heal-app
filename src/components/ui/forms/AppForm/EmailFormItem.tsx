@@ -57,7 +57,7 @@ const EmailFormItem = React.forwardRef<InputRef, EmailFormItemProps>(
     return (
       <Form.Item
         name={name}
-        label={<span className='text-black'>{label}</span>}
+        label={<span className='text-black p-0!'>{label}</span>}
         rules={hasRules ? rules : []}
         {...formItemProps}
       >
@@ -71,7 +71,7 @@ const EmailFormItem = React.forwardRef<InputRef, EmailFormItemProps>(
           allowClear={clearable}
           maxLength={maxLength}
           autoComplete={autoComplete}
-          className="!bg-white !text-black border-none!"
+          className="!bg-white !text-black border-none! "
           {...restInputProps}
         />
       </Form.Item>

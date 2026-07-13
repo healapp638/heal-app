@@ -143,7 +143,7 @@ const OTPForm = () => {
                 layout="vertical"
                 onFinish={handleVerifyOTP}
                 form={form}
-                className='w-full'
+                className='w-full otp-page'
             >
                 <Form.Item
                     label={<span className='text-black'>OTP Code</span>}

@@ -68,7 +68,7 @@ export default function Login() {
                 layout='vertical'
                 onFinish={handleLogin}
                 autoComplete='off'
-                className='w-[95%] mx-auto!'
+                className='w-[95%] login-form'
             >
                 <EmailFormItem name="email" />
 

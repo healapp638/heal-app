@@ -241,3 +241,25 @@
 .ant-upload-list-item-thumbnail{
    @apply text-black! 
 }
+
+.ant-form-item-vertical .ant-form-item-label{
+  @apply p-0!
+}
+.ant-form-item{
+  @apply m-0!
+}
+.ant-form-item-control-input-content{
+  @apply my-4!
+}
+.login-form .ant-form-item-control-input-content{
+  @apply my-0!
+}
+.forgot-page .ant-form-item-control-input-content{
+  @apply my-0!
+}
+.otp-page .ant-form-item-control-input-content{
+  @apply my-0!
+}
+.reset-page .ant-form-item-control-input-content{
+  @apply my-0!
+}

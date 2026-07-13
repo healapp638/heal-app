@@ -10,7 +10,6 @@ import { MUTATION_KEYS } from "@/tanstack/keys"
 import { useAppMutate } from "@/tanstack/useAppMutate"
 import { trimString } from "@/utils/helper"
 
-
 export default function Delete() {
 
     const [emailForm] = Form.useForm();

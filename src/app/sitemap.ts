@@ -1,7 +1,8 @@
 import { MetadataRoute } from "next"
+import { ROUTES } from "@/routerKeys"
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://www.sachtech.com"
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 
   return [
     {
@@ -11,23 +12,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1.0,
     },
     {
-      url: `${baseUrl}/about`,
+      url: `${baseUrl}${ROUTES.COMMON.DELETE}`,
       lastModified: new Date(),
       changeFrequency: "monthly",
-      priority: 0.8,
+      priority: 0.5,
     },
-    {
-      url: `${baseUrl}/services`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    // Add more pages as your site grows…
   ]
 }

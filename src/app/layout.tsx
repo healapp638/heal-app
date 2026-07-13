@@ -15,8 +15,10 @@ import SplashScreen from '@/components/ui/feedback/SplashScreen'
 import { DEFAULT_LANGUAGE, SHOW_INSTALL_PROMPT, SHOW_VERSION_UPDATE_NOTIFICATION } from '@/config'
 
 // ---------- SEO METADATA ----------
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
 export const metadata = {
-  metadataBase: new URL("https://www.sachtech.com"),
+  metadataBase: new URL(APP_URL),
   title: {
     default: "Heal | Software Development, SaaS, Mobile & Web Solutions",
     template: "%s | Heal",
@@ -24,11 +26,11 @@ export const metadata = {
   description:
     "Heal provides expert software development, SaaS solutions, mobile apps, and enterprise web applications.",
   robots: "index, follow",
-  alternates: { canonical: "https://www.sachtech.com" },
+  alternates: { canonical: APP_URL },
   openGraph: {
     title: "Heal",
     description: "Software, SaaS, Web & Mobile App Development Experts",
-    url: "https://www.sachtech.com",
+    url: APP_URL,
     siteName: "Heal",
     images: [{ url: "/og-image.png" }],
   },
@@ -132,7 +134,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "Heal",
-              url: "https://www.sachtech.com",
+              url: APP_URL,
             }),
           }}
         />

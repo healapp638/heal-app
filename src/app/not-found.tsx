@@ -30,13 +30,6 @@ export default function NotFound() {
                     >
                         Go to homepage
                     </Link>
-
-                    <Link
-                        href="/contact"
-                        className="inline-flex items-center justify-center rounded-md border border-border px-6 py-3 text-sm font-medium hover:bg-card transition"
-                    >
-                        Contact support
-                    </Link>
                 </div>
             </div>
         </div>

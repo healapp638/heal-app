@@ -3,8 +3,6 @@
 import React from 'react';
 import { Form } from 'antd';
 import { useRouter } from 'next/navigation';
-
-import logger from '@/utils/logger';
 import { ROUTES } from '@/routerKeys';
 import { ENDPOINTS } from '@/Endpoints';
 import { AppButton } from '@/components/ui';
@@ -15,6 +13,7 @@ import { useResetFlow } from '@/hooks/auth/useResetFlow';
 import AuthCard from '@/components/commonCard/AuthCard';
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper';
 import { EmailFormItem } from '@/components/ui/forms/AppForm';
+import logger from '@/utils/logger';
 
 
 export default function ForgotPasswordForm() {
@@ -82,11 +81,11 @@ export default function ForgotPasswordForm() {
         layout='vertical'
         autoComplete='off'
         onFinish={handleForgotPassword}
-        className='w-[95%] mx-auto!'
+        className='w-[95%] forgot-page'
       >
         <EmailFormItem name="email" />
 
-        <AppButton htmlType="submit" className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" block>
+        <AppButton htmlType="submit" className="bg-maincolor! font-bold text-white! hover:text-white! hover:opacity-100 my-4! rounded-lg  border-transparent! border-none! outline-none!  shadow-none!" block>
           Continue
         </AppButton>
       </Form>
