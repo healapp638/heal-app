@@ -15,7 +15,6 @@ import { tryCatchWrapper } from '@/utils/tryCatchWrapper';
 import { EmailFormItem } from '@/components/ui/forms/AppForm';
 import logger from '@/utils/logger';
 
-
 export default function ForgotPasswordForm() {
 
   const router = useRouter();
