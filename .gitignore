@@ -8,6 +8,16 @@ node_modules/
 dist/
 # Ignore secrets
 public/androidCerts/androidInAppPurchase.json
+build/public/androidCerts/androidInAppPurchase.json
+public/firebase/firebase.sdk.json
+build/public/firebase/firebase.sdk.json
+.env
+.env.dev
+.env.docker
+.env.example
+.env.prod
+build/.env
+build/.env.docker
 
 
 # Compiled Java class files
