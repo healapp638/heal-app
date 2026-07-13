@@ -11,6 +11,7 @@ import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddLessonsModal from "@/components/ui/modals/addLessonsModal";
@@ -134,8 +135,8 @@ export default function AddLessons() {
             {
                 errorMessage: 'Failed to delete lesson',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete lesson');
+                onError(error) {
+                    logger.error('Failed to delete lesson', error);
                     setOpenDeleteLessonModal(false)
                     setLessonId("")
                 },
@@ -163,10 +164,10 @@ export default function AddLessons() {
                 });
             },
             {
-                errorMessage: 'Failed to delete lesson',
+                errorMessage: 'Failed to change lesson status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete lesson');
+                onError(error) {
+                    logger.error('Failed to change lesson status', error);
                     setOpenDeleteLessonModal(false)
                     setLessonId("")
                 },
@@ -298,7 +299,7 @@ export default function AddLessons() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

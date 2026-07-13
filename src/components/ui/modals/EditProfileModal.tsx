@@ -4,6 +4,7 @@ import React from "react"
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { Form, Input, Modal, Upload, message } from "antd";
 import { RxCross2 } from "react-icons/rx";
@@ -101,9 +102,8 @@ const EditProfileModal = ({ openModal, setOpenModal }: EditProfileModalProps) =>
             {
                 errorMessage: 'Failed to upload file',
                 showToast: true,
-                onError() {
-                    // Optionally handle error state here
-                    console.error('Failed to upload file');
+                onError(error) {
+                    logger.error('Failed to upload file', error);
                 }
             }
         );

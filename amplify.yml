@@ -3,19 +3,6 @@ frontend:
   phases:
     preBuild:
       commands:
-        - echo "AWS BRANCH = $AWS_BRANCH"
-
-        # Dev branch
-        - if [ "$AWS_BRANCH" = "dev" ]; then cp .env.development .env; fi
-
-        # Production branch
-        - if [ "$AWS_BRANCH" = "prod" ]; then cp .env.production .env; fi
-
-        # Debug output
-        - echo "========== USING .env FILE =========="
-        - cat .env
-        - echo "====================================="
-
         # Install dependencies AFTER env is set
         - npm clean-install
 

@@ -7,6 +7,7 @@ import { AppButton } from "@/components/ui";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 
 interface contactDetailProps {
@@ -63,10 +64,10 @@ export default function ContactModule({ openModal, setOpenModal, isReply,isView,
                 });
             },
             {
-                errorMessage: 'Failed to delete contact',
+                errorMessage: 'Failed to send reply',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to send reply', error);
                     setOpenModal(false)
                 }
             }
@@ -92,7 +93,7 @@ export default function ContactModule({ openModal, setOpenModal, isReply,isView,
                 open={openModal}
                 onOk={() => setOpenModal(false)}
                 onCancel={() => setOpenModal(false)}
-                width={400}
+                width={600}
                 footer={false}
                 centered
             >

@@ -3,7 +3,6 @@
 import React from 'react'
 import { Form } from 'antd'
 import Link from 'next/link'
-import logger from '@/utils/logger'
 import { ROUTES } from '@/routerKeys'
 import { ENDPOINTS } from '@/Endpoints'
 import { useDispatch } from 'react-redux'
@@ -48,7 +47,6 @@ export default function Login() {
             password: trimString(values.password),
             email: formatEmail(values.email),
         }
-        logger.error('User logged in successfully', user);
 
         loginMutate({
             url: ENDPOINTS.AUTH.LOGIN,

@@ -12,6 +12,7 @@ import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { useParams, useRouter } from "next/navigation";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddModuleModal from "@/components/ui/modals/addModuleModal";
@@ -93,10 +94,10 @@ export default function AddModule() {
                 });
             },
             {
-                errorMessage: 'Failed to change status',
+                errorMessage: 'Failed to change module status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to change status');
+                onError(error) {
+                    logger.error('Failed to change module status', error);
                 },
             }
         );
@@ -129,8 +130,8 @@ export default function AddModule() {
             {
                 errorMessage: 'Failed to delete module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to delete module', error);
                     setOpenDeleteModule(false)
                     setSelectedModule("")
                 },
@@ -263,7 +264,7 @@ export default function AddModule() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

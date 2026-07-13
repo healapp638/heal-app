@@ -10,6 +10,7 @@ import { Image, Select, Switch, Table } from 'antd';
 import { MUTATION_KEYS } from '@/tanstack/keys';
 import type { ColumnsType } from 'antd/es/table';
 import { FiTrash2, FiEdit } from "react-icons/fi"
+import logger from '@/utils/logger';
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper';
 import { useAppMutate } from '@/tanstack/useAppMutate';
 import { useAppQuery } from '@/tanstack/useAppQuery';
@@ -98,10 +99,10 @@ export default function Module() {
                 });
             },
             {
-                errorMessage: 'Failed to delete theme',
+                errorMessage: 'Failed to change module status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to change module status', error);
                 },
             }
         );
@@ -131,10 +132,10 @@ export default function Module() {
                 });
             },
             {
-                errorMessage: 'Failed to delete theme',
+                errorMessage: 'Failed to delete module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to delete module', error);
                     setSelectedTheme("")
                 },
             }
@@ -227,7 +228,7 @@ export default function Module() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

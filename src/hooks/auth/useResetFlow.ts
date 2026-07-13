@@ -1,36 +1,31 @@
-import { useState, useCallback } from 'react';
+'use client';
 
-let resetFlowState: { email?: string; token?: string; otp?: string; flow?: string } = {};
+import { useCallback } from 'react';
+import { useResetFlowContext } from './ResetFlowContext';
 
 export const useResetFlow = () => {
-  const [, setRefresh] = useState({});
+  const { state, setState } = useResetFlowContext();
 
   const setResetEmail = useCallback((email: string) => {
-    resetFlowState.email = email;
-    resetFlowState.flow = 'reset';
-    setRefresh({});
-  }, []);
+    setState((prev) => ({ ...prev, email, flow: 'reset' }));
+  }, [setState]);
 
   const setResetToken = useCallback((token: string) => {
-    resetFlowState.token = token;
-    setRefresh({});
-  }, []);
-
+    setState((prev) => ({ ...prev, token }));
+  }, [setState]);
 
   const setResetOTP = useCallback((otp: string) => {
-    resetFlowState.otp = otp;
-    setRefresh({});
-  }, []);
+    setState((prev) => ({ ...prev, otp }));
+  }, [setState]);
 
-  const getResetEmail = useCallback(() => resetFlowState.email, []);
-  const getResetToken = useCallback(() => resetFlowState.token, []);
-  const getResetOTP = useCallback(() => resetFlowState.otp, []);
-  const getFlow = useCallback(() => resetFlowState.flow, []);
+  const getResetEmail = useCallback(() => state.email, [state.email]);
+  const getResetToken = useCallback(() => state.token, [state.token]);
+  const getResetOTP = useCallback(() => state.otp, [state.otp]);
+  const getFlow = useCallback(() => state.flow, [state.flow]);
 
   const clearResetFlow = useCallback(() => {
-    resetFlowState = {};
-    setRefresh({});
-  }, []);
+    setState({});
+  }, [setState]);
 
   return {
     setResetEmail,
@@ -41,9 +36,9 @@ export const useResetFlow = () => {
     getResetToken,
     getFlow,
     clearResetFlow,
-    resetEmail: resetFlowState.email,
-    resetToken: resetFlowState.token,
-    resetOTP: resetFlowState.otp,
-    flow: resetFlowState.flow,
+    resetEmail: state.email,
+    resetToken: state.token,
+    resetOTP: state.otp,
+    flow: state.flow,
   };
 };

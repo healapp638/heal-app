@@ -4,6 +4,7 @@ import React from "react"
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { Form, Input, Modal, Spin, Upload, message } from "antd";
 import { FiPlus } from "react-icons/fi"
@@ -111,8 +112,8 @@ const AddCategoryModal = ({ openModal, setOpenModal, isUpdate, isView, categoryI
             {
                 errorMessage: `Failed to ${isUpdate ? 'update' : 'add'} category theme`,
                 showToast: true,
-                onError() {
-                    console.error(`Failed to ${isUpdate ? 'update' : 'add'} category theme`);
+                onError(error) {
+                    logger.error(`Failed to ${isUpdate ? 'update' : 'add'} category theme`, error);
                 }
             }
         );
@@ -155,8 +156,8 @@ const AddCategoryModal = ({ openModal, setOpenModal, isUpdate, isView, categoryI
             {
                 errorMessage: 'Failed to upload file',
                 showToast: true,
-                onError() {
-                    console.error('Failed to upload file');
+                onError(error) {
+                    logger.error('Failed to upload file', error);
                     setFileList([]);
                     setFileUrl("");
                     form.setFieldValue("imgUrl", "");

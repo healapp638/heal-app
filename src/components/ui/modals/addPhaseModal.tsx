@@ -6,6 +6,7 @@ import { RxCross2 } from "react-icons/rx";
 import AppButton from "../buttons/AppButton";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { MUTATION_KEYS } from "@/tanstack/keys";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { ENDPOINTS } from "@/Endpoints";
 import { useAppQuery } from "@/tanstack/useAppQuery";
@@ -90,8 +91,8 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
             {
                 errorMessage: 'Failed to add phase',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add phase');
+                onError(error) {
+                    logger.error('Failed to add phase', error);
                     handleCancel();
                 }
             }
@@ -126,8 +127,8 @@ const AddPhaseModal = ({ openAddPhaseModal, setOpenAddPhaseModal, subModuleId, o
             {
                 errorMessage: 'Failed to update phase',
                 showToast: true,
-                onError() {
-                    console.error('Failed to update phase');
+                onError(error) {
+                    logger.error('Failed to update phase', error);
                     handleCancel();
                 }
             }

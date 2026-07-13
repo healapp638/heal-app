@@ -8,6 +8,7 @@ import { MUTATION_KEYS } from '@/tanstack/keys'
 import { useAppQuery } from '@/tanstack/useAppQuery'
 import { useAppMutate } from '@/tanstack/useAppMutate'
 import CustomEditor from '@/components/ui/CustomEditor'
+import logger from '@/utils/logger'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
@@ -85,10 +86,10 @@ export default function PrivacyPolicy() {
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to update Privacy Policy content',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to update Privacy Policy content', error);
                 }
             }
         );
@@ -107,10 +108,10 @@ export default function PrivacyPolicy() {
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to reset Privacy Policy content',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to reset Privacy Policy content', error);
                 }
             }
         );
@@ -128,7 +129,7 @@ export default function PrivacyPolicy() {
                     value={selectedLanguage}
                     onChange={handleLanguageChange}
                     options={LANGUAGE_OPTIONS}
-                    onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                    onOpenChange={(open) => setIsSelectOpen(open)}
                     className='w-32 bg-maincolor! font-bold text-white! border-none!'
                     suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                 />

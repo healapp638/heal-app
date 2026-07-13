@@ -8,6 +8,7 @@ import { Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import React from 'react'
 import DeleteModal from '@/components/ui/modals/DeleteModal'
+import logger from '@/utils/logger'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
 import { useAppMutate } from '@/tanstack/useAppMutate'
 import ContactModule from './contactModule'
@@ -84,8 +85,8 @@ export default function ContactUs() {
             {
                 errorMessage: 'Failed to delete contact',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to delete contact', error);
                     setopenDeleteModal(false);
                     setSelectedContact("");
                 }

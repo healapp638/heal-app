@@ -15,6 +15,7 @@ import IconButton from "@/components/ui/IconButton";
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { FaEye } from "react-icons/fa";
 import AddMcqExerciseModal from "@/components/ui/modals/addMcqExerciseModal";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 
@@ -130,10 +131,10 @@ export default function AddMcqExercise() {
                 });
             },
             {
-                errorMessage: 'Failed to delete lesson',
+                errorMessage: 'Failed to delete MCQ exercise',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete lesson');
+                onError(error) {
+                    logger.error('Failed to delete MCQ exercise', error);
                     setOpenDeleteMcqModal(false)
                     setMcqID("")
                 },
@@ -282,7 +283,7 @@ export default function AddMcqExercise() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

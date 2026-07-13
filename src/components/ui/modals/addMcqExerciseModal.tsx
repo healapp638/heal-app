@@ -6,6 +6,7 @@ import { RxCross2 } from "react-icons/rx";
 import { FiTrash2 } from "react-icons/fi";
 import { FaPlus } from "react-icons/fa";
 import AppButton from "../buttons/AppButton";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
@@ -97,10 +98,10 @@ const AddMcqExerciseModal = ({ openAddMcqExerciseModal, setOpenAddMcqExerciseMod
                 });
             },
             {
-                errorMessage: 'Failed to add phase',
+                errorMessage: 'Failed to add MCQ exercise',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add phase');
+                onError(error) {
+                    logger.error('Failed to add MCQ exercise', error);
                     handleCancel();
                 }
             }
@@ -132,10 +133,10 @@ const AddMcqExerciseModal = ({ openAddMcqExerciseModal, setOpenAddMcqExerciseMod
                 });
             },
             {
-                errorMessage: 'Failed to update Lesson',
+                errorMessage: 'Failed to update MCQ exercise',
                 showToast: true,
-                onError() {
-                    console.error('Failed to update Lesson');
+                onError(error) {
+                    logger.error('Failed to update MCQ exercise', error);
                     handleCancel();
                 }
             }

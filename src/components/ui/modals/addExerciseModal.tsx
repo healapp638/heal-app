@@ -4,6 +4,7 @@ import React from "react"
 import { Form, Input, Modal } from "antd"
 import { RxCross2 } from "react-icons/rx";
 import AppButton from "../buttons/AppButton";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
@@ -70,10 +71,10 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
                 });
             },
             {
-                errorMessage: 'Failed to add phase',
+                errorMessage: 'Failed to add exercise',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add phase');
+                onError(error) {
+                    logger.error('Failed to add exercise', error);
                     handleCancel();
                 }
             }
@@ -104,10 +105,10 @@ const AddExerciseModal = ({ openModal, setOpenModal, lessonId, isView, isUpdate,
                 });
             },
             {
-                errorMessage: 'Failed to update phase',
+                errorMessage: 'Failed to update exercise',
                 showToast: true,
-                onError() {
-                    console.error('Failed to update phase');
+                onError(error) {
+                    logger.error('Failed to update exercise', error);
                     handleCancel();
                 }
             }

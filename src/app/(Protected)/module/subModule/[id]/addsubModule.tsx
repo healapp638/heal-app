@@ -12,6 +12,7 @@ import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery"
 import { useAppMutate } from "@/tanstack/useAppMutate"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
+import logger from "@/utils/logger"
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper"
 import DeleteModal from "@/components/ui/modals/DeleteModal"
 import AddSubModuleModal from "@/components/ui/modals/addSubModuleModal"
@@ -113,10 +114,10 @@ export default function AddSubModule() {
                 });
             },
             {
-                errorMessage: 'Failed to delete module',
+                errorMessage: 'Failed to delete sub module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to delete sub module', error);
                     setOpenDeleteModule(false)
                     setSelectedSubModule("")
                 },
@@ -146,10 +147,10 @@ export default function AddSubModule() {
                 });
             },
             {
-                errorMessage: 'Failed to delete module',
+                errorMessage: 'Failed to change sub module status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to change sub module status', error);
                     setOpenDeleteModule(false)
                     setSelectedSubModule("")
                 },
@@ -250,7 +251,7 @@ export default function AddSubModule() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

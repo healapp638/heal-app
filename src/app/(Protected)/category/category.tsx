@@ -16,6 +16,7 @@ import { ENDPOINTS } from "@/Endpoints";
 import { FILE_URL } from "@/utils/helper";
 import { ROUTES } from "@/routerKeys";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 
@@ -116,8 +117,8 @@ const Category = () => {
             {
                 errorMessage: 'Failed to delete category',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete category');
+                onError(error) {
+                    logger.error('Failed to delete category', error);
                     setSelectedCategory("")
                 },
             }
@@ -145,10 +146,10 @@ const Category = () => {
                 });
             },
             {
-                errorMessage: 'Failed to change status',
+                errorMessage: 'Failed to change category status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to change status');
+                onError(error) {
+                    logger.error('Failed to change category status', error);
                 },
             }
         );
@@ -224,7 +225,7 @@ const Category = () => {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

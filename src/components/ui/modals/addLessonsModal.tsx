@@ -4,6 +4,7 @@ import React from "react";
 import { Form, Input, Modal } from "antd";
 import { RxCross2 } from "react-icons/rx";
 import AppButton from "../buttons/AppButton";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
@@ -97,10 +98,10 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                 });
             },
             {
-                errorMessage: 'Failed to add phase',
+                errorMessage: 'Failed to add lesson',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add phase');
+                onError(error) {
+                    logger.error('Failed to add lesson', error);
                     handleCancel();
                 }
             }
@@ -132,10 +133,10 @@ const AddLessonsModal = ({ openAddLessonsModal, setOpenAddLessonsModal, phaseId,
                 });
             },
             {
-                errorMessage: 'Failed to update Lesson',
+                errorMessage: 'Failed to update lesson',
                 showToast: true,
-                onError() {
-                    console.error('Failed to update Lesson');
+                onError(error) {
+                    logger.error('Failed to update lesson', error);
                     handleCancel();
                 }
             }

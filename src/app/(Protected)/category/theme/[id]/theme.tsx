@@ -13,6 +13,7 @@ import { MUTATION_KEYS } from "@/tanstack/keys";
 import { ENDPOINTS } from "@/Endpoints";
 import { FILE_URL } from "@/utils/helper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import AddHomeThemeModal from "@/components/ui/modals/addHomeThemeModal";
@@ -90,10 +91,10 @@ const HomeTheme = () => {
                 });
             },
             {
-                errorMessage: 'Failed to delete category',
+                errorMessage: 'Failed to delete home theme',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete category');
+                onError(error) {
+                    logger.error('Failed to delete home theme', error);
                     setSelectedHomeTheme("")
                 },
             }
@@ -121,10 +122,10 @@ const HomeTheme = () => {
                 });
             },
             {
-                errorMessage: 'Failed to change status',
+                errorMessage: 'Failed to change home theme status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to change status');
+                onError(error) {
+                    logger.error('Failed to change home theme status', error);
                 },
             }
         );

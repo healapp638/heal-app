@@ -13,6 +13,7 @@ import { MUTATION_KEYS } from "@/tanstack/keys";
 import { FiTrash2, FiEdit } from "react-icons/fi"
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddPhaseModal from "@/components/ui/modals/addPhaseModal";
@@ -142,10 +143,10 @@ export default function AddPhase() {
                 });
             },
             {
-                errorMessage: 'Failed to delete module',
+                errorMessage: 'Failed to delete phase',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to delete phase', error);
                     setOpenDeletePhaseModal(false)
                     setSelectPhase("")
                 },
@@ -173,10 +174,10 @@ export default function AddPhase() {
                 });
             },
             {
-                errorMessage: 'Failed to delete module',
+                errorMessage: 'Failed to change phase status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete theme');
+                onError(error) {
+                    logger.error('Failed to change phase status', error);
                 },
             }
         );
@@ -289,7 +290,7 @@ export default function AddPhase() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

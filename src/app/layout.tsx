@@ -32,13 +32,13 @@ export const metadata = {
     description: "Software, SaaS, Web & Mobile App Development Experts",
     url: APP_URL,
     siteName: "Heal",
-    images: [{ url: "/og-image.png" }],
+    images: [{ url: "/logo.png" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Heal",
     description: "Build modern digital solutions.",
-    images: ["/og-image.png"],
+    images: ["/logo.png"],
   },
   manifest: "/manifest.json",
   appleWebApp: {

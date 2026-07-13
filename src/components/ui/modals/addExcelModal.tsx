@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Form, Modal, Upload } from "antd"
+import { Form, Modal, Upload, message } from "antd"
 import { useAppMutate } from "@/tanstack/useAppMutate";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import logger from "@/utils/logger";
@@ -51,8 +51,8 @@ const AddExcelModal = ({ openModal, setOpenModal, excelSampleLink }: { openModal
             {
                 errorMessage: 'Failed to upload file',
                 showToast: true,
-                onError() {
-                    console.error('Failed to upload file');
+                onError(error) {
+                    logger.error('Failed to upload file', error);
                 }
             }
         );

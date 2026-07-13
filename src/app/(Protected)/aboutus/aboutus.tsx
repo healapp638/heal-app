@@ -8,6 +8,7 @@ import { MUTATION_KEYS } from '@/tanstack/keys'
 import { useAppQuery } from '@/tanstack/useAppQuery'
 import { useAppMutate } from '@/tanstack/useAppMutate'
 import CustomEditor from '@/components/ui/CustomEditor'
+import logger from '@/utils/logger'
 import { tryCatchWrapper } from '@/utils/tryCatchWrapper'
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
@@ -82,10 +83,10 @@ export default function AboutUs() {
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to update About Us content',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to update About Us content', error);
                 }
             }
         );
@@ -104,10 +105,10 @@ export default function AboutUs() {
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to reset About Us content',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to reset About Us content', error);
                 }
             }
         );
@@ -125,7 +126,7 @@ export default function AboutUs() {
                     value={selectedLanguage}
                     onChange={handleLanguageChange}
                     options={LANGUAGE_OPTIONS}
-                    onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                    onOpenChange={(open) => setIsSelectOpen(open)}
                     className='w-32 bg-maincolor! font-bold text-white! border-none!'
                     suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                 />

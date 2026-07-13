@@ -4,6 +4,7 @@ import React from "react"
 import { useAppMutate } from "@/tanstack/useAppMutate"
 import { ENDPOINTS } from "@/Endpoints"
 import { MUTATION_KEYS } from "@/tanstack/keys"
+import logger from "@/utils/logger"
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper"
 import { Form, Modal } from "antd"
 import { RxCross2 } from "react-icons/rx"
@@ -46,8 +47,8 @@ const ChangePasswordModal = ({ openModal, setOpenModal }: any) => {
             {
                 errorMessage: 'Failed to change password',
                 showToast: true,
-                onError() {
-                    console.error('Failed to change password');
+                onError(error) {
+                    logger.error('Failed to change password', error);
                     handleCancel()
                 }
             }

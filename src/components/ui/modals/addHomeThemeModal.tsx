@@ -4,6 +4,7 @@ import React from "react"
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { Form, Modal, Upload, message, Spin } from "antd";
 import { FiPlus } from "react-icons/fi"
@@ -112,10 +113,10 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
                 }
             },
             {
-                errorMessage: `Failed to ${isUpdate ? 'update' : 'add'} theme`,
+                errorMessage: `Failed to ${isUpdate ? 'update' : 'add'} home theme`,
                 showToast: true,
-                onError() {
-                    console.error(`Failed to ${isUpdate ? 'update' : 'add'} theme`);
+                onError(error) {
+                    logger.error(`Failed to ${isUpdate ? 'update' : 'add'} home theme`, error);
                 }
             }
         );
@@ -158,8 +159,8 @@ const AddHomeThemeModal = ({ openModal, setOpenModal, isUpdate, isView, category
             {
                 errorMessage: 'Failed to upload file',
                 showToast: true,
-                onError() {
-                    console.error('Failed to upload file');
+                onError(error) {
+                    logger.error('Failed to upload file', error);
                     setFileList([]);
                     setFileUrl(null);
                     form.setFieldValue("imgUrl", "");

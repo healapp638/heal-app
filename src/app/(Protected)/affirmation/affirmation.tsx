@@ -126,10 +126,10 @@ const Affirmation = () => {
                     });
                 },
                 {
-                    errorMessage: 'Failed to delete theme',
+                    errorMessage: 'Failed to delete affirmation',
                     showToast: true,
-                    onError() {
-                        console.error('Failed to delete theme');
+                    onError(error) {
+                        logger.error('Failed to delete affirmation', error);
                         setAffiliationId("")
                     },
                 }
@@ -149,10 +149,10 @@ const Affirmation = () => {
                     });
                 },
                 {
-                    errorMessage: 'Failed to delete theme',
+                    errorMessage: 'Failed to update affirmation status',
                     showToast: true,
-                    onError() {
-                        console.error('Failed to delete theme');
+                    onError(error) {
+                        logger.error('Failed to update affirmation status', error);
                         setAffiliationId("")
                     },
                 }
@@ -226,7 +226,7 @@ const Affirmation = () => {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-42 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

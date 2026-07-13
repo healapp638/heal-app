@@ -41,7 +41,6 @@ export const api: AxiosInstance = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = getAccessToken();
-  logger.log("token inside api.interceptors.request.use", token);
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

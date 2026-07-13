@@ -20,7 +20,6 @@ const authSlice = createSlice({
      */
     storeToken(state, action: PayloadAction<string>) {
       state.accessToken = action.payload;
-      document.cookie = `auth=true; path=/;`;
     },
 
     /**
@@ -36,7 +35,6 @@ const authSlice = createSlice({
     logout(state) {
       state.accessToken = null;
       state.refreshToken = null;
-      document.cookie = "auth=; path=/; max-age=0;"
     },
   },
 });

@@ -11,7 +11,6 @@ import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { useTheme } from 'next-themes'
 import { lightTheme, darkTheme } from '@/theme/antdTheme'
 import AppThemeProvider from '@/providers/ThemeProvider'
-// import CentralLoader from '@/components/ui/feedback/CentralLoader'
 import { persistor, store } from '@/redux/store/store'
 
 const queryClient = new QueryClient({
@@ -59,7 +58,6 @@ function InnerProviders({ children }: { children: React.ReactNode }) {
             theme={isDark ? darkTheme : lightTheme}
           >
             <Toaster position="top-right" />
-            {/* <CentralLoader /> */}
             {children}
           </ConfigProvider>
         </QueryClientProvider>

@@ -3,7 +3,7 @@ import { ROUTES } from '@/routerKeys'
 import Login from './login'
 
 export const metadata = generateSEO({
-  title: "Welcome | Heal",
+  title: "Welcome",
   description: "Access your Heal securely.",
   path: ROUTES.WELCOME.WELCOME,
   keywords: ["Heal"],

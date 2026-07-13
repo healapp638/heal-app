@@ -4,6 +4,7 @@ import { Form, Input, Modal } from "antd";
 import React from "react"
 import { RxCross2 } from "react-icons/rx";
 import AppButton from "../buttons/AppButton";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
@@ -61,8 +62,8 @@ const AddAffirmationModal = ({ openModal, setOpenModal, isView, isUpdate, Affili
             {
                 errorMessage: 'Failed to add affirmation',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add affirmation');
+                onError(error) {
+                    logger.error('Failed to add affirmation', error);
                     handleCancel();
                 }
             }
@@ -84,8 +85,8 @@ const AddAffirmationModal = ({ openModal, setOpenModal, isView, isUpdate, Affili
             {
                 errorMessage: 'Failed to update affirmation',
                 showToast: true,
-                onError() {
-                    console.error('Failed to update affirmation');
+                onError(error) {
+                    logger.error('Failed to update affirmation', error);
                     handleCancel();
                 }
             }

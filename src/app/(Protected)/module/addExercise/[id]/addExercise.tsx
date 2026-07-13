@@ -11,6 +11,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppQuery } from "@/tanstack/useAppQuery";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import DeleteModal from "@/components/ui/modals/DeleteModal";
 import AddExerciseModal from "@/components/ui/modals/addExerciseModal"
@@ -129,8 +130,8 @@ export default function AddExercise() {
             {
                 errorMessage: 'Failed to delete exercise',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete exercise');
+                onError(error) {
+                    logger.error('Failed to delete exercise', error);
                     setOpenDeleteExerciseModal(false)
                     setExerciseId("")
                 },
@@ -158,10 +159,10 @@ export default function AddExercise() {
                 });
             },
             {
-                errorMessage: 'Failed to delete exercise',
+                errorMessage: 'Failed to change exercise status',
                 showToast: true,
-                onError() {
-                    console.error('Failed to delete exercise');
+                onError(error) {
+                    logger.error('Failed to change exercise status', error);
                     setOpenDeleteExerciseModal(false)
                     setExerciseId("")
                 },
@@ -281,7 +282,7 @@ export default function AddExercise() {
                         value={selectedLanguage}
                         onChange={handleLanguageChange}
                         options={LANGUAGE_OPTIONS}
-                        onDropdownVisibleChange={(open) => setIsSelectOpen(open)}
+                        onOpenChange={(open) => setIsSelectOpen(open)}
                         className='w-32 bg-maincolor! font-bold text-white! border-none!'
                         suffixIcon={isSelectOpen ? <IoIosArrowUp className="text-white!" /> : <IoIosArrowDown className="text-white!" />}
                     />

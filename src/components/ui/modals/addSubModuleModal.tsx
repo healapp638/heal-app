@@ -4,6 +4,7 @@ import React from "react"
 import { Form, Input, Modal } from "antd";
 import { RxCross2 } from "react-icons/rx";
 import AppButton from "../buttons/AppButton";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
@@ -88,10 +89,10 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to update sub module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to update sub module', error);
                     handleCancel();
                 }
             }
@@ -125,8 +126,8 @@ const AddSubModuleModal = ({ openModal, setOpenModal, moduleId, onClose, subModu
             {
                 errorMessage: 'Failed to add sub module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to add sub module', error);
                     handleCancel();
                 }
             }

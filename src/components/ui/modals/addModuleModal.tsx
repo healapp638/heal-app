@@ -4,6 +4,7 @@ import React from "react"
 import { ENDPOINTS } from "@/Endpoints";
 import { MUTATION_KEYS } from "@/tanstack/keys";
 import { useAppMutate } from "@/tanstack/useAppMutate";
+import logger from "@/utils/logger";
 import { tryCatchWrapper } from "@/utils/tryCatchWrapper";
 import { Form, Input, Modal } from "antd"
 import AppButton from "../buttons/AppButton";
@@ -83,10 +84,10 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to update module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to update module', error);
                     handleCancel();
                 }
             }
@@ -108,10 +109,10 @@ const AddModuleModal = ({ openModal, setOpenModal, ThemeID, isView, isUpdate, mo
                 });
             },
             {
-                errorMessage: 'Failed to add theme',
+                errorMessage: 'Failed to add module',
                 showToast: true,
-                onError() {
-                    console.error('Failed to add theme');
+                onError(error) {
+                    logger.error('Failed to add module', error);
                     handleCancel();
                 }
             }
