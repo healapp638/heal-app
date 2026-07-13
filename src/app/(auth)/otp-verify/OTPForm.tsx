@@ -68,6 +68,7 @@ const OTPForm = () => {
             }
         )
     }
+    
 
     // Auto detect OTP
     React.useEffect(() => {
