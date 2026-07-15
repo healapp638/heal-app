@@ -62,6 +62,7 @@ const HealyChat = () => {
     setShouldAnimateNext,
     isHistoryLoading,
     handleSend,
+    retryPendingMessage,
     conversationId,
     setConversationId,
     startNewChat,
@@ -271,6 +272,7 @@ const HealyChat = () => {
           <GetCreditsModal
             visible={creditsModalVisible}
             onClose={() => setCreditsModalVisible(false)}
+            onPurchaseSuccess={retryPendingMessage}
           />
         </View>
       }

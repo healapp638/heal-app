@@ -73,6 +73,7 @@ export const useHealyChat = (
   const lastMessageRef = useRef<string | null>(null);
   const paginationTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingScrollAfterSend = useRef(false);
+  const pendingRetryMessageRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (isFreshAppLaunch) {
@@ -459,6 +460,7 @@ export const useHealyChat = (
       {
         onSuccess: async (res: any) => {
           if (res?.data?.total_credit === 0) {
+            pendingRetryMessageRef.current = userMessageContent;
             setCreditsModalVisible(true);
           }
           const newConvId =
@@ -531,10 +533,30 @@ export const useHealyChat = (
         onError: (err: any) => {
           console.log('sendMessage error:', err);
           setIsSending(false);
+
+          const isCreditError = /credit/i.test(err?.message || '');
+          if (isCreditError) {
+            // Message never actually sent, so drop the optimistic bubble and
+            // remember the text to auto-resend once the user buys credits.
+            pendingRetryMessageRef.current = userMessageContent;
+            setAllMessages(prev => prev.filter(m => m._id !== tempUserMsg._id));
+            setVisibleCount(prev => Math.max(0, prev - 1));
+            setCreditsModalVisible(true);
+          }
         },
       },
     );
   }, [conversationId, dispatch, refetch, sendMessageMutate, flatListRef, queryClient, setCreditsModalVisible, randomQuestion]);
+
+  // Re-send the message that failed due to lack of credits, called after a
+  // successful credit purchase.
+  const retryPendingMessage = useCallback(() => {
+    const message = pendingRetryMessageRef.current;
+    if (message) {
+      pendingRetryMessageRef.current = null;
+      handleSend(message);
+    }
+  }, [handleSend]);
 
   const startNewChat = useCallback(() => {
     setConversationId(null);
@@ -562,6 +584,7 @@ export const useHealyChat = (
     setShouldAnimateNext,
     isHistoryLoading,
     handleSend,
+    retryPendingMessage,
     conversationId,
     setConversationId,
     startNewChat,

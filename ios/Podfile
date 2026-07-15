@@ -32,5 +32,17 @@ target 'Heal' do
       :mac_catalyst_enabled => false,
        # :ccache_enabled => true
     )
+
+    # Xcode 26's newer libc++ headers don't transitively include <thread>,
+    # which breaks Folly/Hermes compilation ("No member named 'thread' in
+    # namespace 'std'", "undeclared identifier 'expected'") under RN 0.81's
+    # pinned hermes-engine. Force a newer C++ standard on those targets.
+    installer.pods_project.targets.each do |target|
+      if ['React-hermes', 'hermes-engine'].include?(target.name)
+        target.build_configurations.each do |build_config|
+          build_config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++20'
+        end
+      end
+    end
   end
 end

@@ -27,9 +27,10 @@ import { CREDIT_PACK_MAPPINGS } from '../config/purchasesConfig';
 interface GetCreditsModalProps {
   visible: boolean;
   onClose: () => void;
+  onPurchaseSuccess?: () => void;
 }
 
-const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
+const GetCreditsModal = ({ visible, onClose, onPurchaseSuccess }: GetCreditsModalProps) => {
   const { colors, images } = useTheme() as any;
   const { localization } = useContext(LocalizationContext) as any;
   const styles = useStyles(colors);
@@ -134,6 +135,7 @@ const GetCreditsModal = ({ visible, onClose }: GetCreditsModalProps) => {
               );
               // Close modal
               onClose();
+              onPurchaseSuccess?.();
             },
             onError: (err: any) => {
               console.error('[Supabase] Failed to sync credits:', err);

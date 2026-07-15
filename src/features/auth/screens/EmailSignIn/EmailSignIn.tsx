@@ -46,7 +46,7 @@ const EmailSignIn = () => {
       return;
     }
 
-    triggerHaptic('impactMedium');
+    // triggerHaptic('impactMedium');
 
     const payload = {
       language: AppUtils.getLanguageCode(appLanguage) || 'en',
@@ -61,7 +61,7 @@ const EmailSignIn = () => {
       howFellingLately: answers?.howFellingLately || '',
       hearAboutUs: answers?.hearAboutUs || '',
     };
-    console.log(payload);
+
     sendMagicLink(
       {
         endpoint: endpoints.sendMagicLink,
