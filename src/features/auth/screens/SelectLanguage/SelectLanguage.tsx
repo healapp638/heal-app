@@ -52,12 +52,12 @@ const SelectLanguage = () => {
       flag: images.germany,
       key: 'German',
     },
-    {
+    /* {
       id: '5',
       name: 'Русский',
       flag: images.russia,
       key: 'Russian',
-    },
+    }, */
     {
       id: '6',
       name: 'Português',

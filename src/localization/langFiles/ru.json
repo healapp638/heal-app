@@ -299,6 +299,8 @@
     "newChat": "Новый чат",
     "noConversationsFound": "Прошлые диалоги не найдены.",
     "chatSessionFallback": "Сессия чата",
+    "deleteConversation": "Удалить разговор",
+    "conversationDeleted": "Разговор успешно удалён",
     "timeToday": "Сегодня",
     "timeYesterday": "Вчера",
     "timeMorning": "утром",

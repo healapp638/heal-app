@@ -49,10 +49,13 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
   const user = useSelector((state: any) => state.userData?.user);
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
   const locale = AppUtils.getLanguageCode(appLanguage) || 'en';
+  const isLightBackground =
+    user?.homeTheme?.imgUrl === 'file/file-1782982927591.webp';
   const homeThemeUrl = user?.homeTheme?.imgUrl
     ? `${getEnvVars().fileUrl}${user.homeTheme.imgUrl}`
     : null;
-  const activeColor = homeThemeUrl ? '#FFFFFF' : '#3A2110';
+  const activeColor =
+    homeThemeUrl && !isLightBackground ? '#FFFFFF' : '#3A2110';
   const {
     data: affirmationData,
     fetchNextPage,
@@ -390,7 +393,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                 flex: 1,
               }}
             >
-              {homeThemeUrl ? (
+              {homeThemeUrl && !isLightBackground ? (
                 <ImageBackground
                   source={{
                     uri: homeThemeUrl,
@@ -406,7 +409,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                   <SolidText
                     style={{
                       fontSize: AppUtils.fontSize(24),
-                      fontFamily: AppFonts.reco,
+                      fontFamily: AppFonts.recoSemiBold,
                       color: activeColor,
                       textAlign: 'center',
                       lineHeight: 36,
@@ -431,7 +434,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                   <SolidText
                     style={{
                       fontSize: AppUtils.fontSize(24),
-                      fontFamily: AppFonts.reco,
+                      fontFamily: AppFonts.recoMedium,
                       color: activeColor,
                       textAlign: 'center',
                       lineHeight: 36,
@@ -440,7 +443,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
                   >
                     {sharingItem.affirmation.startsWith('"')
                       ? sharingItem.affirmation
-                      : `"${sharingItem.affirmation}"`}
+                      : `${sharingItem.affirmation}`}
                   </SolidText>
                 </View>
               )}

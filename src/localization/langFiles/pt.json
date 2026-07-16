@@ -299,6 +299,8 @@
     "newChat": "Nova conversa",
     "noConversationsFound": "Nenhuma conversa anterior encontrada.",
     "chatSessionFallback": "Sessão de chat",
+    "deleteConversation": "Excluir conversa",
+    "conversationDeleted": "Conversa excluída com sucesso",
     "timeToday": "Hoje",
     "timeYesterday": "Ontem",
     "timeMorning": "manhã",

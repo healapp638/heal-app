@@ -18,6 +18,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useTheme } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import SolidText from '../../../../../components/SolidText';
 import api from '../../../../../api/Manager/manager';
 import { endpoints } from '../../../../../api/Services/endpoints';
@@ -35,7 +36,13 @@ interface ConversationDrawerProps {
   styles: any;
 }
 
-const { width: screenWidth } = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const CONTEXT_MENU_WIDTH = 200;
+const CONTEXT_MENU_HEIGHT = 60;
+const CONTEXT_MENU_MARGIN = 10;
+// Matches drawerListItem in HealyChat/style.ts: padding(16*2) + title/date content (~40) + border(2)
+const CONVERSATION_ITEM_HEIGHT = 76;
+const CONTEXT_MENU_GAP = 8;
 
 // Date Formatter matching high-end design aesthetics
 const formatConversationDate = (dateString: string, localization: any) => {
@@ -92,6 +99,7 @@ const ConversationDrawerComponent: React.FC<ConversationDrawerProps> = ({
   styles,
 }) => {
   const { colors, images } = useTheme() as any;
+  const insets = useSafeAreaInsets();
   const { localization } = useContext(LocalizationContext) as any;
   const slideAnim = useRef(new Animated.Value(screenWidth)).current;
   const touchCoordinates = useRef({ pageX: 0, pageY: 0, locationY: 0 });
@@ -206,25 +214,39 @@ const ConversationDrawerComponent: React.FC<ConversationDrawerProps> = ({
     touchCoordinates.current = { pageX, pageY, locationY };
   }, []);
 
-  const handleLongPress = useCallback((item: any) => {
-    triggerHaptic('impactLight');
+  const handleLongPress = useCallback(
+    (item: any) => {
+      triggerHaptic('impactLight');
 
-    const { pageX, pageY, locationY } = touchCoordinates.current;
-    setSelectedConversation(item);
+      const { pageX, pageY, locationY } = touchCoordinates.current;
+      setSelectedConversation(item);
 
-    const itemTopY = pageY - locationY;
-    const itemHeight = 72;
+      const itemTopY = pageY - locationY;
 
-    // Position the menu to overlap only the bottom part of the selected item (leaving the title visible)
-    const calculatedTop = itemTopY + 40;
-    const calculatedLeft = screenWidth * 0.22 + (screenWidth * 0.78 - 200) / 2;
+      // Position the menu directly below the full selected item (instead of overlapping mid-card,
+      // which used to spill diagonally across the next card's corner), then clamp within the safe
+      // area so it never gets clipped against a screen edge/corner on devices with different
+      // notch/status bar heights.
+      const rawTop = itemTopY + CONVERSATION_ITEM_HEIGHT + CONTEXT_MENU_GAP;
+      const minTop = insets.top + CONTEXT_MENU_MARGIN;
+      const maxTop =
+        screenHeight - insets.bottom - CONTEXT_MENU_HEIGHT - CONTEXT_MENU_MARGIN;
+      const calculatedTop = Math.min(Math.max(rawTop, minTop), maxTop);
 
-    setMenuPosition({
-      top: calculatedTop,
-      left: calculatedLeft,
-    });
-    setMenuVisible(true);
-  }, []);
+      const rawLeft =
+        screenWidth * 0.22 + (screenWidth * 0.78 - CONTEXT_MENU_WIDTH) / 2;
+      const minLeft = CONTEXT_MENU_MARGIN;
+      const maxLeft = screenWidth - CONTEXT_MENU_WIDTH - CONTEXT_MENU_MARGIN;
+      const calculatedLeft = Math.min(Math.max(rawLeft, minLeft), maxLeft);
+
+      setMenuPosition({
+        top: calculatedTop,
+        left: calculatedLeft,
+      });
+      setMenuVisible(true);
+    },
+    [insets.top, insets.bottom],
+  );
 
   const handleDeleteInstant = useCallback(
     async (item: any) => {
@@ -509,6 +531,7 @@ const localStyles = StyleSheet.create({
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingRight: 10,
   },
   menuItemIcon: {
     width: 14,
