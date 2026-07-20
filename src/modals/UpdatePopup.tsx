@@ -33,9 +33,11 @@ const UpdatePopup: React.FC<UpdatePopupProps> = ({
               height: '90%',
             }}
           >
-            <Text style={style.txtStyle}>{'Update your app'}</Text>
+            <Text maxFontSizeMultiplier={1.2} style={style.txtStyle}>
+              {'Update your app'}
+            </Text>
 
-            <Text style={[style.txtStyle, { fontWeight: '500' }]}>
+            <Text maxFontSizeMultiplier={1.2} style={[style.txtStyle, { fontWeight: '500' }]}>
               {'To enjoy our newest features tap button below'}
             </Text>
             <TouchableOpacity
@@ -48,7 +50,9 @@ const UpdatePopup: React.FC<UpdatePopupProps> = ({
               }}
               style={style.btnStyle}
             >
-              <Text style={style.btnTxt}>{'Update Now'}</Text>
+              <Text maxFontSizeMultiplier={1.2} style={style.btnTxt}>
+                {'Update Now'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -68,6 +68,7 @@ const AppUtils: AppUtilsInterface = {
         iosStoreURL: urls.iosAppLink,
         androidStoreURL: urls.androidAppLink,
       });
+
       if (check.result === "new") {
         return true;
       } else {

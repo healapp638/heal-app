@@ -55,6 +55,7 @@ function App(): React.JSX.Element {
 
   const checkUpdate = async () => {
     let isNew = await AppUtils.checkAppVersion();
+
     setIsUpdateAvailable(isNew);
   };
 
