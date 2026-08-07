@@ -8,7 +8,6 @@ import { MUTATION_KEYS } from '@/tanstack/keys'
 import { Card, Col, Row, Avatar, Typography } from 'antd'
 import { FILE_URL } from '@/utils/helper'
 import { formattedDateOnly } from '@/utils/formatting/date'
-import logger from '@/utils/logger'
 
 const { Title, Text } = Typography;
 
@@ -61,7 +60,6 @@ export default function UserDetail() {
     })
 
     const userDataResult = userData?.data;
-    logger.log("userDataResult", userDataResult)
 
     if (!userDataResult) return null;
 
