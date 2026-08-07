@@ -32,6 +32,10 @@ interface UserDetailResult {
     status: number;
     timeYouCommit: string;
     updatedAt: string;
+    feelThatWay?: string;
+    helpFeelBetter?: string;
+    stopFeelBetter?: string;
+    goalStartWith?: string;
     // Gamification properties
     total_earned_points?: number;
     total_points?: number;
@@ -104,7 +108,7 @@ export default function UserDetail() {
                                     </div>
                                 </div>
                                 <div className="w-full bg-gray-200/80 rounded-full h-2.5 overflow-hidden">
-                                    <div 
+                                    <div
                                         className="bg-maincolor h-full rounded-full transition-all duration-500"
                                         style={{ width: `${userDataResult.completedPercentage ?? 0}%` }}
                                     />
@@ -120,7 +124,7 @@ export default function UserDetail() {
 
                 {/* Details Section */}
                 <Col xs={24} lg={10}>
-                    <div className="bg-white! border-none! shadow-sm!">
+                    <div className="bg-white! border-none! shadow-sm!  h-124! overflow-y-scroll!">
                         <h1 className="text-2xl p-4 font-bold text-black">
                             Personal <span className="text-maincolor">Information</span>
                         </h1>
@@ -164,35 +168,93 @@ export default function UserDetail() {
                 </Col>
 
                 <Col xs={24} lg={14}>
-                     <div className="bg-white! border-none! shadow-sm!">
+                    <div className="bg-white! border-none! shadow-sm! h-124! overflow-y-scroll!">
                         <h1 className="text-2xl p-4 font-bold text-black">
                             Onboarding <span className="text-maincolor">Insights</span>
                         </h1>
                         <div className="flex flex-col gap-4 px-4 py-2">
-                            {/* <div className="flex justify-between items-center w-full">
-                                <p className="font-medium text-black">What brings you here?</p>
-                                <p className="text-gray-600">{userDataResult.bringsYouHere || "Not specified"}</p>
-                            </div> */}
-                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
-                                <p className="font-medium text-black">How are you feeling lately?</p>
-                                <p className="text-gray-600">{userDataResult.howFellingLately || "N/A"}</p>
-                            </div>
-                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
-                                <p className="font-medium text-black">What would you like to feel more?</p>
-                                <p className="text-gray-600">{userDataResult.likeToFellMore || "N/A"}</p>
-                            </div>
-                            {/* <div className="flex justify-between items-center w-full">
-                                <p className="font-medium text-black">How you describe yourself?</p>
-                                <p className="text-gray-600">{userDataResult.startShowingOfYourSelf || "N/A"}</p>
-                            </div> */}
-                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
-                                <p className="font-medium text-black">Time commitment</p>
-                                <p className="text-gray-600">{userDataResult.timeYouCommit || "N/A"}</p>
-                            </div>
-                            <div className="flex flex-col md:flex-row justify-between items-center w-full">
-                                <p className="font-medium text-black">Found us via</p>
-                                <p className="text-gray-600">{userDataResult.hearAboutUs || "N/A"}</p>
-                            </div>
+                            {userDataResult.fullName && userDataResult.fullName.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What do you want to be called?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.fullName}</p>
+                                </div>
+                            )}
+                            {userDataResult.hearAboutUs && userDataResult.hearAboutUs.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">Where did you hear about us?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.hearAboutUs}</p>
+                                </div>
+                            )}
+                            {userDataResult.howFellingLately && userDataResult.howFellingLately.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">How have you been feeling lately?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.howFellingLately}</p>
+                                </div>
+                            )}
+                            {userDataResult.bringsYouHere && userDataResult.bringsYouHere.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What brings you here?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.bringsYouHere}</p>
+                                </div>
+                            )}
+
+                            {userDataResult.feelThatWay && userDataResult.feelThatWay.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What's making you feel that way?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.feelThatWay}</p>
+                                </div>
+                            )}
+                            {userDataResult.likeToFellMore && userDataResult.likeToFellMore.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What would you like to feel more?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.likeToFellMore}</p>
+                                </div>
+                            )}
+                            {userDataResult.helpFeelBetter && userDataResult.helpFeelBetter.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What helps you feel better?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.helpFeelBetter}</p>
+                                </div>
+                            )}
+                            {userDataResult.stopFeelBetter && userDataResult.stopFeelBetter.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What usually stops you from feeling better?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.stopFeelBetter}</p>
+                                </div>
+                            )}
+                            {userDataResult.startShowingOfYourSelf && userDataResult.startShowingOfYourSelf.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">How you describe yourself?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.startShowingOfYourSelf}</p>
+                                </div>
+                            )}
+                            {userDataResult.timeYouCommit && userDataResult.timeYouCommit.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">How much would you like to dedicate to yourself?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.timeYouCommit}</p>
+                                </div>
+                            )}
+                            {userDataResult.goalStartWith && userDataResult.goalStartWith.trim() !== "" && (
+                                <div className="flex flex-col md:flex-row justify-between items-start w-full gap-2">
+                                    <p className="font-medium text-black shrink-0">What goal do you want to start with?</p>
+                                    <p className="text-gray-600 text-left md:text-right md:pl-4">{userDataResult.goalStartWith}</p>
+                                </div>
+                            )}
+
+                            {!(
+                                (userDataResult.bringsYouHere && userDataResult.bringsYouHere.trim() !== "") ||
+                                (userDataResult.howFellingLately && userDataResult.howFellingLately.trim() !== "") ||
+                                (userDataResult.feelThatWay && userDataResult.feelThatWay.trim() !== "") ||
+                                (userDataResult.likeToFellMore && userDataResult.likeToFellMore.trim() !== "") ||
+                                (userDataResult.helpFeelBetter && userDataResult.helpFeelBetter.trim() !== "") ||
+                                (userDataResult.stopFeelBetter && userDataResult.stopFeelBetter.trim() !== "") ||
+                                (userDataResult.startShowingOfYourSelf && userDataResult.startShowingOfYourSelf.trim() !== "") ||
+                                (userDataResult.timeYouCommit && userDataResult.timeYouCommit.trim() !== "") ||
+                                (userDataResult.goalStartWith && userDataResult.goalStartWith.trim() !== "") ||
+                                (userDataResult.hearAboutUs && userDataResult.hearAboutUs.trim() !== "")
+                            ) && (
+                                    <p className="text-gray-400 text-center py-4">No onboarding insights available</p>
+                                )}
                         </div>
                     </div>
                 </Col>

@@ -9,7 +9,7 @@ import { FaUser, FaUserFriends, FaUserSlash } from "react-icons/fa";
 import { RegistrationAreaChart, DonutChart, ThemeEngagementChart } from './DashboardCharts';
 
 export default function DashboardClient() {
-  const [activateButton, setActivateButton] = React.useState<string>("1M")
+  const [activateButton, setActivateButton] = React.useState<string>("MAX")
   const { data: DashboardData } = useAppQuery<any>({
     queryKey: [MUTATION_KEYS.ADMIN_DASHBOARD, activateButton],
     url: ENDPOINTS.PRIVATE.ADMIN_DASHBOARD,
