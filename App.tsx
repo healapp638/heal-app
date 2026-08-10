@@ -22,12 +22,16 @@ import { SubscriptionProvider } from './src/hooks/useSubscription';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import LogRocket from '@logrocket/react-native';
+import { initSuperwall } from './src/utils/superwallService';
 const queryClient = new QueryClient();
 
 function App(): React.JSX.Element {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const theme = useColorScheme();
   const isDarkMode = useColorScheme() === 'dark';
+  useEffect(() => {
+    initSuperwall('pk_IGVZ_hgwIWZ5-1wUISfWd'); // Replace with your actual Superwall API Key
+  }, []);
   LogBox.ignoreLogs(['[RevenueCat]']);
   useEffect(() => {
     notifee.requestPermission();

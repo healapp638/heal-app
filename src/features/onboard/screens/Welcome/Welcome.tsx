@@ -28,6 +28,8 @@ import {
 import ResumeModal from '../../../../modals/ResumeModal';
 import SignInModal from '../../../../modals/SignInModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { startSuperwallOnboarding } from '../../../../utils/superwallService';
+
 const Welcome = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
@@ -62,37 +64,40 @@ const Welcome = () => {
   useFocusEffect(
     useCallback(() => {
       hasPromptedOnFocus.current = false;
-      if (onboarding?.isCompleted) {
-        dispatch(clearOnboardingProgress());
-        return () => {
-          hasPromptedOnFocus.current = false;
-        };
-      }
-      if (
-        onboarding?.currentScreen === AppRoutes.GetStarted ||
-        onboarding?.currentScreen === AppRoutes.HearAboutUs
-      ) {
-        return () => {
-          hasPromptedOnFocus.current = false;
-        };
-      }
+      // Only a genuinely resumable, in-progress *old-style* native onboarding
+      // (past the trivial GetStarted/HearAboutUs screens) should show the
+      // "resume?" prompt. Everything else -- fresh user, already-completed
+      // onboarding, or barely-started onboarding -- goes straight to Superwall.
       const canResume =
         !auth &&
-        onboarding?.hasStarted &&
         !onboarding?.isCompleted &&
+        onboarding?.hasStarted &&
+        onboarding?.currentScreen !== AppRoutes.GetStarted &&
+        onboarding?.currentScreen !== AppRoutes.HearAboutUs &&
         RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
-      if (!canResume || hasPromptedOnFocus.current) {
+
+      if (hasPromptedOnFocus.current) {
         return () => {
           hasPromptedOnFocus.current = false;
         };
       }
       hasPromptedOnFocus.current = true;
-      setResumeModalVisible(true);
+      if (canResume) {
+        setResumeModalVisible(true);
+      } else {
+        // Nothing to resume -- present Superwall's onboarding placement
+        // immediately instead of waiting for a tap on the native "Welcome"
+        // button. The native UI stays mounted underneath as a backdrop/
+        // fallback (e.g. if Superwall fails to load) and Sign In stays reachable.
+        dispatch(clearOnboardingProgress());
+        startSuperwallOnboarding(navigation);
+      }
       return () => {
         hasPromptedOnFocus.current = false;
       };
     }, [
       dispatch,
+      navigation,
       onboarding?.currentScreen,
       onboarding?.isCompleted,
       onboarding?.hasStarted,
@@ -141,76 +146,18 @@ const Welcome = () => {
   const { flag, code } = getLangData();
   const styles = style(colors);
   return (
-    <SolidView
-      isScrollEnabled
-      view={
-        <View style={styles.mainContainer}>
-          <View style={styles.header}>
-            <Image
-              source={images.h}
-              style={styles.logoH}
-              resizeMode="contain"
-            />
-            <TouchableOpacity
-              style={styles.languagePill}
-              onPress={() => {
-                triggerHaptic('impactMedium');
-                navigation.navigate(AppRoutes.SelectLanguage as never);
-              }}
-            >
-              <Image
-                source={flag}
-                style={styles.flagIcon}
-                resizeMode="contain"
-              />
-              <SolidText style={styles.langCode}>{code}</SolidText>
-            </TouchableOpacity>
-          </View>
-          <Image
-            source={images.phone}
-            resizeMode="contain"
-            style={styles.phoneImage}
-          />
-          <View style={{ flex: 1, justifyContent: 'center', minHeight: 60 }}>
-            <SolidText style={styles.title}>
-              {localization.appkeys?.healingStarts}
-            </SolidText>
-          </View>
-          <SolidBtn
-            titleTxt={localization.appkeys?.welcome}
-            btnStyle={styles.btn}
-            onPress={() => {
-              dispatch(clearOnboardingProgress());
-              return navigation.navigate(AppRoutes.GetStarted as never);
-            }}
-          />
-          <SolidText
-            onPress={() => {
-              triggerHaptic('impactMedium');
-
-              setSignInModalVisible(true);
-            }}
-            style={styles.footerText}
-          >
-            {localization.appkeys?.alreadyAccount}{' '}
-            <Text style={styles.signInText}>
-              {localization.appkeys?.signIn}
-            </Text>
-          </SolidText>
-
-          <ResumeModal
-            visible={resumeModalVisible}
-            onClose={() => setResumeModalVisible(false)}
-            onConfirm={handleResumeFlow}
-            onStartOver={handleStartOver}
-          />
-          <SignInModal
-            visible={signInModalVisible}
-            onClose={() => setSignInModalVisible(false)}
-          />
-        </View>
-      }
-    />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <ResumeModal
+        visible={resumeModalVisible}
+        onClose={() => setResumeModalVisible(false)}
+        onConfirm={handleResumeFlow}
+        onStartOver={handleStartOver}
+      />
+      <SignInModal
+        visible={signInModalVisible}
+        onClose={() => setSignInModalVisible(false)}
+      />
+    </View>
   );
 };
 export default Welcome;

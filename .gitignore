@@ -76,3 +76,7 @@ buck-out/
 Source Control - fastlane docs
 #  git-crypt private key
 my-secret-key
+# Expo
+.expo
+dist/
+web-build/

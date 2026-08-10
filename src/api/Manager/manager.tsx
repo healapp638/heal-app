@@ -76,11 +76,18 @@ const refreshAccessToken = async (): Promise<string> => {
 
 let isLoggingOut = false;
 
-store.subscribe(() => {
-  const currentToken = store.getState().userData.token;
-  if (currentToken) {
-    isLoggingOut = false;
-  }
+// Deferred to a microtask: this module is reached via a circular import
+// (redux/Store/store.tsx -> Reducers/userData.tsx -> this file -> redux/Store/store.tsx),
+// so `store` is still undefined if subscribed to synchronously here. By the time this
+// microtask runs, the whole synchronous require chain -- including store.tsx itself --
+// has finished, so `store` is safely defined.
+Promise.resolve().then(() => {
+  store.subscribe(() => {
+    const currentToken = store.getState().userData.token;
+    if (currentToken) {
+      isLoggingOut = false;
+    }
+  });
 });
 
 const logoutUser = async (
