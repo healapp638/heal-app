@@ -62,6 +62,16 @@ target 'Heal' do
           build_config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'gnu++20'
         end
       end
+
+      # fmt/base.h unconditionally redefines FMT_USE_CONSTEVAL based on __cplusplus,
+      # so preprocessor defines are overwritten. The reliable fix is to compile fmt
+      # in C++17 mode: FMT_CPLUSPLUS (201703L) < 201709L → FMT_USE_CONSTEVAL = 0.
+      # All other pods stay in C++20 (React-perflogger needs std::unordered_map::contains).
+      if target.name == 'fmt'
+        target.build_configurations.each do |build_config|
+          build_config.build_settings['CLANG_CXX_LANGUAGE_STANDARD'] = 'c++17'
+        end
+      end
     end
   end
 end
