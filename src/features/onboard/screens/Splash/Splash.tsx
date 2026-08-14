@@ -1,14 +1,18 @@
 import { View, StyleSheet, Alert } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Video from 'react-native-video';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserDetail } from '../../../../redux/Reducers/userData';
+import { clearOnboardingProgress, getUserDetail } from '../../../../redux/Reducers/userData';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import usePostApi from '../../../../hooks/usePostApi';
 import { endpoints } from '../../../../api/Services/endpoints';
 import AppRoutes from '../../../../routes/RouteKeys/appRoutes';
 import style from './style';
 import SolidView from '../../../../components/SolidView';
+import {
+  RESUMABLE_ONBOARDING_ROUTES,
+} from '../../utils/onboardingProgress';
+import { startSuperwallOnboarding } from '../../../../utils/superwallService';
 
 const Splash = () => {
   const navigation = useNavigation();
@@ -16,9 +20,11 @@ const Splash = () => {
   const styles = style(colors);
   const auth = useSelector((state: any) => state.userData?.auth);
   const user = useSelector((state: any) => state.userData?.user);
+  const onboarding = useSelector((state: any) => state.userData?.onboarding);
 
   const dispatch = useDispatch();
   const { mutate: postApi } = usePostApi();
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
     if (auth) {
@@ -41,11 +47,31 @@ const Splash = () => {
   }, [auth, postApi, dispatch]);
 
   const handleNavigation = () => {
+    if (hasNavigated.current) return;
+    hasNavigated.current = true;
+
     if (!auth) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: AppRoutes.Welcome } as never],
-      });
+      const canResume =
+        !auth &&
+        !onboarding?.isCompleted &&
+        onboarding?.hasStarted &&
+        onboarding?.currentScreen !== AppRoutes.GetStarted &&
+        onboarding?.currentScreen !== AppRoutes.HearAboutUs &&
+        RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
+
+      if (canResume) {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: AppRoutes.Welcome } as never],
+        });
+      } else {
+        dispatch(clearOnboardingProgress());
+        navigation.reset({
+          index: 0,
+          routes: [{ name: AppRoutes.Welcome } as never],
+        });
+        startSuperwallOnboarding(navigation);
+      }
     } else {
       if (user?.is_onboarding == false) {
         // If in between the onboarding flow, navigate to HearAboutUs and show ResumeModal

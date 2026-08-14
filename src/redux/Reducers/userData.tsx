@@ -162,8 +162,6 @@ export const {
   setRememberMe,
 } = userDataSlice.actions;
 
-import api from '../../api/Manager/manager';
-import { endpoints } from '../../api/Services/endpoints';
 import { setLoader } from './tempData';
 
 export const getUserDetail =
@@ -171,6 +169,8 @@ export const getUserDetail =
   async (dispatch: any) => {
     try {
       showLoader && dispatch(setLoader(true));
+      const { default: api } = await import('../../api/Manager/manager');
+      const { endpoints } = await import('../../api/Services/endpoints');
       const response: any = await api.get(endpoints.user_details);
       if (response?.ok) {
         dispatch(setUser(response?.data?.data));

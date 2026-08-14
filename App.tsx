@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { LogBox, StatusBar, useColorScheme } from 'react-native';
+import { LogBox, Platform, StatusBar, useColorScheme } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Provider } from 'react-redux';
 import { store, persistor } from './src/redux/Store/store';
@@ -25,12 +25,20 @@ import LogRocket from '@logrocket/react-native';
 import { initSuperwall } from './src/utils/superwallService';
 const queryClient = new QueryClient();
 
+const SUPERWALL_API_KEY = Platform.select({
+  ios: 'pk__tn_USnOXf5BdSwBoKXOE',
+  android: 'pk_IGVZ_hgwIWZ5-1wUISfWd',
+  default: 'pk_IGVZ_hgwIWZ5-1wUISfWd',
+});
+
 function App(): React.JSX.Element {
   const [isUpdateAvailable, setIsUpdateAvailable] = useState(false);
   const theme = useColorScheme();
   const isDarkMode = useColorScheme() === 'dark';
   useEffect(() => {
-    initSuperwall('pk_IGVZ_hgwIWZ5-1wUISfWd'); // Replace with your actual Superwall API Key
+    if (SUPERWALL_API_KEY) {
+      initSuperwall(SUPERWALL_API_KEY);
+    }
   }, []);
   LogBox.ignoreLogs(['[RevenueCat]']);
   useEffect(() => {

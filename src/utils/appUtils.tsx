@@ -5,7 +5,6 @@ import { config, Mode } from "../../config";
 import { Platform } from "react-native";
 import { ToastService } from "./ToastManager";
 import { store } from "../redux/Store/store";
-import { setFontScaling } from "../redux/Reducers/userData";
 
 interface AppUtilsInterface {
   validatePhone: (phone: string) => boolean;
@@ -52,12 +51,12 @@ const AppUtils: AppUtilsInterface = {
 
   // Disable font size increase from phone settings
   disableFontScale: () => {
-    store.dispatch(setFontScaling(1))
+    store.dispatch({ type: 'userData/setFontScaling', payload: 1 });
   },
 
   // Enable Ada compliance
   adaCompliance: () => {
-    store.dispatch(setFontScaling(1.4))
+    store.dispatch({ type: 'userData/setFontScaling', payload: 1.4 });
   },
 
   // Check Update with live version's

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Image, TouchableOpacity, View, Platform } from 'react-native';
 import { useNavigation, useTheme } from '@react-navigation/native';
 import SolidView from '../../../../components/SolidView';
@@ -28,6 +28,15 @@ const AccessScreen = () => {
   const navigation = useNavigation();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
+
+  const onboardingAnswers = useSelector(
+    (state: any) => state.userData?.onboarding?.answers,
+  );
+
+  useEffect(() => {
+    console.log('📱 [Native AccessScreen Mounted] Current Redux Onboarding Answers:');
+    console.log(JSON.stringify(onboardingAnswers || {}, null, 2));
+  }, [onboardingAnswers]);
 
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 
