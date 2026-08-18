@@ -31,6 +31,7 @@ import {
   getTokensFromKeychain,
 } from '../../utils/tokenStorage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { dismissSuperwall } from '../../utils/superwallService';
 
 const Stack = createNativeStackNavigator();
 
@@ -255,6 +256,7 @@ export default function MainStack() {
           {
             onSuccess: async (response: any) => {
               currentDispatch(setLoader(false));
+              await dismissSuperwall();
               currentDispatch(setUser(response?.data));
               currentDispatch(setToken(response?.data?.access_token));
               currentDispatch(setRefreshToken(response?.data?.refresh_token));
@@ -262,51 +264,37 @@ export default function MainStack() {
               currentDispatch(getUserDetail() as any);
               currentDispatch(setEmail(email));
 
-              if (response?.data?.is_onboarding === false) {
-                // Navigate to onboard flow starting from Welcome screen
+              // User has logged in with magic link
+              // Route to BottomTab if subscribed, otherwise route to Offer screen
+              if (response?.data?.user_subscription?.is_subscribed == 1) {
                 currentNavigation.reset({
                   index: 0,
                   routes: [
                     {
-                      name: AppRoutes.AuthStack,
+                      name: AppRoutes.NonAuthStack,
                       params: {
-                        screen: AppRoutes.HearAboutUs,
-                        params: { from: 'link' },
+                        screen: AppRoutes.BottomTab,
                       },
                     } as never,
                   ],
                 });
               } else {
-                if (response?.data?.user_subscription?.is_subscribed == 1) {
-                  currentNavigation.reset({
-                    index: 0,
-                    routes: [
-                      {
-                        name: AppRoutes.NonAuthStack,
-                        params: {
-                          screen: AppRoutes.BottomTab,
-                        },
-                      } as never,
-                    ],
-                  });
-                } else {
-                  currentNavigation.reset({
-                    index: 0,
-                    routes: [
-                      {
-                        name: AppRoutes.NonAuthStack,
-                        params: {
-                          screen: AppRoutes.Offer,
-                        },
-                      } as never,
-                    ],
-                  });
-                }
-                // Navigate/Reset to NonAuthStack Offer screen
+                currentNavigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: AppRoutes.NonAuthStack,
+                      params: {
+                        screen: AppRoutes.Offer,
+                      },
+                    } as never,
+                  ],
+                });
               }
             },
-            onError: (error: any) => {
+            onError: async (error: any) => {
               currentDispatch(setLoader(false));
+              await dismissSuperwall();
               console.log('Magic link login error:', error);
               AppUtils.showToast(error.message || 'Magic link login failed');
 
@@ -316,7 +304,7 @@ export default function MainStack() {
                   {
                     name: AppRoutes.AuthStack,
                     params: {
-                      screen: AppRoutes.Welcome,
+                      screen: AppRoutes.AccessScreen,
                     },
                   } as never,
                 ],

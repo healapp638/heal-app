@@ -109,6 +109,17 @@ const finishOnboarding = async (navigation: any) => {
     }
 };
 
+// Safely dismiss Superwall if currently showing
+export const dismissSuperwall = async () => {
+    try {
+        isSuperwallPresenting = false;
+        const { default: Superwall } = await loadSuperwall();
+        await Superwall.dismiss();
+    } catch (e) {
+        console.log('Error dismissing Superwall:', e);
+    }
+};
+
 // Trigger Onboarding Flow Placement
 export const startSuperwallOnboarding = async (navigation: any) => {
     if (isSuperwallPresenting) {
@@ -415,6 +426,18 @@ export const startSuperwallOnboarding = async (navigation: any) => {
                         }
                     }
                 }
+            } else if (
+                callback?.name === 'navigate_to_signin' ||
+                callback?.name === 'sign_in' ||
+                callback?.name === 'signin' ||
+                callback?.name === 'access_screen' ||
+                callback?.name === 'login'
+            ) {
+                isSuperwallPresenting = false;
+                navigation.reset({
+                    index: 0,
+                    routes: [{ name: AppRoutes.AccessScreen }],
+                });
             }
             return { status: 'success' };
         });

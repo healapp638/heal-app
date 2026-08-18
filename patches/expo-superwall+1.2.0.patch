@@ -1,0 +1,53 @@
+diff --git a/node_modules/expo-superwall/android/build.gradle b/node_modules/expo-superwall/android/build.gradle
+index e111111..2222222 100644
+--- a/node_modules/expo-superwall/android/build.gradle
++++ b/node_modules/expo-superwall/android/build.gradle
+@@ -43,7 +43,7 @@ android {
+ }
+ 
+ dependencies {
+-  implementation "com.superwall.sdk:superwall-android:2.7.20"
++  implementation "com.superwall.sdk:superwall-android:2.8.0"
+   implementation 'com.android.billingclient:billing:8.0.0'
+   implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.2'
+ }
+diff --git a/node_modules/expo-superwall/android/src/main/java/expo/modules/superwallexpo/SuperwallExpoModule.kt b/node_modules/expo-superwall/android/src/main/java/expo/modules/superwallexpo/SuperwallExpoModule.kt
+index e333333..4444444 100644
+--- a/node_modules/expo-superwall/android/src/main/java/expo/modules/superwallexpo/SuperwallExpoModule.kt
++++ b/node_modules/expo-superwall/android/src/main/java/expo/modules/superwallexpo/SuperwallExpoModule.kt
+@@ -163,18 +163,22 @@ class SuperwallExpoModule : Module() {
+           superwallOptionsFromJson(options)
+         }?:SuperwallOptions()
+ 
+-        // Set up onBackPressed callback to emit event to JS and wait for response
+-        superwallOptions.paywalls.onBackPressed = { paywallInfo ->
+-          backPressedPromise = CompletableFuture()
+-
+-          val data = paywallInfo?.let {
+-            mapOf("paywallInfo" to it.toJson())
+-          } ?: emptyMap()
+-
+-          emitEvent("onBackPressed", data)
+-
+-          // Block and wait for JS response via didHandleBackPressed
+-          runBlocking {
+-            backPressedPromise?.await() ?: false
++        // Only override onBackPressed if custom handler is explicitly requested in options
++        val customBackHandler = options?.get("enableCustomBackHandler") as? Boolean ?: false
++        if (customBackHandler) {
++          superwallOptions.paywalls.onBackPressed = { paywallInfo ->
++            backPressedPromise = CompletableFuture()
++
++            val data = paywallInfo?.let {
++              mapOf("paywallInfo" to it.toJson())
++            } ?: emptyMap()
++
++            emitEvent("onBackPressed", data)
++
++            // Block and wait for JS response via didHandleBackPressed
++            runBlocking {
++              backPressedPromise?.await() ?: false
++            }
+           }
+         }
+ 

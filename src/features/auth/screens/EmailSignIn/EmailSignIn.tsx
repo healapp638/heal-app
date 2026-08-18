@@ -41,7 +41,7 @@ const EmailSignIn = () => {
     if (!AppUtils.validateEmail(email)) {
       AppUtils.showToast(
         localization.appkeys?.toastInvalidEmail ||
-          'Please enter a valid email address.',
+        'Please enter a valid email address.',
       );
       return;
     }
@@ -61,7 +61,7 @@ const EmailSignIn = () => {
       howFellingLately: answers?.howFellingLately || '',
       hearAboutUs: answers?.hearAboutUs || '',
     };
-
+    console.log("sudygiowjeh", payload)
     sendMagicLink(
       {
         endpoint: endpoints.sendMagicLink,
@@ -122,7 +122,7 @@ const EmailSignIn = () => {
               viewStyle={styles.inputContainer}
               textInputStyle={styles.textInput}
               // autoFocus={true}
-              onRightPress={() => {}}
+              onRightPress={() => { }}
             />
           </View>
 

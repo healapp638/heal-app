@@ -37,6 +37,10 @@
 android:scheme="https"
 android:host="api.heal-app.com"
 android:pathPrefix="/"/>
+<data
+android:scheme="https"
+android:host="apidev.heal-app.com"
+android:pathPrefix="/"/>
 </intent-filter>
 <!-- Custom Scheme Deep Link -->
 <intent-filter>

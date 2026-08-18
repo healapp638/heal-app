@@ -46,6 +46,7 @@ allprojects {
         resolutionStrategy {
             force 'net.java.dev.jna:jna:5.17.0'
             force 'net.java.dev.jna:jna-platform:5.17.0'
+            force 'com.superwall.sdk:superwall-android:2.8.0'
         }
     }
 }
