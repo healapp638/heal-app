@@ -42,9 +42,12 @@ const Welcome = () => {
   const [resumeModalVisible, setResumeModalVisible] = React.useState(false);
   const [signInModalVisible, setSignInModalVisible] = React.useState(false);
 
+  const [showNativeContent, setShowNativeContent] = React.useState(false);
+
   const handleResumeFlow = useCallback(() => {
     const currentScreen = onboarding?.currentScreen;
     if (!currentScreen) return;
+    console.log('🚨 [WELCOME -> NATIVE] handleResumeFlow: Resuming old native onboarding flow to screen:', currentScreen);
     const stackRoutes = getResumeStackRoutes(currentScreen);
     if (!stackRoutes.length) return;
     setResumeModalVisible(false);
@@ -58,17 +61,15 @@ const Welcome = () => {
     }, 150);
   }, [navigation, onboarding?.currentScreen]);
   const handleStartOver = useCallback(() => {
+    console.log('🔄 [WELCOME] handleStartOver: Clearing onboarding progress and starting over with Superwall');
     dispatch(clearOnboardingProgress());
     setResumeModalVisible(false);
-  }, [dispatch]);
+    startSuperwallOnboarding(navigation, () => setShowNativeContent(true));
+  }, [dispatch, navigation]);
   const hasInitializedSuperwall = useRef(false);
 
   useFocusEffect(
     useCallback(() => {
-      // Only a genuinely resumable, in-progress *old-style* native onboarding
-      // (past the trivial GetStarted/HearAboutUs screens) should show the
-      // "resume?" prompt. Everything else -- fresh user, already-completed
-      // onboarding, or barely-started onboarding -- goes straight to Superwall.
       const canResume =
         !auth &&
         !onboarding?.isCompleted &&
@@ -78,11 +79,15 @@ const Welcome = () => {
         RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
 
       if (canResume) {
+        console.log('🚨 [WELCOME -> NATIVE] canResume is TRUE! Showing ResumeModal for native screen:', onboarding?.currentScreen);
+        setShowNativeContent(true);
         setResumeModalVisible(true);
       } else if (!hasInitializedSuperwall.current) {
+        console.log('🚀 [WELCOME -> SUPERWALL] Auto-launching Superwall onboarding placement on focus...');
         hasInitializedSuperwall.current = true;
-        // Present Superwall's onboarding placement immediately once on launch
-        startSuperwallOnboarding(navigation);
+        startSuperwallOnboarding(navigation, () => {
+          setShowNativeContent(true);
+        });
       }
     }, [
       navigation,
@@ -135,72 +140,77 @@ const Welcome = () => {
   const styles = style(colors);
   return (
     <SolidView
-      isScrollEnabled
+      isScrollEnabled={showNativeContent}
       view={
-        <View style={styles.mainContainer}>
-          <View style={styles.header}>
-            <Image
-              source={images.h}
-              style={styles.logoH}
-              resizeMode="contain"
-            />
-            <TouchableOpacity
-              style={styles.languagePill}
-              onPress={() => {
-                triggerHaptic('impactMedium');
-                navigation.navigate(AppRoutes.SelectLanguage as never);
-              }}
-            >
+        showNativeContent ? (
+          <View style={styles.mainContainer}>
+            <View style={styles.header}>
               <Image
-                source={flag}
-                style={styles.flagIcon}
+                source={images.h}
+                style={styles.logoH}
                 resizeMode="contain"
               />
-              <SolidText style={styles.langCode}>{code}</SolidText>
-            </TouchableOpacity>
-          </View>
-          <Image
-            source={images.phone}
-            resizeMode="contain"
-            style={styles.phoneImage}
-          />
-          <View style={{ flex: 1, justifyContent: 'center', minHeight: 60 }}>
-            <SolidText style={styles.title}>
-              {localization.appkeys?.healingStarts}
+              <TouchableOpacity
+                style={styles.languagePill}
+                onPress={() => {
+                  triggerHaptic('impactMedium');
+                  navigation.navigate(AppRoutes.SelectLanguage as never);
+                }}
+              >
+                <Image
+                  source={flag}
+                  style={styles.flagIcon}
+                  resizeMode="contain"
+                />
+                <SolidText style={styles.langCode}>{code}</SolidText>
+              </TouchableOpacity>
+            </View>
+            <Image
+              source={images.phone}
+              resizeMode="contain"
+              style={styles.phoneImage}
+            />
+            <View style={{ flex: 1, justifyContent: 'center', minHeight: 60 }}>
+              <SolidText style={styles.title}>
+                {localization.appkeys?.healingStarts}
+              </SolidText>
+            </View>
+            <SolidBtn
+              titleTxt={localization.appkeys?.welcome}
+              btnStyle={styles.btn}
+              onPress={() => {
+                console.log('🔘 [WELCOME] Primary button pressed: Launching Superwall onboarding...');
+                dispatch(clearOnboardingProgress());
+                startSuperwallOnboarding(navigation, () => setShowNativeContent(true));
+              }}
+            />
+            <SolidText
+              onPress={() => {
+                triggerHaptic('impactMedium');
+                setSignInModalVisible(true);
+              }}
+              style={styles.footerText}
+            >
+              {localization.appkeys?.alreadyAccount}{' '}
+              <Text style={styles.signInText}>
+                {localization.appkeys?.signIn}
+              </Text>
             </SolidText>
-          </View>
-          <SolidBtn
-            titleTxt={localization.appkeys?.welcome}
-            btnStyle={styles.btn}
-            onPress={() => {
-              dispatch(clearOnboardingProgress());
-              startSuperwallOnboarding(navigation);
-            }}
-          />
-          <SolidText
-            onPress={() => {
-              triggerHaptic('impactMedium');
-              setSignInModalVisible(true);
-            }}
-            style={styles.footerText}
-          >
-            {localization.appkeys?.alreadyAccount}{' '}
-            <Text style={styles.signInText}>
-              {localization.appkeys?.signIn}
-            </Text>
-          </SolidText>
 
-          <ResumeModal
-            visible={resumeModalVisible}
-            onClose={() => setResumeModalVisible(false)}
-            onConfirm={handleResumeFlow}
-            onStartOver={handleStartOver}
-          />
-          <SignInModal
-            visible={signInModalVisible}
-            onClose={() => setSignInModalVisible(false)}
-          />
-        </View>
+            <ResumeModal
+              visible={resumeModalVisible}
+              onClose={() => setResumeModalVisible(false)}
+              onConfirm={handleResumeFlow}
+              onStartOver={handleStartOver}
+            />
+            <SignInModal
+              visible={signInModalVisible}
+              onClose={() => setSignInModalVisible(false)}
+            />
+          </View>
+        ) : (
+          <View style={[styles.mainContainer, { backgroundColor: colors.background }]} />
+        )
       }
     />
   );

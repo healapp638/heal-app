@@ -70,7 +70,6 @@ const Splash = () => {
           index: 0,
           routes: [{ name: AppRoutes.Welcome } as never],
         });
-        startSuperwallOnboarding(navigation);
       }
     } else {
       if (user?.is_profile_completed == false) {

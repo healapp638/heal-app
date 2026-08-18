@@ -2,6 +2,7 @@ import React, { createContext, useState, ReactNode, useEffect, useCallback } fro
 import * as RNLocalize from 'react-native-localize';
 import LocalizedStrings from 'react-native-localization';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useSelector } from 'react-redux';
 import AppUtils from '../utils/appUtils';
 import { strings } from '../constants/variables';
 
@@ -61,6 +62,7 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({
   children,
 }) => {
   const [appLanguage, setAppLanguage] = useState(DEFAULT_LANGUAGE);
+  const reduxLanguage = useSelector((state: any) => state.userData?.appLanguage);
 
   const setLanguage = useCallback((language: string, saveToStorage = true) => {
     localization.setLanguage(language);
@@ -69,6 +71,14 @@ export const LocalizationProvider: React.FC<LocalizationProviderProps> = ({
       AsyncStorage.setItem(strings.appLanguage, language);
     }
   }, []);
+
+  useEffect(() => {
+    if (reduxLanguage && reduxLanguage !== appLanguage) {
+      localization.setLanguage(reduxLanguage);
+      setAppLanguage(reduxLanguage);
+      AsyncStorage.setItem(strings.appLanguage, reduxLanguage);
+    }
+  }, [reduxLanguage, appLanguage]);
 
   const initializeAppLanguage = useCallback(async () => {
     const currentLanguage = await AsyncStorage.getItem(strings.appLanguage);

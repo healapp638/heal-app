@@ -28,7 +28,7 @@ const DeleteAccount = () => {
   const dispatch = useDispatch();
   const { localization } = useContext(LocalizationContext) as any;
   const styles = style(colors);
-  
+
   const [reason, setReason] = useState('');
   const { mutate: deleteAccountApi, isPending } = useDeleteApi();
 
@@ -43,7 +43,7 @@ const DeleteAccount = () => {
     Alert.alert(
       localization.appkeys?.deleteAccountTitle || 'Delete Account',
       localization.appkeys?.deleteAccountConfirmMsg ||
-        'Are you sure you want to permanently delete your account? This action cannot be undone.',
+      'Are you sure you want to permanently delete your account? This action cannot be undone.',
       [
         {
           text: localization.appkeys?.cancelLabel || 'Cancel',
@@ -67,9 +67,9 @@ const DeleteAccount = () => {
                   triggerHaptic('impactHeavy');
                   AppUtils.showToast(
                     localization.appkeys?.deleteAccountSuccess ||
-                      'Your account has been deleted successfully.',
+                    'Your account has been deleted successfully.',
                   );
-                  
+
                   // Perform logout functionality
                   dispatch(clearOnboardingProgress());
                   dispatch(setAuth(false));
@@ -92,8 +92,8 @@ const DeleteAccount = () => {
                 onError: (error: any) => {
                   AppUtils.showToast(
                     error.message ||
-                      localization.appkeys?.deleteAccountFailed ||
-                      'Failed to delete account. Please try again.',
+                    localization.appkeys?.deleteAccountFailed ||
+                    'Failed to delete account. Please try again.',
                   );
                 },
               },
