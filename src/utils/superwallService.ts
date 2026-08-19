@@ -101,6 +101,7 @@ export const initSuperwall = async (apiKey: string) => {
 };
 
 let isSuperwallPresenting = false;
+let didUserExitToAuth = false;
 
 // Mirrors CreatingSpace.tsx's `handleContinue` -- the last step of the native
 // onboarding flow that Superwall's placement now replaces. Whatever brought the
@@ -124,9 +125,9 @@ const finishOnboarding = async (navigation: any) => {
     console.log('🎉 =======================================================');
 
     if (token) {
-        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User authenticated. Navigating to Offer screen.');
+        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User authenticated. Submitting complete_onboarding and navigating to Offer screen.');
         try {
-            const response: any = await api.post(endpoints.complete_onboarding, {
+            await api.post(endpoints.complete_onboarding, {
                 language: AppUtils.getLanguageCode(appLanguage) || 'en',
                 fullName: answers?.fullName || '',
                 goalStartWith: answers?.goalStartWith || '',
@@ -138,29 +139,33 @@ const finishOnboarding = async (navigation: any) => {
                 howFellingLately: answers?.howFellingLately || '',
                 hearAboutUs: answers?.hearAboutUs || '',
             });
-            if (response?.ok) {
-                store.dispatch(getUserDetail() as any);
-                navigation.reset({
-                    index: 0,
-                    routes: [
-                        {
-                            name: AppRoutes.NonAuthStack,
-                            params: {
-                                screen: AppRoutes.Offer,
-                                params: { fromCreatingSpace: true },
-                            },
-                        },
-                    ],
-                });
-            }
+            store.dispatch(getUserDetail() as any);
         } catch (error) {
-            console.log(error);
+            console.log('complete_onboarding error:', error);
+        } finally {
+            navigation.reset({
+                index: 0,
+                routes: [
+                    {
+                        name: AppRoutes.NonAuthStack,
+                        params: {
+                            screen: AppRoutes.Offer,
+                            params: { fromCreatingSpace: true },
+                        },
+                    },
+                ],
+            });
         }
     } else {
         console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User not authenticated. Navigating to AccessScreen (Sign In / Sign Up).');
         navigation.reset({
             index: 0,
-            routes: [{ name: AppRoutes.AccessScreen }],
+            routes: [
+                {
+                    name: AppRoutes.AuthStack,
+                    params: { screen: AppRoutes.AccessScreen },
+                },
+            ],
         });
     }
 };
@@ -183,6 +188,7 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
         return;
     }
     isSuperwallPresenting = true;
+    didUserExitToAuth = false;
     try {
         const { default: Superwall, PaywallPresentationHandler, SubscriptionStatus } = await loadSuperwall();
         
@@ -239,6 +245,27 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                 if (lang) {
                     applySuperwallLanguage(lang);
                 }
+            } else if (
+                callback?.name === 'set_name' ||
+                callback?.name === 'set_username' ||
+                callback?.name === 'set_fullname' ||
+                callback?.name === 'save_name' ||
+                callback?.name === 'user_name' ||
+                callback?.name === 'username' ||
+                callback?.name === 'name' ||
+                callback?.name === 'fullname'
+            ) {
+                const nameVal =
+                    (typeof callback.variables === 'string' ? callback.variables : null) ||
+                    callback.variables?.fullName ||
+                    callback.variables?.userName ||
+                    callback.variables?.name ||
+                    callback.variables?.value ||
+                    callback.variables?.firstName;
+                if (nameVal) {
+                    console.log(`✅ Onboarding Answer Stored (Name): [fullName] = "${nameVal}"`);
+                    store.dispatch(setOnboardingAnswers({ fullName: nameVal }));
+                }
             } else if (callback?.name === 'set_onboarding_answer' && callback?.variables) {
                 const vars = callback.variables;
                 if (typeof vars === 'object') {
@@ -247,8 +274,13 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                         if (cleanKey.toLowerCase().includes('lang')) {
                             applySuperwallLanguage(vars.value);
                         } else {
-                            console.log(`✅ Onboarding Answer Stored: [${cleanKey}] = "${vars.value}"`);
-                            store.dispatch(setOnboardingAnswers({ [cleanKey]: vars.value }));
+                            const lower = cleanKey.toLowerCase();
+                            const finalKey =
+                                lower === 'username' || lower === 'name' || lower === 'fullname' || lower === 'firstname'
+                                    ? 'fullName'
+                                    : cleanKey;
+                            console.log(`✅ Onboarding Answer Stored: [${finalKey}] = "${vars.value}"`);
+                            store.dispatch(setOnboardingAnswers({ [finalKey]: vars.value }));
                         }
                     } else {
                         const payload: Record<string, any> = {};
@@ -538,16 +570,26 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                 }
             } else if (
                 callback?.name === 'navigate_to_signin' ||
+                callback?.name === 'navigate_to_signup' ||
                 callback?.name === 'sign_in' ||
                 callback?.name === 'signin' ||
+                callback?.name === 'sign_up' ||
+                callback?.name === 'signup' ||
                 callback?.name === 'access_screen' ||
-                callback?.name === 'login'
+                callback?.name === 'login' ||
+                callback?.name === 'create_account'
             ) {
                 console.log(`🚨 [SUPERWALL -> NATIVE] Custom callback "${callback?.name}" triggered. Navigating to native AccessScreen.`);
+                didUserExitToAuth = true;
                 isSuperwallPresenting = false;
                 navigation.reset({
                     index: 0,
-                    routes: [{ name: AppRoutes.AccessScreen }],
+                    routes: [
+                        {
+                            name: AppRoutes.AuthStack,
+                            params: { screen: AppRoutes.AccessScreen },
+                        },
+                    ],
                 });
             }
             return { status: 'success' };
@@ -557,6 +599,11 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
         handler.onDismiss(() => {
             console.log('🎉 [SUPERWALL -> NATIVE] handler.onDismiss: Superwall paywall was completed/dismissed by user.');
             isSuperwallPresenting = false;
+            if (didUserExitToAuth) {
+                console.log('ℹ️ [SUPERWALL] User exited to Sign In / Auth. Skipping finishOnboarding.');
+                didUserExitToAuth = false;
+                return;
+            }
             finishOnboarding(navigation);
         });
 

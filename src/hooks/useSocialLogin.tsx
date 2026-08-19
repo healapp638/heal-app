@@ -71,7 +71,21 @@ const useSocialLogin = () => {
           dispatch(setLastLoginType(source));
           dispatch(setSocialEmail(email));
           dispatch(getUserDetail() as any);
-          if (response?.data?.user_subscription?.is_subscribed == 1) {
+          const isOnboardingDone =
+            response?.data?.is_onboarding === 1 ||
+            response?.data?.is_onboarding === true;
+
+          if (!isOnboardingDone) {
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: AppRoutes.AuthStack,
+                  params: { screen: AppRoutes.Welcome },
+                } as never,
+              ],
+            });
+          } else if (response?.data?.user_subscription?.is_subscribed == 1) {
             navigation.reset({
               index: 0,
               routes: [

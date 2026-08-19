@@ -148,6 +148,46 @@ const SignIn = () => {
             dispatch(setLastLoginType('manual'));
             dispatch(setReduxRememberMe(rememberMe));
 
+            const isOnboardingDone =
+              response?.data?.is_onboarding === 1 ||
+              response?.data?.is_onboarding === true;
+
+            const navigateToNextScreen = () => {
+              if (!isOnboardingDone) {
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: AppRoutes.AuthStack,
+                      params: { screen: AppRoutes.Welcome },
+                    } as never,
+                  ],
+                });
+              } else if (response?.data?.user_subscription?.is_subscribed == 1) {
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: AppRoutes.NonAuthStack,
+                      params: { screen: AppRoutes.BottomTab },
+                    } as never,
+                  ],
+                });
+              } else {
+                navigation.reset({
+                  index: 0,
+                  routes: [
+                    {
+                      name: AppRoutes.NonAuthStack,
+                      params: {
+                        screen: AppRoutes.Offer,
+                      },
+                    } as never,
+                  ],
+                });
+              }
+            };
+
             const isBioEnabled = !!response?.data?.is_biometric || !!biometric;
 
             if (!isBioEnabled) {
@@ -159,40 +199,23 @@ const SignIn = () => {
                   {
                     text: localization?.appkeys?.skip || 'Skip',
                     onPress: () => {
-                      navigation.reset({
-                        index: 0,
-                        routes: [
-                          {
-                            name: AppRoutes.NonAuthStack,
-                            params: {
-                              screen: AppRoutes.Offer,
-                            },
-                          } as never,
-                        ],
-                      });
+                      navigateToNextScreen();
                     },
                     style: 'cancel',
                   },
                   {
                     text: localization?.appkeys?.yes || 'Yes',
                     onPress: () => {
-                      handleBiometricAuth(onEnableBiometricSuccess);
+                      handleBiometricAuth(() => {
+                        dispatch(setBiometric(true));
+                        navigateToNextScreen();
+                      });
                     },
                   },
                 ],
               );
             } else {
-              navigation.reset({
-                index: 0,
-                routes: [
-                  {
-                    name: AppRoutes.NonAuthStack,
-                    params: {
-                      screen: AppRoutes.Offer,
-                    },
-                  } as never,
-                ],
-              });
+              navigateToNextScreen();
             }
           }
         },
