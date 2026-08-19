@@ -28,7 +28,7 @@ const Splash = () => {
   const auth = useSelector((state: any) => state.userData?.auth);
   const user = useSelector((state: any) => state.userData?.user);
   const onboarding = useSelector((state: any) => state.userData?.onboarding);
-
+  console.log('dfherth', user);
   const dispatch = useDispatch();
   const { mutate: postApi } = usePostApi();
   const hasNavigated = useRef(false);

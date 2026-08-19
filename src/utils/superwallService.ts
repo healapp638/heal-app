@@ -124,8 +124,20 @@ const finishOnboarding = async (navigation: any) => {
     console.log(JSON.stringify(answers, null, 2));
     console.log('🎉 =======================================================');
 
-    if (token) {
-        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User authenticated. Submitting complete_onboarding and navigating to Offer screen.');
+    // Only complete onboarding and navigate to Offer if the user actually answered the questions
+    const hasOnboardingAnswers = [
+        answers?.goalStartWith,
+        answers?.timeYouCommit,
+        answers?.stopFeelBetter,
+        answers?.helpFeelBetter,
+        answers?.likeToFellMore,
+        answers?.feelThatWay,
+        answers?.howFellingLately,
+        answers?.hearAboutUs,
+    ].some(val => typeof val === 'string' && val.trim().length > 0);
+
+    if (token && hasOnboardingAnswers) {
+        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User authenticated and answers collected. Submitting complete_onboarding and navigating to Offer screen.');
         try {
             await api.post(endpoints.complete_onboarding, {
                 language: AppUtils.getLanguageCode(appLanguage) || 'en',
@@ -157,7 +169,7 @@ const finishOnboarding = async (navigation: any) => {
             });
         }
     } else {
-        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User not authenticated. Navigating to AccessScreen (Sign In / Sign Up).');
+        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: Onboarding not completed / unauthenticated. Navigating to AccessScreen.');
         navigation.reset({
             index: 0,
             routes: [
@@ -568,29 +580,34 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                         }
                     }
                 }
-            } else if (
-                callback?.name === 'navigate_to_signin' ||
-                callback?.name === 'navigate_to_signup' ||
-                callback?.name === 'sign_in' ||
-                callback?.name === 'signin' ||
-                callback?.name === 'sign_up' ||
-                callback?.name === 'signup' ||
-                callback?.name === 'access_screen' ||
-                callback?.name === 'login' ||
-                callback?.name === 'create_account'
-            ) {
-                console.log(`🚨 [SUPERWALL -> NATIVE] Custom callback "${callback?.name}" triggered. Navigating to native AccessScreen.`);
-                didUserExitToAuth = true;
-                isSuperwallPresenting = false;
-                navigation.reset({
-                    index: 0,
-                    routes: [
-                        {
-                            name: AppRoutes.AuthStack,
-                            params: { screen: AppRoutes.AccessScreen },
-                        },
-                    ],
-                });
+            } else {
+                const normalizedCb = (callback?.name || '')
+                    .toLowerCase()
+                    .replace(/[^a-z0-9]/g, '');
+
+                const isAuthCb =
+                    normalizedCb.includes('signin') ||
+                    normalizedCb.includes('signup') ||
+                    normalizedCb.includes('login') ||
+                    normalizedCb.includes('access') ||
+                    normalizedCb.includes('auth') ||
+                    normalizedCb.includes('createaccount') ||
+                    normalizedCb.includes('register');
+
+                if (isAuthCb) {
+                    console.log(`🚨 [SUPERWALL -> NATIVE] Custom auth callback "${callback?.name}" triggered. Navigating to native AccessScreen.`);
+                    didUserExitToAuth = true;
+                    isSuperwallPresenting = false;
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            {
+                                name: AppRoutes.AuthStack,
+                                params: { screen: AppRoutes.AccessScreen },
+                            },
+                        ],
+                    });
+                }
             }
             return { status: 'success' };
         });
