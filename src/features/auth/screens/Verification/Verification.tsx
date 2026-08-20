@@ -110,14 +110,38 @@ const Verification = () => {
             dispatch(setToken(response?.data?.access_token));
             dispatch(setRefreshToken(response?.data?.refresh_token));
             dispatch(setAuth(true));
-            if (response?.data?.is_profile_completed === false) {
+            const rawData = response?.data?.data || response?.data?.user || response?.data;
+            const userObj = rawData?.user || rawData;
+            const isOnboardingDone =
+              rawData?.is_onboarding === 1 ||
+              rawData?.is_onboarding === true ||
+              rawData?.is_onboarding === '1' ||
+              rawData?.is_onboarding === 'true' ||
+              userObj?.is_onboarding === 1 ||
+              userObj?.is_onboarding === true ||
+              userObj?.is_onboarding === '1' ||
+              userObj?.is_onboarding === 'true';
+
+            if (!isOnboardingDone) {
               navigation.reset({
                 index: 0,
                 routes: [
                   {
-                    name: AppRoutes.CompleteProfile,
+                    name: AppRoutes.AuthStack,
                     params: {
-                      userData: response?.data,
+                      screen: AppRoutes.Welcome,
+                    },
+                  } as never,
+                ],
+              });
+            } else if (response?.data?.user_subscription?.is_subscribed == 1) {
+              navigation.reset({
+                index: 0,
+                routes: [
+                  {
+                    name: AppRoutes.NonAuthStack,
+                    params: {
+                      screen: AppRoutes.BottomTab,
                     },
                   } as never,
                 ],

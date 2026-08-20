@@ -82,7 +82,7 @@ export const initSuperwall = async (apiKey: string) => {
             },
         });
         await Superwall.configure({ apiKey, options });
-        
+
         // Ensure SDK treats unauthenticated new user as Inactive (unsubscribed)
         // This is critical for matching audience rules like "Show to: unsubscribed users"
         try {
@@ -198,7 +198,11 @@ export const dismissSuperwall = async () => {
     try {
         isSuperwallPresenting = false;
         const { default: Superwall } = await loadSuperwall();
-        await Superwall.dismiss();
+        if (Superwall?.shared && typeof Superwall.shared.dismiss === 'function') {
+            await Superwall.shared.dismiss();
+        } else if (typeof (Superwall as any)?.dismiss === 'function') {
+            await (Superwall as any).dismiss();
+        }
     } catch (e) {
         console.log('Error dismissing Superwall:', e);
     }
@@ -214,25 +218,27 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
     didUserExitToAuth = false;
     try {
         const { default: Superwall, PaywallPresentationHandler, SubscriptionStatus } = await loadSuperwall();
-        
+
         // Reset device session cache so past test runs don't cause audience limits/skips
         try {
             await Superwall.shared.reset();
             await Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive);
 
             const state = store.getState().userData as any;
-            const hasAuthToken = !!state?.token || !!state?.auth;
-            console.log('🔍 [SUPERWALL DEBUG] Checking user state before register:');
-            console.log('   - Redux Token:', state?.token ? `${state?.token?.substring(0, 15)}...` : 'NULL');
-            console.log('   - Redux Auth:', state?.auth);
-            console.log('   - hasAuthToken computed:', hasAuthToken);
+            const user = state?.user || {};
+            const isOnboardingDone =
+                user?.is_onboarding === 1 ||
+                user?.is_onboarding === true ||
+                user?.is_onboarding === '1' ||
+                user?.is_onboarding === 'true' ||
+                user?.is_profile_completed === 1 ||
+                user?.is_profile_completed === true ||
+                user?.is_profile_completed === '1' ||
+                user?.is_profile_completed === 'true';
 
-            if (hasAuthToken) {
-                await Superwall.shared.setUserAttributes({ has_signed_up: true });
-                console.log('👤 [SUPERWALL DEBUG] Set user attribute: { has_signed_up: true }');
-            } else {
-                console.log('👤 [SUPERWALL DEBUG] User is Guest (no token/auth). Attributes not set.');
-            }
+            const hasSignedUp = isOnboardingDone;
+            await Superwall.shared.setUserAttributes({ has_signed_up: hasSignedUp });
+            console.log('👤 [SUPERWALL DEBUG] Set user attribute: { has_signed_up:', hasSignedUp, '}');
         } catch (e) {
             console.log('Error resetting Superwall session:', e);
         }
@@ -307,6 +313,7 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                 if (nameVal) {
                     console.log(`✅ Onboarding Answer Stored (Name): [fullName] = "${nameVal}"`);
                     store.dispatch(setOnboardingAnswers({ fullName: nameVal }));
+                    setSuperwallUserAttributes({ name: nameVal, fullName: nameVal, userName: nameVal });
                 }
             } else if (callback?.name === 'set_onboarding_answer' && callback?.variables) {
                 const vars = callback.variables;
@@ -317,12 +324,27 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             applySuperwallLanguage(vars.value);
                         } else {
                             const lower = cleanKey.toLowerCase();
-                            const finalKey =
-                                lower === 'username' || lower === 'name' || lower === 'fullname' || lower === 'firstname'
-                                    ? 'fullName'
-                                    : cleanKey;
+                            const isNameKey =
+                                lower === 'username' ||
+                                lower === 'name' ||
+                                lower === 'fullname' ||
+                                lower === 'firstname' ||
+                                lower.includes('name') ||
+                                lower.includes('value') ||
+                                lower.endsWith('value') ||
+                                lower.startsWith('node.');
+                            const finalKey = isNameKey ? 'fullName' : cleanKey;
                             console.log(`✅ Onboarding Answer Stored: [${finalKey}] = "${vars.value}"`);
                             store.dispatch(setOnboardingAnswers({ [finalKey]: vars.value }));
+                            if (isNameKey) {
+                                setSuperwallUserAttributes({
+                                    name: vars.value,
+                                    fullName: vars.value,
+                                    userName: vars.value,
+                                    [cleanKey]: vars.value,
+                                    [vars.key]: vars.value,
+                                });
+                            }
                         }
                     } else {
                         const payload: Record<string, any> = {};
@@ -343,6 +365,10 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             thoughtful: 'Thoughtful',
                             moodhopeful: 'Hopeful',
                             hopeful: 'Hopeful',
+                            moodother: 'Other',
+                            moodotherp9: 'Other',
+                            otherp9: 'Other',
+                            other: 'Other',
                         };
 
                         const TOPIC_MAP: Record<string, string> = {
@@ -363,6 +389,10 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             needtotalk: 'Just need to talk',
                             justneedtotalk: 'Just need to talk',
                             talk: 'Just need to talk',
+                            topicother: 'Other',
+                            topicotherp9: 'Other',
+                            otherp9: 'Other',
+                            other: 'Other',
                         };
 
                         const FEEL_MORE_MAP: Record<string, string> = {
@@ -391,6 +421,10 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             feelmotivation: 'Motivation',
                             motivation: 'Motivation',
                             topicmotivation: 'Motivation',
+                            feelother: 'Other',
+                            feelotherp9: 'Other',
+                            otherp9: 'Other',
+                            other: 'Other',
                         };
 
                         const HELP_BETTER_MAP: Record<string, string> = {
@@ -418,6 +452,8 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             listeningtomusic: 'Listening to music',
                             feelother: 'Other',
                             helpother: 'Other',
+                            helpotherp9: 'Other',
+                            otherp9: 'Other',
                             other: 'Other',
                         };
 
@@ -459,6 +495,12 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             stopunhealthy: 'I repeat unhealthy patterns',
                             unhealthypatterns: 'I repeat unhealthy patterns',
                             unhealthy: 'I repeat unhealthy patterns',
+                            stopother: 'Other',
+                            stopotherp9: 'Other',
+                            feelotherp9: 'Other',
+                            feelother: 'Other',
+                            otherp9: 'Other',
+                            other: 'Other',
                         };
 
                         const TIME_COMMIT_MAP: Record<string, string> = {
@@ -507,12 +549,85 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                         let selectedTimeCommit: string | null = null;
                         let selectedGoalStart: string | null = null;
 
+                        const keysJoined = Object.keys(vars).join(' ').toLowerCase();
+
+                        const isPage9Obstacles =
+                            keysJoined.includes('p9') ||
+                            keysJoined.includes('overthink') ||
+                            keysJoined.includes('stuck') ||
+                            keysJoined.includes('isolate') ||
+                            keysJoined.includes('unhealthypatterns');
+
+                        const isPage10Helps =
+                            keysJoined.includes('goingoutside') ||
+                            keysJoined.includes('therapy') ||
+                            keysJoined.includes('journaling') ||
+                            keysJoined.includes('talking') ||
+                            keysJoined.includes('listening');
+
+                        const isMoodsPage =
+                            keysJoined.includes('calm') ||
+                            keysJoined.includes('sad') ||
+                            keysJoined.includes('happy') ||
+                            keysJoined.includes('sorrow') ||
+                            keysJoined.includes('thoughtful') ||
+                            keysJoined.includes('hopeful');
+
+                        const isTopicsPage =
+                            keysJoined.includes('romantic') ||
+                            keysJoined.includes('family') ||
+                            keysJoined.includes('friendship') ||
+                            keysJoined.includes('loneliness') ||
+                            keysJoined.includes('selfconfident');
+
+                        const isFeelMorePage =
+                            keysJoined.includes('peaceofmind') ||
+                            keysJoined.includes('emotionalstrength') ||
+                            keysJoined.includes('clarity') ||
+                            keysJoined.includes('balance');
+
                         Object.entries(vars).forEach(([k, v]) => {
                             const cleanKey = k.replace(/^(state|user|user_attributes|attributes)\./i, '');
                             const lowerKey = cleanKey.toLowerCase();
                             const isSelected = v === true || v === 'on' || v === 'true' || v === '1';
 
-                            if (MOOD_MAP[lowerKey]) {
+                            const isOtherKey =
+                                lowerKey === 'other' ||
+                                lowerKey === 'otherp9' ||
+                                lowerKey === 'feelother' ||
+                                lowerKey === 'feelotherp9' ||
+                                lowerKey === 'helpother' ||
+                                lowerKey === 'topicother' ||
+                                lowerKey === 'moodother' ||
+                                lowerKey.includes('other');
+
+                            if (isOtherKey) {
+                                if (isSelected) {
+                                    if (isPage9Obstacles) {
+                                        selectedStopBetter.push('Other');
+                                    } else if (isPage10Helps) {
+                                        selectedHelpBetter.push('Other');
+                                    } else if (isMoodsPage) {
+                                        selectedMoods.push('Other');
+                                    } else if (isTopicsPage) {
+                                        selectedFeelThatWay.push('Other');
+                                    } else if (isFeelMorePage) {
+                                        selectedFeelMore.push('Other');
+                                    } else {
+                                        if (lowerKey.includes('help') || lowerKey.includes('goingoutside') || lowerKey.includes('therapy')) {
+                                            selectedHelpBetter.push('Other');
+                                        } else if (lowerKey.includes('stop') || lowerKey.includes('p9')) {
+                                            selectedStopBetter.push('Other');
+                                        } else if (lowerKey.includes('mood')) {
+                                            selectedMoods.push('Other');
+                                        } else if (lowerKey.includes('topic')) {
+                                            selectedFeelThatWay.push('Other');
+                                        } else {
+                                            selectedHelpBetter.push('Other');
+                                        }
+                                    }
+                                }
+                            } else if (MOOD_MAP[lowerKey]) {
                                 if (isSelected) {
                                     selectedMoods.push(MOOD_MAP[lowerKey]);
                                 }
@@ -551,6 +666,13 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                             ) {
                                 payload['fullName'] = v;
                                 console.log(`✅ Onboarding Answer Stored: [fullName] = "${v}"`);
+                                setSuperwallUserAttributes({
+                                    name: v,
+                                    fullName: v,
+                                    userName: v,
+                                    [cleanKey]: v,
+                                    [k]: v,
+                                });
                             } else if (lowerKey === 'privacyaccepted') {
                                 payload['privacyAccepted'] = isSelected;
                                 console.log(`✅ Onboarding Answer Stored: [privacyAccepted] = ${isSelected}`);
@@ -668,16 +790,27 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
         });
 
         const state = store.getState().userData as any;
-        const hasAuthToken = !!state?.token || !!state?.auth;
+        const user = state?.user || {};
+        const isOnboardingDone =
+            user?.is_onboarding === 1 ||
+            user?.is_onboarding === true ||
+            user?.is_onboarding === '1' ||
+            user?.is_onboarding === 'true' ||
+            user?.is_profile_completed === 1 ||
+            user?.is_profile_completed === true ||
+            user?.is_profile_completed === '1' ||
+            user?.is_profile_completed === 'true';
+
+        const hasSignedUp = isOnboardingDone;
 
         console.log('🚀 [SUPERWALL DEBUG] Calling Superwall.shared.register:');
         console.log('   - Placement: "onboarding_start"');
-        console.log('   - Params passed: ', JSON.stringify({ has_signed_up: hasAuthToken }));
-        console.log('   - User Attributes in Superwall: { has_signed_up: ', hasAuthToken, '}');
+        console.log('   - Params passed: ', JSON.stringify({ has_signed_up: hasSignedUp }));
+        console.log('   - User Attributes in Superwall: { has_signed_up: ', hasSignedUp, '}');
 
         await Superwall.shared.register({
             placement: 'onboarding_start',
-            params: { has_signed_up: hasAuthToken },
+            params: { has_signed_up: hasSignedUp },
             handler,
         });
     } catch (error) {

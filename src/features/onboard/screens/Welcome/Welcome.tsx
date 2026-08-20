@@ -70,32 +70,14 @@ const Welcome = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const canResume =
-        !auth &&
-        !onboarding?.isCompleted &&
-        onboarding?.hasStarted &&
-        onboarding?.currentScreen !== AppRoutes.GetStarted &&
-        onboarding?.currentScreen !== AppRoutes.HearAboutUs &&
-        RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
-
-      if (canResume) {
-        console.log('🚨 [WELCOME -> NATIVE] canResume is TRUE! Showing ResumeModal for native screen:', onboarding?.currentScreen);
+      console.log('🚀 [WELCOME -> SUPERWALL] Auto-launching Superwall onboarding placement on focus...');
+      dispatch(clearOnboardingProgress());
+      setResumeModalVisible(false);
+      setShowNativeContent(false);
+      startSuperwallOnboarding(navigation, () => {
         setShowNativeContent(true);
-        setResumeModalVisible(true);
-      } else if (!hasInitializedSuperwall.current) {
-        console.log('🚀 [WELCOME -> SUPERWALL] Auto-launching Superwall onboarding placement on focus...');
-        hasInitializedSuperwall.current = true;
-        startSuperwallOnboarding(navigation, () => {
-          setShowNativeContent(true);
-        });
-      }
-    }, [
-      navigation,
-      onboarding?.currentScreen,
-      onboarding?.isCompleted,
-      onboarding?.hasStarted,
-      auth,
-    ]),
+      });
+    }, [navigation, dispatch]),
   );
   const getLangData = () => {
     switch (appLanguage) {

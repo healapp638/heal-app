@@ -72,9 +72,17 @@ const useSocialLogin = () => {
           dispatch(setLastLoginType(source));
           dispatch(setSocialEmail(email));
           dispatch(getUserDetail() as any);
+          const rawData = response?.data?.data || response?.data?.user || response?.data;
+          const userObj = rawData?.user || rawData;
           const isOnboardingDone =
-            response?.data?.is_onboarding === 1 ||
-            response?.data?.is_onboarding === true;
+            rawData?.is_onboarding === 1 ||
+            rawData?.is_onboarding === true ||
+            rawData?.is_onboarding === '1' ||
+            rawData?.is_onboarding === 'true' ||
+            userObj?.is_onboarding === 1 ||
+            userObj?.is_onboarding === true ||
+            userObj?.is_onboarding === '1' ||
+            userObj?.is_onboarding === 'true';
           console.log('📱 [SOCIAL LOGIN DEBUG] Social Login Success!');
           console.log('   - isOnboardingDone:', isOnboardingDone);
           console.log('   - Token received:', !!response?.data?.access_token);

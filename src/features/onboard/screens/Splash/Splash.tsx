@@ -58,28 +58,34 @@ const Splash = () => {
     hasNavigated.current = true;
 
     if (!auth) {
-      const canResume =
-        !auth &&
-        !onboarding?.isCompleted &&
-        onboarding?.hasStarted &&
-        onboarding?.currentScreen !== AppRoutes.GetStarted &&
-        onboarding?.currentScreen !== AppRoutes.HearAboutUs &&
-        RESUMABLE_ONBOARDING_ROUTES.includes(onboarding?.currentScreen);
-
-      if (canResume) {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: AppRoutes.Welcome } as never],
-        });
-      } else {
-        dispatch(clearOnboardingProgress());
-        navigation.reset({
-          index: 0,
-          routes: [{ name: AppRoutes.Welcome } as never],
-        });
-      }
+      dispatch(clearOnboardingProgress());
+      navigation.reset({
+        index: 0,
+        routes: [{ name: AppRoutes.Welcome } as never],
+      });
     } else {
-      if (user?.is_profile_completed == false) {
+      const isOnboardingDone =
+        user?.is_onboarding === 1 ||
+        user?.is_onboarding === true ||
+        user?.is_onboarding === '1' ||
+        user?.is_onboarding === 'true';
+
+      console.log('⚡ [SPLASH DEBUG] user?.is_onboarding:', user?.is_onboarding);
+      console.log('   - Computed isOnboardingDone:', isOnboardingDone);
+
+      if (!isOnboardingDone) {
+        console.log('👉 [SPLASH NAV] Onboarding NOT done -> AuthStack -> AppRoutes.Welcome');
+        navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: AppRoutes.AuthStack,
+              params: { screen: AppRoutes.Welcome },
+            } as never,
+          ],
+        });
+      } else if (user?.is_profile_completed === false) {
+        console.log('👉 [SPLASH NAV] Profile incomplete -> AppRoutes.CompleteProfile');
         navigation.reset({
           index: 0,
           routes: [
@@ -90,6 +96,7 @@ const Splash = () => {
           ],
         });
       } else if (user?.user_subscription?.is_subscribed == 1) {
+        console.log('👉 [SPLASH NAV] Onboarded & Subscribed -> NonAuthStack -> AppRoutes.BottomTab');
         navigation.reset({
           index: 0,
           routes: [
@@ -100,18 +107,13 @@ const Splash = () => {
           ],
         });
       } else {
-        // User has not subscribed / not in home screen - treat as new user
-        dispatch(setAuth(false));
-        dispatch(setToken(null));
-        dispatch(setRefreshToken(null));
-        dispatch(setUser({}));
-        dispatch(clearOnboardingProgress());
+        console.log('👉 [SPLASH NAV] Onboarded & Unsubscribed -> NonAuthStack -> AppRoutes.Offer');
         navigation.reset({
           index: 0,
           routes: [
             {
-              name: AppRoutes.AuthStack,
-              params: { screen: AppRoutes.Welcome },
+              name: AppRoutes.NonAuthStack,
+              params: { screen: AppRoutes.Offer },
             } as never,
           ],
         });

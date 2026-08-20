@@ -158,11 +158,11 @@ api.axiosInstance.interceptors.response.use(
     const response = error.response;
 
     if (response) {
-      // console.log(
-      //   `[API Error] ${originalRequest?.method?.toUpperCase()} ${
-      //     originalRequest?.url
-      //   } - Status: ${response.status}`,
-      // );
+      console.log(
+        `❌ [API ERROR RESPONSE] ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - Status: ${response.status}`,
+      );
+      console.log('   - Response Data:', JSON.stringify(response.data, null, 2));
+
       if (response.status === 401) {
         // Skip refresh for the refresh_token endpoint itself to avoid infinite loop
         if (originalRequest?.url?.includes(endpoints.refresh_token)) {
@@ -218,10 +218,15 @@ api.axiosInstance.interceptors.response.use(
       }
     } else {
       console.log(
-        `[API Network/Server Error] ${originalRequest?.method?.toUpperCase()} ${
+        `❌ [API NETWORK/SERVER ERROR] ${originalRequest?.method?.toUpperCase()} ${
           originalRequest?.url
-        } - Error: ${error.message}`,
+        } - Error Message: ${error.message}`,
       );
+      console.log('   - Request Full URL:', (originalRequest?.baseURL || '') + (originalRequest?.url || ''));
+      console.log('   - Request Payload Data:', JSON.stringify(originalRequest?.data, null, 2));
+      console.log('   - XHR Raw Response (_response):', error?.request?._response);
+      console.log('   - XHR Status:', error?.request?.status);
+      console.log('   - Error Code:', error?.code);
     }
 
     return Promise.reject(error);
