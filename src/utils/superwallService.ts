@@ -182,6 +182,17 @@ const finishOnboarding = async (navigation: any) => {
     }
 };
 
+// Set custom user attributes in Superwall SDK
+export const setSuperwallUserAttributes = async (attributes: Record<string, any>) => {
+    try {
+        const { default: Superwall } = await loadSuperwall();
+        await Superwall.shared.setUserAttributes(attributes);
+        console.log('👤 [SUPERWALL DEBUG] setSuperwallUserAttributes SUCCESS:', JSON.stringify(attributes));
+    } catch (e) {
+        console.log('❌ [SUPERWALL DEBUG] Error setting Superwall user attributes:', e);
+    }
+};
+
 // Safely dismiss Superwall if currently showing
 export const dismissSuperwall = async () => {
     try {
@@ -208,11 +219,30 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
         try {
             await Superwall.shared.reset();
             await Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive);
+
+            const state = store.getState().userData as any;
+            const hasAuthToken = !!state?.token || !!state?.auth;
+            console.log('🔍 [SUPERWALL DEBUG] Checking user state before register:');
+            console.log('   - Redux Token:', state?.token ? `${state?.token?.substring(0, 15)}...` : 'NULL');
+            console.log('   - Redux Auth:', state?.auth);
+            console.log('   - hasAuthToken computed:', hasAuthToken);
+
+            if (hasAuthToken) {
+                await Superwall.shared.setUserAttributes({ has_signed_up: true });
+                console.log('👤 [SUPERWALL DEBUG] Set user attribute: { has_signed_up: true }');
+            } else {
+                console.log('👤 [SUPERWALL DEBUG] User is Guest (no token/auth). Attributes not set.');
+            }
         } catch (e) {
             console.log('Error resetting Superwall session:', e);
         }
 
         const handler = new PaywallPresentationHandler();
+
+        handler.onPresent((info: any) => {
+            console.log('🎨 [SUPERWALL DEBUG] Paywall Presented Successfully!');
+            console.log('   - Paywall Name/Identifier:', info?.name || info?.identifier || JSON.stringify(info));
+        });
 
         // 1. Capture user selection from Superwall buttons.
         // The SDK only ever sends `{ name, variables }` on a custom callback (there is
@@ -637,13 +667,21 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
             onFallback?.();
         });
 
-        console.log('🚀 [SUPERWALL] Registering placement: "onboarding_start"...');
+        const state = store.getState().userData as any;
+        const hasAuthToken = !!state?.token || !!state?.auth;
+
+        console.log('🚀 [SUPERWALL DEBUG] Calling Superwall.shared.register:');
+        console.log('   - Placement: "onboarding_start"');
+        console.log('   - Params passed: ', JSON.stringify({ has_signed_up: hasAuthToken }));
+        console.log('   - User Attributes in Superwall: { has_signed_up: ', hasAuthToken, '}');
+
         await Superwall.shared.register({
             placement: 'onboarding_start',
+            params: { has_signed_up: hasAuthToken },
             handler,
         });
     } catch (error) {
-        console.error('❌ [SUPERWALL] Exception during Superwall register:', error);
+        console.error('❌ [SUPERWALL DEBUG] Exception during Superwall register:', error);
         isSuperwallPresenting = false;
         onFallback?.();
     }

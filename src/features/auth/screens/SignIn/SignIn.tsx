@@ -38,6 +38,8 @@ import {
 import useSocialLogin from '../../../../hooks/useSocialLogin';
 import SuccessModal from '../../../../modals/SuccessModal';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import { setSuperwallUserAttributes } from '../../../../utils/superwallService';
+
 const SignIn = () => {
   const dispatch = useDispatch();
   const { colors, images } = useTheme() as any;
@@ -152,8 +154,13 @@ const SignIn = () => {
               response?.data?.is_onboarding === 1 ||
               response?.data?.is_onboarding === true;
 
+            console.log('📱 [SIGN IN DEBUG] Email Login Success!');
+            console.log('   - isOnboardingDone:', isOnboardingDone);
+
             const navigateToNextScreen = () => {
               if (!isOnboardingDone) {
+                console.log('🔑 [SIGN IN DEBUG] Onboarding not done. Setting setSuperwallUserAttributes({ has_signed_up: true })...');
+                setSuperwallUserAttributes({ has_signed_up: true });
                 navigation.reset({
                   index: 0,
                   routes: [

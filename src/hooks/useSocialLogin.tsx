@@ -23,6 +23,7 @@ import AppRoutes from '../routes/RouteKeys/appRoutes';
 import AppUtils from '../utils/appUtils';
 import { setLoader } from '../redux/Reducers/tempData';
 import { LocalizationContext } from '../localization/localization';
+import { setSuperwallUserAttributes } from '../utils/superwallService';
 
 const useSocialLogin = () => {
   const { mutate: socialLoginMutate, isPending } = usePostApi();
@@ -74,8 +75,13 @@ const useSocialLogin = () => {
           const isOnboardingDone =
             response?.data?.is_onboarding === 1 ||
             response?.data?.is_onboarding === true;
+          console.log('📱 [SOCIAL LOGIN DEBUG] Social Login Success!');
+          console.log('   - isOnboardingDone:', isOnboardingDone);
+          console.log('   - Token received:', !!response?.data?.access_token);
 
           if (!isOnboardingDone) {
+            console.log('🔑 [SOCIAL LOGIN DEBUG] Onboarding not done. Setting setSuperwallUserAttributes({ has_signed_up: true })...');
+            setSuperwallUserAttributes({ has_signed_up: true });
             navigation.reset({
               index: 0,
               routes: [
