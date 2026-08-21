@@ -61,7 +61,7 @@ function App(): React.JSX.Element {
         store.dispatch(SetAppLanguage(value));
       }
     } catch (e) {
-      console.log('Error loading language', e);
+      AppUtils.showLog('Error loading language', e);
     }
   };
 

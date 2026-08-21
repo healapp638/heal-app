@@ -149,7 +149,7 @@ const CreatingSpace = () => {
             );
           },
           onError: (err: any) => {
-            console.log(err);
+            AppUtils.showLog(err);
           },
         },
       );

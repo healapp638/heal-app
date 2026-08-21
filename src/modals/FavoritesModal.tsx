@@ -122,9 +122,9 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                    ...quote,
-                    is_liked: false,
-                  }
+                  ...quote,
+                  is_liked: false,
+                }
                 : quote,
             ),
           },
@@ -165,7 +165,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
         shareLink = link;
       }
     } catch (apiError) {
-      console.log('Error creating link:', apiError);
+      AppUtils.showLog('Error creating link:', apiError);
     }
 
     // Wait for the hidden view to render with the new item
@@ -182,7 +182,7 @@ const FavoritesModal = ({ visible, onClose }: FavoritesModalProps) => {
           });
         }
       } catch (error) {
-        console.log('Share error:', error);
+        AppUtils.showLog('Share error:', error);
       } finally {
         setSharingItem(null);
       }

@@ -102,7 +102,7 @@ const SignIn = () => {
     if (!AppUtils.validateEmail(finalEmail)) {
       AppUtils.showToast(
         localization.appkeys?.toastInvalidEmail ||
-          'Please enter a valid email address.',
+        'Please enter a valid email address.',
       );
       return;
     }
@@ -125,7 +125,6 @@ const SignIn = () => {
       },
       {
         onSuccess: async (response: any) => {
-          // console.log('response', response?.data?.is_after_social_login);
 
           if (response?.data?.is_after_social_login) {
             navigation.navigate(
@@ -162,12 +161,10 @@ const SignIn = () => {
               userObj?.is_onboarding === '1' ||
               userObj?.is_onboarding === 'true';
 
-            console.log('📱 [SIGN IN DEBUG] Email Login Success!');
-            console.log('   - isOnboardingDone:', isOnboardingDone);
+
 
             const navigateToNextScreen = () => {
               if (!isOnboardingDone) {
-                console.log('🔑 [SIGN IN DEBUG] Onboarding not done. Setting setSuperwallUserAttributes({ has_signed_up: true })...');
                 setSuperwallUserAttributes({ has_signed_up: true });
                 navigation.reset({
                   index: 0,
@@ -209,7 +206,7 @@ const SignIn = () => {
               Alert.alert(
                 localization?.appkeys?.enableBiometric || 'Enable Biometric',
                 localization?.appkeys?.wouldYouLike ||
-                  'Would you like to enable biometric login for next time?',
+                'Would you like to enable biometric login for next time?',
                 [
                   {
                     text: localization?.appkeys?.skip || 'Skip',

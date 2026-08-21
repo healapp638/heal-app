@@ -50,6 +50,7 @@ import style from './style';
 import ExerciseLoading from '../../../../components/ExerciseLoading';
 import ExerciseReflection from '../../../../components/ExerciseReflection';
 import ExerciseStepContent from '../../../../components/ExerciseStepContent';
+import AppUtils from '../../../../utils/appUtils';
 
 const ModuleExercise = () => {
   const { colors } = useTheme() as any;
@@ -174,7 +175,7 @@ const ModuleExercise = () => {
         if (!selectedOptionIdVal) {
           ToastService.show(
             localization.appkeys?.pleaseSelectOption ||
-              'Please select an option to proceed',
+            'Please select an option to proceed',
           );
           return;
         }
@@ -191,7 +192,7 @@ const ModuleExercise = () => {
             },
             {
               onSuccess: () => {
-                console.log('startLesson success');
+                AppUtils.showLog('startLesson success');
               },
               onError: () => {
                 if (isMounted.current) {
@@ -207,7 +208,7 @@ const ModuleExercise = () => {
       if (!reflectionTextRef.current.trim()) {
         ToastService.show(
           localization.appkeys?.pleaseEnterReflection ||
-            'Please enter your reflection',
+          'Please enter your reflection',
         );
         return;
       }
@@ -243,11 +244,9 @@ const ModuleExercise = () => {
             });
             dispatch(getUserDetail() as any);
             showPointsToast(
-              `${localization.appkeys?.completedPhase || "You've completed"} ${
-                phase?.phase ||
-                `${localization.appkeys?.phase || 'Phase'} ${
-                  phase?.phaseNumber || 1
-                }`
+              `${localization.appkeys?.completedPhase || "You've completed"} ${phase?.phase ||
+              `${localization.appkeys?.phase || 'Phase'} ${phase?.phaseNumber || 1
+              }`
               }`,
               `+${data?.data?.points || 0} ${(
                 localization.appkeys?.pts || 'pts'

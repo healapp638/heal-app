@@ -83,12 +83,9 @@ const useSocialLogin = () => {
             userObj?.is_onboarding === true ||
             userObj?.is_onboarding === '1' ||
             userObj?.is_onboarding === 'true';
-          console.log('📱 [SOCIAL LOGIN DEBUG] Social Login Success!');
-          console.log('   - isOnboardingDone:', isOnboardingDone);
-          console.log('   - Token received:', !!response?.data?.access_token);
+
 
           if (!isOnboardingDone) {
-            console.log('🔑 [SOCIAL LOGIN DEBUG] Onboarding not done. Setting setSuperwallUserAttributes({ has_signed_up: true })...');
             setSuperwallUserAttributes({ has_signed_up: true });
             navigation.reset({
               index: 0,
@@ -122,7 +119,6 @@ const useSocialLogin = () => {
           }
         },
         onError: (error: any) => {
-          console.log('error', error);
           AppUtils.showToast(error.message || 'Social login failed');
         },
       },
@@ -136,10 +132,10 @@ const useSocialLogin = () => {
     });
 
     try {
-      GoogleSignin.signOut().catch(() => {});
+      GoogleSignin.signOut().catch(() => { });
       auth()
         .signOut()
-        .catch(() => {});
+        .catch(() => { });
 
       const { data }: any = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(
@@ -158,7 +154,6 @@ const useSocialLogin = () => {
         AppUtils.showToast('Google Sign-In Failed');
       }
     } catch (error: any) {
-      console.log('Google Sign-In Error:', error);
       if (error.code !== 'ASYNC_OP_IN_PROGRESS' && error.code !== '7') {
         AppUtils.showToast('Google Sign-In Failed');
       }
@@ -189,8 +184,7 @@ const useSocialLogin = () => {
       const name =
         res.user?.displayName ||
         (appleAuthRequestResponse?.fullName?.givenName
-          ? `${appleAuthRequestResponse.fullName.givenName || ''} ${
-              appleAuthRequestResponse.fullName.familyName || ''
+          ? `${appleAuthRequestResponse.fullName.givenName || ''} ${appleAuthRequestResponse.fullName.familyName || ''
             }`.trim()
           : '') ||
         '';

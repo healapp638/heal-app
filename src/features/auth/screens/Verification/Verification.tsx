@@ -86,8 +86,8 @@ const Verification = () => {
           email: email?.trim()?.toLowerCase(),
           ...(from !== 'ForgotPassword' &&
             from !== 'SocialLogin' && {
-              password,
-            }),
+            password,
+          }),
           otp: String(otpCode),
         },
       },
@@ -164,7 +164,6 @@ const Verification = () => {
           }
         },
         onError: (error: any) => {
-          console.log('erro', error);
           AppUtils.showToast(error.message || 'OTP Verification Failed');
         },
       },

@@ -146,7 +146,7 @@ const GetCreditsModal = ({ visible, onClose, onPurchaseSuccess }: GetCreditsModa
       }
     } catch (error: any) {
       if (error?.userCancelled) {
-        console.log('[RevenueCat] User cancelled credit purchase.');
+        AppUtils.showLog('[RevenueCat] User cancelled credit purchase.');
       } else {
         console.error('[RevenueCat] Credit purchase failed:', error);
         AppUtils.showToast(error?.message || 'Purchase failed');
@@ -159,46 +159,46 @@ const GetCreditsModal = ({ visible, onClose, onPurchaseSuccess }: GetCreditsModa
   const displayPacks =
     rcPackages.length > 0
       ? rcPackages.map(pkg => {
-          const details = getPackDetails(pkg.product.identifier);
-          return {
-            ...details,
-            productIdentifier: pkg.product.identifier,
-            price: pkg.product.priceString,
-            rawPackage: pkg,
-          };
-        })
+        const details = getPackDetails(pkg.product.identifier);
+        return {
+          ...details,
+          productIdentifier: pkg.product.identifier,
+          price: pkg.product.priceString,
+          rawPackage: pkg,
+        };
+      })
       : [
-          {
-            id: 'large',
-            productIdentifier: 'large_pack',
-            title: localization.appkeys.largePack,
-            credits: '500x',
-            price: '$9.99',
-            badge: localization.appkeys.bestValue,
-            type: localization.appkeys.oneTime,
-            rawPackage: null,
-          },
-          {
-            id: 'medium',
-            productIdentifier: 'medium_pack',
-            title: localization.appkeys.mediumPack,
-            credits: '300x',
-            price: '$5.99',
-            badge: localization.appkeys.mostPopular,
-            type: localization.appkeys.oneTime,
-            rawPackage: null,
-          },
-          {
-            id: 'small',
-            productIdentifier: 'small_pack',
-            title: localization.appkeys.smallPack,
-            credits: '150x',
-            price: '$2.99',
-            badge: null,
-            type: localization.appkeys.oneTime,
-            rawPackage: null,
-          },
-        ];
+        {
+          id: 'large',
+          productIdentifier: 'large_pack',
+          title: localization.appkeys.largePack,
+          credits: '500x',
+          price: '$9.99',
+          badge: localization.appkeys.bestValue,
+          type: localization.appkeys.oneTime,
+          rawPackage: null,
+        },
+        {
+          id: 'medium',
+          productIdentifier: 'medium_pack',
+          title: localization.appkeys.mediumPack,
+          credits: '300x',
+          price: '$5.99',
+          badge: localization.appkeys.mostPopular,
+          type: localization.appkeys.oneTime,
+          rawPackage: null,
+        },
+        {
+          id: 'small',
+          productIdentifier: 'small_pack',
+          title: localization.appkeys.smallPack,
+          credits: '150x',
+          price: '$2.99',
+          badge: null,
+          type: localization.appkeys.oneTime,
+          rawPackage: null,
+        },
+      ];
 
   const handleGetCreditsBtnPress = () => {
     const selectedPack = displayPacks.find(p => p.id === selectedPackageId);

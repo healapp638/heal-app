@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import Purchases, { CustomerInfo, PurchasesOffering } from 'react-native-purchases';
 import { REVENUECAT_CONFIG } from '../config/purchasesConfig';
+import AppUtils from './appUtils';
 
 class PurchasesService {
   private isConfigured: boolean = false;
@@ -10,7 +11,6 @@ class PurchasesService {
    */
   public async initialize(): Promise<void> {
     if (this.isConfigured) {
-      console.log('[RevenueCat] SDK is already configured.');
       return;
     }
 
@@ -34,7 +34,6 @@ class PurchasesService {
       Purchases.configure({ apiKey });
 
       this.isConfigured = true;
-      console.log('[RevenueCat] SDK initialized successfully.');
     } catch (error) {
       console.error('[RevenueCat] Failed to initialize SDK:', error);
     }
@@ -83,13 +82,13 @@ class PurchasesService {
       if (specificOffering && offerings.all[specificOffering]) {
         return offerings.all[specificOffering];
       }
-      
+
       return offerings.current;
     } catch (error: any) {
-      const isConfigError = error?.code === 'ConfigurationError' || 
-                            error?.message?.includes('ConfigurationError') ||
-                            String(error).includes('ConfigurationError');
-      
+      const isConfigError = error?.code === 'ConfigurationError' ||
+        error?.message?.includes('ConfigurationError') ||
+        String(error).includes('ConfigurationError');
+
       if (isConfigError) {
         console.warn(
           '[RevenueCat] Dev Warning: Offerings/products are not yet configured in your RevenueCat dashboard for Google Play Store. ' +
@@ -135,7 +134,7 @@ class PurchasesService {
       return this.hasPremiumEntitlement(customerInfo);
     } catch (error: any) {
       if (error?.userCancelled) {
-        console.log('[RevenueCat] User cancelled purchase flow.');
+        AppUtils.showLog('[RevenueCat] User cancelled purchase flow.');
       } else {
         console.error('[RevenueCat] Purchase failed:', error);
       }
@@ -158,7 +157,7 @@ class PurchasesService {
       return result;
     } catch (error: any) {
       if (error?.userCancelled) {
-        console.log('[RevenueCat] User cancelled package purchase.');
+        AppUtils.showLog('[RevenueCat] User cancelled package purchase.');
       } else {
         console.error('[RevenueCat] Package purchase failed:', error);
       }
@@ -179,7 +178,7 @@ class PurchasesService {
 
     try {
       const customerInfo = await Purchases.restorePurchases();
-      console.log('[RevenueCat] Purchases restored successfully.');
+      AppUtils.showLog('[RevenueCat] Purchases restored successfully.');
       return customerInfo;
     } catch (error) {
       console.error('[RevenueCat] Error restoring purchases:', error);
@@ -192,11 +191,11 @@ class PurchasesService {
    */
   public addCustomerInfoListener(listener: (customerInfo: CustomerInfo) => void): () => void {
     if (!this.isConfigured) {
-      return () => {};
+      return () => { };
     }
 
     const subscription = Purchases.addCustomerInfoUpdateListener(listener);
-    
+
     // Return unsubscribe function
     return () => {
       // In newer react-native-purchases versions, Purchases.removeCustomerInfoUpdateListener exists, or the listener returns a subscription object that has a remove() method.

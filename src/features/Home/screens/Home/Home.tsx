@@ -35,6 +35,7 @@ import { endpoints } from '../../../../api/Services/endpoints';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
 import { setModuleSubModule } from '../../../../redux/Reducers/tempData';
 import messaging from '@react-native-firebase/messaging';
+import AppUtils from '../../../../utils/appUtils';
 const Home = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
@@ -148,7 +149,7 @@ const Home = () => {
             dispatch(getUserDetail() as any);
           },
           onError: (error: any) => {
-            console.log(error);
+            AppUtils.showLog(error);
           },
         },
       );
@@ -353,7 +354,7 @@ const Home = () => {
 
             <SectionHeader
               title={localization.appkeys?.todayJournal || 'Today Journal'}
-              onActionPress={() => {}}
+              onActionPress={() => { }}
               containerStyle={{
                 marginTop: 20,
               }}

@@ -61,7 +61,6 @@ const EmailSignIn = () => {
       howFellingLately: answers?.howFellingLately || '',
       hearAboutUs: answers?.hearAboutUs || '',
     };
-    console.log("sudygiowjeh", payload)
     sendMagicLink(
       {
         endpoint: endpoints.sendMagicLink,

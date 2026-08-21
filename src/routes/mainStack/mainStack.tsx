@@ -70,7 +70,7 @@ export default function MainStack() {
           dispatch(getUserDetail(false) as any);
         }
       } catch (e) {
-        console.log('Error loading tokens from keychain:', e);
+        AppUtils.showLog('Error loading tokens from keychain:', e);
       } finally {
         setIsReady(true);
       }
@@ -139,7 +139,6 @@ export default function MainStack() {
 
       // Deduplicate: skip if same URL was processed recently (within 5 seconds)
       if (lastProcessedUrl.current === url) {
-        console.log('Deep link already processed:', url);
         return;
       }
       lastProcessedUrl.current = url;
@@ -152,7 +151,6 @@ export default function MainStack() {
         const afterLink = url.substring(linkIndex + 6);
         code = afterLink.split('?')[0];
       }
-      console.log('Extracted code:', code);
 
       // Extract query parameters safely
       const params: { [key: string]: string } = {};
@@ -184,9 +182,7 @@ export default function MainStack() {
         ref,
       } = params;
 
-      if (ref) {
-        console.log('Referral:', ref);
-      }
+
 
       // Use refs to get fresh dispatch/navigation/mutate
       const currentDispatch = dispatchRef.current;
@@ -255,7 +251,6 @@ export default function MainStack() {
           },
           {
             onSuccess: async (response: any) => {
-              console.log('🔗 [MAGIC LINK SUCCESS RESPONSE]', JSON.stringify(response, null, 2));
               currentDispatch(setLoader(false));
               await dismissSuperwall();
               currentDispatch(setUser(response?.data));
@@ -282,12 +277,9 @@ export default function MainStack() {
                 rawData?.user_subscription?.is_subscribed == 1 ||
                 userObj?.user_subscription?.is_subscribed == 1;
 
-              console.log('🔗 [MAGIC LINK SUCCESS] Raw API Data:', JSON.stringify(rawData, null, 2));
-              console.log('   - Computed isOnboardingDone:', isOnboardingDone);
-              console.log('   - Computed isSubscribed:', isSubscribed);
+
 
               if (!isOnboardingDone) {
-                console.log('👉 [MAGIC LINK NAV] Onboarding NOT done -> AuthStack -> AppRoutes.Welcome');
                 currentNavigation.reset({
                   index: 0,
                   routes: [
@@ -300,7 +292,6 @@ export default function MainStack() {
                   ],
                 });
               } else if (isSubscribed) {
-                console.log('👉 [MAGIC LINK NAV] Onboarded & Subscribed -> NonAuthStack -> AppRoutes.BottomTab');
                 currentNavigation.reset({
                   index: 0,
                   routes: [
@@ -313,7 +304,6 @@ export default function MainStack() {
                   ],
                 });
               } else {
-                console.log('👉 [MAGIC LINK NAV] Onboarded & Unsubscribed -> NonAuthStack -> AppRoutes.Offer');
                 currentNavigation.reset({
                   index: 0,
                   routes: [
@@ -330,13 +320,7 @@ export default function MainStack() {
             onError: async (error: any) => {
               currentDispatch(setLoader(false));
               await dismissSuperwall();
-              console.log('🚨 [MAGIC LINK LOGIN ERROR DETAILS]:');
-              console.log('   - Error Message:', error?.message);
-              console.log('   - Response Status:', error?.response?.status);
-              console.log('   - Response Data:', JSON.stringify(error?.response?.data, null, 2));
-              console.log('   - XHR Raw Response (_response):', error?.request?._response);
-              console.log('   - XHR Status:', error?.request?.status);
-              console.log('   - Code:', error?.code);
+
 
               AppUtils.showToast(error?.response?.data?.message || error?.message || 'Magic link login failed');
 

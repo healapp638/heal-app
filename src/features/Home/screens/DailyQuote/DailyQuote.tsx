@@ -34,6 +34,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import getEnvVars from '../../../../../env';
 import { triggerHaptic } from '../../../../hooks/useHaptic';
+import AppUtils from '../../../../utils/appUtils';
 const { height: SCREEN_HEIGHT } = Dimensions.get('screen');
 const DailyQuote = () => {
   const navigation = useNavigation();
@@ -55,7 +56,6 @@ const DailyQuote = () => {
   const onViewableItemsChanged = useRef(({ viewableItems }: any) => {
     if (viewableItems.length > 0) {
       const visibleItem = viewableItems[0].item;
-      // console.log('Current Item on Screen:', visibleItem);
       setCurrentIndex(viewableItems[0].index);
 
       // Hit addView API
@@ -113,7 +113,7 @@ const DailyQuote = () => {
           shareLink = link;
         }
       } catch (apiError) {
-        console.log('Error creating link:', apiError);
+        AppUtils.showLog('Error creating link:', apiError);
       }
 
       // Small delay to ensure the hidden view has rendered with the new item
@@ -131,7 +131,7 @@ const DailyQuote = () => {
         }
       }, 100);
     } catch (error) {
-      console.log('Share error:', error);
+      AppUtils.showLog('Share error:', error);
     }
   };
   const apiQuotes =
@@ -171,9 +171,9 @@ const DailyQuote = () => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                    ...quote,
-                    is_liked: !isLiked,
-                  }
+                  ...quote,
+                  is_liked: !isLiked,
+                }
                 : quote,
             ),
           },

@@ -30,6 +30,7 @@ import usePostApi from '../../../../hooks/usePostApi';
 import { useQueryClient } from '@tanstack/react-query';
 import getEnvVars from '../../../../../env';
 import PremiumModal from '../../../../modals/PremiumModal';
+import AppUtils from '../../../../utils/appUtils';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const SavedDailyQuote = () => {
@@ -112,7 +113,7 @@ const SavedDailyQuote = () => {
           shareLink = link;
         }
       } catch (apiError) {
-        console.log('Error creating link:', apiError);
+        AppUtils.showLog('Error creating link:', apiError);
       }
 
       const uri = await viewShotRefs.current[index]?.capture();
@@ -126,7 +127,7 @@ const SavedDailyQuote = () => {
         });
       }
     } catch (error) {
-      console.log('Share error:', error);
+      AppUtils.showLog('Share error:', error);
     }
   };
   const apiQuotes =
@@ -178,9 +179,9 @@ const SavedDailyQuote = () => {
             result: page.data.result.map((quote: any) =>
               quote._id === item._id
                 ? {
-                    ...quote,
-                    is_liked: false,
-                  }
+                  ...quote,
+                  is_liked: false,
+                }
                 : quote,
             ),
           },
@@ -341,8 +342,8 @@ const SavedDailyQuote = () => {
                   Platform.OS == 'android'
                     ? -10
                     : insets?.top > 0
-                    ? insets.top - 10
-                    : 20,
+                      ? insets.top - 10
+                      : 20,
               },
             ]}
           >

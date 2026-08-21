@@ -86,7 +86,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const syncUser = async () => {
       if (auth && userId) {
-        console.log('[RevenueCat] Identifying user:', userId);
         const info = await purchasesService.login(userId);
         if (info) {
           setCustomerInfo(info);
@@ -94,7 +93,6 @@ export const SubscriptionProvider: React.FC<{ children: React.ReactNode }> = ({
           setIsPremium(hasPremium);
         }
       } else if (!auth) {
-        console.log('[RevenueCat] Resetting user on logout');
         const info = await purchasesService.logout();
 
         if (info) {

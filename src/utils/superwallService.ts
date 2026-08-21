@@ -49,7 +49,6 @@ export const applySuperwallLanguage = (rawLanguage: string) => {
     if (!rawLanguage) return;
     const normalized = String(rawLanguage).trim().toLowerCase();
     const matched = LANGUAGE_MAP[normalized] || rawLanguage;
-    console.log(`🌐 [SUPERWALL -> NATIVE] Setting App Language: "${rawLanguage}" -> "${matched}"`);
     store.dispatch(SetAppLanguage(matched));
     AsyncStorage.setItem(strings.appLanguage, matched);
 };
@@ -88,13 +87,12 @@ export const initSuperwall = async (apiKey: string) => {
         try {
             await Superwall.shared.setSubscriptionStatus(SubscriptionStatus.Inactive);
         } catch (subErr) {
-            console.log('Error setting initial subscription status:', subErr);
+            AppUtils.showLog('Error setting initial subscription status:', subErr);
         }
 
         // Preload paywalls immediately in background during splash so they appear instantly
         await Superwall.shared.preloadPaywalls(new Set(['onboarding_start']));
         await Superwall.shared.preloadAllPaywalls();
-        console.log('✅ Superwall SDK Initialized & Preloaded');
     } catch (error) {
         console.error('Superwall Initialization Error:', error);
     }
@@ -119,10 +117,7 @@ const finishOnboarding = async (navigation: any) => {
     const answers = state?.onboarding?.answers || {};
     const appLanguage = state?.appLanguage;
 
-    console.log('🎉 =======================================================');
-    console.log('🎉 [SUPERWALL ONBOARDING COMPLETED - ALL ANSWERS COLLECTED]');
-    console.log(JSON.stringify(answers, null, 2));
-    console.log('🎉 =======================================================');
+
 
     // Only complete onboarding and navigate to Offer if the user actually answered the questions
     const hasOnboardingAnswers = [
@@ -137,7 +132,6 @@ const finishOnboarding = async (navigation: any) => {
     ].some(val => typeof val === 'string' && val.trim().length > 0);
 
     if (token && hasOnboardingAnswers) {
-        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: User authenticated and answers collected. Submitting complete_onboarding and navigating to Offer screen.');
         try {
             await api.post(endpoints.complete_onboarding, {
                 language: AppUtils.getLanguageCode(appLanguage) || 'en',
@@ -153,7 +147,7 @@ const finishOnboarding = async (navigation: any) => {
             });
             store.dispatch(getUserDetail() as any);
         } catch (error) {
-            console.log('complete_onboarding error:', error);
+            AppUtils.showLog('complete_onboarding error:', error);
         } finally {
             navigation.reset({
                 index: 0,
@@ -169,7 +163,6 @@ const finishOnboarding = async (navigation: any) => {
             });
         }
     } else {
-        console.log('🚨 [SUPERWALL -> NATIVE] finishOnboarding: Onboarding not completed / unauthenticated. Navigating to AccessScreen.');
         navigation.reset({
             index: 0,
             routes: [
@@ -187,9 +180,8 @@ export const setSuperwallUserAttributes = async (attributes: Record<string, any>
     try {
         const { default: Superwall } = await loadSuperwall();
         await Superwall.shared.setUserAttributes(attributes);
-        console.log('👤 [SUPERWALL DEBUG] setSuperwallUserAttributes SUCCESS:', JSON.stringify(attributes));
     } catch (e) {
-        console.log('❌ [SUPERWALL DEBUG] Error setting Superwall user attributes:', e);
+        AppUtils.showLog('❌ [SUPERWALL DEBUG] Error setting Superwall user attributes:', e);
     }
 };
 
@@ -204,14 +196,14 @@ export const dismissSuperwall = async () => {
             await (Superwall as any).dismiss();
         }
     } catch (e) {
-        console.log('Error dismissing Superwall:', e);
+        AppUtils.showLog('Error dismissing Superwall:', e);
     }
 };
 
 // Trigger Onboarding Flow Placement
 export const startSuperwallOnboarding = async (navigation: any, onFallback?: () => void) => {
     if (isSuperwallPresenting) {
-        console.log('Superwall onboarding already presenting/registering, skipping duplicate call');
+        AppUtils.showLog('Superwall onboarding already presenting/registering, skipping duplicate call');
         return;
     }
     isSuperwallPresenting = true;
@@ -238,17 +230,13 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
 
             const hasSignedUp = isOnboardingDone;
             await Superwall.shared.setUserAttributes({ has_signed_up: hasSignedUp });
-            console.log('👤 [SUPERWALL DEBUG] Set user attribute: { has_signed_up:', hasSignedUp, '}');
         } catch (e) {
-            console.log('Error resetting Superwall session:', e);
+            AppUtils.showLog('Error resetting Superwall session:', e);
         }
 
         const handler = new PaywallPresentationHandler();
 
-        handler.onPresent((info: any) => {
-            console.log('🎨 [SUPERWALL DEBUG] Paywall Presented Successfully!');
-            console.log('   - Paywall Name/Identifier:', info?.name || info?.identifier || JSON.stringify(info));
-        });
+
 
         // 1. Capture user selection from Superwall buttons.
         // The SDK only ever sends `{ name, variables }` on a custom callback (there is
@@ -256,7 +244,6 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
         // Custom Action named "set_onboarding_answer" whose variables include `key` and
         // `value`, matching the answer keys in redux/Reducers/userData.tsx's onboarding state.
         handler.onCustomCallback((callback: any) => {
-            console.log('🔔 [Superwall Callback]:', JSON.stringify(callback, null, 2));
 
             // Universal Language Detection from any variables or action
             if (callback?.variables && typeof callback.variables === 'object') {
@@ -311,7 +298,6 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                     callback.variables?.value ||
                     callback.variables?.firstName;
                 if (nameVal) {
-                    console.log(`✅ Onboarding Answer Stored (Name): [fullName] = "${nameVal}"`);
                     store.dispatch(setOnboardingAnswers({ fullName: nameVal }));
                     setSuperwallUserAttributes({ name: nameVal, fullName: nameVal, userName: nameVal });
                 }
@@ -334,7 +320,6 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                                 lower.endsWith('value') ||
                                 lower.startsWith('node.');
                             const finalKey = isNameKey ? 'fullName' : cleanKey;
-                            console.log(`✅ Onboarding Answer Stored: [${finalKey}] = "${vars.value}"`);
                             store.dispatch(setOnboardingAnswers({ [finalKey]: vars.value }));
                             if (isNameKey) {
                                 setSuperwallUserAttributes({
@@ -665,7 +650,6 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                                 lowerKey.startsWith('node.')
                             ) {
                                 payload['fullName'] = v;
-                                console.log(`✅ Onboarding Answer Stored: [fullName] = "${v}"`);
                                 setSuperwallUserAttributes({
                                     name: v,
                                     fullName: v,
@@ -675,51 +659,42 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                                 });
                             } else if (lowerKey === 'privacyaccepted') {
                                 payload['privacyAccepted'] = isSelected;
-                                console.log(`✅ Onboarding Answer Stored: [privacyAccepted] = ${isSelected}`);
                             } else {
                                 payload[cleanKey] = v;
-                                console.log(`✅ Onboarding Answer Stored: [${cleanKey}] = "${v}"`);
                             }
                         });
 
                         if (selectedMoods.length > 0) {
                             const combined = selectedMoods.join(', ');
                             payload['howFellingLately'] = combined;
-                            console.log(`✅ Onboarding Answer Stored (Multi-select Moods): [howFellingLately] = "${combined}" (Array: [${selectedMoods.map(m => `"${m}"`).join(', ')}])`);
                         }
 
                         if (selectedFeelThatWay.length > 0) {
                             const combined = selectedFeelThatWay.join(', ');
                             payload['feelThatWay'] = combined;
-                            console.log(`✅ Onboarding Answer Stored (Multi-select Topics): [feelThatWay] = "${combined}" (Array: [${selectedFeelThatWay.map(m => `"${m}"`).join(', ')}])`);
                         }
 
                         if (selectedFeelMore.length > 0) {
                             const combined = selectedFeelMore.join(', ');
                             payload['likeToFellMore'] = combined;
-                            console.log(`✅ Onboarding Answer Stored (Multi-select Goals): [likeToFellMore] = "${combined}" (Array: [${selectedFeelMore.map(m => `"${m}"`).join(', ')}])`);
                         }
 
                         if (selectedHelpBetter.length > 0) {
                             const combined = selectedHelpBetter.join(', ');
                             payload['helpFeelBetter'] = combined;
-                            console.log(`✅ Onboarding Answer Stored (Multi-select Helps): [helpFeelBetter] = "${combined}" (Array: [${selectedHelpBetter.map(m => `"${m}"`).join(', ')}])`);
                         }
 
                         if (selectedStopBetter.length > 0) {
                             const combined = selectedStopBetter.join(', ');
                             payload['stopFeelBetter'] = combined;
-                            console.log(`✅ Onboarding Answer Stored (Multi-select Obstacles): [stopFeelBetter] = "${combined}" (Array: [${selectedStopBetter.map(m => `"${m}"`).join(', ')}])`);
                         }
 
                         if (selectedTimeCommit) {
                             payload['timeYouCommit'] = selectedTimeCommit;
-                            console.log(`✅ Onboarding Answer Stored (Time Commitment): [timeYouCommit] = "${selectedTimeCommit}"`);
                         }
 
                         if (selectedGoalStart) {
                             payload['goalStartWith'] = selectedGoalStart;
-                            console.log(`✅ Onboarding Answer Stored (Start Goal): [goalStartWith] = "${selectedGoalStart}"`);
                         }
 
                         if (vars.language || vars.selected_language || vars.appLanguage || vars.lang) {
@@ -747,7 +722,6 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
                     normalizedCb.includes('register');
 
                 if (isAuthCb) {
-                    console.log(`🚨 [SUPERWALL -> NATIVE] Custom auth callback "${callback?.name}" triggered. Navigating to native AccessScreen.`);
                     didUserExitToAuth = true;
                     isSuperwallPresenting = false;
                     navigation.reset({
@@ -766,10 +740,8 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
 
         // 2. User completes the Superwall onboarding flow (final dismiss / purchase)
         handler.onDismiss(() => {
-            console.log('🎉 [SUPERWALL -> NATIVE] handler.onDismiss: Superwall paywall was completed/dismissed by user.');
             isSuperwallPresenting = false;
             if (didUserExitToAuth) {
-                console.log('ℹ️ [SUPERWALL] User exited to Sign In / Auth. Skipping finishOnboarding.');
                 didUserExitToAuth = false;
                 return;
             }
@@ -803,10 +775,6 @@ export const startSuperwallOnboarding = async (navigation: any, onFallback?: () 
 
         const hasSignedUp = isOnboardingDone;
 
-        console.log('🚀 [SUPERWALL DEBUG] Calling Superwall.shared.register:');
-        console.log('   - Placement: "onboarding_start"');
-        console.log('   - Params passed: ', JSON.stringify({ has_signed_up: hasSignedUp }));
-        console.log('   - User Attributes in Superwall: { has_signed_up: ', hasSignedUp, '}');
 
         await Superwall.shared.register({
             placement: 'onboarding_start',

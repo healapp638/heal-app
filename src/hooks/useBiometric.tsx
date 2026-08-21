@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { setBiometric, getUserDetail } from '../redux/Reducers/userData';
 import AppRoutes from '../routes/RouteKeys/appRoutes';
 import { Alert } from 'react-native';
+import AppUtils from '../utils/appUtils';
 
 const useBiometric = () => {
   const dispatch = useDispatch();
@@ -40,7 +41,7 @@ const useBiometric = () => {
         }
       }
     } catch (e: any) {
-      console.log('Biometric auth error:', e);
+      AppUtils.showLog('Biometric auth error:', e);
     }
   };
 

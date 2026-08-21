@@ -43,7 +43,6 @@ const SignUp = () => {
 
 
   const appLanguage = useSelector((state: any) => state.userData?.appLanguage);
-  // console.log('onboarding answers in sign up', answers);
   const styles = style(colors);
   const { mutate: registerUser, isPending: isRegistering } = usePostApi();
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
@@ -138,7 +137,6 @@ const SignUp = () => {
           );
         },
         onError: error => {
-          console.log('Error during registration:', error);
           AppUtils.showToast(error.message || 'Registration failed');
         },
       },

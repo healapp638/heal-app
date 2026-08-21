@@ -9,6 +9,7 @@ import usePostApi from '../../../../../hooks/usePostApi';
 import { endpoints } from '../../../../../api/Services/endpoints';
 import { useNavigation } from '@react-navigation/native';
 import { triggerHaptic } from '../../../../../hooks/useHaptic';
+import AppUtils from '../../../../../utils/appUtils';
 
 let isFreshAppLaunch = true;
 
@@ -55,7 +56,7 @@ export const useHealyChat = (
   const reduxConversationId = useSelector(
     (state: any) => state.tempData?.conversationId,
   );
-  
+
   const [conversationId, setConversationId] = useState<string | null>(
     reduxConversationId || null,
   );
@@ -127,11 +128,11 @@ export const useHealyChat = (
     enabled: false,
   });
 
-    
+
 
 
   const randomQuestion =
-    randomQuestionsData?.data?.question||""
+    randomQuestionsData?.data?.question || ""
 
   // Load messages from query response
   useEffect(() => {
@@ -449,14 +450,13 @@ export const useHealyChat = (
       message: userMessageContent,
       question: !conversationId ? (randomQuestion || '') : '',
     };
-    // console.log('Sending message payload:', payload);
 
     sendMessageMutate(
       {
         endpoint: endpoints.sendMessage,
         data: payload,
       },
-      
+
       {
         onSuccess: async (res: any) => {
           if (res?.data?.total_credit === 0) {
@@ -486,8 +486,8 @@ export const useHealyChat = (
                   if (!response.ok) {
                     throw new Error(
                       (response.data as any)?.message ||
-                        response.problem ||
-                        'Something went wrong',
+                      response.problem ||
+                      'Something went wrong',
                     );
                   }
                   return response.data;
@@ -495,7 +495,7 @@ export const useHealyChat = (
               });
 
               let rawResult = data?.data?.result || data?.result || [];
-              
+
               const lastOptimisticUserMsg = allMessages.find(
                 m => m.role === 'user' && typeof m._id === 'string' && m._id.startsWith('temp-user-')
               );
@@ -518,7 +518,7 @@ export const useHealyChat = (
               setVisibleCount(Math.min(10, rawResult.length));
               setPrevConversationId(newConvId);
             } catch (err) {
-              console.log('Failed to fetch initial messages for new conversation:', err);
+              AppUtils.showLog('Failed to fetch initial messages for new conversation:', err);
             }
           } else {
             // Existing conversation: manually trigger refetch to fetch bot response
@@ -531,7 +531,6 @@ export const useHealyChat = (
           }, 150);
         },
         onError: (err: any) => {
-          console.log('sendMessage error:', err);
           setIsSending(false);
 
           const isCreditError = /credit/i.test(err?.message || '');

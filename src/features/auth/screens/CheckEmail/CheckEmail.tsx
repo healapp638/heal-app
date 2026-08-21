@@ -69,10 +69,10 @@ const CheckEmail = () => {
             return;
           }
         }
-        console.log('No email app found on this device');
+        AppUtils.showLog('No email app found on this device');
       }
     } catch (err) {
-      console.log('Error opening email app:', err);
+      AppUtils.showLog('Error opening email app:', err);
     }
   };
 

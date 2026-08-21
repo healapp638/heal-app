@@ -163,25 +163,26 @@ export const {
 } = userDataSlice.actions;
 
 import { setLoader } from './tempData';
+import AppUtils from '../../utils/appUtils';
 
 export const getUserDetail =
   (showLoader = false) =>
-  async (dispatch: any) => {
-    try {
-      showLoader && dispatch(setLoader(true));
-      const { default: api } = await import('../../api/Manager/manager');
-      const { endpoints } = await import('../../api/Services/endpoints');
-      const response: any = await api.get(endpoints.user_details);
-      if (response?.ok) {
-        dispatch(setUser(response?.data?.data));
-      } else {
-        // dispatch(setUser({}));
+    async (dispatch: any) => {
+      try {
+        showLoader && dispatch(setLoader(true));
+        const { default: api } = await import('../../api/Manager/manager');
+        const { endpoints } = await import('../../api/Services/endpoints');
+        const response: any = await api.get(endpoints.user_details);
+        if (response?.ok) {
+          dispatch(setUser(response?.data?.data));
+        } else {
+          // dispatch(setUser({}));
+        }
+      } catch (error) {
+        AppUtils.showLog('getUserDetail', error);
+      } finally {
+        dispatch(setLoader(false));
       }
-    } catch (error) {
-      console.log('getUserDetail', error);
-    } finally {
-      dispatch(setLoader(false));
-    }
-  };
+    };
 
 export default userDataSlice.reducer;

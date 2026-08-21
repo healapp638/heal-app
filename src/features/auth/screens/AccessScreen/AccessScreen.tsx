@@ -33,10 +33,7 @@ const AccessScreen = () => {
     (state: any) => state.userData?.onboarding?.answers,
   );
 
-  useEffect(() => {
-    console.log('📱 [Native AccessScreen Mounted] Current Redux Onboarding Answers:');
-    console.log(JSON.stringify(onboardingAnswers || {}, null, 2));
-  }, [onboardingAnswers]);
+
 
   const { googleLogin, appleLogin, isSocialPending } = useSocialLogin();
 

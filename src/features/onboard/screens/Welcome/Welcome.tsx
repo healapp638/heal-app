@@ -47,7 +47,6 @@ const Welcome = () => {
   const handleResumeFlow = useCallback(() => {
     const currentScreen = onboarding?.currentScreen;
     if (!currentScreen) return;
-    console.log('🚨 [WELCOME -> NATIVE] handleResumeFlow: Resuming old native onboarding flow to screen:', currentScreen);
     const stackRoutes = getResumeStackRoutes(currentScreen);
     if (!stackRoutes.length) return;
     setResumeModalVisible(false);
@@ -61,7 +60,6 @@ const Welcome = () => {
     }, 150);
   }, [navigation, onboarding?.currentScreen]);
   const handleStartOver = useCallback(() => {
-    console.log('🔄 [WELCOME] handleStartOver: Clearing onboarding progress and starting over with Superwall');
     dispatch(clearOnboardingProgress());
     setResumeModalVisible(false);
     startSuperwallOnboarding(navigation, () => setShowNativeContent(true));
@@ -70,7 +68,6 @@ const Welcome = () => {
 
   useFocusEffect(
     useCallback(() => {
-      console.log('🚀 [WELCOME -> SUPERWALL] Auto-launching Superwall onboarding placement on focus...');
       dispatch(clearOnboardingProgress());
       setResumeModalVisible(false);
       setShowNativeContent(false);
@@ -161,7 +158,6 @@ const Welcome = () => {
               titleTxt={localization.appkeys?.welcome}
               btnStyle={styles.btn}
               onPress={() => {
-                console.log('🔘 [WELCOME] Primary button pressed: Launching Superwall onboarding...');
                 dispatch(clearOnboardingProgress());
                 startSuperwallOnboarding(navigation, () => setShowNativeContent(true));
               }}

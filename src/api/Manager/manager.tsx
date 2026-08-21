@@ -24,7 +24,6 @@ const api = create({
 });
 
 api.addRequestTransform((request: any) => {
-  // console.log(`[API Request] ${request.method?.toUpperCase()} ${request.url}`);
   const token = store.getState().userData.token;
   if (token) {
     request.headers.Authorization = `Bearer ${token}`;
@@ -117,7 +116,7 @@ const logoutUser = async (
       await messaging().unsubscribeFromTopic(user._id);
     }
   } catch (error) {
-    console.log('Error unsubscribing from FCM topic', error);
+    AppUtils.showLog('Error unsubscribing from FCM topic', error);
   }
 
   if (toastMessage && typeof toastMessage === 'string') {
@@ -146,11 +145,7 @@ const logoutUser = async (
 
 api.axiosInstance.interceptors.response.use(
   response => {
-    // console.log(
-    //   `[API Success] ${response.config?.method?.toUpperCase()} ${
-    //     response.config?.url
-    //   } - Status: ${response.status}`,
-    // );
+
     return response;
   },
   async (error: any) => {
@@ -158,10 +153,7 @@ api.axiosInstance.interceptors.response.use(
     const response = error.response;
 
     if (response) {
-      console.log(
-        `❌ [API ERROR RESPONSE] ${originalRequest?.method?.toUpperCase()} ${originalRequest?.url} - Status: ${response.status}`,
-      );
-      console.log('   - Response Data:', JSON.stringify(response.data, null, 2));
+
 
       if (response.status === 401) {
         // Skip refresh for the refresh_token endpoint itself to avoid infinite loop
@@ -217,16 +209,9 @@ api.axiosInstance.interceptors.response.use(
         logoutUser('Your account is deleted by admin!!');
       }
     } else {
-      console.log(
-        `❌ [API NETWORK/SERVER ERROR] ${originalRequest?.method?.toUpperCase()} ${
-          originalRequest?.url
-        } - Error Message: ${error.message}`,
-      );
-      console.log('   - Request Full URL:', (originalRequest?.baseURL || '') + (originalRequest?.url || ''));
-      console.log('   - Request Payload Data:', JSON.stringify(originalRequest?.data, null, 2));
-      console.log('   - XHR Raw Response (_response):', error?.request?._response);
-      console.log('   - XHR Status:', error?.request?.status);
-      console.log('   - Error Code:', error?.code);
+
+
+      AppUtils.showLog('   - Error Code:', error?.code);
     }
 
     return Promise.reject(error);
@@ -235,7 +220,7 @@ api.axiosInstance.interceptors.response.use(
 
 // Define the type for the monitor function
 type MonitorFunction = (response: ResponseType) => void;
-const naviMonitor: MonitorFunction = _response => {};
+const naviMonitor: MonitorFunction = _response => { };
 
 if (config.mode === Mode.DEV) {
   api.addMonitor(naviMonitor);

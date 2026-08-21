@@ -28,7 +28,6 @@ const Splash = () => {
   const auth = useSelector((state: any) => state.userData?.auth);
   const user = useSelector((state: any) => state.userData?.user);
   const onboarding = useSelector((state: any) => state.userData?.onboarding);
-  console.log('dfherth', user);
   const dispatch = useDispatch();
   const { mutate: postApi } = usePostApi();
   const hasNavigated = useRef(false);
@@ -45,7 +44,6 @@ const Splash = () => {
       //       dispatch(getUserDetail() as any);
       //     },
       //     onError: (error: any) => {
-      //       console.log('claimStreak error', error);
       //       dispatch(getUserDetail() as any);
       //     },
       //   },
@@ -70,11 +68,9 @@ const Splash = () => {
         user?.is_onboarding === '1' ||
         user?.is_onboarding === 'true';
 
-      console.log('⚡ [SPLASH DEBUG] user?.is_onboarding:', user?.is_onboarding);
-      console.log('   - Computed isOnboardingDone:', isOnboardingDone);
+
 
       if (!isOnboardingDone) {
-        console.log('👉 [SPLASH NAV] Onboarding NOT done -> AuthStack -> AppRoutes.Welcome');
         navigation.reset({
           index: 0,
           routes: [
@@ -85,7 +81,6 @@ const Splash = () => {
           ],
         });
       } else if (user?.is_profile_completed === false) {
-        console.log('👉 [SPLASH NAV] Profile incomplete -> AppRoutes.CompleteProfile');
         navigation.reset({
           index: 0,
           routes: [
@@ -96,7 +91,6 @@ const Splash = () => {
           ],
         });
       } else if (user?.user_subscription?.is_subscribed == 1) {
-        console.log('👉 [SPLASH NAV] Onboarded & Subscribed -> NonAuthStack -> AppRoutes.BottomTab');
         navigation.reset({
           index: 0,
           routes: [
@@ -107,7 +101,6 @@ const Splash = () => {
           ],
         });
       } else {
-        console.log('👉 [SPLASH NAV] Onboarded & Unsubscribed -> NonAuthStack -> AppRoutes.Offer');
         navigation.reset({
           index: 0,
           routes: [
